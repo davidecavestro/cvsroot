@@ -38,6 +38,8 @@ public class Application extends Observable{
 		this.addObserver(this.projectDeleteAction);
 		this.addObserver(this.projectOpenAction);
 		this.addObserver(this.projectSaveAction);
+		this.addObserver(this.projectXMLExportAction);
+		this.addObserver(this.projectXMLImportAction);
 	}
 	
 	private static Application instance = null;
@@ -172,6 +174,16 @@ public class Application extends Observable{
 	private final ProjectSaveAction projectSaveAction = new ProjectSaveAction();
 	public ProjectSaveAction getProjectSaveAction(){
 		return this.projectSaveAction;
+	}
+	
+	private final ProjectXMLExportAction projectXMLExportAction = new ProjectXMLExportAction();
+	public ProjectXMLExportAction getProjectXMLExportAction(){
+		return this.projectXMLExportAction;
+	}
+	
+	private final ProjectXMLImportAction projectXMLImportAction = new ProjectXMLImportAction();
+	public ProjectXMLImportAction getProjectXMLImportAction(){
+		return this.projectXMLImportAction;
 	}
 	
 	private PersistenceManager pm;
