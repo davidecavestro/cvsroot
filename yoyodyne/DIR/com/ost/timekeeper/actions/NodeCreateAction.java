@@ -15,12 +15,16 @@ import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.util.*;
 
 /**
- *
- * @author  davide
+ * Implementa la creazione di un nuovo nodo della gerarchia di {@link
+ * com.ost.timekeeper.mode.ProgressItem}.
+ * 
+ * @author davide
  */
 public class NodeCreateAction extends javax.swing.AbstractAction implements java.util.Observer {
 	
-	/** Creates a new instance of NodeCreateAction */
+	/**
+	 * Costruttore vuoto.
+	 */
 	public NodeCreateAction() {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.createnode"), ResourceSupplier.getImageIcon (ResourceClass.UI, "newnode.gif"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
@@ -32,7 +36,7 @@ public class NodeCreateAction extends javax.swing.AbstractAction implements java
 		Application app = Application.getInstance();
 		ProgressItem selectedItem = app.getSelectedItem ();
 		app.getMainForm().getProgressTreeModel().insertNodeInto(newNode, selectedItem, selectedItem.childCount());
-//		selectedItem.insert(newNode, selectedItem.getChildCount());
+//              selectedItem.insert(newNode, selectedItem.getChildCount());
 	}
 	
 	public String askForName (){

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping xmlns="http://castor.exolab.org/" xmlns:cst="http://castor.exolab.org/">
+    <description>Castor generated mapping file</description>
+    <class cst:name="com.ost.timekeeper.model.Project">
+        <description>Default mapping for class com.ost.timekeeper.model.Project</description>
+        <map-to cst:xml="project"/>
+        <field cst:name="root" cst:type="com.ost.timekeeper.model.ProgressItem">
+            <bind-xml name="root" node="element"/>
+        </field>
+        <field cst:name="name" cst:type="java.lang.String">
+            <bind-xml name="name" node="element"/>
+        </field>
+    </class>
+    <!--
+    <class cst:name="com.ost.timekeeper.model.ProgressListener">
+    <description>Default mapping for class com.ost.timekeeper.model.ProgressListener</description>
+    <map-to cst:xml="progress-listener"/>
+    </class>
+    <class cst:name="java.util.Observer">
+    <description>Default mapping for class java.util.Observer</description>
+    <map-to cst:xml="observer"/>
+    </class>
+    -->
+    <class cst:name="com.ost.timekeeper.model.ProgressItem">
+        <description>Default mapping for class com.ost.timekeeper.model.ProgressItem</description>
+        <map-to cst:xml="progress-item"/>
+        <field cst:name="progressing" cst:type="boolean">
+            <bind-xml name="progressing" node="attribute"/>
+        </field>
+        <field cst:name="name" cst:type="java.lang.String">
+            <bind-xml name="name" node="element"/>
+        </field>
+        <field cst:name="children" cst:type="java.lang.Object" cst:collection="collection">
+            <bind-xml name="children" node="element"/>
+        </field>
+        <!--
+        <field cst:name="descendants" cst:type="java.lang.Object" cst:collection="collection">
+            <bind-xml name="descendants" node="element"/>
+        </field>
+        <field cst:name="subtreeProgresses" cst:type="java.lang.Object" cst:collection="collection"
+            ><bind-xml name="subtree-progresses" node="element"/>
+        </field>
+        <field cst:name="progressListener" cst:type="com.ost.timekeeper.model.ProgressListener" cst:collection="enumerate">
+            <bind-xml name="progress-listener" node="element"/>
+        </field>
+        -->
+        <field cst:name="progresses" cst:type="java.lang.Object" cst:collection="collection">
+            <bind-xml name="progresses" node="element"/>
+        </field>
+        <field cst:name="project" cst:type="com.ost.timekeeper.model.Project">
+            <bind-xml name="project" node="element"/>
+        </field>
+        <field cst:name="parent" cst:type="com.ost.timekeeper.model.ProgressItem">
+            <bind-xml name="parent" node="element"/>
+        </field>
+        <!--
+        <field cst:name="observer" cst:type="java.util.Observer" cst:collection="enumerate">
+            <bind-xml name="observer" node="element"/>
+        </field>
+        -->
+    </class>
+</mapping>
