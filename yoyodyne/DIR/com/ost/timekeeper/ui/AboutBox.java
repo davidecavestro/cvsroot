@@ -6,6 +6,7 @@
 
 package com.ost.timekeeper.ui;
 
+import com.jgoodies.animation.*;
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.conf.*;
 import com.ost.timekeeper.util.*;
@@ -81,6 +82,21 @@ public final class AboutBox extends JDialog {
 	 */
 	private ImageIcon productLogoImage;
 	
+	/**
+	 * La pagina di intro
+	 */
+    private IntroPage introPage;
+	
+	/**
+	 * La velocità dell'intro.
+	 */
+    private static final int DEFAULT_FRAME_RATE = 30;
+	
+	/**
+	 * Il pannello contenente l'animazione di intro.
+	 */
+	private JPanel introPanel;
+	
 	/** 
 	 * Costruttore. 
 	 */
@@ -134,12 +150,12 @@ public final class AboutBox extends JDialog {
 		
 		final JPanel otherLogosPanel = new JPanel ();
 
-		this.companyLogoLabel = new JLabel ();
-//		this.companyLogoLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "companylogo"));
-		this.companyLogoLabel.setText ("");
-		this.companyLogoImage = ResourceSupplier.getImageIcon (ResourceClass.UI, "companylogosmall.jpg");
-		this.companyLogoLabel.setIcon (this.companyLogoImage);
-		otherLogosPanel.add (this.companyLogoLabel, BorderLayout.NORTH);
+//		this.companyLogoLabel = new JLabel ();
+////		this.companyLogoLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "companylogo"));
+//		this.companyLogoLabel.setText ("");
+//		this.companyLogoImage = ResourceSupplier.getImageIcon (ResourceClass.UI, "companylogosmall.jpg");
+//		this.companyLogoLabel.setIcon (this.companyLogoImage);
+//		otherLogosPanel.add (this.companyLogoLabel, BorderLayout.NORTH);
 		
 		this.aboutPanel.add (otherLogosPanel, BorderLayout.CENTER);		
 		
@@ -153,7 +169,17 @@ public final class AboutBox extends JDialog {
 		this.buttonPanel.add (confirmButton);
 		
 		final JTabbedPane tabbedPanel = new JTabbedPane ();
-		tabbedPanel.addTab ("About", new JScrollPane (aboutPanel));
+		
+		this.introPage = new IntroPage();
+		
+		introPanel = introPage.build ();
+		tabbedPanel.addTab (
+			ResourceSupplier.getString (ResourceClass.UI, "about", "intro.title"),
+			introPanel);
+
+		tabbedPanel.addTab (
+			ResourceSupplier.getString (ResourceClass.UI, "about", "about.title"),
+			new JScrollPane (aboutPanel));
 		
 		final JPanel detailPanel = new JPanel ();
 		
@@ -236,13 +262,52 @@ public final class AboutBox extends JDialog {
 			detailPanel.add (productBuildValue, c);
 		}
 		
+		{
+			final JLabel productReleaseDateLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.releasedate")+": ");
+			productReleaseDateLabel.setHorizontalAlignment (JLabel.RIGHT);
+
+			c.weightx = 0.0;
+			c.weighty = 0.0;
+			c.gridx = 1;
+			c.gridy = 3;
+			c.gridwidth = 1;
+			detailPanel.add (productReleaseDateLabel, c);
+		}
+		{
+			final JLabel productReleaaseDateValue = new JLabel (CalendarUtils.toTSString (appData.getReleaseDate ().getTime ()));
+
+			c.weightx = 1.0;
+			c.weighty = 0.0;
+			c.gridx = 2;
+			c.gridy = 3;
+			c.gridwidth = 1;
+			detailPanel.add (productReleaaseDateValue, c);
+		}
+		
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		c.gridx = 0;
 		c.gridy = 10;
 		detailPanel.add (new JLabel (), c);
 		
-		tabbedPanel.addTab ("Details", new JScrollPane (detailPanel));
+		tabbedPanel.addTab (
+			ResourceSupplier.getString (ResourceClass.UI, "about", "details.title"),
+			new JScrollPane (detailPanel)
+			);
+		
+		final JPanel systemPanel = new JPanel (new BorderLayout ());
+		final JTable systemTable = new JTable (
+		new Object[][]{
+			System.getProperties ().keySet ().toArray (),
+			System.getProperties ().values ().toArray ()
+			}, new Object[]{
+				ResourceSupplier.getString (ResourceClass.UI, "about", "property"),
+				ResourceSupplier.getString (ResourceClass.UI, "about", "value")
+			});
+		systemPanel.add (new JScrollPane (systemTable), BorderLayout.CENTER);
+		tabbedPanel.addTab (
+			ResourceSupplier.getString (ResourceClass.UI, "about", "system.title"), 
+			systemPanel);
 		
 		final JPanel mainPanel = new JPanel ();
 		mainPanel.setLayout (new BorderLayout ());
@@ -268,5 +333,42 @@ public final class AboutBox extends JDialog {
 		 * Impedisce ridimensionamento.
 		 */
 		this.setResizable (false);
+		this.addWindowListener (new AboutWindowListener());
+	}
+	
+	private Animator _animator=null;
+	
+	/**
+	 * Mostra la finestra.
+	 */
+    private class AboutWindowListener extends WindowAdapter {
+		public void windowActivated(WindowEvent e){
+			/* primo show */
+			AboutBox.this._animator = new Animator(AboutBox.this.introPage.animation(), DEFAULT_FRAME_RATE);
+
+//				final Animator animator = _animator;
+//				Runnable runnable = new Runnable() {
+//					public void run() {
+//						if (AboutBox.this.isVisible ()){
+//							animator.start();
+//						}
+//					}
+//				};
+//
+//				AnimationUtils.invokeOnStop(introPage.animation(), runnable);
+
+		AboutBox.this._animator.start();
+		}
+
+		public void windowDeactivated(WindowEvent e){
+			if(AboutBox.this._animator!=null){
+				AboutBox.this._animator.stop ();
+			}
+		}
+	}
+	
+	public void show (){
+		super.show ();
+		this.introPanel.invalidate ();
 	}
 }

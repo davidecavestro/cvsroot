@@ -171,7 +171,7 @@ public class Application extends Observable{
 					new PlainTextLogger (
 						plainTextLogFile, true), null);
 		} catch (IOException ioe){
-			System.out.println ("Logging disabled. CAUSE: "+ExceptionUtils.getStackStrace (ioe));
+			System.out.println ("Logging disabled. CAUSE: "+ExceptionUtils.getStackTrace (ioe));
 		}
 		Application a = null;
 		try {
@@ -324,22 +324,14 @@ public class Application extends Observable{
 	 * Il gestore della persistenza deidati.
 	 */
 	private PersistenceManager pm;
-	/**
-	 * Inizializza la gestione della persistenza dei dati.
-	 */
-	private void initPersistence (){
-//		if (this.pm!=null){
-//			try {
-//			this.pm.currentTransaction().commit ();
-//			} catch (Exception e){}
-//		}
-//		
+	
+	private final void setDatastoreProperties (){
 		if (this._dataStoreEnvironment==null){
 			this._dataStoreEnvironment = new DataStoreEnvironment (null);
 		}
 		final Properties properties = this._dataStoreEnvironment.getDataStoreProperties ();
 		properties.put ("javax.jdo.PersistenceManagerFactoryClass", "com.sun.jdori.fostore.FOStorePMF");
-		StringBuffer connectionURL = new StringBuffer ();
+		final StringBuffer connectionURL = new StringBuffer ();
 		connectionURL.append ("fostore:");
 		final String storageDirPath = this._applicationOptions.getJDOStorageDirPath ();
 		if (storageDirPath!=null && storageDirPath.length ()>0){
@@ -351,11 +343,46 @@ public class Application extends Observable{
 		connectionURL.append (this._applicationOptions.getJDOStorageName ());
 		properties.put ("javax.jdo.option.ConnectionURL", connectionURL.toString ());
 		properties.put ("javax.jdo.option.ConnectionUserName", this._applicationOptions.getJDOUserName ());
+	}
+	
+	/**
+	 * Inizializza la gestione della persistenza dei dati.
+	 */
+	private void initPersistence (){
+		setDatastoreProperties ();
+		final Properties properties = this._dataStoreEnvironment.getDataStoreProperties ();
 		final PersistenceManagerFactory pmf =
 					  JDOHelper.getPersistenceManagerFactory(properties);
+		
+		System.out.println ("Setting persistent manager from "+properties);
+		
 		this.pm = pmf.getPersistenceManager();
+		
+		if (this.pm.currentTransaction().isActive ()){
+			this.pm.currentTransaction().commit();
+		}
 		this.pm.currentTransaction().begin();
 	}
+	
+	/**
+	 * Rilascia le risorse per la risorsea gestione della persistenza dei dati.
+	 */
+	private void closePersistence (){
+		if (this.pm==null){
+			return;
+		}
+		if (this.pm.currentTransaction().isActive ()){
+			this.pm.currentTransaction().commit();
+		}
+		if (!this.pm.isClosed ()){
+			this.pm.close ();
+		}
+	}
+	
+	/**
+	 * specifica se il manager della persistenza è utilizzabile allo stato attuale.
+	 */
+	private boolean _usablePersistenceManager = false;
 	
 	/**
 	 * Ritorna <TT>true</TT> se il persistence manager specificato è utilizzabile.
@@ -376,9 +403,12 @@ public class Application extends Observable{
 	 * Inizializza il repository dei dati persistenti con le impostazioni correnti.
 	 */
 	public void createDataStore (){
-		initPersistence ();
-		DataStoreUtil.createDataStore (getDataStoreEnvironment ());
-		initPersistence ();
+		if (_usablePersistenceManager){
+			closePersistence ();
+		}
+		setDatastoreProperties ();
+		this.pm = DataStoreUtil.createDataStore (getDataStoreEnvironment (), true);
+		_usablePersistenceManager = true;
 	}
 	
 	/**
@@ -386,6 +416,7 @@ public class Application extends Observable{
 	 * @return il gestore della persistenza dei dati.
 	 */	
 	public final PersistenceManager getPersistenceManager (){
+		System.out.println ("returning persistent manager for properties "+	this._dataStoreEnvironment.getDataStoreProperties ());
 		return this.pm;
 	}
 	
@@ -396,12 +427,12 @@ public class Application extends Observable{
 		Transaction tx = this.pm.currentTransaction();
 		try {
 			tx.commit();
-			tx.begin();
 		} catch (Exception e){
 			Application.getLogger ().error ("Error flushing data for persistence. ", e);
 			e.printStackTrace();
 			tx.rollback();
 		}
+		tx.begin();
 	}
 	
 	/**

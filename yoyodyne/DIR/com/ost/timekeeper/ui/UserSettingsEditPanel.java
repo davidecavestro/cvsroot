@@ -161,18 +161,18 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		/*
 		 * Inserimento pannello editazione.
 		 */
-		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "ui.prefs"), new JScrollPane (uiEditPanel));
+		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "ui.prefs"), /*new JScrollPane (*/uiEditPanel/*)*/);
 		
 		
 		/*
 		 * Inserimento pannello editazione.
 		 */
-		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "data.prefs"), new JScrollPane (dataEditPanel));
+		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "data.prefs"), /*new JScrollPane (*/dataEditPanel/*)*/);
 		
 		/*
 		 * Inserimento pannello editazione.
 		 */
-		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "other.prefs"), new JScrollPane (otherEditPanel));
+		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "other.prefs"), /*new JScrollPane (*/otherEditPanel/*)*/);
 		
 		
 		/*

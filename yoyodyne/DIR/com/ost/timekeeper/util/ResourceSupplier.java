@@ -48,6 +48,7 @@ public final class ResourceSupplier {
 		try {
 			return java.util.ResourceBundle.getBundle(bundlePath+bundle).getString(key);
 		} catch (MissingResourceException mre){
+			System.out.println ("Missing resource "+bundle+": "+key);
 			return bundle+"_"+key;
 		}
 	} 

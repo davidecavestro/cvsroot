@@ -27,25 +27,34 @@ public final class DataStoreUtil {
 
 	
 	/**
-	 * Crea un nuovo repository didati persistenti.
+	 * Crea un nuovo repository di dati persistenti.
+	 *
+	 * @param env l'ambiente di configurazione del data store.
+	 * @param leaveOpen <TT>true</TT> se la transazone deve rimanere attiva.
+	 * @return il gestore della persistenza per il datastore creato.
 	 */
-	public static void createDataStore(final DataStoreEnvironment env) {
+	public static PersistenceManager createDataStore(final DataStoreEnvironment env, final boolean leaveOpen) {
+		PersistenceManager pm = null;
 		try {
-			final Properties properties = env.getDataStoreProperties ();
+			final Properties properties = (Properties)env.getDataStoreProperties ().clone ();
 			properties.put("com.sun.jdori.option.ConnectionCreate", "true");
-			PersistenceManagerFactory pmf =
+			final PersistenceManagerFactory pmf =
 			JDOHelper.getPersistenceManagerFactory(properties);
-			PersistenceManager pm = pmf.getPersistenceManager();
-			Transaction tx = pm.currentTransaction();
-//			if (!pm.isClosed ()){
-//				tz.commit ();
-//			}
+			pm = pmf.getPersistenceManager();
+			final Transaction tx = pm.currentTransaction();
+
 			tx.begin();
-			tx.commit();
-		} catch (Exception e) {
+			tx.commit ();
+			
+			if (leaveOpen ){
+				tx.begin();
+			}
+
+		} catch (final Exception e) {
 			System.out.println("Problem creating database");
 			e.printStackTrace();
 		}
+		return pm;
 	}
 	
 	/**
@@ -55,6 +64,6 @@ public final class DataStoreUtil {
 	 * @param args i parametri di lancio (non usati).
 	 */	
 	public static void main (String[] args){
-		DataStoreUtil.createDataStore(new DataStoreEnvironment (args[0]));
+		DataStoreUtil.createDataStore(new DataStoreEnvironment (args[0]), false);
 	}
 }

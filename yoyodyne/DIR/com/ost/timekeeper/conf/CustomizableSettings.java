@@ -54,6 +54,10 @@ public interface CustomizableSettings extends ApplicationSettings{
 	/** Altezza della finestra di elenco avanzamenti. */
 	public final static String PROPNAME_PROGRESSLISTFRAME_HEIGHT = "progresslistframeheight";
 	
+	/** Larghezza dell'albero dei nodi di avanzamento. */
+	public final static String PROPNAME_PROGRESSITEMTREE_WIDTH = "progressitemtreewidth";
+	
+	
 	/** Beep in presenza di eventi. */
 	public final static String PROPNAME_BEEPONEVENTS = "beeponevents";
 	
@@ -185,4 +189,9 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 * Impostala dimensione del buffer per il logger di testo semplice.
 	 */
 	public void setPlainTextLogBufferSize (final Integer size);
+	
+	/**
+	 * Imposta la larghezza dell'albero dei nodi di avanzamento.
+	 */
+	public void setProgressItemTreeWidth (final Integer width);
 }

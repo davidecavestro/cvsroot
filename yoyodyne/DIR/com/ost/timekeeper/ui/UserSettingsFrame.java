@@ -39,6 +39,8 @@ public final class UserSettingsFrame extends javax.swing.JDialog {
 		setTitle (ResourceSupplier.getString (ResourceClass.UI, "controls", "user.settings"));
 		initComponents ();
 		
+//		this.setIconImage (ResourceSupplier.getImageIcon (ResourceClass.UI, "user-settings-frame.gif").getImage ());
+		
 		/*
 		 * centra
 		 */

@@ -45,6 +45,9 @@ public final class HelpResource {
 	/** La finestra di modifica preferenze utente. */
 	public final static HelpResource USERSETTINGSDIALOG = new HelpResource ("html.usersettingsdialog");
 	
+	/** La finestra di generazione dei report. */
+	public final static HelpResource REPORTGENERATIONDIALOG = new HelpResource ("html.reportgenerationdialog");
+	
 	/**
 	 * Costruttore con risorsa specificata.
 	 *

@@ -25,6 +25,11 @@ public final class ApplicationData {
 	public final static String PROPNAME_INTERNALAPPLICATIONNAME = "internal.name";
 
 	/**
+	 * Nome della proprietà contenente il nome dell'applicazione per uso esterno.
+	 */
+	public final static String PROPNAME_EXTERNALAPPLICATIONNAME = "external.name";
+
+	/**
 	 * Nome della proprietà contenente il numero di versione più significativo.
 	 */
 	public final static String PROPNAME_MAJORVERSIONNUMBER = "major.version.number";
@@ -91,6 +96,16 @@ public final class ApplicationData {
 		return SettingsSupport.getStringProperty (_releaseProperties, PROPNAME_INTERNALAPPLICATIONNAME);
 	}
 	
+	/**
+	 * Ritorna il nome esterno dell'applicazione. Questo nome è inteso ad uso 
+	 * dei processi di presentazione dell'applicazione.
+	 *
+	 * @return il nome esterno dell'applicazione.
+	 */
+	public String getApplicationExternalName (){
+		return SettingsSupport.getStringProperty (_releaseProperties, PROPNAME_EXTERNALAPPLICATIONNAME);
+	}
+	
 
 	/**
 	 * Il numero di versione (cache).
@@ -138,10 +153,10 @@ public final class ApplicationData {
 	 * @return la data di rilascio.
 	 */	
 	public final Calendar getReleaseDate (){
-		if (_versionNumber==null || !_versionNumber.isValid ()){
-			_versionNumber = new DisposableData (SettingsSupport.getCalendarProperty (_releaseProperties, PROPNAME_RELEASE_DATE));
+		if (_releaseDate==null || !_releaseDate.isValid ()){
+			_releaseDate = new DisposableData (SettingsSupport.getCalendarProperty (_releaseProperties, PROPNAME_RELEASE_DATE));
 		}
-		return (Calendar)_versionNumber.getData ();
+		return (Calendar)_releaseDate.getData ();
 	}
 	
 }

@@ -49,7 +49,21 @@ public final class Duration {
 		computeFields ();
 	}
 	
+	/**
+	 * Costruttore con durata inmillisecondi.
+	 *
+	 * @param milliseconds il numero di millisecondi.
+	 */	
+	public Duration (final long milliseconds) {
+		this.totalMilliseconds = milliseconds;
+		computedTotalMilliseconds = true;
+		computeFields ();
+	}
+	
 	private final void computeFields (){
+		if (!computedTotalMilliseconds){
+			computeTotalMilliseconds ();
+		}
 		if (!computedMilliseconds){
 			computeMilliseconds ();
 		}
@@ -67,11 +81,17 @@ public final class Duration {
 		}
 	}
 	
+	private boolean computedTotalMilliseconds;
+	
 	private boolean computedMilliseconds = false;
 	private long totalMilliseconds = 0;
 	private long modMilliseconds = 0;
-	private final void computeMilliseconds (){
+	
+	private final void computeTotalMilliseconds (){
 		this.totalMilliseconds = this.to.getTime() - this.from.getTime();
+		computedTotalMilliseconds = true;
+	}
+	private final void computeMilliseconds (){
 		this.modMilliseconds = this.totalMilliseconds % MILLISECONDS_PER_SECOND;
 		computedMilliseconds = true;
 	}
@@ -162,5 +182,14 @@ public final class Duration {
 	 */	
 	public long getTotalHours (){
 		return this.totalHours;
+	}
+	
+	/**
+	 * Ritorna questa durata in millisecondi.
+	 *
+	 * @return questa durata in millisecondi.
+	 */	
+	public long getTime (){
+		return this.totalMilliseconds;
 	}
 }

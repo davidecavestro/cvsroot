@@ -93,6 +93,8 @@ public final class UserSettings extends AbstractSettings implements Observer{
 			this.setProgressItemInspectorBounds (ProgressItemInspectorFrame.getInstance ().getBounds ());
 			this.setProgressPeriodInspectorBounds (ProgressInspectorFrame.getInstance ().getBounds ());
 			this.setProgressListFrameBounds (ProgressListFrame.getInstance ().getBounds ());
+			/* Salva larghezza albero */
+			this.setProgressItemTreeWidth (new Integer (Application.getInstance ().getMainForm ().getProgressItemTreeWidth ()));
 			/* Salva tipo lista avanzamenti. */
 			this.setProgressListType (ProgressListFrame.getInstance ().getListType ());
 		}

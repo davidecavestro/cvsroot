@@ -354,4 +354,29 @@ public final class ApplicationOptions {
 		}
 	}
 	
+	/**
+	 * Ritorna l'ampiezza dell'albero dei nodi di avanzamento.
+	 *
+	 * @return l'ampiezza dell'albero dei nodi di avanzamento..
+	 */
+	public int getProgressItemTreeWidth (){
+		final Integer returnValue = this._settings.getProgressItemTreeWidth ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue.intValue ();
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.getProgressItemTreeWidth ();
+			}
+		}
+		/*
+		 * Informazione non disponibile.
+		 */
+		return -1;
+	}
 }

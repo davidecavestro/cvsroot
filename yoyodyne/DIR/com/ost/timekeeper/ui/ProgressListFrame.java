@@ -10,6 +10,7 @@ import com.ost.timekeeper.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
+import com.tomtessier.scrollabledesktop.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -20,7 +21,7 @@ import javax.swing.event.*;
  *
  * @author  davide
  */
-public final class ProgressListFrame extends javax.swing.JInternalFrame {
+public final class ProgressListFrame extends BaseInternalFrame {
 
 	/**
 	 * La tabella.
@@ -132,6 +133,8 @@ public final class ProgressListFrame extends javax.swing.JInternalFrame {
 		/* Imposta selezione lista avanzamenti. */
 		setListType (Application.getOptions ().getProgressListType ());
 
+		this.setFrameIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "progress-list-frame.gif"));
+		
 		pack ();
 	}
 

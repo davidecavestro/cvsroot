@@ -44,7 +44,7 @@ public final class ProjectXMLImportAction extends javax.swing.AbstractAction imp
 		// Load Mapping
 		final Mapping mapping = new Mapping();
 		try{
-			mapping.loadMapping(this.getClass ().getResource ("com/ost/timekeeper/actions/dataiomap.xml"));
+			mapping.loadMapping(this.getClass ().getResource ("dataiomap.xml"));
 			
 			final int returnVal = chooser.showOpenDialog(app.getMainForm());
 			

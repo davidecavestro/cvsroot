@@ -257,7 +257,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		/*
 		 * Inserimento pannello editazione.
 		 */
-		this.add (new JScrollPane (editPanel), java.awt.BorderLayout.CENTER);
+		this.add (editPanel, java.awt.BorderLayout.CENTER);
 		
 		/*
 		 * Inserimento pulsantiera.

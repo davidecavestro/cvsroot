@@ -49,7 +49,7 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 		// Load Mapping
 		final Mapping mapping = new Mapping();
 		try{
-			mapping.loadMapping(this.getClass ().getResource ("com/ost/timnekeeper/actions/dataiomap.xml"));
+			mapping.loadMapping(this.getClass ().getResource ("dataiomap.xml"));
 			
 			final int returnVal = chooser.showSaveDialog(app.getMainForm());
 			final SwingWorker worker = new SwingWorker() {

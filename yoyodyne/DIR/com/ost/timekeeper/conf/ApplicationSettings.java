@@ -95,4 +95,11 @@ public interface ApplicationSettings {
 	 * @return la dimensione del buffer per il logger di testo semplice.
 	 */
 	public Integer getPlainTextLogBufferSize ();
+	
+	/**
+	 * Ritorna l'ampiezza dell'albero dei nodi di avanzamento.
+	 *
+	 * @return l'ampiezza dell'albero dei nodi di avanzamento..
+	 */
+	public Integer getProgressItemTreeWidth ();
 }

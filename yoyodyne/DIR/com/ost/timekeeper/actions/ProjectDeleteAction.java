@@ -65,7 +65,7 @@ public final class ProjectDeleteAction extends javax.swing.AbstractAction implem
 		}
 		app.setProject (null);
 		/*
-		 * Rimuove persistenza oggettideterminati.
+		 * Rimuove persistenza oggetti determinati.
 		 */
 		app.getPersistenceManager ().deletePersistentAll (toDelete);
 	}

@@ -39,7 +39,7 @@ public class PlainTextLogger implements Logger{
 		try {
 			this._fw = new BufferedWriter (new FileWriter (logFile, append), bufferSize);
 		} catch (Exception e){
-			System.out.println ("Error creating log file. CAUSE:\n"+ com.ost.timekeeper.util.ExceptionUtils.getStackStrace (e).toString ()+"\nI'll try to continue using a temporary file.");
+			System.out.println ("Error creating log file. CAUSE:\n"+ com.ost.timekeeper.util.ExceptionUtils.getStackTrace (e).toString ()+"\nI'll try to continue using a temporary file.");
 			/* tenta scrittura su file temporaneo */
 			this._fw = new BufferedWriter (new FileWriter (File.createTempFile ("timekeeper_log_", ".txt")), bufferSize);;
 		}
@@ -65,7 +65,7 @@ public class PlainTextLogger implements Logger{
 				this._fw.flush ();
 				this._fw.close ();
 			} catch (IOException ioe){
-				System.out.println (com.ost.timekeeper.util.ExceptionUtils.getStackStrace (ioe));
+				System.out.println (com.ost.timekeeper.util.ExceptionUtils.getStackTrace (ioe));
 			}
 		}
 	}
@@ -150,7 +150,7 @@ public class PlainTextLogger implements Logger{
 			sb.append (CR);
 			sb.append ("Related event: ");
 			sb.append (CR);
-			sb.append (ExceptionUtils.getStackStrace (t));
+			sb.append (ExceptionUtils.getStackTrace (t));
 			sb.append (CR);
 		}
 		sb.append (CR);
@@ -158,7 +158,7 @@ public class PlainTextLogger implements Logger{
 			this._fw.write (sb.toString ());
 //			this._fw.flush ();
 		} catch (final IOException ioe){
-			System.out.println (ExceptionUtils.getStackStrace (ioe));
+			System.out.println (ExceptionUtils.getStackTrace (ioe));
 		}
 	}
 	

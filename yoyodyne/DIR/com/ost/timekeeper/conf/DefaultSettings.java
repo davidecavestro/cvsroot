@@ -221,4 +221,12 @@ public final class DefaultSettings implements ApplicationSettings {
 		return UserResources.getUserAccount ();
 	}
 	
+	/**
+	 * Ritorna l'ampiezza dell'albero dei nodi di avanzamento.
+	 *
+	 * @return l'ampiezza dell'albero dei nodi di avanzamento..
+	 */
+	public Integer getProgressItemTreeWidth (){
+		return new Integer (-1);
+	}
 }

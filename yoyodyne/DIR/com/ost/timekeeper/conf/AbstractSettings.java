@@ -53,7 +53,7 @@ public abstract class AbstractSettings implements CustomizableSettings {
 			Application.getLogger ().warning ( "Error loading propoerties. ", fnfe);
 			} catch (Exception e){
 				/* evita eccezioni dovute a dipendenze inizializzazione*/
-				System.out.println (com.ost.timekeeper.util.ExceptionUtils.getStackStrace (e));
+				System.out.println (com.ost.timekeeper.util.ExceptionUtils.getStackTrace (e));
 			}
 		} catch (IOException ioe) {
 			throw new NestedRuntimeException (ioe);
@@ -335,9 +335,26 @@ public abstract class AbstractSettings implements CustomizableSettings {
 		return SettingsSupport.getIntegerProperty (this.getProperties (), PLAINTEXTLOG_BUFFERSIZE);
 	}
 	/**
-	 * Impostala dimensione del buffer per il logger di testo semplice.
+	 * Imposta la dimensione del buffer per il logger di testo semplice.
 	 */
 	public void setPlainTextLogBufferSize (final Integer size){
 		SettingsSupport.setIntegerProperty (this.getProperties (), PLAINTEXTLOG_BUFFERSIZE, size);
 	}
+	
+	/**
+	 * Ritorna l'ampiezza dell'albero dei nodi di avanzamento.
+	 *
+	 * @return l'ampiezza dell'albero dei nodi di avanzamento..
+	 */
+	public Integer getProgressItemTreeWidth (){
+		return SettingsSupport.getIntegerProperty (this.getProperties (), PROPNAME_PROGRESSITEMTREE_WIDTH);
+	}
+	
+	/**
+	 * Imposta la larghezza dell'albero dei nodi di avanzamento.
+	 */
+	public void setProgressItemTreeWidth (Integer width) {
+		SettingsSupport.setIntegerProperty (this.getProperties (), PROPNAME_PROGRESSITEMTREE_WIDTH, width);
+	}
+	
 }

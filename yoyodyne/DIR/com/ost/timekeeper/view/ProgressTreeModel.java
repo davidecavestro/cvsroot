@@ -13,23 +13,50 @@ import javax.swing.tree.*;
 
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.model.*;
+import com.ost.timekeeper.ui.support.treetable.*;
+import com.ost.timekeeper.util.*;
+import java.text.*;
 
 /**
+ * Modello di albero degli avanzamenti.
  *
  * @author  davide
  */
-public class ProgressTreeModel extends AbstractTreeModel implements Observer{
+public class ProgressTreeModel extends com.ost.timekeeper.ui.support.treetable.AbstractTreeTableModel implements Observer{
 	
 	private ProgressItem root;
 	
-	/** Crea una nuova istanza di ProgressTreeModel */
-	public ProgressTreeModel(ProgressItem root) {
+ // Types of the columns.
+    static protected Class[]  cTypes = { TreeTableModel.class,
+					 String.class};		
+					 
+	/**
+	 * Costruttore con nodo radice.
+	 *
+	 * @param root il nodo radice.
+	 */
+	public ProgressTreeModel(final ProgressItem root) {
+		super (root);
 		load (root);
+		initColumnsStructure ();
 	}
 	
-	/** Crea una nuova istanza di ProgressTreeModel */
-	public ProgressTreeModel(Project project) {
+	/**
+	 * Costruttore con progetto.
+	 *
+	 * @param project il progetto.
+	 */
+	public ProgressTreeModel(final Project project) {
+		super(project!=null?project.getRoot ():null);
 		load (project);
+		initColumnsStructure ();
+	}
+	
+	private void initColumnsStructure (){
+		this.columns = new Object[]{
+			ResourceSupplier.getString(ResourceClass.UI, "controls", "node"),
+			ResourceSupplier.getString(ResourceClass.UI, "controls", "duration")
+		};		
 	}
 	
 	public final void load (ProgressItem root){
@@ -51,10 +78,18 @@ public class ProgressTreeModel extends AbstractTreeModel implements Observer{
 		}
 		if (this.root!=null){
 			//c'и una radice
-			this.fireTreeStructureChanged(new TreeModelEvent (this, this.getPathToRoot(this.root)));
+			/*
+			 * pessimizzazione!!!
+			 */
+			final TreeModelEvent tme = new TreeModelEvent (this, this.getPathToRoot(this.root));
+			this.fireTreeStructureChanged(this, tme.getPath (), tme.getChildIndices (), tme.getChildren ());
 		} else if (oldRoot!=null){
 			//la radice non cми, ma ce n'era una prima
-			this.fireTreeStructureChanged(new TreeModelEvent (this, new Object[]{new ProgressItem ()}));
+			/*
+			 * pessimizzazione!!!
+			 */
+			final TreeModelEvent tme = new TreeModelEvent (this, new Object[]{new ProgressItem ()});
+			this.fireTreeStructureChanged(this, tme.getPath (), tme.getChildIndices (), tme.getChildren ());
 		}
 	}
 	
@@ -86,15 +121,19 @@ public class ProgressTreeModel extends AbstractTreeModel implements Observer{
 	}
 	
 	public void insertNodeInto(ProgressItem newChild, ProgressItem parent, int index){
-		fireTreeNodesInserted(new TreeModelEvent(this, getPathToRoot(parent),
-		new int[]{index}, new Object[]{newChild}));
+		/* pessimizzazione ||| */
+		final TreeModelEvent tme = new TreeModelEvent(this, getPathToRoot(parent),
+		new int[]{index}, new Object[]{newChild});
+		fireTreeNodesInserted(this, tme.getPath (), tme.getChildIndices (), tme.getChildren ());
 	}
 	
 	public void removeNodeFromParent(ProgressItem toRemove){
 		final ProgressItem parent = toRemove.getParent();
 		int[] childIndex = new int[]{parent.childIndex(toRemove)};
-		fireTreeNodesRemoved(new TreeModelEvent(this, getPathToRoot(parent),
-		childIndex, new Object[]{toRemove}));
+		/* pessimizzazione||| */
+		final TreeModelEvent tme =new TreeModelEvent(this, getPathToRoot(parent),
+		childIndex, new Object[]{toRemove});
+		fireTreeNodesRemoved(this, tme.getPath (), tme.getChildIndices (), tme.getChildren ());
 	}
 	
 	/**
@@ -150,7 +189,72 @@ public class ProgressTreeModel extends AbstractTreeModel implements Observer{
 		if (o instanceof Application){
 			if (arg!=null && arg.equals(ObserverCodes.PROJECTCHANGE)){
 				this.load (((Application)o).getProject());
+			} else if (arg!=null && arg.equals(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE)){
+				/*
+				 * pessimizzazione!!!
+				 */
+				final TreeModelEvent tme = new TreeModelEvent (this, this.getPathToRoot(Application.getInstance ().getCurrentItem ()));
+				this.fireTreeNodesChanged (this, tme.getPath (), tme.getChildIndices (), tme.getChildren ());
 			}
 		}
 	}
+	
+	/** Le colonne.*/
+	private Object[] columns;
+	
+	public int getColumnCount () {
+		return 2;
+	}
+	
+	public String getColumnName (int column) {
+		return (String)columns[column];
+	}
+	
+	public Object getValueAt (Object node, int column) {
+		final ProgressItem progressItem = (ProgressItem)node;
+		switch (column){
+			case 0: return progressItem.getName ();
+			case 1: 
+				long totalDuration = 0;
+				for (final Iterator it = progressItem.getSubtreeProgresses ().iterator ();it.hasNext ();){
+					final Period period = (Period)it.next ();
+					totalDuration += period.getDuration ().getTime ();
+				}
+				
+				if (totalDuration==0){
+					return "";
+				}
+				
+				final Duration duration = new Duration (totalDuration);
+				final StringBuffer sb = new StringBuffer ();
+				/*
+				sb.append (durationNumberFormatter.format(duration.getDays()))
+				.append (":")
+				 */
+				sb.append (durationNumberFormatter.format(duration.getHours()))
+				.append (":")
+				.append (durationNumberFormatter.format(duration.getMinutes()))
+				.append (":")
+				.append (durationNumberFormatter.format(duration.getSeconds()));
+				return sb.toString ();
+				
+			default: return null;
+		}
+	}
+	
+	private final DurationNumberFormatter durationNumberFormatter = new DurationNumberFormatter ();
+	
+	private static class DurationNumberFormatter extends DecimalFormat {
+		public DurationNumberFormatter (){
+			this.setMinimumIntegerDigits (2);
+		}
+	}
+	
+    /**
+     * Returns the class for the particular column.
+     */
+    public Class getColumnClass(int column) {
+	return cTypes[column];
+    }
+
 }

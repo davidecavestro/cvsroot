@@ -8,6 +8,7 @@ package com.ost.timekeeper.ui;
 
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.util.*;
+import com.tomtessier.scrollabledesktop.*;
 import java.awt.*;
 
 /**
@@ -15,7 +16,7 @@ import java.awt.*;
  *
  * @author  davide
  */
-public final class ProgressInspectorFrame extends javax.swing.JInternalFrame {
+public final class ProgressInspectorFrame extends BaseInternalFrame {
 	
 	/**
 	 * Istanza singleton.
@@ -68,6 +69,9 @@ public final class ProgressInspectorFrame extends javax.swing.JInternalFrame {
 		 * Imposta dimensione minima.
 		 */
 		this.setMinimumSize (new Dimension (250, 150));
+		
+		this.setFrameIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "progress-inspector-frame.gif"));
+		
 		pack ();
 	}
 	

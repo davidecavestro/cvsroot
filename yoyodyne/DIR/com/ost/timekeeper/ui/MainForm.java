@@ -6,6 +6,7 @@
 
 package com.ost.timekeeper.ui;
 
+import com.jgoodies.uif_lite.panel.*;
 import java.awt.event.*;
 import java.util.*;
 
@@ -18,11 +19,14 @@ import com.ost.timekeeper.actions.*;
 import com.ost.timekeeper.conf.*;
 import com.ost.timekeeper.help.*;
 import com.ost.timekeeper.model.*;
+import com.ost.timekeeper.report.*;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
+import com.toedter.components.*;
 import java.awt.*;
 import java.text.*;
 import javax.help.*;
+import javax.swing.plaf.basic.*;
 
 /**
  * Finestra principale dell'applicazione.
@@ -42,6 +46,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		this.application = app;
 		this.progressTreeModel = new ProgressTreeModel (application.getProject ());
 		this.application.addObserver (progressTreeModel);
+		
 		ApplicationOptionsNotifier.getInstance ().addObserver (this);
 		
 		initComponents ();
@@ -53,10 +58,31 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		JFrame.setDefaultLookAndFeelDecorated (true);
 	}
 	
+    /**
+     * Installs the Kunststoff and Plastic Look And Feels if available in classpath.
+     */
+    public final void initializeLookAndFeels() {
+    	// if in classpath thry to load JGoodies Plastic Look & Feel
+        try {
+            UIManager.installLookAndFeel("JGoodies Plastic 3D",
+                "com.jgoodies.plaf.plastic.Plastic3DLookAndFeel");
+            UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.Plastic3DLookAndFeel");
+        } catch (Throwable t) {
+        	try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			}  catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
+    }
+
 	/**
 	 * Inizializzaizone componenti.
 	 */
 	private void initComponents () {
+        // Set the JGoodies Plastic 3D look and feel
+        initializeLookAndFeels();
+		
 		progressTreePopup = new javax.swing.JPopupMenu ();
 		jPanelMain = new javax.swing.JPanel ();
 		mainToolbar = new javax.swing.JToolBar ();
@@ -80,7 +106,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			desktopColor = Color.BLACK;
 		}
 		desktop.setBackground (desktopColor);
-		desktop.setDragMode (JDesktopPane.LIVE_DRAG_MODE);
+//		desktop.setDragMode (JDesktopPane.LIVE_DRAG_MODE);
 		
 
 		this.application.addObserver (ProgressListFrame.getInstance ().getProgressTable ());
@@ -107,6 +133,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuItemTreeExpandCollapse = new javax.swing.JMenuItem ();
 		jMenuTools = new javax.swing.JMenu ();
 		jMenuItemOptions = new javax.swing.JMenuItem ();
+		jMenuItemReports = new javax.swing.JMenuItem ();
 		jMenuHelp = new javax.swing.JMenu ();
 		jMenuItemAbout = new javax.swing.JMenuItem ();
 		jMenuItemHelp = new javax.swing.JMenuItem ();
@@ -130,6 +157,9 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		mainToolbar.setBorder (new javax.swing.border.EtchedBorder ());
 		mainToolbar.setRollover (true);
 		mainToolbar.setAutoscrolls (true);
+		
+        mainToolbar.putClientProperty("jgoodies.headerStyle", "Both");
+
 		nodeCreateButton.setAction (ActionPool.getInstance ().getNodeCreateAction ());
 		nodeCreateButton.setText ("");
 		mainToolbar.add (nodeCreateButton);
@@ -191,10 +221,21 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		jPanelTree.setLayout (new java.awt.BorderLayout ());
 		
+		final JPanel treePanel = new JPanel (new BorderLayout ());
+		
 		jSplit_Tree_Data.setToolTipText (ResourceSupplier.getString (ResourceClass.UI, "global", "controls.splitter.tooltip"));
-		progressItemTree.setAutoscrolls (true);
-		progressItemTree.setPreferredSize (new java.awt.Dimension (150, 200));
-		jSplit_Tree_Data.setLeftComponent (new JScrollPane (progressItemTree));
+//		progressItemTree.setAutoscrolls (true);
+//		progressItemTree.setPreferredSize (new java.awt.Dimension (100, 200));
+		treePanel.add (new SimpleInternalFrame (
+			ResourceSupplier.getString (ResourceClass.UI, "controls", "jobs.tree"),
+			null, new JScrollPane (progressItemTree)
+			));
+//		treePanel.add (new JScrollPane (progressItemTree), BorderLayout.CENTER);
+		
+		treePanel.setBackground (progressItemTree.getBackground ());
+		
+		treePanel.setPreferredSize (new Dimension (180, 200));
+		jSplit_Tree_Data.setLeftComponent (treePanel);
 		javax.help.CSH.setHelpIDString(progressItemTree, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PROGRESSITEMTREE ));
 		
 		/*
@@ -217,10 +258,13 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		 * Frame lista avanzamenti.
 		 */
 		final ProgressListFrame progressListFrame = ProgressListFrame.getInstance ();
-        //Set the window's location.
-        progressListFrame.setBounds (options.getProgressListFrameBounds ());
-		progressListFrame.setVisible (true); //necessary as of 1.3
-		desktop.add (progressListFrame);
+        {
+			//Set the window's location.
+			final Rectangle bounds = options.getProgressListFrameBounds ();
+			progressListFrame.setBounds (bounds);
+			progressListFrame.setVisible (true); //necessary as of 1.3
+			desktop.add (progressListFrame, (int)bounds.getX (), (int)bounds.getY ());
+		}
 		try {
 			progressListFrame.setSelected (true);
 		} catch (java.beans.PropertyVetoException e) {}
@@ -230,10 +274,13 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		 * Dettaglio nodo di avanzamento.
 		 */
 		final ProgressItemInspectorFrame progressItemInspectorFrame = ProgressItemInspectorFrame.getInstance ();
-        //Set the window's location.
-        progressItemInspectorFrame.setBounds (options.getProgressItemInspectorBounds ());
-		progressItemInspectorFrame.setVisible (true); //necessary as of 1.3
-		desktop.add (progressItemInspectorFrame);
+		{
+			//Set the window's location.
+			final Rectangle bounds = options.getProgressItemInspectorBounds ();
+			progressItemInspectorFrame.setBounds (bounds);
+			progressItemInspectorFrame.setVisible (true); //necessary as of 1.3
+			desktop.add (progressItemInspectorFrame, (int)bounds.getX (), (int)bounds.getY ());
+		}
 		try {
 			progressItemInspectorFrame.setSelected (true);
 		} catch (java.beans.PropertyVetoException e) {}
@@ -247,9 +294,12 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		 */
 		final ProgressInspectorFrame periodInspectorFrame = ProgressInspectorFrame.getInstance ();
         //Set the window's location.
-        periodInspectorFrame.setBounds (options.getProgressPeriodInspectorBounds ());
-		periodInspectorFrame.setVisible (true); //necessary as of 1.3
-		desktop.add (periodInspectorFrame);
+		{
+			final Rectangle bounds = options.getProgressPeriodInspectorBounds ();
+			periodInspectorFrame.setBounds (bounds);
+			periodInspectorFrame.setVisible (true); //necessary as of 1.3
+			desktop.add (periodInspectorFrame, (int)bounds.getX (), (int)bounds.getY ());
+		}
 		try {
 			periodInspectorFrame.setSelected (true);
 		} catch (java.beans.PropertyVetoException e) {}
@@ -259,8 +309,32 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		//		dataTabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "detail")
 		//		, new JScrollPane (progressItemEditPanel));
 		
-		jSplit_Tree_Data.setRightComponent (new JScrollPane (desktop));
+		
+//		final JPanel rightPanel = new JPanel (new BorderLayout ());
+		
+//		jSplit_Tree_Data.setRightComponent (rightPanel);
+		
+//		rightPanel.add (desktop, BorderLayout.CENTER);
+		
+//		final JScrollPane scrollPane = new JScrollPane();
+//
+//		final JViewport viewport = new JViewport();
+
+//		viewport.setView(desktop);
+
+//		scrollPane.setViewport(viewport);
+
+//		desktop.setPreferredSize(new Dimension(1600,1200)); //very important
+
+//		rightPanel.add (scrollPane, BorderLayout.CENTER);
+		
+		jSplit_Tree_Data.setRightComponent (desktop);
+		
+		
 		jSplit_Tree_Data.setOneTouchExpandable (true);
+		
+		final int treewidth = Application.getOptions ().getProgressItemTreeWidth ();
+		jSplit_Tree_Data.setDividerLocation (treewidth>0?treewidth:180);
 		
 		jPanelTree.add (jSplit_Tree_Data, java.awt.BorderLayout.CENTER);
 		
@@ -371,7 +445,79 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 
 		jMenuTools.add (jMenuItemOptions);
 		
+		jMenuItemReports.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tools.reports"));
+		jMenuItemReports.addActionListener (new ActionListener (){
+			public void actionPerformed(ActionEvent e){
+				ReportsFrame.getInstance ().show ();
+			}
+		});
+
+		jMenuTools.add (new javax.swing.JSeparator ());
+		
+		jMenuTools.add (jMenuItemReports);
+
 		jMenuBarMain.add (jMenuTools);
+
+		
+        // Menu for the look and feels (lnfs).
+        UIManager.LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
+
+        ButtonGroup lnfGroup = new ButtonGroup();
+        JMenu lnfMenu = new JMenu("Look&Feel");
+        lnfMenu.setMnemonic('L');
+
+        jMenuBarMain.add(lnfMenu);
+
+        for (int i = 0; i < lnfs.length; i++) {
+            if (!lnfs[i].getName().equals("CDE/Motif")) {
+                JRadioButtonMenuItem rbmi = new JRadioButtonMenuItem(lnfs[i].getName());
+                lnfMenu.add(rbmi);
+
+                // preselect the current Look & feel
+                rbmi.setSelected(UIManager.getLookAndFeel().getName().equals(lnfs[i].getName()));
+
+                // store lool & feel info as client property
+                rbmi.putClientProperty("lnf name", lnfs[i]);
+
+                // create and add the item listener
+                rbmi.addItemListener(
+                // inlining
+                new ItemListener() {
+                        public void itemStateChanged(ItemEvent ie) {
+                            JRadioButtonMenuItem rbmi2 = (JRadioButtonMenuItem) ie.getSource();
+
+                            if (rbmi2.isSelected()) {
+                                // get the stored look & feel info
+                                UIManager.LookAndFeelInfo info = (UIManager.LookAndFeelInfo) rbmi2.getClientProperty(
+                                        "lnf name");
+
+                                try {
+                                    UIManager.setLookAndFeel(info.getClassName());
+
+                                    // update the complete application's
+                                    // look & feel
+                                    SwingUtilities.updateComponentTreeUI(MainForm.this);
+
+                                    // set the split pane devider border to
+                                    // null
+//                                    BasicSplitPaneDivider divider = ((BasicSplitPaneUI) splitPane.getUI()).getDivider();
+//
+//                                    if (divider != null) {
+//                                        divider.setBorder(null);
+//                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+
+                                    System.err.println("Unable to set UI " + e.getMessage());
+                                }
+                            }
+                        }
+                    });
+                lnfGroup.add(rbmi);
+            }
+        }
+		
+		
 		
 		jMenuHelp.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help"));
 		jMenuItemAbout.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_QUOTE, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
@@ -392,10 +538,12 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuHelp.add (jMenuItemHelp);
 		
 		jMenuItemContextualHelp.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help.contextualhelp"));
+		jMenuItemContextualHelp.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "directhelp.gif"));
 		jMenuItemContextualHelp.addActionListener(new CSH.DisplayHelpAfterTracking(HelpManager.getInstance ().getMainHelpBroker ()));
-		
+
 		jMenuHelp.add (jMenuItemContextualHelp);
 		
+		/* il menu dell'help va aggiunto in coda */
 		jMenuBarMain.add (jMenuHelp);
 		
 		setJMenuBar (jMenuBarMain);
@@ -411,6 +559,16 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		progressItemTree.add (progressTreePopup);
 		progressItemTree.addMouseListener (new PopupTrigger ());
+		
+		// register the menu bar with the scrollable desktop
+		desktop.registerMenuBar(jMenuBarMain);
+		
+		jMenuBarMain.add (jMenuHelp);
+
+		// register the default internal frame icon
+//		desktop.registerDefaultFrameIcon(new ImageIcon("images/frmeicon.gif"));
+		
+		
 		pack ();
 	}
 	
@@ -451,6 +609,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JMenuItem jMenuItemSave;
 	private javax.swing.JMenuItem jMenuItemCreateNode;
 	private javax.swing.JMenuItem jMenuItemOptions;
+	private javax.swing.JMenuItem jMenuItemReports;
 	private javax.swing.JMenuItem jMenuItemPaste;
 	private javax.swing.JMenuItem jMenuItemStart;
 	private javax.swing.JMenuItem jMenuItemStop;
@@ -462,7 +621,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private Desktop desktop;
 	private javax.swing.JToolBar mainToolbar;
 	private javax.swing.JProgressBar jobProgress;
-	private javax.swing.JTree progressItemTree;
+	private ProgressItemTree progressItemTree;
 	private javax.swing.JButton nodeCreateButton;
 	private javax.swing.JButton nodeDeleteButton;
 	private javax.swing.JButton startButton;
@@ -471,7 +630,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	// End of variables declaration
 	
 	private void postInitComponents () {
-		this.progressItemTree.addTreeSelectionListener (new TreeSelectionListener (){
+		this.progressItemTree.getTree ().addTreeSelectionListener (new TreeSelectionListener (){
 			public void valueChanged (TreeSelectionEvent e){
 				if (e.getNewLeadSelectionPath () == null) {
 					//gestione caso cancellazione elemento selezionato
@@ -482,21 +641,21 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 				treeExpandCollapseAction.makeForPath (thePath);
 			}
 		});
-		this.progressItemTree.setSelectionRow (0);
+		this.progressItemTree.getTree ().setSelectionRow (0);
 		
-		this.progressItemTree.addTreeSelectionListener (ProgressListFrame.getInstance ().getProgressTable ());
-		this.progressItemTree.setEditable (true);
-		this.progressItemTree.setInvokesStopCellEditing (true);
+		this.progressItemTree.getTree ().addTreeSelectionListener (ProgressListFrame.getInstance ().getProgressTable ());
+		this.progressItemTree.getTree ().setEditable (true);
+		this.progressItemTree.getTree ().setInvokesStopCellEditing (true);
 	}
 	
 	private final void initTreeModelListeners (){
-		this.progressItemTree.getModel ().addTreeModelListener (new TreeModelListener (){
-			public void treeNodesChanged (TreeModelEvent e){repaint ();}
-			public void treeNodesInserted (TreeModelEvent e){repaint ();}
-			public void treeNodesRemoved (TreeModelEvent e){repaint ();}
-			public void treeStructureChanged (TreeModelEvent e){repaint ();}
-		});
-		this.progressItemTree.getModel ().addTreeModelListener (ProgressListFrame.getInstance ().getProgressTable ());
+//		this.progressItemTree.getTree ().getModel ().addTreeModelListener (new TreeModelListener (){
+//			public void treeNodesChanged (TreeModelEvent e){repaint ();}
+//			public void treeNodesInserted (TreeModelEvent e){repaint ();}
+//			public void treeNodesRemoved (TreeModelEvent e){repaint ();}
+//			public void treeStructureChanged (TreeModelEvent e){repaint ();}
+//		});
+//		this.progressItemTree.getTree ().getModel ().addTreeModelListener (ProgressListFrame.getInstance ().getProgressTable ());
 	}
 	
 	/**
@@ -601,17 +760,17 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			if (lastExpandCollapsePath==null){
 				return;
 			}
-			if (progressItemTree.isExpanded (lastExpandCollapsePath)){
-				progressItemTree.collapsePath (lastExpandCollapsePath);
+			if (progressItemTree.getTree ().isExpanded (lastExpandCollapsePath)){
+				progressItemTree.getTree ().collapsePath (lastExpandCollapsePath);
 			} else {
-				progressItemTree.expandPath (lastExpandCollapsePath);
+				progressItemTree.getTree ().expandPath (lastExpandCollapsePath);
 			}
 			makeForPath (lastExpandCollapsePath);
 		}
 		
 		public void makeForPath (TreePath path){
 			if (path != null) {
-				if (progressItemTree.isExpanded (path)){
+				if (progressItemTree.getTree ().isExpanded (path)){
 					treeExpandCollapseAction.putValue (Action.NAME, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.collapse"));
 				} else {
 					treeExpandCollapseAction.putValue (Action.NAME, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.expand"));
@@ -635,14 +794,21 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			if (e.isPopupTrigger ()) {
 				int x = e.getX ();
 				int y = e.getY ();
-				final TreePath path = progressItemTree.getPathForLocation (x, y);
+				final TreePath path = progressItemTree.getTree ().getPathForLocation (x, y);
 				/* varia selezione corrente */
-				progressItemTree.setSelectionPath (path);
+				progressItemTree.getTree ().setSelectionPath (path);
 				treeExpandCollapseAction.makeForPath (path);
 				progressTreePopup.show (progressItemTree, x, y);
 			}
 		}
 	}
 	
-	
+	/**
+	 * Ritorna l'ampiezza dell'albero.  L'implementazione attuale ritorna in realtà la posizione dello splitter.
+	 *
+	 * @return l'ampiezza dell'albero. 
+	 */	
+	public int getProgressItemTreeWidth (){
+		return jSplit_Tree_Data.getDividerLocation ();
+	}
 }

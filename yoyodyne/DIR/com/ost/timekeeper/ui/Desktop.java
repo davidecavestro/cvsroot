@@ -6,6 +6,7 @@
 
 package com.ost.timekeeper.ui;
 
+import com.tomtessier.scrollabledesktop.*;
 import javax.swing.*;
 
 /**
@@ -13,7 +14,7 @@ import javax.swing.*;
  *
  * @author  davide
  */
-public final class Desktop extends JDesktopPane{
+public final class Desktop extends JScrollableDesktopPane{
 	
 	/**
 	 * L'istanza del desktop.

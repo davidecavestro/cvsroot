@@ -71,6 +71,6 @@ public final class NestedRuntimeException extends java.lang.RuntimeException {
 	 * @return la stringa che rappresenta questa eccezione.
 	 */	
 	public String toString (){
-		return ExceptionUtils.getStackStrace (this).toString ();
+		return ExceptionUtils.getStackTrace (this).toString ();
 	}
 }

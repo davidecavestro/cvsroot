@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapping xmlns="http://castor.exolab.org/" xmlns:cst="http://castor.exolab.org/">
-    <description>Castor generated mapping file</description>
+    <description>Castor mapping file</description>
     <class cst:name="com.ost.timekeeper.model.Project">
         <description>Default mapping for class com.ost.timekeeper.model.Project</description>
         <map-to cst:xml="project"/>
         <field cst:name="root" cst:type="com.ost.timekeeper.model.ProgressItem">
-            <bind-xml name="root" node="element"/>
+            <bind-xml name="root" node="element" reference="true" />
         </field>
         <field cst:name="name" cst:type="java.lang.String">
             <bind-xml name="name" node="element"/>
@@ -24,39 +24,71 @@
     <class cst:name="com.ost.timekeeper.model.ProgressItem">
         <description>Default mapping for class com.ost.timekeeper.model.ProgressItem</description>
         <map-to cst:xml="progress-item"/>
+        <field cst:name="code" cst:type="java.lang.String">
+            <bind-xml name="code" node="element"/>
+        </field>
         <field cst:name="progressing" cst:type="boolean">
-            <bind-xml name="progressing" node="attribute"/>
+            <bind-xml name="progressing" transient="true"/>
         </field>
         <field cst:name="name" cst:type="java.lang.String">
             <bind-xml name="name" node="element"/>
         </field>
+        <field cst:name="description" cst:type="java.lang.String">
+            <bind-xml name="description" node="element"/>
+        </field>
+        <field cst:name="notes" cst:type="java.lang.String">
+            <bind-xml name="notes" node="element"/>
+        </field>
         <field cst:name="children" cst:type="java.lang.Object" cst:collection="collection">
             <bind-xml name="children" node="element"/>
         </field>
-        <!--
         <field cst:name="descendants" cst:type="java.lang.Object" cst:collection="collection">
-            <bind-xml name="descendants" node="element"/>
+            <bind-xml transient="true"/>
         </field>
-        <field cst:name="subtreeProgresses" cst:type="java.lang.Object" cst:collection="collection"
-            ><bind-xml name="subtree-progresses" node="element"/>
+        <field cst:name="subtreeProgresses" cst:type="java.lang.Object" cst:collection="collection">
+			<bind-xml transient="true"/>
         </field>
+        <!--
         <field cst:name="progressListener" cst:type="com.ost.timekeeper.model.ProgressListener" cst:collection="enumerate">
             <bind-xml name="progress-listener" node="element"/>
         </field>
-        -->
+		-->
+		
         <field cst:name="progresses" cst:type="java.lang.Object" cst:collection="collection">
             <bind-xml name="progresses" node="element"/>
         </field>
         <field cst:name="project" cst:type="com.ost.timekeeper.model.Project">
-            <bind-xml name="project" node="element"/>
+            <bind-xml name="project" node="element" reference="true" />
         </field>
         <field cst:name="parent" cst:type="com.ost.timekeeper.model.ProgressItem">
-            <bind-xml name="parent" node="element"/>
+            <bind-xml name="parent" node="element" reference="true" />
+        </field>
+        <field cst:name="currentProgress" cst:type="com.ost.timekeeper.model.Period">
+            <bind-xml name="current-progress" node="element" reference="true" />
         </field>
         <!--
         <field cst:name="observer" cst:type="java.util.Observer" cst:collection="enumerate">
             <bind-xml name="observer" node="element"/>
         </field>
         -->
+    </class>
+    <class cst:name="com.ost.timekeeper.model.Period">
+        <description>Default mapping for class com.ost.timekeeper.model.Period</description>
+        <map-to cst:xml="period"/>
+        <field cst:name="from" cst:type="java.util.Date">
+            <bind-xml name="from" node="element"/>
+        </field>
+        <field cst:name="to" cst:type="java.util.Date">
+            <bind-xml name="to" node="element"/>
+        </field>
+        <field cst:name="duration" cst:type="com.ost.timekeeper.util.Duration">
+            <bind-xml transient="true"/>
+        </field>
+        <field cst:name="description" cst:type="java.lang.String">
+            <bind-xml name="description" node="element"/>
+        </field>
+        <field cst:name="notes" cst:type="java.lang.String">
+            <bind-xml name="notes" node="element"/>
+        </field>
     </class>
 </mapping>

@@ -252,7 +252,7 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		/*
 		 * Inserimento pannello editazione.
 		 */
-		this.add (new JScrollPane (editPanel), java.awt.BorderLayout.CENTER);
+		this.add (editPanel, java.awt.BorderLayout.CENTER);
 		
 		/*
 		 * Inserimento pulsantiera.

@@ -13,6 +13,7 @@ import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.view.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.table.*;
 import javax.swing.tree.*;
 
 /**
@@ -22,7 +23,7 @@ import javax.swing.tree.*;
  * @todo implementare funzionalità TreeTable.
  * @todo supporto icone custom.
  */
-public final class ProgressItemTree extends JTree{
+public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treetable.JTreeTable{
 	
 	private ProgressTreeModel _progressTreeModel;
 	
@@ -31,6 +32,7 @@ public final class ProgressItemTree extends JTree{
 	 * @param progressTreeModel il modello sottostante.
 	 */
 	public ProgressItemTree (final ProgressTreeModel progressTreeModel) {
+		super (progressTreeModel);
 		this._progressTreeModel= progressTreeModel;
 		init (progressTreeModel);
 	}
@@ -40,12 +42,12 @@ public final class ProgressItemTree extends JTree{
 	 *
 	 * @param progressTreeModel il modello.
 	 */
-	private void init (final TreeModel progressTreeModel){
-		final ProgressItemCellRenderer progressItemCellRenderer = new ProgressItemCellRenderer ();
-		final TreeCellEditor treeCellEditor = new javax.swing.tree.DefaultTreeCellEditor (this, progressItemCellRenderer);
+	private void init (final ProgressTreeModel progressTreeModel){
+//		final ProgressItemCellRenderer progressItemCellRenderer = new ProgressItemCellRenderer ();
+		final TableCellEditor treeCellEditor = this.getDefaultEditor (ProgressItem.class);
 		treeCellEditor.addCellEditorListener (new CellEditorListener (){
 			public void editingStopped (ChangeEvent e){
-				TreeCellEditor source = (TreeCellEditor)e.getSource ();
+				CellEditor source = (CellEditor)e.getSource ();
 				String newValue = (String)source.getCellEditorValue ();
 				Application.getInstance ().getSelectedItem ().setName (newValue);
 			}
@@ -55,8 +57,8 @@ public final class ProgressItemTree extends JTree{
 			}
 		});
 		this.setCellEditor (treeCellEditor);
-		this.setCellRenderer (progressItemCellRenderer);
-		this.setModel (progressTreeModel);
+//		this.setCellRenderer (progressItemCellRenderer);
+//		this.setModel (progressTreeModel);
 		
 		this.getSelectionModel().setSelectionMode (TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.setDragEnabled(true);
@@ -117,7 +119,7 @@ public final class ProgressItemTree extends JTree{
 //        
 //        return buff.toString();
 		if (c!=ProgressItemTree.this){return null;}
-		return (ProgressItem)ProgressItemTree.this.getSelectionPath ().getLastPathComponent ();
+		return (ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ();
 	}
 		
 		/*
@@ -157,7 +159,7 @@ public final class ProgressItemTree extends JTree{
 //			}
 			if (c!=ProgressItemTree.this){return;}
 //			ProgressItemTree.this.getDropTarget ().get
-			final ProgressItem target = (ProgressItem)ProgressItemTree.this.getSelectionPath ().getLastPathComponent ();
+			final ProgressItem target = (ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ();
 			if (progressItem==target){
 				/* Evita drop su se stesso. */
 				return;
