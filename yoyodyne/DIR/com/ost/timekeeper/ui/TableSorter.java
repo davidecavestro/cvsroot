@@ -121,7 +121,7 @@ The Number subclasses in the JDK are immutable and so will not be used in
 this way but other subclasses of Number might want to do this to save 
 space and avoid unnecessary heap allocation. 
 */
-        if (type.getSuperclass() == java.lang.Number.class)
+        if (type.isAssignableFrom(java.lang.Number.class))
             {
                 Number n1 = (Number)data.getValueAt(row1, column);
                 double d1 = n1.doubleValue();
@@ -135,7 +135,7 @@ space and avoid unnecessary heap allocation.
                 else
                     return 0;
             }
-        else if (type == java.util.Date.class)
+        else if (type.isAssignableFrom(java.util.Date.class))
             {
                 Date d1 = (Date)data.getValueAt(row1, column);
                 long n1 = d1.getTime();
@@ -148,7 +148,20 @@ space and avoid unnecessary heap allocation.
                     return 1;
                 else return 0;
             }
-        else if (type == String.class)
+        else if (type.isAssignableFrom(java.util.Calendar.class))
+            {
+                Calendar d1 = (Calendar)data.getValueAt(row1, column);
+                long n1 = d1.getTime().getTime();
+                Calendar d2 = (Calendar)data.getValueAt(row2, column);
+                long n2 = d2.getTime().getTime();
+
+                if (n1 < n2)
+                    return -1;
+                else if (n1 > n2)
+                    return 1;
+                else return 0;
+            }
+        else if (type.isAssignableFrom(String.class))
             {
                 String s1 = (String)data.getValueAt(row1, column);
                 String s2    = (String)data.getValueAt(row2, column);
@@ -160,7 +173,7 @@ space and avoid unnecessary heap allocation.
                     return 1;
                 else return 0;
             }
-        else if (type == Boolean.class)
+        else if (type.isAssignableFrom(Boolean.class))
             {
                 Boolean bool1 = (Boolean)data.getValueAt(row1, column);
                 boolean b1 = bool1.booleanValue();
@@ -218,7 +231,7 @@ space and avoid unnecessary heap allocation.
 
     public void tableChanged(TableModelEvent e)
     {
-	System.out.println("Sorter: tableChanged"); 
+//	System.out.println("Sorter: tableChanged"); 
         reallocateIndexes();
 
         super.tableChanged(e);
@@ -239,7 +252,7 @@ space and avoid unnecessary heap allocation.
         // n2sort();
         // qsort(0, indexes.length-1);
         shuttlesort((int[])indexes.clone(), indexes, 0, indexes.length);
-        System.out.println("Compares: "+compares);
+//        System.out.println("Compares: "+compares);
     }
 
     public void n2sort() {
@@ -358,7 +371,7 @@ space and avoid unnecessary heap allocation.
              }
          };
         JTableHeader th = tableView.getTableHeader(); 
-//        th.addMouseListener(listMouseListener); 
+        th.addMouseListener(listMouseListener); 
     }
 
 

@@ -30,6 +30,10 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 	/** Creates new form MainForm */
 	public MainForm(Application app) {
 		this.application = app;
+		this.progressTreeModel = new ProgressTreeModel(application.getProject());
+		this.application.addObserver (progressTreeModel);
+		this.progressTableModel = new ProgressTableModel(application.getCurrentItem());
+		
 		progressItemCellRenderer = new ProgressItemCellRenderer();
 		initComponents();
 		postInitComponents();
@@ -177,7 +181,7 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		progressTree.setCellRenderer(progressItemCellRenderer);
 		progressTree.setMaximumSize(null);
 		progressTree.setMinimumSize(null);
-		progressTree.setModel(null);
+		progressTree.setModel(this.progressTreeModel);
 		progressTree.setAutoscrolls(true);
 		progressTree.setPreferredSize(new java.awt.Dimension(150, 200));
 		jSplitPane1.setLeftComponent(new JScrollPane (progressTree));
@@ -485,6 +489,7 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		this.progressTree.setEditable(true);
 		this.progressTree.setInvokesStopCellEditing (true);
 //		this.progressTree.putClientProperty("JTree.lineStyle", "Angled");
+		this.progressTable.setAutoResizeMode (JTable.AUTO_RESIZE_LAST_COLUMN);
 	}
 	
 	private final void initTreeModelListeners (){
@@ -517,12 +522,14 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
 			if (arg!=null && arg.equals ("project")){
-				this.progressTreeModel = new ProgressTreeModel(application.getProject());
-				this.progressTree.setModel(this.progressTreeModel);
-				initTreeModelListeners ();
+//				this.progressTree.setModel(this.progressTreeModel);
+				this.progressTreeModel.load (application.getProject());
 				
-				this.progressTableModel = new ProgressTableModel(application.getSelectedItem());
-				this.progressTable.setModel(this.progressTableModel);
+				this.progressTableModel.load (application.getSelectedItem());
+//				this.progressTable.setModel(this.progressTableModel);
+				
+				initTreeModelListeners ();
+				this.progressTree.invalidate();
 				initTableModelListeners ();
 			} else if (arg!=null && (arg.equals ("currentitem"))){
 				Application app = (Application)o;

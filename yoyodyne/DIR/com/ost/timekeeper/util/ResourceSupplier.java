@@ -36,6 +36,10 @@ public final class ResourceSupplier {
 		if (resClass==ResourceClass.UI){
 			iamgePath = "/com/ost/timekeeper/ui/images/";
 		}
-		return new javax.swing.ImageIcon(ResourceSupplier.class.getResource(iamgePath+name));
+		try {
+			return new javax.swing.ImageIcon(ResourceSupplier.class.getResource(iamgePath+name));
+		} catch (Exception e){
+			return new javax.swing.ImageIcon ();
+		}
 	}
 }

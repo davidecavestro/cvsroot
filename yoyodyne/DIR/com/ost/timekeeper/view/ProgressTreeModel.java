@@ -11,27 +11,50 @@ import java.util.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 
+import com.ost.timekeeper.*;
 import com.ost.timekeeper.model.*;
 
 /**
  *
  * @author  davide
  */
-public class ProgressTreeModel extends AbstractTreeModel {
+public class ProgressTreeModel extends AbstractTreeModel implements Observer{
 	
 	private ProgressItem root;
 	
 	/** Crea una nuova istanza di ProgressTreeModel */
 	public ProgressTreeModel(ProgressItem root) {
-		this.root = root;
+		load (root);
 	}
 	
 	/** Crea una nuova istanza di ProgressTreeModel */
 	public ProgressTreeModel(Project project) {
+		load (project);
+	}
+	
+	public final void load (ProgressItem root){
+		this.root = root;
+	}
+	
+	/**
+	 * Inizializa il modello con i dati relativi al progetto.
+	 * @param project il progetto.
+	 */	
+	public final void load (Project project){
+		ProgressItem oldRoot = this.root;
 		if (project!=null){
+			//progetto non nullo
 			this.root = project.getRoot();
 		} else {
+			//progetto nullo
 			this.root = null;
+		}
+		if (this.root!=null){
+			//c'и una radice
+			this.fireTreeStructureChanged(new TreeModelEvent (this, this.getPathToRoot(this.root)));
+		} else if (oldRoot!=null){
+			//la radice non cми, ma ce n'era una prima
+			//@@@this.fireTreeStructureChanged(new TreeModelEvent (this, this.valueForPathChanged(this.getPathToRoot(oldRoot))));
 		}
 	}
 	
@@ -126,4 +149,13 @@ public class ProgressTreeModel extends AbstractTreeModel {
 			retNodes[retNodes.length - depth] = aNode;
 		}
 		return retNodes;
-	}}
+	}
+	
+	public void update(Observable o, Object arg) {
+		if (o instanceof Application){
+			if (arg!=null && arg.equals("project")){
+				this.load (((Application)o).getProject());
+			}
+		}
+	}
+}

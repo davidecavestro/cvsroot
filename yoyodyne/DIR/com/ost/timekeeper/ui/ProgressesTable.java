@@ -47,38 +47,41 @@ public class ProgressesTable extends javax.swing.JTable implements TreeSelection
 	
 	private ProgressTableSorter dataModel;
 	private class ProgressTableSorter extends TableSorter {
-		private int currentPeriodIdx;
 		private ProgressTableModel progressTableModel;
 		public ProgressTableSorter (ProgressTableModel progressTableModel){
-			super (progressTableModel);
-			this.progressTableModel=progressTableModel;
-			
-			//valorizza indice avanzamento corrente
-			Application app = Application.getInstance();
-			if (app.getCurrentItem()!=null){
-				List progresses = progressTableModel.getProgresses ();
-				for (int i=0;i<progresses.size();i++){
-					Period p = (Period)progresses.get (i);
-					if (p==app.getCurrentItem().getCurrentProgress()){
-						this.currentPeriodIdx=i;
-						break;
-					}
-				}
-			}
-		}
-		public void fireCurrentPeriodUpdated (){
-			this.fireTableChanged(new TableModelEvent (this, this.currentPeriodIdx));
+			super ();
+			load (progressTableModel);
 		}
 		
-		public final void setCurrentPeriodIndex (int currentPeriodIdx){
-			this.currentPeriodIdx = currentPeriodIdx;
+		public void load (ProgressTableModel progressTableModel){
+			super.setModel (progressTableModel);
+			this.progressTableModel=progressTableModel;
 		}
+		public void fireCurrentPeriodUpdated (){
+			this.fireTableChanged(new TableModelEvent (this, this.progressTableModel.getCurrentPeriodIndex()));
+		}
+		
+//		public final void setCurrentPeriodIndex (int currentPeriodIdx){
+//			this.currentPeriodIdx = currentPeriodIdx;
+//		}
 		public final int getCurrentPeriodIndex (){
-			return this.currentPeriodIdx;
+			return this.progressTableModel.getCurrentPeriodIndex();
 		}
+		
+		public void sort(Object sender) {
+			super.sort(sender);
+			Application.getInstance().setChanged();
+			Application.getInstance().notifyObservers(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
+//			//sincronizza indice avanzamento corrente, dopo riordino
+//			this.progressTableModel.synchCurrentPeriodIdx();
+		}
+		
 	}
 	
 	public void setModel(ProgressTableModel dataModel) {
+		if (this.dataModel!=null){
+			this.dataModel.removeTableModelListener(this);
+		}
 		this.dataModel = new ProgressTableSorter(dataModel);
 		// Install a mouse listener in the TableHeader as the sorter UI.
 		this.dataModel.addMouseListenerToHeaderInTable(this);
@@ -105,8 +108,24 @@ public class ProgressesTable extends javax.swing.JTable implements TreeSelection
 		}
 	}
 	
+	/**
+	 * Ricarica il modello su diun sottoalbero target.
+	 *
+	 * @param root la radice del sottoalbero da ricaricare.
+	 */
 	public void reloadModel(ProgressItem root){
-		setModel(new ProgressTableModel(root));
+		/*
+		 * Il tableMOdel effettivo puòessere di due tipi:
+		 * il wrapper per l'ordinamento (ProgressTableSorter)
+		 * oppure l'originale ProgressTableModel
+		 */
+		TableModel actualTableModel = this.getModel();
+		if (actualTableModel instanceof ProgressTableModel){
+			((ProgressTableModel)actualTableModel).load(root);
+		} else if (actualTableModel instanceof ProgressTableSorter){
+			((ProgressTableSorter)actualTableModel).progressTableModel.load(root);
+			((ProgressTableSorter)actualTableModel).load(((ProgressTableSorter)actualTableModel).progressTableModel);
+		}
 	}
 	public void valueChanged(TreeSelectionEvent e){
 		//		 if (e.getNewLeadSelectionPath() == null) {
@@ -143,7 +162,7 @@ public class ProgressesTable extends javax.swing.JTable implements TreeSelection
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals("currentitem")){
+			if (arg!=null && arg.equals("selecteditem")){
 				this.reloadModel(((Application)o).getSelectedItem());
 			} else if (arg!=null && arg.equals("itemprogressing")){
 				//				this.reloadModel(((Application)o).getSelectedItem());
