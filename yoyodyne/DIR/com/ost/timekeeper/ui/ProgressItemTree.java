@@ -23,15 +23,17 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
+import javax.swing.JTextField;
 import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.tree.*;
+import javax.swing.tree.TreeCellEditor;
 
 /**
  * Albero dei nodi di avanzamento.
  *
  * @author  davide
- * @todo implementare funzionalità TreeTable.
+ * @todo implementare funzionalit? TreeTable.
  * @todo supporto icone custom.
  */
 public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treetable.JTreeTable implements Observer{
@@ -315,4 +317,9 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		}
 	}
 	
+//	public boolean isCellEditable(EventObject e) {
+//		super.isCellEditable (e);
+//	    return true;
+//	}
+
 }

@@ -137,10 +137,11 @@ public final class ProgressListFrame extends BaseInternalFrame {
 		final JPanel progressesBottomPane = new JPanel (new BorderLayout ());
 		
 		final JScrollPane tableScroller = new JScrollPane (progressTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		tableScroller.getViewport ().setBackground (progressTable.getBackground ());
 		
 		progressesBottomPane.add (tableScroller, BorderLayout.CENTER);
 
-		progressTable.setIntercellSpacing (new Dimension (5, 3));
+//		progressTable.setIntercellSpacing (new Dimension (5, 3));
 		progressTable.setAutoResizeMode (JTable.AUTO_RESIZE_LAST_COLUMN);
 		
 		progressesPane.add (progressesBottomPane, BorderLayout.CENTER);

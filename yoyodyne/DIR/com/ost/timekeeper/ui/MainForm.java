@@ -245,13 +245,16 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jSplit_Tree_Data.setToolTipText (ResourceSupplier.getString (ResourceClass.UI, "global", "controls.splitter.tooltip"));
 //		progressItemTree.setAutoscrolls (true);
 //		progressItemTree.setPreferredSize (new java.awt.Dimension (100, 200));
+/*
 		treePanel.add (new SimpleInternalFrame (
 			ResourceSupplier.getString (ResourceClass.UI, "controls", "jobs.tree"),
-			null, new JScrollPane (progressItemTree)
-			));
-		treePanel.add (new JScrollPane (progressItemTree), BorderLayout.CENTER);
+			null, null
+			), BorderLayout.NORTH);
+*/			
+		JScrollPane treeScroller = new JScrollPane (progressItemTree);
+		treePanel.add (treeScroller, BorderLayout.CENTER);
 		
-		treePanel.setBackground (progressItemTree.getBackground ());
+		treeScroller.getViewport ().setBackground (progressItemTree.getBackground ());
 
 		treePanel.setPreferredSize (new Dimension (180, 200));
 		jSplit_Tree_Data.setLeftComponent (treePanel);
