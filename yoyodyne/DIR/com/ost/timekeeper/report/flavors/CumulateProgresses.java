@@ -54,6 +54,15 @@ public final class CumulateProgresses extends AbstractDataExtractor {
 	public final static String SUBTREEDURATION_ELEMENT = "subtreeduration";
 	
 	/**
+	 * Il tag di durata avanzamento totale in millisecondi.
+	 */
+	public final static String MILLISECTOTALDURATION_ELEMENT = "millisectotalduration";
+	/**
+	 * Il tag di durata avanzamento totale.
+	 */
+	public final static String TOTALDURATION_ELEMENT = "totalduration";
+	
+	/**
 	 * Identificatore dell'attributo <TT>FROM</TT> in qualità di obiettivo di un filtro.
 	 */
 	public final static Target PROGRESS_FROM = new Target (){};
@@ -66,16 +75,34 @@ public final class CumulateProgresses extends AbstractDataExtractor {
 	/**
 	 * La radice del sottoalbero di interesse.
 	 */
-	private ProgressItem _subtreeRoot;
+	private final ProgressItem _subtreeRoot;
+	
+	/**
+	 * Il numero di giorni dilunghezza del periodo
+	 */
+	private final int _periodLength;
+	
+	/**
+	 * Il numero di periodi di interesse
+	 */
+	private final int _periodCount;
+	
+	private final Date _date;
 	
 	/**
 	 * Costruttore.
+	 * @param date la data di partenza
+	 * @param periodLength la lunghezza (in giorni) del periodo
+	 * @param periodCount il numero di periodi
 	 * @param filters i filtri da applicare.
 	 * @param subtreeRoot la radice del sottoalbero di interesse per il report.
 	 */
-	public CumulateProgresses (final ProgressItem subtreeRoot, final com.ost.timekeeper.report.filter.TargetedFilterContainer[] filters) {
+	public CumulateProgresses (final ProgressItem subtreeRoot, final com.ost.timekeeper.report.filter.TargetedFilterContainer[] filters, final Date date, final int periodLength, final int periodCount) {
 		super (filters);
 		this._subtreeRoot = subtreeRoot;
+		this._date=date;
+		this._periodLength = periodLength;
+		this._periodCount = periodCount;
 	}
 	
 	/**
@@ -103,6 +130,9 @@ public final class CumulateProgresses extends AbstractDataExtractor {
 		
 		Calendar now = new GregorianCalendar ();
 		
+		if (this._date!=null){
+			now.setTime (this._date);
+		}
 		now.set (Calendar.HOUR_OF_DAY, 0);
 		now.set (Calendar.MINUTE, 0);
 		now.set (Calendar.SECOND, 0);
@@ -110,10 +140,10 @@ public final class CumulateProgresses extends AbstractDataExtractor {
 //		now.roll (Calendar.DATE, 1);
 		final Date periodFinishDate = new Date (now.getTime ().getTime ());
 		
-		now.roll (Calendar.DATE, -7);
+		now.add (Calendar.DAY_OF_YEAR, -1*_periodLength*_periodCount);
 		final Date periodStartDate = new Date (now.getTime ().getTime ());
 		
-		final TimeCumulationScale map = new TimeCumulationScale (periodStartDate, periodFinishDate, 1);
+		final TimeCumulationScale map = new TimeCumulationScale (periodStartDate, periodFinishDate, _periodLength);
 		
 //		Date currentPeriodStartDate = periodStartDate;
 //		Calendar c = new GregorianCalendar ();
@@ -171,6 +201,19 @@ public final class CumulateProgresses extends AbstractDataExtractor {
 			{
 				final Element element = new Element (SUBTREEDURATION_ELEMENT);
 				element.setText (getDurationLabel (new Duration ((long)cumulation.getSubtreeDuration ())));
+				progressElement.addContent (element);
+			}
+			
+			double totalDuration = cumulation.getLocalDuration ()+cumulation.getSubtreeDuration ();
+			{
+				final Element element = new Element (MILLISECTOTALDURATION_ELEMENT);
+				element.setText (Double.toString (totalDuration));
+				progressElement.addContent (element);
+			}
+			
+			{
+				final Element element = new Element (TOTALDURATION_ELEMENT);
+				element.setText (getDurationLabel (new Duration ((long)totalDuration)));
 				progressElement.addContent (element);
 			}
 			
