@@ -70,6 +70,10 @@ public interface CustomizableSettings extends ApplicationSettings{
 	/** Beep in presenza di eventi. */
 	public final static String PROPNAME_BEEPONEVENTS = "beeponevents";
 	
+	/** Autocaricamento grafico ad anello */
+	public final static String PROPNAME_RINGCHARTAUTOLOAD = "ringchartautoload";
+	
+	
 	/** Tipo di lista avanzamenti. */
 	public final static String PROPNAME_PROGRESSLISTTYPE = "progresslisttype";
 	

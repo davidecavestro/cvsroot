@@ -11,7 +11,9 @@ import JSci.awt.*;
 import com.ost.timekeeper.graph.awt.*;
 import com.ost.timekeeper.graph.swing.tooltip.SerieNodeToolTipSupplier;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
 import javax.swing.JLabel;
 
@@ -33,6 +35,9 @@ public class JRingChart  extends JTreeGraph2D {
 	protected Color sliceColor[]={Color.blue,Color.green,Color.red,Color.yellow,Color.cyan,Color.lightGray,Color.magenta,Color.orange,Color.pink};
 	
 	private JLabel _xAxisLabel;
+	
+	private double padX;
+	private double padY;
 	
 	/**
 	 * Costruttore.
@@ -60,6 +65,28 @@ public class JRingChart  extends JTreeGraph2D {
 		
 		dataChanged (new GraphDataEvent (model));
 		addMouseListener (new JRingChart.MouseAdapter ());
+		addMouseMotionListener (new MouseMotionAdapter (){
+			public void mouseMoved(MouseEvent e) {
+				boolean hit = false;
+				JRingChart.NodeGraphData data=null;
+//				System.out.println ("click detected");
+				for (final java.util.Iterator it = _nodeGraphData.iterator ();it.hasNext ();) {
+					data = (JRingChart.NodeGraphData )it.next ();			
+					if (data.getArea ().contains(e.getPoint())) {
+//						System.out.println ("changing root node: "+data.getNode ());
+						hit=true;
+						break;
+					}
+				}
+				if (hit){
+					setCursor(Cursor.getPredefinedCursor (Cursor.HAND_CURSOR));
+				} else {
+					setCursor(Cursor.getDefaultCursor ());
+				}
+				
+			}
+		});
+		initGridLevels ();
 	}
 	
 	public void setDepth (int depth){
@@ -67,6 +94,7 @@ public class JRingChart  extends JTreeGraph2D {
 			throw new Error ("Invalid depth value: "+depth);
 		}
 		this._depth=depth;
+		initGridLevels ();
         redraw();
 	}
 	
@@ -124,20 +152,47 @@ public class JRingChart  extends JTreeGraph2D {
 	 */
 	protected final void rescale () {
 		// Swing optimised
-		origin.x=getWidth ()/2;
-		origin.y=getHeight ()/2;
+		int width = getWidth ();
+		int height = getHeight ();
+		int size = Math.min (width, height);
+		if (width>height){
+			this.padX = (width-height)/2;
+			this.padY = 0;
+		} else if (width<height){
+			this.padY = (height-width)/2;
+			this.padX = 0;
+		} else {
+			this.padX = 0;
+			this.padY = 0;
+		}
+		origin.x = (int)this.padX + size/2;
+		origin.y = (int)this.padY + size/2;
+//		origin.x=getWidth ()/2;
+//		origin.y=getHeight ()/2;
 		redraw ();
 	}
 	
-//	private final java.util.Map _shapesToNodes = new java.util.HashMap ();
 	private final java.util.Collection _nodeGraphData = new java.util.ArrayList ();
 	
-	double _xLevel=(origin.x/*-axisPad*/)/_depth;
-	double _yLevel=(origin.y/*-axisPad*/)/_depth;
-	double _xWidth=2*_xLevel;
-	double _yWidth=2*_yLevel;
+	double _levelWidthSeed;
+	double _levelHeightSeed;
 	
 	final Font legendaFont = new Font("Default",Font.BOLD,12);
+	
+	final BufferedImage bi = new BufferedImage(5, 5,
+                                BufferedImage.TYPE_INT_RGB);
+	
+	final Rectangle textureRectangle = new Rectangle(0,0,5,5);
+	
+	/** 
+	 * Numero di livelli della griglia di tracciamento.
+	 * E' dato da <CODE>((_depth-1)*2)+1</CODE>
+	 */
+	private double _gridLevels;
+	
+	private void initGridLevels (){
+		 this._gridLevels = ((_depth-1)*2)+1;
+	}
 	
 	/**
 	 * Paint the graph.
@@ -146,45 +201,28 @@ public class JRingChart  extends JTreeGraph2D {
 		Graphics2D g2 = (Graphics2D)g;
 		
         Stroke s = new BasicStroke(2f);
-//        g2.setColor(Color.WHITE);
-//        g2.fillRect(0, 0, getWidth(), getHeight());
+        g2.setColor(this.getBackground ());
+        g2.fillRect(0, 0, getWidth(), getHeight());
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setStroke(s);
 		
 		_nodeGraphData.clear ();
 		
-		_xLevel=(origin.x/*-axisPad*/)/_depth;
-		_yLevel=(origin.y/*-axisPad*/)/_depth;
-		_xWidth=2*_xLevel;
-		_yWidth=2*_yLevel;
+		_levelWidthSeed=(origin.x-this.padX)/this._gridLevels;
+		_levelHeightSeed=(origin.y-this.padY)/this._gridLevels;
 	
- BufferedImage bi = new BufferedImage(5, 5,
-                                BufferedImage.TYPE_INT_RGB);
          Graphics2D big = bi.createGraphics();
          big.setColor(Color.lightGray);
          big.fillRect(0, 0, 5, 5);
          big.setColor(Color.white);
          big.fillOval(0, 0, 5, 5);
-         Rectangle r = new Rectangle(0,0,5,5);
 		 
 		computeShapes (new JRingChart.NodeGraphData (model.getRoot (), 
-		new TexturePaint(bi, r)),
+		new TexturePaint(bi, textureRectangle)),
 		null,
 		1, 0.0d, 360.0d);
 		for (final java.util.Iterator it=_nodeGraphData.iterator ();it.hasNext ();){
 			JRingChart.NodeGraphData data = (JRingChart.NodeGraphData )it.next ();
-			
-//		String message = data.getNode ().getName ();
-//				
-//		FontMetrics metrics = g2.getFontMetrics();
-//		int width = metrics.stringWidth( message );
-//		int height = metrics.getHeight();
-//		g2.setColor (Color.RED);
-//        g2.setStroke(new BasicStroke (1f));
-//		g2.drawString( message, (float)data.getArea ().getBounds ().getX (), (float)data.getArea ().getBounds ().getY () );		
-//		java.awt.geom.Area dataArea = data.getArea ();
-//		g2.drawRect (dataArea.getBounds ().x, dataArea.getBounds ().y, dataArea.getBounds ().width, dataArea.getBounds ().height );		
-			
 			
 			g2.setColor (Color.BLACK);
 			g2.draw (data.getArea ());
@@ -219,6 +257,28 @@ public class JRingChart  extends JTreeGraph2D {
 		}
 	}
 	
+	/** Rettangolo ad uso interno per il tracciamento degli archi */
+	private final Rectangle2D shapeTrackingFrame = new Rectangle2D.Double ();
+	
+	private Rectangle2D getShapeBounds (int level){
+		double fromTopWithoutPad = _levelWidthSeed*2*(this._depth-level);
+		double fromLeftWithoutPad = _levelHeightSeed*2*(this._depth-level);
+		
+		/* origine orizzontale shape */
+		double x = this.padX + fromTopWithoutPad;
+		/* origine verticale shape */
+		double y = this.padY + fromLeftWithoutPad;
+		
+		int factor = 1+2*(level-1);
+		/* larghezza shape */
+		double w = 2*_levelWidthSeed * factor;
+		/* altezza shape */
+		double h = 2*_levelHeightSeed * factor;
+		
+		shapeTrackingFrame.setFrame (x, y, w, h);
+		return shapeTrackingFrame;
+	}
+	
 	/*
 	 * Arco su cui lavorare.
 	 **/
@@ -228,18 +288,13 @@ public class JRingChart  extends JTreeGraph2D {
 		SerieNode node = nodeData.getNode ();
 		java.awt.Paint paint = nodeData.getPaint ();
 		
-		final double x=_xLevel*(_depth-level);
-		final double y=_yLevel*(_depth-level);
-		final double width=_xWidth*level;
-		final double height=_yWidth*level;
-		
 		double arcAngle,angle=0;
 		double childStart = startAngle;
 		int childLevel = level+1;
 		
 		_theArc.setAngleStart (startAngle);
 		_theArc.setAngleExtent (extensionAngle);
-		_theArc.setFrame (x,y,width,height);
+		_theArc.setFrame (getShapeBounds (level));
 		java.awt.geom.Area currentArea = new java.awt.geom.Area (_theArc);
 		
 		final int subtractorsLength;
@@ -353,8 +408,17 @@ public class JRingChart  extends JTreeGraph2D {
 				}
 			}
 		}
+		
+    /**
+     * Invoked when the mouse enters a component.
+     */
+    public void mouseEntered(MouseEvent e) {
+//		JRingChart.super.
 	}
-	
+
+    /**
+     * Invoked when the mouse exits a component.
+     */
+    public void mouseExited(MouseEvent e) {}
+	}
 }
-
-

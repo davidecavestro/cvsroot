@@ -1,1 +1,8 @@
 com/ost/timekeeper/conf/SystemResources.java
+Test.java
+com/ost/timekeeper/report/flavors/TreeProgresses.java
+RingGraphDemo.java
+com/ost/timekeeper/ui/ProjectImportConflictsResolver.java
+com/ost/timekeeper/actions/commands/ExportProjectToXML_1.java
+com/ost/timekeeper/graph/swing/JRingChart_1.java
+com/jgoodies/**.*

@@ -10,7 +10,7 @@ import com.ost.timekeeper.model.*;
 import java.awt.datatransfer.*;
 
 /**
- * La selezione contenente di un noo di avanzamento.
+ * La selezione contenente di un nodo di avanzamento.
  *
  * @author  davide
  */

@@ -144,7 +144,7 @@ public final class UserDataSettingsEditPanel extends ObservablePanel implements 
 		final GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
-		c.insets = new Insets (3, 3, 3, 3);
+		c.insets = new Insets (3, 10, 3, 10);
 		
 		/*
 		 * Inserimento componenti editazione percorso directory storage notifica sonora.
@@ -152,12 +152,15 @@ public final class UserDataSettingsEditPanel extends ObservablePanel implements 
 		
 		c.gridx = 0;
 		c.gridy = 0;
+		c.weightx = 0.5;
 		add (jdoStorageDirPathLabel, c);
 		c.gridx = 1;
 		c.gridy = 0;
+		c.weightx = 1;
 		add (jdoStorageDirPathEditor, c);
 		c.gridx = 2;
 		c.gridy = 0;
+		c.weightx = 0.5;
 		add (jdoStorageDirPathChoice, c);
 		
 		/*
@@ -177,19 +180,22 @@ public final class UserDataSettingsEditPanel extends ObservablePanel implements 
 		});
 		
 		
-		c.weightx = 1;
+//		c.weightx = 1;
 		/*
 		 * Inserimento componenti editazione nome dello storage.
 		 */
 		c.gridx = 0;
 		c.gridy = 1;
+		c.weightx = 0.5;
 		add (jdoStorageNameLabel, c);
 		c.gridx = 1;
 		c.gridy = 1;
+		c.weightx = 1;
 		add (jdoStorageNameEditor, c);
 		
 		c.gridx = 1;
 		c.gridy = 2;
+		c.weightx = 1;
 		add (jdoStorageInitButton, c);
 		
 		/* etichetta vuota per riempire lo spazio rimanente */

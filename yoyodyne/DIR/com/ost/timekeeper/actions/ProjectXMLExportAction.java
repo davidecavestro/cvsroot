@@ -10,14 +10,18 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
-import org.exolab.castor.mapping.*;
-import org.exolab.castor.xml.*;
+//import org.exolab.castor.mapping.*;
+//import org.exolab.castor.xml.*;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.actions.commands.ExportProjectToXML;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
+import com.ost.timekeeper.ui.support.CustomFileFilter;
 import com.ost.timekeeper.util.*;
+import org.jdom.Document;
+import org.jdom.output.XMLOutputter;
 import org.xml.sax.*;
 
 /**
@@ -27,7 +31,7 @@ import org.xml.sax.*;
  *
  * @author  davide
  */
-public final class ProjectXMLExportAction extends javax.swing.AbstractAction implements Observer{
+public final class ProjectXMLExportAction extends javax.swing.AbstractAction implements Observer {
 	
 	/**
 	 * Componente grafica per la selezione del file di esportazione.
@@ -38,18 +42,30 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 	 * Costruttore vuoto.
 	 */
 	public ProjectXMLExportAction() {
-		super(ResourceSupplier.getString(ResourceClass.UI, "menu", "actions.xmlexportproject"), ResourceSupplier.getImageIcon(ResourceClass.UI, "xmlexportproject.gif"));
-		this.putValue(SHORT_DESCRIPTION, ResourceSupplier.getString(ResourceClass.UI, "menu", "file.xmlexportproject.tooltip"));
+		super(ResourceSupplier.getString(ResourceClass.UI, "menu", "project.xmlexportproject"), ResourceSupplier.getImageIcon(ResourceClass.UI, "export.png"));
+		this.putValue(SHORT_DESCRIPTION, ResourceSupplier.getString(ResourceClass.UI, "menu", "project.xmlexportproject.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
+		final CustomFileFilter filter = new CustomFileFilter (
+			new String []{FileUtils.xml},
+			new String []{ResourceSupplier.getString (ResourceClass.UI, "controls", "file.type.xml")}
+		);
+		chooser.addChoosableFileFilter (filter);
+		
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		final Application app = Application.getInstance();
+		
+
+	
+	
+	
+		
 		// Load Mapping
-		final Mapping mapping = new Mapping();
+//		final Mapping mapping = new Mapping();
 		try{
-			mapping.loadMapping(this.getClass ().getResource ("dataiomap.xml"));
+//			mapping.loadMapping(this.getClass ().getResource ("dataiomap.xml"));
 			
 			final int returnVal = chooser.showSaveDialog(app.getMainForm());
 			final SwingWorker worker = new SwingWorker() {
@@ -60,15 +76,22 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 							return null;
 						}
 						try {
-							// Create a Reader to the file to unmarshal from
-							Writer writer = new FileWriter(chooser.getSelectedFile());
-
-							// Create a new Marshaller
-							Marshaller marshaller = new Marshaller(writer);
-							marshaller.setMapping(mapping);
-							// Marshal the project object
-							marshaller.marshal(app.getProject(), writer);
+							final org.jdom.Document data = new org.jdom.Document ();
+							new ExportProjectToXML (app.getProject (), data).execute ();
+							
+							final XMLOutputter xo = new XMLOutputter ();
+							xo.output (data, new FileOutputStream (chooser.getSelectedFile()));
+							
+//							// Create a Reader to the file to unmarshal from
+//							Writer writer = new FileWriter(chooser.getSelectedFile());
+//
+//							// Create a new Marshaller
+//							Marshaller marshaller = new Marshaller(writer);
+//							marshaller.setMapping(mapping);
+//							// Marshal the project object
+//							marshaller.marshal(app.getProject(), writer);
 						} catch (Exception ex) {
+							System.out.println (ExceptionUtils.getStackTrace (ex));
 							throw new NestedRuntimeException(ex);
 						}
 					} finally {

@@ -132,15 +132,19 @@ public final class ProgressListFrame extends BaseInternalFrame {
 		deleteButton.setText ("");
 		progressesToolBar.add (deleteButton);
 		
+		
 		progressesPane.add (progressesToolBar, BorderLayout.NORTH);
 		final JPanel progressesBottomPane = new JPanel (new BorderLayout ());
-		progressesBottomPane.add (
-		new JScrollPane (progressTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
-		BorderLayout.CENTER);
 		
+		final JScrollPane tableScroller = new JScrollPane (progressTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
+		progressesBottomPane.add (tableScroller, BorderLayout.CENTER);
+
+		progressTable.setIntercellSpacing (new Dimension (5, 3));
 		progressTable.setAutoResizeMode (JTable.AUTO_RESIZE_LAST_COLUMN);
 		
 		progressesPane.add (progressesBottomPane, BorderLayout.CENTER);
+		
 		this.setContentPane (progressesPane);
 		
 		
@@ -152,7 +156,7 @@ public final class ProgressListFrame extends BaseInternalFrame {
 		/* Imposta selezione lista avanzamenti. */
 		setListType (Application.getOptions ().getProgressListType ());
 
-		this.setFrameIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "progress-list-frame.gif"));
+		this.setFrameIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "progress-list-frame.png"));
 		
 		pack ();
 	}

@@ -14,9 +14,10 @@ import com.ost.timekeeper.util.*;
  * Rappresenta un periodo temporale. I metodi che non ammettono periodi temporali 
  * non validi possono sollevare <code>{@link com.ost.timekeeper.model.InvalidPeriodException}</code>.
  *
+ * @todo estendere LocalizedPeriodImpl
  * @author  davide
  */
-public class Period extends Observable{
+public class Period extends Observable implements LocalizedPeriod{
 	
 	/** 
 	 * La data di inizio periodo. 
@@ -131,12 +132,34 @@ public class Period extends Observable{
 	 * @return <code>true</code> se questo periodo temporale interseca <code>period</code>; 
 	 * <code>false</code> altrimenti.
 	 */	
-	public synchronized boolean intersects (final Period period){
-		if (!this.isValid() || !period.isValid()){
-			throw new InvalidPeriodException ();
-		}
+	public synchronized boolean intersects (final LocalizedPeriod period){
+//		final Period period = (LocalizedPeriod)lPeriod;
+//		if (!this.isValid() || !period.isValid()){
+//			throw new InvalidPeriodException ();
+//		}
 		return ! (this.getFrom ().after(period.getTo()) 
 			|| this.getTo().before(period.getFrom()));
+	}
+	
+	/**
+	 * Verifica l'intersezione non vuota tra due periodi.
+	 *
+	 * @param period il periodo da testare.
+	 * @return <code>true</code> se questo periodo temporale interseca <code>period</code>; 
+	 * <code>false</code> altrimenti.
+	 */	
+	public synchronized LocalizedPeriod intersection (final LocalizedPeriod period){
+//		if (!this.isValid() || !period.isValid()){
+//			throw new InvalidPeriodException ();
+//		}
+		
+		final long maxFrom = Math.max (this.getFrom ().getTime (), period.getFrom ().getTime ());
+		final long minTo = Math.min (this.getTo ().getTime (), period.getTo ().getTime ());
+
+		if (maxFrom<minTo){
+			return new Period (new Date (maxFrom), new Date (minTo));
+		}
+		return null;
 	}
 	
 	/** 

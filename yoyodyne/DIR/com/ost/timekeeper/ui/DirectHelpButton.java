@@ -21,7 +21,7 @@ public class DirectHelpButton extends JButton {
 	
 	/** Costruttore. */
 	public DirectHelpButton () {
-		super (ResourceSupplier.getImageIcon (ResourceClass.UI, "directhelp.gif"));
+		super (ResourceSupplier.getImageIcon (ResourceClass.UI, "contexthelp.png"));
 		addActionListener (new CSH.DisplayHelpAfterTracking(HelpManager.getInstance ().getMainHelpBroker ()));
 		this.setBorderPainted (false);
 		this.setToolTipText (ResourceSupplier.getString (ResourceClass.UI, "controls", "direct.help"));

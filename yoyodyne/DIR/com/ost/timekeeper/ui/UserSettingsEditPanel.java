@@ -153,6 +153,10 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		
 		tabbedPane.setTabLayoutPolicy (JTabbedPane.SCROLL_TAB_LAYOUT);
 		
+		final GradientPanel gradientPanel = new GradientPanel (Color.LIGHT_GRAY, GradientPanel.OBLIQUE);
+		gradientPanel.setPreferredSize (new Dimension (30, 120));
+		this.add (gradientPanel, java.awt.BorderLayout.WEST);
+			
 		/*
 		 * Inserimento pannello editazione.
 		 */
@@ -161,18 +165,18 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		/*
 		 * Inserimento pannello editazione.
 		 */
-		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "ui.prefs"), /*new JScrollPane (*/uiEditPanel/*)*/);
+		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "ui"), /*new JScrollPane (*/uiEditPanel/*)*/);
 		
 		
 		/*
 		 * Inserimento pannello editazione.
 		 */
-		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "data.prefs"), /*new JScrollPane (*/dataEditPanel/*)*/);
+		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "data"), /*new JScrollPane (*/dataEditPanel/*)*/);
 		
 		/*
 		 * Inserimento pannello editazione.
 		 */
-		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "other.prefs"), /*new JScrollPane (*/otherEditPanel/*)*/);
+		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "other"), /*new JScrollPane (*/otherEditPanel/*)*/);
 		
 		
 		/*

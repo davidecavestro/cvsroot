@@ -28,12 +28,35 @@ public final class DataFlavors {
 	public final static DataFlavor progressItemFlavor = createProgressItemFlavor ();
 	
 	/**
+	 * L'identificatore del tipo <TT>Progress</TT>.
+	 */
+	private final static String progressMimeType = DataFlavor.javaJVMLocalObjectMimeType +";class="+Progress.class.getName ();
+	
+	/**
+	 * Ritorna il tipo relativo alla classe {@link com.ost.timekeeper.model.Progress}.
+	 */
+	public final static DataFlavor progressFlavor = createProgressFlavor ();
+	
+	/**
 	 * Crea il tipo di dato per <TT>ProgressItem</TT>.
 	 */
 	private static DataFlavor createProgressItemFlavor () {
 		//Try to create a DataFlavor for progress item.
 		try {
 			return new DataFlavor (progressItemMimeType);
+		} catch (ClassNotFoundException cnfe) {
+			/** Caso non previsto. */
+			throw new NestedRuntimeException (cnfe);
+		}
+	}
+	
+	/**
+	 * Crea il tipo di dato per <TT>Progress</TT>.
+	 */
+	private static DataFlavor createProgressFlavor () {
+		//Try to create a DataFlavor for progress.
+		try {
+			return new DataFlavor (progressMimeType);
 		} catch (ClassNotFoundException cnfe) {
 			/** Caso non previsto. */
 			throw new NestedRuntimeException (cnfe);

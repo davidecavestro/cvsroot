@@ -40,11 +40,12 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 		Application.getLogger ().debug ("Creating new ProgressTableModel");
 		this.currentPeriodIdx=-1;
 		this.columns = new Object[]{
+			ResourceSupplier.getString(ResourceClass.UI, "components", "progress.running"),
+			ResourceSupplier.getString(ResourceClass.UI, "components", "progress.duration"),
 			ResourceSupplier.getString(ResourceClass.UI, "controls", "from"),
 			ResourceSupplier.getString(ResourceClass.UI, "controls", "to"),
-			ResourceSupplier.getString(ResourceClass.UI, "components", "progress.duration"),
-			ResourceSupplier.getString(ResourceClass.UI, "components", "progress.running"),
-		};		
+			ResourceSupplier.getString(ResourceClass.UI, "controls", "description")
+		};
 		load (root);
 		//registra interesse per eventi di variazione periodo avanzamento corrente
 		Application.getInstance().addObserver(this);
@@ -109,9 +110,9 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Progress period = (Progress)progresses.get(rowIndex);
 		switch (columnIndex){
-			case 0: return period.getFrom();
-			case 1: return period.getTo();
-			case 2: 
+			case 2: return period.getFrom();
+			case 3: return period.getTo();
+			case 1: 
 				Duration duration = period.getDuration ();
 				StringBuffer sb = new StringBuffer ();
 				/*
@@ -124,7 +125,8 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 				.append (":")
 				.append (durationNumberFormatter.format(duration.getSeconds()));
 				return sb.toString ();
-			case 3: return new Boolean(period.getTo()==null);
+			case 0: return new Boolean(period.getTo()==null);
+			case 4: return period.getDescription ();
 			default: return null;
 		}
 	}
@@ -229,7 +231,7 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 //				reloadProgresses ();
 				synchCurrentPeriodIdx ();
 				Application.getLogger ().debug ("Updating progress period list. Current perdio IDX = "+this.currentPeriodIdx);
-				this.fireTableChanged(new TableModelEvent(this/*, this.getCurrentPeriodIndex()*/));
+				this.fireTableChanged(new TableModelEvent(this, 0, this.getColumnCount ()-1, 1/*, this.getCurrentPeriodIndex()*/));
 			}
 		}
 	}

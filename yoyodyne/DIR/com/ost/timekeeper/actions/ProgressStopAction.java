@@ -22,7 +22,7 @@ public final class ProgressStopAction extends javax.swing.AbstractAction impleme
 	 * Costruttore vuoto.
 	 */
 	public ProgressStopAction () {
-		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.stop"), ResourceSupplier.getImageIcon (ResourceClass.UI, "stop.gif"));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.stop"), ResourceSupplier.getImageIcon (ResourceClass.UI, "no.png"));
 		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.stop.tooltip"));
 		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled (false);

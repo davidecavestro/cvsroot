@@ -9,10 +9,12 @@ package com.ost.timekeeper.actions;
 import java.util.*;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.actions.commands.DeleteProject;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.util.*;
+import javax.swing.JOptionPane;
 
 /**
  * Azione di rimozione di un progetto.
@@ -25,59 +27,21 @@ public final class ProjectDeleteAction extends javax.swing.AbstractAction implem
 	 * Costruttore vuoto.
 	 */
 	public ProjectDeleteAction () {
-		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.deleteproject"), ResourceSupplier.getImageIcon (ResourceClass.UI, "deleteproject.gif"));
-		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "file.deleteproject.tooltip"));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "project.delete")/*, ResourceSupplier.getImageIcon (ResourceClass.UI, "deleteproject.gif")*/);
+		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "project.delete.tooltip"));
 		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled (false);
 	}
 	
 	public void actionPerformed (java.awt.event.ActionEvent e) {
 		final Application app = Application.getInstance ();
-		Collection toDelete = new ArrayList ();
-		
-		Project project = app.getProject ();
-//		if (project.jdoIsPersistent ()){
-			/*
-			 * Progetto persistente.
-			 */
-			toDelete.add (project);
-			ProgressItem root = project.getRoot ();
-			toDelete.add (root);
-			for (Iterator it=root.getSubtreeProgresses ().iterator ();it.hasNext ();){
-				final Progress progress = (Progress)it.next ();
-//				if (progress.jdoIsPersistent ()){
-					/*
-					 * Avanzamento persistente.
-					 */
-					toDelete.add (progress);
-//				}
-			}
-			
-			for (Iterator it=root.getDescendants ().iterator ();it.hasNext ();){
-				ProgressItem node = (ProgressItem)it.next ();
-//				if (node.jdoIsPersistent ()){
-					/*
-					 * Nodo persistente.
-					 */
-					toDelete.add (node);
-//				}
-			}
-//		}
-		app.setProject (null);
-		final javax.jdo.PersistenceManager pm = app.getPersistenceManager ();
-		final javax.jdo.Transaction tx = pm.currentTransaction ();
-		tx.begin ();
-		try {		/*
-		 * Rimuove persistenza oggetti determinati.
-		 */
-			app.getPersistenceManager ().deletePersistentAll (toDelete);
-			
-			
-			tx.commit ();
-		} catch (final Throwable t){
-			tx.rollback ();
-			throw new NestedRuntimeException (t);
+		if (
+		JOptionPane.showConfirmDialog (
+		app.getMainForm (), ResourceSupplier.getString (ResourceClass.UI, "controls", "delete.project.confirm"))!=JOptionPane.OK_OPTION){
+			return;
 		}
+		new DeleteProject (app.getProject ()).execute ();
+		app.setProject (null);
 	}
 	
 	public void update (Observable o, Object arg) {

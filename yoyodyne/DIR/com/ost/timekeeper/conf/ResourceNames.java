@@ -6,6 +6,8 @@
 
 package com.ost.timekeeper.conf;
 
+import com.ost.timekeeper.ApplicationData;
+
 /**
  * I nomi delle risorse utilizzabili.
  *
@@ -16,12 +18,12 @@ public interface ResourceNames {
 	/**
 	 * Nome directory di supporto all'applicazione condivisa tra gli utenti.
 	 */
-	public final static String SYSTEM_APPLICATIONREPOSITORYDIR_NAME = "timekeeper";
+	public final static String SYSTEM_APPLICATIONREPOSITORYDIR_NAME = ApplicationData.getInstance ().getApplicationInternalName ();
 	
 	/**
 	 * Nome directory utente di supporto all'applicazione.
 	 */
-	public final static String USER_APPLICATIONREPOSITORYDIR_NAME = ".timekeeper";
+	public final static String USER_APPLICATIONREPOSITORYDIR_NAME = "."+ApplicationData.getInstance ().getApplicationInternalName ();
 	
 	/**
 	 * Nome directory impostazioni utente.

@@ -51,8 +51,20 @@ public final class HelpResource {
 	/** La finestra di selezione della radice del grafico ad anello. */
 	public final static HelpResource RINGCHART_ROOTSELECTION_DIALOG = new HelpResource ("html.ringchartrootselectiondialog");
 	
+	/** La finestra di selezione della radice del grafico a linea. */
+	public final static HelpResource LINECHART_ROOTSELECTION_DIALOG = new HelpResource ("html.linechartrootselectiondialog");
+
 	/** La finestra di gestione grafici. */
 	public final static HelpResource CHARTFRAME = new HelpResource ("html.chartframe");
+	
+	/** La finestra di selezione della radice del report avanzamenti semplci. */
+	public final static HelpResource PLAINPROGRESSREPORT_ROOTSELECTION_DIALOG = new HelpResource ("html.plainprogressreportrootselectiondialog");
+
+	/** La finestra di immissione nuovo nome per un progetto importato che conflitta con esistente. */
+	public final static HelpResource PROJECTIMPORTCONFLICT_NAMEINPUT_DIALOG = new HelpResource ("html.projectimportconflictnameinputdialog");
+	
+	/** La barra di stato principale. */
+	public final static HelpResource MAINSTATUSBAR = new HelpResource ("html.mainstatusbar");
 	
 	/**
 	 * Costruttore con risorsa specificata.

@@ -9,6 +9,7 @@ package com.ost.timekeeper.ui;
 import com.jgoodies.animation.*;
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.conf.*;
+import com.ost.timekeeper.ui.support.GradientPanel;
 import com.ost.timekeeper.util.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -73,15 +74,15 @@ public final class AboutBox extends JDialog {
 	 */
 	private ImageIcon productNameImage;
 	
-	/**
-	 * Etichetta logo prodotto.
-	 */
-	private JLabel productLogoLabel;
+//	/**
+//	 * Etichetta logo prodotto.
+//	 */
+//	private JLabel productLogoLabel;
 	
-	/**
-	 * Immagine logo prodotto.
-	 */
-	private ImageIcon productLogoImage;
+//	/**
+//	 * Immagine logo prodotto.
+//	 */
+//	private ImageIcon productLogoImage;
 	
 	/**
 	 * La pagina di intro
@@ -190,6 +191,19 @@ public final class AboutBox extends JDialog {
 		this.introPage = new IntroPage();
 		
 		introPanel = introPage.build ();
+		introPanel.setMaximumSize (new Dimension (350, 100));
+		introPanel.addComponentListener (new ComponentAdapter (){
+			public void componentShown(ComponentEvent e){
+				AboutBox.this._animator = new Animator(AboutBox.this.introPage.animation(), DEFAULT_FRAME_RATE);
+				AboutBox.this._animator.start ();
+			}
+			public void componentHidden(ComponentEvent e){
+				if (AboutBox.this._animator !=null){
+					AboutBox.this._animator.stop ();
+				}
+			}
+		});
+
 		tabbedPanel.addTab (
 			ResourceSupplier.getString (ResourceClass.UI, "about", "intro.title"),
 			introPanel);
@@ -208,7 +222,7 @@ public final class AboutBox extends JDialog {
 			new JScrollPane (createDetailPanel ())
 			);
 		
-		final JPanel systemPanel = new JPanel (new BorderLayout ());
+//		final JPanel systemPanel = new JPanel (new BorderLayout ());
 		final JTable systemTable = new JTable (
 		new Object[][]{
 			System.getProperties ().keySet ().toArray (),
@@ -217,13 +231,18 @@ public final class AboutBox extends JDialog {
 				ResourceSupplier.getString (ResourceClass.UI, "about", "property"),
 				ResourceSupplier.getString (ResourceClass.UI, "about", "value")
 			});
-		systemPanel.add (new JScrollPane (systemTable), BorderLayout.CENTER);
+		systemTable.setAutoscrolls (true);
+//		systemPanel.add (new JScrollPane (systemTable), BorderLayout.CENTER);
 		tabbedPanel.addTab (
 			ResourceSupplier.getString (ResourceClass.UI, "about", "system.title"), 
-			systemPanel);
-		
+			new JScrollPane (systemTable));
+		systemTable.setMaximumSize (new Dimension (100, 50));
 		final JPanel mainPanel = new JPanel ();
 		mainPanel.setLayout (new BorderLayout ());
+		
+		final GradientPanel gradientPanel = new GradientPanel (Color.LIGHT_GRAY, GradientPanel.OBLIQUE);
+		gradientPanel.setPreferredSize (new Dimension (30, 100));
+		mainPanel.add (gradientPanel, java.awt.BorderLayout.WEST);
 		
 		mainPanel.add (tabbedPanel, BorderLayout.CENTER);
 		
@@ -246,7 +265,8 @@ public final class AboutBox extends JDialog {
 		 * Impedisce ridimensionamento.
 		 */
 		this.setResizable (false);
-		this.addWindowListener (new AboutWindowListener());
+		
+//		this.addWindowListener (new AboutWindowListener());
 	}
 	
 	private Animator _animator=null;
@@ -254,31 +274,31 @@ public final class AboutBox extends JDialog {
 	/**
 	 * Mostra la finestra.
 	 */
-    private class AboutWindowListener extends WindowAdapter {
-		public void windowActivated(WindowEvent e){
-			/* primo show */
-			AboutBox.this._animator = new Animator(AboutBox.this.introPage.animation(), DEFAULT_FRAME_RATE);
-
-//				final Animator animator = _animator;
-//				Runnable runnable = new Runnable() {
-//					public void run() {
-//						if (AboutBox.this.isVisible ()){
-//							animator.start();
-//						}
-//					}
-//				};
+//    private class AboutWindowListener extends WindowAdapter {
+//		public void windowActivated(WindowEvent e){
+//			/* primo show */
+//			AboutBox.this._animator = new Animator(AboutBox.this.introPage.animation(), DEFAULT_FRAME_RATE);
 //
-//				AnimationUtils.invokeOnStop(introPage.animation(), runnable);
+////				final Animator animator = _animator;
+////				Runnable runnable = new Runnable() {
+////					public void run() {
+////						if (AboutBox.this.isVisible ()){
+////							animator.start();
+////						}
+////					}
+////				};
+////
+////				AnimationUtils.invokeOnStop(introPage.animation(), runnable);
+//
+//		AboutBox.this._animator.start();
+//		}
 
-		AboutBox.this._animator.start();
-		}
-
-		public void windowDeactivated(WindowEvent e){
-			if(AboutBox.this._animator!=null){
-				AboutBox.this._animator.stop ();
-			}
-		}
-	}
+//		public void windowDeactivated(WindowEvent e){
+//			if(AboutBox.this._animator!=null){
+//				AboutBox.this._animator.stop ();
+//			}
+//		}
+//	}
 	
 	public void show (){
 		super.show ();
@@ -286,6 +306,9 @@ public final class AboutBox extends JDialog {
 	}
 	
 	private JPanel createDetailPanel (){
+		
+		final Font valueFont = new Font("Default",Font.BOLD,12);
+
 		final JPanel container = new JPanel (new BorderLayout ());
 		
 		final JPanel detailPanel = new JPanel (new GridBagLayout ());
@@ -297,11 +320,11 @@ public final class AboutBox extends JDialog {
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
 		c.insets = new Insets (3, 5, 3, 5);
 		
-		this.productLogoLabel = new JLabel ();
-//		this.productLogoLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "productlogo"));
-		this.productLogoLabel.setText ("");
-		this.productLogoImage = ResourceSupplier.getImageIcon (ResourceClass.UI, "productlogosmall.jpg");
-		this.productLogoLabel.setIcon (this.productLogoImage);
+//		this.productLogoLabel = new JLabel ();
+////		this.productLogoLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "productlogo"));
+//		this.productLogoLabel.setText ("");
+//		this.productLogoImage = ResourceSupplier.getImageIcon (ResourceClass.UI, "productlogosmall.jpg");
+//		this.productLogoLabel.setIcon (this.productLogoImage);
 		
 //		c.weightx = 0.0;
 //		c.weighty = 0.0;
@@ -310,7 +333,7 @@ public final class AboutBox extends JDialog {
 //		c.gridwidth = 1;
 //		c.anchor = 0;
 //		detailPanel.add (this.productLogoLabel, c);
-		container.add (this.productLogoLabel, BorderLayout.WEST);
+//		container.add (this.productLogoLabel, BorderLayout.WEST);
 		{
 //			final JLabel detailTitle = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "detail.title"));
 //			detailTitle.setHorizontalAlignment (JLabel.CENTER);
@@ -339,6 +362,7 @@ public final class AboutBox extends JDialog {
 		}
 		{
 			final JLabel productVersionValue = new JLabel (appData.getVersionNumber ());
+			productVersionValue.setFont (valueFont);
 
 			c.weightx = 1.0;
 			c.weighty = 0.0;
@@ -361,6 +385,7 @@ public final class AboutBox extends JDialog {
 		}
 		{
 			final JLabel productBuildValue = new JLabel (appData.getBuildNumber ());
+			productBuildValue.setFont (valueFont);
 
 			c.weightx = 1.0;
 			c.weighty = 0.0;
@@ -383,6 +408,7 @@ public final class AboutBox extends JDialog {
 		}
 		{
 			final JLabel productReleaaseDateValue = new JLabel (CalendarUtils.toTSString (appData.getReleaseDate ().getTime ()));
+			productReleaaseDateValue.setFont (valueFont);
 
 			c.weightx = 1.0;
 			c.weighty = 0.0;
@@ -393,11 +419,11 @@ public final class AboutBox extends JDialog {
 			detailPanel.add (productReleaaseDateValue, c);
 		}
 		
-//		c.weightx = 1.0;
-//		c.weighty = 1.0;
-//		c.gridx = 0;
-//		c.gridy = 10;
-//		detailPanel.add (new JLabel (), c);
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		c.gridx = 0;
+		c.gridy = 4;
+		detailPanel.add (new JLabel (), c);
 		
 		container.add (detailPanel, BorderLayout.CENTER);
 		return container;

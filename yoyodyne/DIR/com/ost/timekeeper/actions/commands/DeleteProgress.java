@@ -53,6 +53,10 @@ public final class DeleteProgress extends AbstractCommand {
 			tx.rollback ();
 			throw new NestedRuntimeException (t);
 		}
+		Application.getInstance ().setChanged ();
+		Application.getInstance ().notifyObservers (ObserverCodes.SELECTEDITEMCHANGE);
+		Application.getInstance ().setChanged ();
+		Application.getInstance ().notifyObservers (ObserverCodes.ITEMPROGRESSINGCHANGE);
 	}
 	
 }

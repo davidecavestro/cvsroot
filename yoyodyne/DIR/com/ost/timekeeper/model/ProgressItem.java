@@ -264,11 +264,12 @@ public final class ProgressItem extends Observable{
 	/**
 	 * Accetta il visitor.
 	 *
+	 * @param recurse specificare se applicare la visita ricorsivamente sul sottoalbero.
 	 * @param visitor il visitor.
 	 */
-	public void accept (ProgressVisitor visitor){
+	public void accept (ProgressItemVisitor visitor, boolean recurse){
 		for (Iterator it=this.children.iterator ();it.hasNext ();){
-			visitor.visit ((ProgressItem)it.next ());
+			((ProgressItem)it.next ()).accept (visitor, recurse);
 		}
 		visitor.visit (this);
 	}
@@ -380,7 +381,9 @@ public final class ProgressItem extends Observable{
 	
 	/**
 	 * Imposta la lista dei figli di questo nodo.
-	 * ATTENZIONE: i riferimenti dei figli al padre non vengono variati.
+	 * <BR>
+	 * N.B.: questo metodo non modifica i riferimenti dei figli versoilnuovo padre.
+	 * @see com.ost.timekeeper.model.ProgressItem#insert .
 	 *
 	 * @param children la nuova lista dei figli di questo nodo.
 	 */
@@ -408,10 +411,13 @@ public final class ProgressItem extends Observable{
 	
 	/**
 	 * Imposta il padre di questo nodo.
+	 * <BR>
+	 * N.B.: questo metodo non modifica i riferimenti del nuovo e del vechio padre verso questo oggetto.
+	 * @see com.ost.timekeeper.model.ProgressItem#insert .
 	 *
 	 * @param parent il nuovo padre.
 	 */
-	public void setParent (ProgressItem parent) {}
+	public void setParent (ProgressItem parent) {this.parent=parent;}
 	
 	/**
 	 * Imposta gli avanzamenti relativi a questo nodo.
@@ -501,6 +507,7 @@ public final class ProgressItem extends Observable{
 	
 	/**
 	 * Rimuove il periodo di avanzamento specificato da questo nodo.
+	 * @param progress l'avanzamento da rimuovere.
 	 */
 	public synchronized void deleteProgress (final Progress progress){
 		final int size = this.progresses.size ();
@@ -511,5 +518,26 @@ public final class ProgressItem extends Observable{
 				break;
 			}
 		}
+	}
+	
+	/**
+	 * Aggiunge il periodo di avanzamento specificato a questo nodo.
+	 * @param progress l'avanzamento da aggiungere.
+	 * @return la posizione del nuovo avanzamento.
+	 */
+	public synchronized int insert (final Progress progress){
+		progress.setProgressItem (this);
+		final int position = this.progresses.size ();
+		this.progresses.add (progress);
+		return position;
+	}
+	
+	/**
+	 * Aggiunge il periodo di avanzamento specificato a questo nodo.
+	 * @param progress l'avanzamento da aggiungere.
+	 */
+	public synchronized void insert (final Progress progress, int position){
+		progress.setProgressItem (this);
+		this.progresses.add (position, progress);
 	}
 }

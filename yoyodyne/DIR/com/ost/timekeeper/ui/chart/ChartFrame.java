@@ -6,11 +6,16 @@
 
 package com.ost.timekeeper.ui.chart;
 
+import com.ost.timekeeper.Application;
+import com.ost.timekeeper.ObserverCodes;
+import com.ost.timekeeper.model.ProgressItem;
+import com.ost.timekeeper.model.Project;
 import com.ost.timekeeper.util.ResourceClass;
 import com.ost.timekeeper.util.ResourceSupplier;
 import com.tomtessier.scrollabledesktop.BaseInternalFrame;
 import java.util.Observer;
 import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
 
 /**
  * Finestra di gestione grafici interattivi.
@@ -18,6 +23,10 @@ import javax.swing.JFrame;
  * @author  davide
  */
 public class ChartFrame extends BaseInternalFrame implements Observer{
+	
+	private RingChartPanel _ringChartPanel;
+	private BarGraphPanel _barGraphPanel;
+	
 	
 	private static ChartFrame _instance;
 	
@@ -42,19 +51,46 @@ public class ChartFrame extends BaseInternalFrame implements Observer{
 			true);//iconifiable
 		
 		initComponents ();
-		this.setFrameIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "chart-frame.gif"));
+		this.setFrameIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "charts-frame.png"));
 		
 		pack ();
+		Application.getInstance ().addObserver (this);
 	}
 	
 	/**
 	 * Inizializza i componentidi questo frame.
 	 */
 	private void initComponents (){
-		this.getContentPane ().add (new RingChartPanel (ResourceSupplier.getString (ResourceClass.UI, "controls", "subtree.work.ring.chart")));
+		final JTabbedPane tabbedPane = new JTabbedPane (JTabbedPane.TOP);
+		
+		this._ringChartPanel = new RingChartPanel (ResourceSupplier.getString (ResourceClass.UI, "controls", "subtree.work.ring.chart"));
+		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "ring.chart"), this._ringChartPanel);
+		
+		this._barGraphPanel = new BarGraphPanel (ResourceSupplier.getString (ResourceClass.UI, "controls", "subtree.work.bar.graph"));
+		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "bar.graph"), this._barGraphPanel);
+		
+		this.getContentPane ().add (tabbedPane);
 	}
 	
 	public void update (java.util.Observable o, Object arg) {
+		if (arg!=null && arg.equals (ObserverCodes.PROJECTCHANGE)){
+			if (Application.getOptions ().ringChartAutoload ()){
+				final Project  project = Application.getInstance ().getProject ();
+				ProgressItem root = null;
+				if (project!=null){
+					root = project.getRoot ();
+				}
+				this.reloadRingChart (root);
+			}
+
+		}
+	}
+	/**
+	 * Reimposta la radice del grafico ad anello, e lo aggiorna.
+	 * @param root la nuova radice.
+	 */
+	public final void reloadRingChart (final ProgressItem root) {
+		this._ringChartPanel.reloadChart (root);
 	}
 	
 }

@@ -13,6 +13,7 @@ import com.ost.timekeeper.report.filter.*;
 import com.ost.timekeeper.report.filter.flavors.date.*;
 import com.ost.timekeeper.report.flavors.*;
 import com.ost.timekeeper.ui.*;
+import com.ost.timekeeper.ui.support.GradientPanel;
 import com.ost.timekeeper.util.*;
 import com.toedter.calendar.*;
 import java.awt.*;
@@ -50,6 +51,11 @@ public class ReportsFrame extends JFrame implements Observer{
 	private final static String SIMPLE_PROGRESSES = "simple_progresses";
 	
 	/**
+	 * Tipo di report che mappa {@link com.ost.timekeeper.report.flavors.CumulateProgresses}.
+	 */
+	private final static String CUMULATE_PROGRESSES = "cumulate_progresses";
+	
+	/**
 	 * Il filtro sulla data diavanzamento (inizio intervallo).
 	 */
 	private Date fromFilter;
@@ -68,6 +74,8 @@ public class ReportsFrame extends JFrame implements Observer{
 	 * Flag abilitazione filtro fine intervallo.
 	 */
 	private boolean toFilterEnabled = false;
+	
+	private ProgressItem _root;
 	
 	/**
 	 * Flag abilitazione filtro radice albero.
@@ -105,28 +113,38 @@ public class ReportsFrame extends JFrame implements Observer{
 		/* inizializza help contestuale */
 		javax.help.CSH.setHelpIDString (this, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.REPORTGENERATIONDIALOG ));
 		
-		final JLabel bannerLabel = new JLabel ("");
-		final ImageIcon banner = ResourceSupplier.getImageIcon (ResourceClass.UI, "report-banner.gif", true);
-		
-		bannerLabel.setIcon (banner);
-		mainPanel.add (bannerLabel, BorderLayout.WEST);
-		
+		ImageIcon banner = null;
+		try {
+			banner = ResourceSupplier.getImageIcon (ResourceClass.UI, "report-banner.gif", false);
+		} catch (MissingResourceException mre){}
+		if (banner!=null){
+			/* risorsa banner disponibile */
+			final JLabel bannerLabel = new JLabel ("");
+			
+			bannerLabel.setIcon (banner);
+			mainPanel.add (bannerLabel, BorderLayout.WEST);
+		} else {
+			/* risorsa banner non disponibile */
+			final GradientPanel gradientPanel = new GradientPanel (Color.LIGHT_GRAY, GradientPanel.OBLIQUE);
+			gradientPanel.setPreferredSize (new Dimension (30, 120));
+			mainPanel.add (gradientPanel, BorderLayout.WEST);
+		}
 		this.reportRootLabel = new JLabel ();
 		final ProgressItem selectedItem =  Application.getInstance ().getSelectedItem ();
 		this.reportRootLabel.setText (selectedItem!=null?selectedItem.getName ():"");
 		
-//		final JPanel reportRootPanel = new JPanel ();
-//		reportRootPanel.add (new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "report.root.item")+": "));
-//		reportRootPanel.add (reportRootLabel);
-//        reportRootPanel.putClientProperty("jgoodies.headerStyle", "Both");
-
-//		mainPanel.add (reportRootPanel, BorderLayout.NORTH);
+		//		final JPanel reportRootPanel = new JPanel ();
+		//		reportRootPanel.add (new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "report.root.item")+": "));
+		//		reportRootPanel.add (reportRootLabel);
+		//        reportRootPanel.putClientProperty("jgoodies.headerStyle", "Both");
+		
+		//		mainPanel.add (reportRootPanel, BorderLayout.NORTH);
 		
 		final JTabbedPane tabbedPanel = new JTabbedPane (JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 		final JPanel reportFlavorPanel = createFlavorPanel ();
 		tabbedPanel.addTab (
 		ResourceSupplier.getString (ResourceClass.UI, "controls", "report.flavor"),
-		ResourceSupplier.getImageIcon (ResourceClass.UI, "report-flavor.gif"),
+		ResourceSupplier.getImageIcon (ResourceClass.UI, "report-flavor.png"),
 		reportFlavorPanel,
 		ResourceSupplier.getString (ResourceClass.UI, "controls", "report.flavor.hint")
 		);
@@ -134,7 +152,7 @@ public class ReportsFrame extends JFrame implements Observer{
 		final JPanel filterPanel = createFilterPanel ();
 		tabbedPanel.addTab (
 		ResourceSupplier.getString (ResourceClass.UI, "controls", "filters"),
-		ResourceSupplier.getImageIcon (ResourceClass.UI, "report-filters.gif"),
+		ResourceSupplier.getImageIcon (ResourceClass.UI, "reports-filter.png"),
 		filterPanel,
 		ResourceSupplier.getString (ResourceClass.UI, "controls", "report.filters.hint")
 		);
@@ -142,7 +160,7 @@ public class ReportsFrame extends JFrame implements Observer{
 		final JPanel reportTypePanel = createReportTypePanel ();
 		tabbedPanel.addTab (
 		ResourceSupplier.getString (ResourceClass.UI, "controls", "output"),
-		ResourceSupplier.getImageIcon (ResourceClass.UI, "report-type.gif"),
+		ResourceSupplier.getImageIcon (ResourceClass.UI, "mime.png"),
 		reportTypePanel,
 		ResourceSupplier.getString (ResourceClass.UI, "controls", "report.type.hint")
 		);
@@ -155,7 +173,7 @@ public class ReportsFrame extends JFrame implements Observer{
 		this.pack ();
 		//		mainPanel.setMinimumSize (new Dimension (400, 150));
 		
-		this.setIconImage (ResourceSupplier.getImageIcon (ResourceClass.UI, "reports-frame.gif").getImage ());
+		this.setIconImage (ResourceSupplier.getImageIcon (ResourceClass.UI, "reports-frame.png").getImage ());
 		
 		/*
 		 * Centra sullo schermo.
@@ -208,21 +226,41 @@ public class ReportsFrame extends JFrame implements Observer{
 			
 		}
 		
+//		{
+//			final JRadioButton treeProgressesChoice = new JRadioButton (
+//			ResourceSupplier.getString (ResourceClass.UI, "controls", "report.flavor.treeprogresses")
+//			);
+//			
+//			treeProgressesChoice.setMnemonic (KeyEvent.VK_T);
+//			
+//			c.gridx = 0;
+//			c.gridy = 1;
+//			c.gridwidth = 1;
+//			thePanel.add (treeProgressesChoice, c);
+//			/*@todo: abilitare radio scelta report*/
+//			treeProgressesChoice.setEnabled (false);
+//			
+//			buttonGroup.add (treeProgressesChoice);
+//		}
+		
 		{
-			final JRadioButton treeProgressesChoice = new JRadioButton (
-			ResourceSupplier.getString (ResourceClass.UI, "controls", "report.flavor.treeprogresses")
+			final JRadioButton cumulateProgressesChoice = new JRadioButton (
+			ResourceSupplier.getString (ResourceClass.UI, "controls", "report.flavor.cumulateprogresses")
 			);
 			
-			treeProgressesChoice.setMnemonic (KeyEvent.VK_T);
+			cumulateProgressesChoice.setMnemonic (KeyEvent.VK_C);
 			
 			c.gridx = 0;
 			c.gridy = 1;
 			c.gridwidth = 1;
-			thePanel.add (treeProgressesChoice, c);
-			/*@todo: abilitare radio scelta report*/
-			treeProgressesChoice.setEnabled (false);
+			thePanel.add (cumulateProgressesChoice, c);
 			
-			buttonGroup.add (treeProgressesChoice);
+			buttonGroup.add (cumulateProgressesChoice);
+			cumulateProgressesChoice.addActionListener (new ActionListener (){
+				public void actionPerformed (ActionEvent ae){
+					_reportFlavor = CUMULATE_PROGRESSES;
+				}
+			});
 		}
 		
 		/* etichetta vuota per riemire spazio */
@@ -232,7 +270,7 @@ public class ReportsFrame extends JFrame implements Observer{
 		c.gridy = 2;
 		c.gridwidth = 1;
 		thePanel.add (new JLabel (), c);
-			
+		
 		return thePanel;
 	}
 	
@@ -253,21 +291,20 @@ public class ReportsFrame extends JFrame implements Observer{
 		{
 			c.gridx = 0;
 			c.gridy = 0;
-			c.gridwidth = 2;
+			c.gridwidth = 3;
 			final TopBorderPane borderPanel = new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "report.filter.structure"));
-//			borderPanel.setFont(new java.awt.Font("Dialog", 3, 12));
-//			borderPanel.setForeground(new java.awt.Color(110, 88, 195));
+			//			borderPanel.setFont(new java.awt.Font("Dialog", 3, 12));
+			//			borderPanel.setForeground(new java.awt.Color(110, 88, 195));
 			thePanel.add (borderPanel, c);
 		}
 		
-		reportRootLabel.setEnabled (false);
-		{
+		reportRootLabel.setEnabled (false); {
 			final JCheckBox rootCheckBox = new JCheckBox (ResourceSupplier.getString (ResourceClass.UI, "controls", "filter.root.enable"));
 			c.gridx = 0;
 			c.gridy = 1;
 			c.gridwidth = 1;
 			thePanel.add (rootCheckBox, c);
-
+			
 			final JLabel rootDescriptionLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "report.root.item")+": ");
 			rootDescriptionLabel.setEnabled (false);
 			
@@ -279,7 +316,20 @@ public class ReportsFrame extends JFrame implements Observer{
 					rootDescriptionLabel.setEnabled (isSelected);
 				}
 			});
-
+			
+			final JButton rootSelectionButton = new JButton (ResourceSupplier.getString (ResourceClass.UI, "controls", "choose.root"));
+			rootSelectionButton.addActionListener (new java.awt.event.ActionListener () {
+				public void actionPerformed (java.awt.event.ActionEvent evt) {
+					final ProgressItemTreeSelector.UserChoice choice = ProgressItemTreeSelector.supplyProgressItem (
+					ResourceSupplier.getString (ResourceClass.UI, "controls", "progressitem.choice"),
+					ResourceSupplier.getString (ResourceClass.UI, "controls", "choose.report.root"), true, HelpResource.PLAINPROGRESSREPORT_ROOTSELECTION_DIALOG);
+					if (choice.isConfirmed ()){
+						ReportsFrame.this._root = choice.getChoice ();
+						ReportsFrame.this.reportRootLabel.setText (ReportsFrame.this._root!=null?ReportsFrame.this._root.getName ():"");
+					}
+				}
+			});
+			thePanel.add (rootSelectionButton, c);
 			
 			c.gridx = 0;
 			c.gridy = 2;
@@ -289,15 +339,19 @@ public class ReportsFrame extends JFrame implements Observer{
 			c.gridy = 2;
 			c.gridwidth = 1;
 			thePanel.add (reportRootLabel, c);
+			c.gridx = 2;
+			c.gridy = 2;
+			c.gridwidth = 1;
+			thePanel.add (rootSelectionButton, c);
 		}
 		
 		{
 			c.gridx = 0;
 			c.gridy = 3;
-			c.gridwidth = 2;
+			c.gridwidth = 3;
 			final TopBorderPane borderPanel = new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "report.filter.time"));
-//			borderPanel.setFont(new java.awt.Font("Dialog", 3, 12));
-//			borderPanel.setForeground(new java.awt.Color(110, 88, 195));
+			//			borderPanel.setFont(new java.awt.Font("Dialog", 3, 12));
+			//			borderPanel.setForeground(new java.awt.Color(110, 88, 195));
 			thePanel.add (borderPanel, c);
 		}
 		
@@ -305,14 +359,14 @@ public class ReportsFrame extends JFrame implements Observer{
 			final JDateChooser fromDateChooser = new JDateChooser ();
 			
 			c.weightx = 1.0;
-//			c.weighty = 1.0;
-		
+			//			c.weighty = 1.0;
+			
 			final JCheckBox fromCheckBox = new JCheckBox (ResourceSupplier.getString (ResourceClass.UI, "controls", "filter.from.enable"));
 			c.gridx = 0;
 			c.gridy = 4;
 			c.gridwidth = 1;
 			thePanel.add (fromCheckBox, c);
-
+			
 			/* disabilita pannello contenente editor date */
 			fromCheckBox.addActionListener (new ActionListener (){
 				public void actionPerformed (ActionEvent ae){
@@ -321,24 +375,24 @@ public class ReportsFrame extends JFrame implements Observer{
 					ReportsFrame.this.fromFilterEnabled = isSelected;
 				}
 			});
-
+			
 			fromDateChooser.addPropertyChangeListener (new DateChooserHelper ());
 			
 			c.gridx = 0;
 			c.gridy = 5;
 			c.gridwidth = 1;
 			
-//			fromFilterPanel.add (fromDateChooser);
+			//			fromFilterPanel.add (fromDateChooser);
 			thePanel.add (fromDateChooser, c);
 			
 			fromDateChooser.setEnabled (false);
 			fromDateChooser.addPropertyChangeListener ("date", new PropertyChangeListener (){
-				 public void propertyChange(PropertyChangeEvent evt){
-					 ReportsFrame.this.fromFilter = new Date (((Date)evt.getNewValue ()).getTime ());
-					 ReportsFrame.this.fromFilter.setHours (0);
-					 ReportsFrame.this.fromFilter.setMinutes (0);
-					 ReportsFrame.this.fromFilter.setSeconds (0);
-				 }
+				public void propertyChange (PropertyChangeEvent evt){
+					ReportsFrame.this.fromFilter = new Date (((Date)evt.getNewValue ()).getTime ());
+					ReportsFrame.this.fromFilter.setHours (0);
+					ReportsFrame.this.fromFilter.setMinutes (0);
+					ReportsFrame.this.fromFilter.setSeconds (0);
+				}
 			});
 		}
 		
@@ -366,17 +420,17 @@ public class ReportsFrame extends JFrame implements Observer{
 			c.gridy = 5;
 			c.gridwidth = 1;
 			
-//			toFilterPanel.add (toDateChooser);
+			//			toFilterPanel.add (toDateChooser);
 			thePanel.add (toDateChooser, c);
 			
 			toDateChooser.setEnabled (false);
 			toDateChooser.addPropertyChangeListener ("date", new PropertyChangeListener (){
-				 public void propertyChange(PropertyChangeEvent evt){
-					 ReportsFrame.this.toFilter = new Date (((Date)evt.getNewValue ()).getTime ());
-					 ReportsFrame.this.toFilter.setHours (0);
-					 ReportsFrame.this.toFilter.setMinutes (0);
-					 ReportsFrame.this.toFilter.setSeconds (0);
-				 }
+				public void propertyChange (PropertyChangeEvent evt){
+					ReportsFrame.this.toFilter = new Date (((Date)evt.getNewValue ()).getTime ());
+					ReportsFrame.this.toFilter.setHours (0);
+					ReportsFrame.this.toFilter.setMinutes (0);
+					ReportsFrame.this.toFilter.setSeconds (0);
+				}
 			});
 		}
 		
@@ -385,9 +439,9 @@ public class ReportsFrame extends JFrame implements Observer{
 		c.weighty = 1.0;
 		c.gridx = 0;
 		c.gridy = 6;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		thePanel.add (new JLabel (), c);
-			
+		
 		return thePanel;
 	}
 	
@@ -545,7 +599,7 @@ public class ReportsFrame extends JFrame implements Observer{
 		c.gridy = 6;
 		c.gridwidth = 2;
 		thePanel.add (new JLabel (), c);
-			
+		
 		return thePanel;
 	}
 	
@@ -597,9 +651,14 @@ public class ReportsFrame extends JFrame implements Observer{
 	private final static com.ost.timekeeper.report.filter.TargetedFilterContainer[] targetedFilterArray = new com.ost.timekeeper.report.filter.TargetedFilterContainer [0];
 	
 	private void launchReport (){
+		final com.ost.timekeeper.Application app = com.ost.timekeeper.Application.getInstance ();
+		if (app.getProject ()==null){
+			JOptionPane.showMessageDialog (this, ResourceSupplier.getString (ResourceClass.UI,"controls", "application.no.project.loaded"));
+			return;
+		}
+		
 		if (this._reportFlavor!=null){
 			if (this._reportFlavor.equals (SIMPLE_PROGRESSES)){
-				final com.ost.timekeeper.Application app = com.ost.timekeeper.Application.getInstance ();
 				
 				final java.util.List filters = new ArrayList ();
 				if (this.fromFilterEnabled && this.fromFilter!=null){
@@ -610,31 +669,49 @@ public class ReportsFrame extends JFrame implements Observer{
 				}
 				
 				final com.ost.timekeeper.report.DataExtractor extractor = new com.ost.timekeeper.report.flavors.SimpleProgresses (
-					this.rootFilterEnabled?app.getSelectedItem ():app.getProject ().getRoot (), 
-					(com.ost.timekeeper.report.filter.TargetedFilterContainer[])filters.toArray (targetedFilterArray)
-					);
+				this.rootFilterEnabled && this._root!=null?this._root:app.getProject ().getRoot (),
+				(com.ost.timekeeper.report.filter.TargetedFilterContainer[])filters.toArray (targetedFilterArray)
+				);
 				final com.ost.timekeeper.report.ReportPreferences prefs = new com.ost.timekeeper.report.ReportPreferences (null);
 				final JRBindings jrb = new JRBindings (this.getClass ().getResourceAsStream ("plainprogresses.jasper"), "/plainprogresses/progress", ReportsFrame.this._reportOutputType);
+				
+				new com.ost.timekeeper.report.ReportDataGenerator ().generate (extractor, prefs, jrb);
+			} else if (this._reportFlavor.equals (CUMULATE_PROGRESSES)){
+				
+				final java.util.List filters = new ArrayList ();
+				if (this.fromFilterEnabled && this.fromFilter!=null){
+					filters.add (new com.ost.timekeeper.report.filter.TargetedFilterContainer (SimpleProgresses.PROGRESS_FROM, new NegateFilter (new BeforeDateFilter (this.fromFilter))));
+				}
+				if (this.toFilterEnabled && this.toFilter!=null){
+					filters.add (new com.ost.timekeeper.report.filter.TargetedFilterContainer (SimpleProgresses.PROGRESS_FROM, new NegateFilter (new AfterDateFilter (this.toFilter))));
+				}
+				
+				final com.ost.timekeeper.report.DataExtractor extractor = new com.ost.timekeeper.report.flavors.CumulateProgresses (
+				this.rootFilterEnabled && this._root!=null?this._root:app.getProject ().getRoot (),
+				(com.ost.timekeeper.report.filter.TargetedFilterContainer[])filters.toArray (targetedFilterArray)
+				);
+				final com.ost.timekeeper.report.ReportPreferences prefs = new com.ost.timekeeper.report.ReportPreferences (null);
+				final JRBindings jrb = new JRBindings (this.getClass ().getResourceAsStream ("cumulateprogresses.jasper"), "/cumulateprogresses/period", ReportsFrame.this._reportOutputType);
 				
 				new com.ost.timekeeper.report.ReportDataGenerator ().generate (extractor, prefs, jrb);
 			}
 		}
 	}
 	
-	public void update(Observable o, Object arg) {
-		if (o instanceof Application){
-			if (arg!=null && arg.equals(ObserverCodes.SELECTEDITEMCHANGE)){
-				final ProgressItem selectedItem =  Application.getInstance ().getSelectedItem ();
-				this.reportRootLabel.setText (selectedItem!=null?selectedItem.getName ():"");
-			}
-		}
+	public void update (Observable o, Object arg) {
+		//		if (o instanceof Application){
+		//			if (arg!=null && arg.equals (ObserverCodes.SELECTEDITEMCHANGE)){
+		//				final ProgressItem selectedItem =  Application.getInstance ().getSelectedItem ();
+		//				this.reportRootLabel.setText (selectedItem!=null?selectedItem.getName ():"");
+		//			}
+		//		}
 	}
 	
 	private final class DateChooserHelper implements PropertyChangeListener {
-//		private JDateChooser _dateChooser;
-//		public DateChooserHelper (final JDateChooser dateChooser){
-//			_dateChooser = dateChooser;
-//		}
+		//		private JDateChooser _dateChooser;
+		//		public DateChooserHelper (final JDateChooser dateChooser){
+		//			_dateChooser = dateChooser;
+		//		}
 		
 		public void propertyChange (PropertyChangeEvent evt) {
 			final String propName = evt.getPropertyName ();

@@ -27,8 +27,8 @@ public final class ProjectOpenAction extends javax.swing.AbstractAction implemen
 	 * Costruttore vuoto.
 	 */
 	public ProjectOpenAction() {
-		super(ResourceSupplier.getString(ResourceClass.UI, "menu", "file.open"), ResourceSupplier.getImageIcon(ResourceClass.UI, "openproject.gif"));
-		this.putValue(SHORT_DESCRIPTION, ResourceSupplier.getString(ResourceClass.UI, "menu", "file.open.tooltip"));
+		super(ResourceSupplier.getString(ResourceClass.UI, "menu", "project.open"), ResourceSupplier.getImageIcon(ResourceClass.UI, "openproject.png"));
+		this.putValue(SHORT_DESCRIPTION, ResourceSupplier.getString(ResourceClass.UI, "menu", "project.open.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}

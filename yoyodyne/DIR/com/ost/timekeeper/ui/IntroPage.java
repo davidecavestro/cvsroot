@@ -87,12 +87,12 @@ public final class IntroPage {
         Font font = getAnimationFont();
         label1 = new BasicTextLabel(" ");
         label1.setFont(font);
-        label1.setBounds(0, 0, 350, 100);
+        label1.setBounds(0, 0, 400, 100);
         label1.setOpaque(false);
 
         label2 = new BasicTextLabel(" ");
         label2.setFont(font);
-        label2.setBounds(0, 0, 350, 100);
+        label2.setBounds(0, 0, 400, 100);
         label2.setOpaque(false);
     }
     

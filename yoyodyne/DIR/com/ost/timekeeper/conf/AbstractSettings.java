@@ -278,6 +278,21 @@ public abstract class AbstractSettings implements CustomizableSettings {
 	}
 	
 	/**
+	 * Autocaricamento grafico ad anello.
+	 * @return lo stato di abilitazione dell'autocaricamento grafico ad anello.
+	 */
+	public Boolean ringChartAutoload () {
+		return SettingsSupport.getBooleanProperty (this.getProperties (), PROPNAME_RINGCHARTAUTOLOAD);
+	}
+	
+	/**
+	 * Imposta lo stato di abilitazione dell'autocaricamento grafico ad anello..
+	 */
+	public void setRingChartAutoload (Boolean beep) {
+		SettingsSupport.setBooleanProperty (this.getProperties (), PROPNAME_RINGCHARTAUTOLOAD, beep);
+	}
+	
+	/**
 	 * Ritorna il tipo di lista degli avanzamenti.
 	 *
 	 * @return il tipo di lista degli avanzamenti.

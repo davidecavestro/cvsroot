@@ -11,7 +11,11 @@
 	<!-- The standard Ant documentation can be downloaded from AutoUpdate and -->
 	<!-- and then you can access the Ant manual in the online help. -->
 
-	<!-- Inizilaizza le risorse interne. -->
+  <taskdef name="obfuscate" 
+        classname="com.yworks.yguard.ObfuscatorTask" 
+	      classpath="yguard.jar"/>
+	      
+	<!-- Inizilizza le risorse interne. -->
 	<target name="init">
 		<tstamp/>
 		<tstamp prefix="file.ts">
@@ -28,6 +32,7 @@
 		<property location="lib" name="lib.dir"/>
 		<property location="../src" name="src.dir"/>
 		<property location="bin" name="bin.dir"/>
+		<property location="license" name="license.dir"/>
 		<property location="${work.dir}/classes" name="classes.dir"/>
 		<property location="${work.dir}/doc/api" name="javadoc.dir"/>
 		<property location="${work.dir}/tmp" name="tmp.dir"/>
@@ -38,6 +43,7 @@
 		<property location="${app.dir}/lib" name="app.lib.dir"/>
 		<property location="${app.dir}/res" name="app.res.dir"/>
 		<property location="${app.dir}/bin" name="app.bin.dir"/>
+		<property location="${app.dir}/license" name="app.license.dir"/>
 
 		<property location="${app.dir}/${project.name}.jar" name="app.jar"/>
 		<property location="${app.res.dir}/i18n.jar" name="i18n.jar"/>
@@ -50,7 +56,7 @@
 		<property location="${project.name}.tar" name="app.tar" />
 		<property location="${project.name}.tar.gz" name="app.zip" />
 
-		<property location="${app.dir}/release.properties" name="release.properties" />
+		<property location="${classes.dir}/com/ost/timekeeper/release.properties" name="release.properties" />
 	</target>
 
 	<!-- Compila il codice sorgente. -->
@@ -62,7 +68,7 @@
 		<mkdir dir="${log.dir}"/>
 
 		<!-- Compila SOLO i sorgenti che necessitano dell'enhancemente JDO. -->
-		<javac debug="true" deprecation="true" destdir="${classes.dir}" fork="true" executable="${ext.javac}">
+		<javac deprecation="true" destdir="${classes.dir}" fork="true" executable="${ext.javac}">
 		<src>
 			<pathelement location="${src.dir}/com/ost/timekeeper/model"/>
 			<pathelement location="${src.dir}/com/ost/timekeeper/util"/>
@@ -83,7 +89,7 @@
 			<pathelement location="${lib.dir}/jdori.jar"/>
 		</path>
 
-		<!-- Esegue l'enhancement per il supporto JDO. Passo 1/3. -->
+		<!-- Esegue l'enhancement per il supporto JDO. Passo 1/4. -->
 		<java classname="com.sun.jdori.enhancer.EnhancerMain"
 			fork="true"
 			failonerror="true"
@@ -91,14 +97,30 @@
 			dir="${classes.dir}"
 			classpathref="jdo.enhancer.classpath"
 		>
-			<arg line="-f "/>
+			<arg line="-v -f "/>
 			<arg line="-j ${lib.dir}/jdopatch.jar:${classes.dir}"/>
 			<arg line="-s ${lib.dir}/jdopatch.jar:${classes.dir}"/>
 			<arg line="-d ${classes.dir}"/>
-			<arg value="com/ost/timekeeper/model/Period"/>
+			<arg line="com/ost/timekeeper/model/ProgressItem com/ost/timekeeper/model/Period com/ost/timekeeper/model/Progress com/ost/timekeeper/model/Project"/>
 		</java>
 
-		<!-- Esegue l'enhancement per il supporto JDO. Passo 2/3. -->
+		<!--
+		<java classname="com.sun.jdori.enhancer.EnhancerMain"
+			fork="true"
+			failonerror="true"
+			maxmemory="128m"
+			dir="${classes.dir}"
+			classpathref="jdo.enhancer.classpath"
+		>
+			<sysproperty key="DEBUG" value="true"/>
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,address=9999,server=y,suspend=y" />
+			<arg line="-f -v "/>
+			<arg line="-j ${lib.dir}/jdopatch.jar:${classes.dir}"/>
+			<arg line="-s ${lib.dir}/jdopatch.jar:${classes.dir}"/>
+			<arg line="-d ${classes.dir}"/>
+			<arg value="com/ost/timekeeper/model/Progress"/>
+		</java>
+
 		<java classname="com.sun.jdori.enhancer.EnhancerMain"
 			fork="true"
 			failonerror="true"
@@ -113,7 +135,6 @@
 			<arg value="com/ost/timekeeper/model/ProgressItem"/>
 		</java>
 
-		<!-- Esegue l'enhancement per il supporto JDO. Passo 3/3. -->
 		<java classname="com.sun.jdori.enhancer.EnhancerMain"
 			fork="true"
 			failonerror="true"
@@ -127,6 +148,7 @@
 			<arg line="-d ${classes.dir}"/>
 			<arg value="com/ost/timekeeper/model/Project"/>
 		</java>
+		-->
 
 		<!-- Elimina i descrittori per l'enhancer JDO. -->
 		<delete>	
@@ -137,20 +159,41 @@
 
 
 		<!-- Compila il codice sorgente rimanente. -->
-		<javac debug="true" deprecation="true" destdir="${classes.dir}" srcdir="${src.dir}" fork="true" executable="${ext.javac}" excludesfile="javacexcludes.txt">
+		<javac deprecation="true" destdir="${classes.dir}" srcdir="${src.dir}" fork="true" executable="${ext.javac}" includesfile="javacincludes.txt" excludesfile="javacexcludes.txt">
 			<classpath>
+			<fileset dir="${lib.dir}">
+			    <include name="**/*.jar"/>
+			</fileset>
+			<!--
 			<pathelement location="${lib.dir}/btree.jar"/>
 			<pathelement location="${lib.dir}/castor.jar"/>
 			<pathelement location="${lib.dir}/castor-xml.jar"/>
 			<pathelement location="${lib.dir}/jdo.jar"/>
 			<pathelement location="${lib.dir}/jdori.jar"/>
 			<pathelement location="${lib.dir}/jhall.jar"/>
+			-->
 			</classpath>
-
+		    <exclude name="com/jgoodies/**"/>
 		</javac>
 		<copy todir="${classes.dir}">
 			<fileset dir="${src.dir}">
 			<include name="com/ost/timekeeper/actions/dataiomap.xml"/>
+			<include name="com/ost/timekeeper/model/package.jdo"/>
+			<include name="com/ost/timekeeper/ui/license.html"/>
+			<include name="com/ost/timekeeper/ui/LGPL.html"/>
+			<include name="com/ost/timekeeper/release.properties"/>
+			</fileset>
+		</copy>
+		
+		<!-- Elimina i class indesiderati. NON DOVREBBE ESSERE NECESSARIO, MA SEMBRA CHE l'EXCLUDE NON FUNZIONI -->
+		<delete>	
+			<fileset dir="${classes.dir}">
+			<include name="com/jgoodies/**/*"/>
+			</fileset>
+		</delete>	
+		<copy todir="${classes.dir}/com/ost/timekeeper/report/">
+			<fileset dir="${src.dir}/report/">
+			<include name="*.jasper"/>
 			</fileset>
 		</copy>
 	</target>
@@ -172,12 +215,18 @@
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Main-Class" value="com.ost.timekeeper.Application"/>
-				<attribute name="Class-Path" value=". lib/jdo.jar lib/jdori.jar lib/btree.jar lib/castor.jar lib/castor-xml.jar lib/jhall.jar res/i18n.jar lib/xerces.jar res/images.jar res/help.jar"/>
+				<attribute name="Class-Path" value=". lib/jdo.jar lib/jdori.jar lib/btree.jar lib/castor.jar lib/castor-xml.jar lib/jhall.jar res/i18n.jar lib/xerces.jar res/images.jar res/help.jar lib/looks.jar lib/skeleton.jar lib/animation.jar lib/jdom.jar lib/jcalendar.jar lib/jasperreports.jar lib/commons-beanutils.jar lib/commons-collections.jar lib/commons-digester.jar lib/commons-logging-api.jar lib/commons-logging.jar lib/jsci-xtra.jar lib/jsci-core.jar lib/itext.jar"/>
 				<attribute name="Implementation-Title" value="${project.name}"/>
 				<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
-				<attribute name="Implementation-Vendor" value="DaveSoft ltd."/>
+				<attribute name="Implementation-Vendor" value="Davide Cavestro"/>
 			</manifest>
 		</jar>
+		<condition property="_obfuscationDenied" >
+			<and>
+				<istrue value="${obfuscationDenied}"/>
+			</and>
+		</condition>
+		<antcall target="obfuscate"/>
 	</target>
 
 	<!-- Genera la directory di distribuzione standard. -->
@@ -205,6 +254,10 @@
 		<!-- copia i file di lancio -->
 		<copy toDir="${app.bin.dir}">
 			<fileset dir="${bin.dir}"/>
+		</copy>
+		<!-- copia i file delle llicenze -->
+		<copy toDir="${app.license.dir}">
+			<fileset dir="${license.dir}"/>
 		</copy>
 		<!-- rende i file di lancio leggibili ed eseguibili da tutti gli utenti -->
 		<chmod dir="${app.bin.dir}" perm="ugo+rx" includes="**/*.sh"/>
@@ -415,5 +468,49 @@
 				<param name="C"  value="${genkey.dname.C}"/>
 			</dname>
 		</genkey>	
+	</target>
+	
+	
+	
+	<!-- Offusca i jar generati. -->
+	<target name="obfuscate" unless="_obfuscationDenied">
+		<obfuscate mainclass="com.ost.timekeeper.Application" logfile="log.xml"
+		replaceclassnamestrings="true">
+		<inoutpair in="${app.jar}" out="${app.jar}"/>
+		<expose>
+		    <class classes="private" methods="private" fields="private">
+			<patternset>
+			    <!--
+			    <include name="com.ost.timekeeper.model.**.*"/>
+			    -->
+			    <include name="com.ost.timekeeper.model.Period**"/>
+			    <include name="com.ost.timekeeper.model.Progress**"/>
+			    <include name="com.ost.timekeeper.model.ProgressItem**"/>
+			    <include name="com.ost.timekeeper.model.Project**"/>
+			</patternset>
+			<patternset>
+			    <include name="**.*"/>
+			    <exclude name="com.ost.timekeeper.**" />
+			</patternset>
+		    </class>
+		</expose>
+		<adjust replaceContent="true">
+		<!-- plain-text class names in the config files will -->
+		<!-- be replaced with the obfuscated name versions   -->
+		<include name="**/*.config"/>
+		<include name="com/ost/timekeeper/release.properties"/>
+		</adjust>
+		<adjust replacePath="false">
+		<!-- keep the complete path to the resources, (gifs...) even if -->
+		<!-- package com.mycompany.myapp gets obfuscated by name        -->
+		<include name="com/ost/timekeeper/ui/image/*"/>
+		<include name="com/ost/timekeeper/ui/bundle/*"/>
+		</adjust>
+		<adjust replaceName="true">
+		<!-- Replace the .properties files' names with the obfuscated  -->
+		<!-- versions if the corresponding .class files get obfuscated -->
+		<include name="**/*.properties"/>
+		</adjust>
+		</obfuscate>	
 	</target>
 </project>

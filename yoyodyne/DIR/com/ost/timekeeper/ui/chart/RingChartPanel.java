@@ -1,5 +1,5 @@
 /*
- * RingChartPanel.java
+ * RingChartzPanel.java
  *
  * Created on 4 marzo 2005, 8.26
  */
@@ -28,6 +28,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Label;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import javax.swing.JButton;
@@ -52,7 +53,7 @@ public class RingChartPanel extends JPanel{
 	private JRingChart _pieChart;
 	
 	private String _chartTitle;
-	private final JLabel _chartTitleLabel = new JLabel ();
+	private JLabel _chartTitleLabel;
 	
 	/**
 	 * Costruttore.
@@ -74,8 +75,8 @@ public class RingChartPanel extends JPanel{
 		final Font titleFont = new Font ("Default",Font.BOLD,14);
 		this._treeModel = createTreeData (null);
 		this._pieChart = new JRingChart (this._treeModel, Application.getOptions ().getRingChartVisibleLevels (), xAxisLabel);
+		this._chartTitleLabel = new JLabel ( this._chartTitle, JLabel.CENTER);
 		this._chartTitleLabel.setFont (titleFont);
-		_chartTitleLabel.setText (this._chartTitle);
 		
 		chartContainer.add (this._chartTitleLabel,"Title");
 		chartContainer.add (this._pieChart,"Graph");
@@ -141,6 +142,14 @@ public class RingChartPanel extends JPanel{
 		
 		return new DefaultSerieNode (progressItem.getCode () + " - " + progressItem.getName (), totalDuration, childSeries);
 	}
+
+	/**
+	 * Reimposta la radice del grafico, e lo aggiorna.
+	 */
+	public final void reloadChart (final ProgressItem root) {
+		this._root = root;
+		this._treeModel.setRoot (createSerieNode (root));
+	}
 	
 	private JPanel createButtonPanel (){
 		final JPanel thePanel = new JPanel ();
@@ -152,8 +161,7 @@ public class RingChartPanel extends JPanel{
 				ResourceSupplier.getString (ResourceClass.UI, "controls", "progressitem.choice"),
 				ResourceSupplier.getString (ResourceClass.UI, "controls", "choose.ringchart.root"), true, HelpResource.RINGCHART_ROOTSELECTION_DIALOG);
 				if (choice.isConfirmed ()){
-					RingChartPanel.this._root = choice.getChoice ();
-					RingChartPanel.this._treeModel.setRoot (createSerieNode (RingChartPanel.this._root));
+					RingChartPanel.this.reloadChart (choice.getChoice ());
 				}
 			}
 		});

@@ -62,6 +62,12 @@ public interface ApplicationSettings {
 	public Boolean beepOnEvents ();
 	
 	/**
+	 * Ritorna lo stato di abilitazione dell'autocaricamento grafico ad anello.
+	 * @return lo stato di abilitazione dell'autocaricamento grafico ad anello.
+	 */
+	public Boolean ringChartAutoload ();
+	
+	/**
 	 * Ritorna il tipo di lista degli avanzamenti.
 	 *
 	 * @return il tipo di lista degli avanzamenti.

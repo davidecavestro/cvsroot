@@ -87,7 +87,7 @@ public final class UserOtherSettingsEditPanel extends ObservablePanel implements
 		final GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
-		c.insets = new Insets (3, 3, 3, 3);
+		c.insets = new Insets (3, 10, 3, 10);
 			
 		/*
 		 * Inserimento componenti editazione dimensione del buffer per il log.

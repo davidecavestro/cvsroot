@@ -70,7 +70,7 @@ public final class ProgressInspectorFrame extends BaseInternalFrame {
 		 */
 		this.setMinimumSize (new Dimension (250, 150));
 		
-		this.setFrameIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "progress-inspector-frame.gif"));
+		this.setFrameIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "progress-inspector-frame.png"));
 		
 		pack ();
 	}

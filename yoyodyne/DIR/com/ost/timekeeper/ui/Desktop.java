@@ -51,4 +51,6 @@ public final class Desktop extends JScrollableDesktopPane{
 			child.getDesktopPane ().getDesktopManager().activateFrame (child);
 //					Desktop.getInstance ().setSelectedFrame (inspector);
 	}
+	
+
 }

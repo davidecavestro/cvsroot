@@ -25,6 +25,8 @@ import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
 import com.toedter.components.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.*;
 import javax.help.*;
 import javax.swing.border.*;
@@ -116,14 +118,16 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		this.application.addObserver (ProgressListFrame.getInstance ().getProgressTable ());
 		menuBar = new javax.swing.JMenuBar ();
 		jMenuFile = new javax.swing.JMenu ();
-		jMenuItemNew = new javax.swing.JMenuItem ();
+		jMenuProject = new javax.swing.JMenu ();
+		jMenuItemNewProject = new javax.swing.JMenuItem ();
 		jMenuItemOpen = new javax.swing.JMenuItem ();
-		jMenuItemSave = new javax.swing.JMenuItem ();
-		jMenuExport = new javax.swing.JMenu ();
+		jMenuItemDeleteProject = new javax.swing.JMenuItem ();
+		jMenuItemSaveProject = new javax.swing.JMenuItem ();
+		jMenuExportProject = new javax.swing.JMenu ();
 		jMenuItemXMLProjectExport = new javax.swing.JMenuItem ();
-		jMenuImport = new javax.swing.JMenu ();
+		jMenuImportProject = new javax.swing.JMenu ();
 		jMenuItemXMLProjectImport = new javax.swing.JMenuItem ();
-		jMenuItemClose = new javax.swing.JMenuItem ();
+		jMenuItemCloseProject = new javax.swing.JMenuItem ();
 		jMenuItemFinish = new javax.swing.JMenuItem ();
 		jMenuEdit = new javax.swing.JMenu ();
 		jMenuItemCut = new javax.swing.JMenuItem ();
@@ -145,10 +149,11 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuItemContextualHelp = new javax.swing.JMenuItem ();
 		
 		setDefaultCloseOperation (javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-		setTitle (ResourceSupplier.getString (ResourceClass.UI, "global", "app.title"));
+		final ApplicationData appData = ApplicationData.getInstance ();
+		setTitle (appData.getApplicationExternalName ());
 		setBackground (new java.awt.Color (204, 204, 255));
 		setFont (new java.awt.Font ("Default", 0, 10));
-		setIconImage (getIconImage ());
+		setIconImage (ResourceSupplier.getImageIcon (ResourceClass.UI, "application.png").getImage ());
 		setName ("MainWindow");
 		addWindowListener (new java.awt.event.WindowAdapter () {
 			public void windowClosing (java.awt.event.WindowEvent evt) {
@@ -229,6 +234,8 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jobProgress.setVisible (false);
 		statusBar.add (jobProgress);
 		
+		javax.help.CSH.setHelpIDString(statusBar, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.MAINSTATUSBAR ));
+		
 		mainPanel.add (statusBar, java.awt.BorderLayout.SOUTH);
 		
 		jPanelTree.setLayout (new java.awt.BorderLayout ());
@@ -242,10 +249,10 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			ResourceSupplier.getString (ResourceClass.UI, "controls", "jobs.tree"),
 			null, new JScrollPane (progressItemTree)
 			));
-//		treePanel.add (new JScrollPane (progressItemTree), BorderLayout.CENTER);
+		treePanel.add (new JScrollPane (progressItemTree), BorderLayout.CENTER);
 		
 		treePanel.setBackground (progressItemTree.getBackground ());
-		
+
 		treePanel.setPreferredSize (new Dimension (180, 200));
 		jSplit_Tree_Data.setLeftComponent (treePanel);
 		javax.help.CSH.setHelpIDString(progressItemTree, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PROGRESSITEMTREE ));
@@ -370,71 +377,101 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		getContentPane ().add (mainPanel, java.awt.BorderLayout.CENTER);
 		
 		jMenuFile.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "file"));
+		
+		//separatore
+		jMenuFile.add (new javax.swing.JSeparator ());
+		
+		jMenuProject.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "project"));
 		//create project
-		jMenuItemNew.setAction (ActionPool.getInstance ().getProjectCreateAction ());
-		jMenuFile.add (jMenuItemNew);
+		jMenuItemNewProject.setAction (ActionPool.getInstance ().getProjectCreateAction ());
+		jMenuProject.add (jMenuItemNewProject);
 		
 		//open project
 		jMenuItemOpen.setAction (ActionPool.getInstance ().getProjectOpenAction ());
-		jMenuFile.add (jMenuItemOpen);
+		jMenuProject.add (jMenuItemOpen);
 		
-		jMenuItemClose.setAction (ActionPool.getInstance ().getProjectCloseAction ());
-		jMenuFile.add (jMenuItemClose);
+		jMenuItemCloseProject.setAction (ActionPool.getInstance ().getProjectCloseAction ());
+		jMenuProject.add (jMenuItemCloseProject);
+		
+		//delete project
+		jMenuItemDeleteProject.setAction (ActionPool.getInstance ().getProjectDeleteAction ());
+		jMenuProject.add (jMenuItemDeleteProject);
 		
 		//separatore
-		jMenuFile.add (new javax.swing.JSeparator ());
+		jMenuProject.add (new javax.swing.JSeparator ());
 		
 		//save project
-		jMenuItemSave.setAction (ActionPool.getInstance ().getProjectSaveAction ());
+		jMenuItemSaveProject.setAction (ActionPool.getInstance ().getProjectSaveAction ());
 		/* l'utente non saprebbe che farsene */
-//		jMenuFile.add (jMenuItemSave);
+//		jMenuProject.add (jMenuItemSaveProject);
 		
 		//separatore
-		jMenuFile.add (new javax.swing.JSeparator ());
+		jMenuProject.add (new javax.swing.JSeparator ());
 		
 		//export project
-		jMenuExport.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "file.export"));
-		jMenuFile.add (jMenuExport);
+		jMenuExportProject.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "project.export"));
+		jMenuProject.add (jMenuExportProject);
 		
 		//export project XML
 		jMenuItemXMLProjectExport.setAction (ActionPool.getInstance ().getProjectXMLExportAction ());
-		jMenuExport.add (jMenuItemXMLProjectExport);
+		jMenuExportProject.add (jMenuItemXMLProjectExport);
 		
 		//import project
-		jMenuImport.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "file.import"));
-		jMenuFile.add (jMenuImport);
+		jMenuImportProject.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "project.import"));
+		jMenuProject.add (jMenuImportProject);
 		
 		//import project XML
 		jMenuItemXMLProjectImport.setAction (ActionPool.getInstance ().getProjectXMLImportAction ());
-		jMenuImport.add (jMenuItemXMLProjectImport);
-		
-		//separatore
-		jMenuFile.add (new javax.swing.JSeparator ());
+		jMenuImportProject.add (jMenuItemXMLProjectImport);
 		
 		//separatore
 		//evitiamo uscite involontarie, almeno finchè non si implementa l'alert
 		//@todo implementare alert richiesta uscita applicazione
 		//jMenuItemFinish.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
 		jMenuItemFinish.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "file.exit"));
+		jMenuItemFinish.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "exit.png", true));
 		jMenuItemFinish.addActionListener (new java.awt.event.ActionListener () {
 			public void actionPerformed (java.awt.event.ActionEvent evt) {
 				//chiusura
+				if (
+				JOptionPane.showConfirmDialog (
+				Application.getInstance ().getMainForm (), ResourceSupplier.getString (ResourceClass.UI, "controls", "application.exit.confirm"))!=JOptionPane.OK_OPTION){
+					return;
+				}
 				Application.getInstance ().exit ();
 			}
 		});
 		jMenuFile.add (jMenuItemFinish);
 		
 		menuBar.add (jMenuFile);
+		menuBar.add (jMenuProject);
 		
 		jMenuEdit.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "edit"));
+		
+		final TransferActionListener actionListener = new TransferActionListener();
+		jMenuItemCut.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "editcut.png"));
+		jMenuItemCut.setActionCommand((String)TransferHandler.getCutAction().
+             getValue(Action.NAME));
+		jMenuItemCut.addActionListener(actionListener);
+		
 		jMenuItemCut.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
 		jMenuItemCut.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "edit.cut"));
 		jMenuEdit.add (jMenuItemCut);
 		
+		jMenuItemCopy.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "editcopy.png"));
+		jMenuItemCopy.setActionCommand((String)TransferHandler.getCopyAction().
+             getValue(Action.NAME));
+		jMenuItemCopy.addActionListener(actionListener);
 		jMenuItemCopy.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
 		jMenuItemCopy.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "edit.copy"));
+		/** @todo: implementare logica abilitazione*/
+		jMenuItemCopy.setEnabled (false);
 		jMenuEdit.add (jMenuItemCopy);
 		
+		jMenuItemPaste.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "editpaste.png"));
+		jMenuItemPaste.setActionCommand((String)TransferHandler.getPasteAction().
+             getValue(Action.NAME));
+		jMenuItemPaste.addActionListener(actionListener);
 		jMenuItemPaste.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
 		jMenuItemPaste.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "edit.paste"));
 		jMenuEdit.add (jMenuItemPaste);
@@ -466,7 +503,20 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		menuBar.add (jMenuActions);
 		
+		jMenuItemReports.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tools.reports"));
+		jMenuItemReports.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "printer1.png"));
+		jMenuItemReports.addActionListener (new ActionListener (){
+			public void actionPerformed(ActionEvent e){
+				ReportsFrame.getInstance ().show ();
+			}
+		});
+
+		jMenuTools.add (jMenuItemReports);
+		
+		jMenuTools.add (new javax.swing.JSeparator ());
+		
 		jMenuTools.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tool"));
+		jMenuItemOptions.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "configure.png"));
 		jMenuItemOptions.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tools.options"));
 		jMenuItemOptions.addActionListener (new ActionListener (){
 			public void actionPerformed(ActionEvent e){
@@ -475,17 +525,6 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		});
 
 		jMenuTools.add (jMenuItemOptions);
-		
-		jMenuItemReports.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tools.reports"));
-		jMenuItemReports.addActionListener (new ActionListener (){
-			public void actionPerformed(ActionEvent e){
-				ReportsFrame.getInstance ().show ();
-			}
-		});
-
-		jMenuTools.add (new javax.swing.JSeparator ());
-		
-		jMenuTools.add (jMenuItemReports);
 
 		menuBar.add (jMenuTools);
 
@@ -553,6 +592,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuHelp.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help"));
 		jMenuItemAbout.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_QUOTE, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
 		jMenuItemAbout.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help.about"));
+		jMenuItemAbout.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "info.png"));
 		jMenuItemAbout.addActionListener (new ActionListener (){
 			public void actionPerformed(ActionEvent e){
 				AboutBox.getInstance ().show ();
@@ -562,6 +602,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuHelp.add (jMenuItemAbout);
 		
 		jMenuItemHelp.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_F1, 0));
+		jMenuItemHelp.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "contents.png"));
 		jMenuItemHelp.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help.help"));
 //		jMenuItemHelp.setActionCommand ("Help");
 		HelpManager.getInstance ().initialize (jMenuItemHelp);
@@ -569,7 +610,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuHelp.add (jMenuItemHelp);
 		
 		jMenuItemContextualHelp.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help.contextualhelp"));
-		jMenuItemContextualHelp.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "directhelp.gif"));
+		jMenuItemContextualHelp.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "contexthelp.png"));
 		jMenuItemContextualHelp.addActionListener(new CSH.DisplayHelpAfterTracking(HelpManager.getInstance ().getMainHelpBroker ()));
 
 		jMenuHelp.add (jMenuItemContextualHelp);
@@ -621,14 +662,15 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JMenu jMenuActions;
 	private javax.swing.JMenuBar menuBar;
 	private javax.swing.JMenu jMenuEdit;
-	private javax.swing.JMenu jMenuExport;
-	private javax.swing.JMenu jMenuImport;
+	private javax.swing.JMenu jMenuExportProject;
+	private javax.swing.JMenu jMenuImportProject;
 	private javax.swing.JMenuItem jMenuItemXMLProjectExport;
 	private javax.swing.JMenuItem jMenuItemXMLProjectImport;
 	private javax.swing.JMenu jMenuFile;
+	private javax.swing.JMenu jMenuProject;
 	private javax.swing.JMenu jMenuHelp;
 	private javax.swing.JMenuItem jMenuItemAbout;
-	private javax.swing.JMenuItem jMenuItemClose;
+	private javax.swing.JMenuItem jMenuItemCloseProject;
 	private javax.swing.JMenuItem jMenuItemCopy;
 	private javax.swing.JMenuItem jMenuItemCut;
 	private javax.swing.JMenuItem jMenuItemDeleteNode;
@@ -636,9 +678,10 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JMenuItem jMenuItemFinish;
 	private javax.swing.JMenuItem jMenuItemHelp;
 	private javax.swing.JMenuItem jMenuItemContextualHelp;
-	private javax.swing.JMenuItem jMenuItemNew;
+	private javax.swing.JMenuItem jMenuItemNewProject;
 	private javax.swing.JMenuItem jMenuItemOpen;
-	private javax.swing.JMenuItem jMenuItemSave;
+	private javax.swing.JMenuItem jMenuItemDeleteProject;
+	private javax.swing.JMenuItem jMenuItemSaveProject;
 	private javax.swing.JMenuItem jMenuItemCreateNode;
 	private javax.swing.JMenuItem jMenuItemStartNodeEdit;
 	private javax.swing.JMenuItem jMenuItemOptions;
@@ -721,6 +764,22 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			initTreeModelListeners ();
 			this.progressItemTree.invalidate ();
 			initTableModelListeners ();
+			
+			/* aggiorna titolo */
+			
+			final ApplicationData appData = ApplicationData.getInstance ();
+			final StringBuffer title = new StringBuffer ();
+			title.append (appData.getApplicationExternalName ())
+			.append (" v.")
+			.append (appData.getVersionNumber ());
+			final Project currentProject = Application.getInstance ().getProject ();
+			if (currentProject!=null){
+				title.append (" - ")
+				.append (ResourceSupplier.getString (ResourceClass.UI, "controls","project"))
+				.append (" ")
+				.append (currentProject.getName ());
+			}
+			setTitle (title.toString ());
 		} else if (arg!=null && ( arg.equals (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || arg.equals (ObserverCodes.CURRENTITEMCHANGE))){
 			final Application app = Application.getInstance ();
 			statusLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "statusbar", app.getCurrentItem ()!=null?"statuslabel.working_UC":"statuslabel.idle_UC"));
@@ -846,4 +905,36 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	public int getProgressItemTreeWidth (){
 		return jSplit_Tree_Data.getDividerLocation ();
 	}
+	
+	public class TransferActionListener implements ActionListener,
+                                              PropertyChangeListener {
+    private JComponent focusOwner = null;
+    
+    public TransferActionListener() {
+        KeyboardFocusManager manager = KeyboardFocusManager.
+           getCurrentKeyboardFocusManager();
+        manager.addPropertyChangeListener("permanentFocusOwner", this);
+    }
+    
+    public void propertyChange(PropertyChangeEvent e) {
+        Object o = e.getNewValue();
+        if (o instanceof JComponent) {
+            focusOwner = (JComponent)o;
+        } else {
+            focusOwner = null;
+        }
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+        if (focusOwner == null)
+            return;
+        String action = (String)e.getActionCommand();
+        Action a = focusOwner.getActionMap().get(action);
+        if (a != null) {
+            a.actionPerformed(new ActionEvent(focusOwner,
+                                              ActionEvent.ACTION_PERFORMED,
+                                              null));
+        }
+    }
+}
 }

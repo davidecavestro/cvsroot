@@ -15,6 +15,7 @@ import javax.swing.tree.*;
 
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.*;
+import com.ost.timekeeper.actions.commands.MoveProgress;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.util.*;
@@ -43,7 +44,7 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 		
 		// Use a scrollbar, in case there are many columns.
 		this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
+
 		setMaximumSize(null);
 		setMinimumSize(null);
 		setAutoCreateColumnsFromModel(true);
@@ -77,6 +78,10 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 			}
 		});
 		this.setAutoscrolls (true);
+		
+		this.setShowHorizontalLines (false);
+		
+		this.setTransferHandler (new ProgressTableTransferHandler ());
 	}
 	
 	/**
@@ -198,6 +203,35 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 				this.dataModel.fireTableChanged(new TableModelEvent(getModel(), this.dataModel.getCurrentPeriodIndex()));
 			}
 		}
+	}
+
+	private final class ProgressTableTransferHandler extends ProgressTransferHandler{
+		
+		protected void cleanup (JComponent c, boolean remove) {
+		}
+		
+		protected com.ost.timekeeper.model.Progress exportProgress (JComponent c) {
+		if (c!=SubtreeProgressesTable.this){return null;}
+		return Application.getInstance ().getSelectedProgress ();//(Progress)SubtreeProgressesTable.this.getTree ().getSelectionPath ().getLastPathComponent ();
+	}
+		
+		protected void importProgress (JComponent c, com.ost.timekeeper.model.Progress progress) {
+			if (c!=SubtreeProgressesTable.this){return;}
+			final ProgressItem target = Application.getInstance ().getSelectedItem ();
+			new MoveProgress (progress, target, -1).execute ();
+
+//			final int[] selectedrows = SubtreeProgressesTable.this.getSelectedRows ();
+//			if (selectedrows!=null){
+//				final ProgressItem target = Application.getInstance ().getSelectedItem ();
+//				for (int i=0;i<selectedrows.length;i++){
+//					final Progress selectedPeriod = (Progress)SubtreeProgressesTable.this.getProgressTableModel ().getProgresses ().get (selectedrows[i]);
+//
+//					new MoveProgress (selectedPeriod, target, -1).execute ();
+//				}
+//			}
+		
+		}
+		
 	}
 	
 }

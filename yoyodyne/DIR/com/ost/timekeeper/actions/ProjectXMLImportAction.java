@@ -10,14 +10,17 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
-import org.exolab.castor.mapping.*;
-import org.exolab.castor.xml.*;
+//import org.exolab.castor.mapping.*;
+//import org.exolab.castor.xml.*;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.actions.commands.ImportProjectFromXML;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
+import com.ost.timekeeper.ui.support.CustomFileFilter;
 import com.ost.timekeeper.util.*;
+import org.jdom.input.SAXBuilder;
 import org.xml.sax.*;
 
 /**
@@ -33,18 +36,23 @@ public final class ProjectXMLImportAction extends javax.swing.AbstractAction imp
 	 * Costruttore vuoto. 
 	 */
 	public ProjectXMLImportAction() {
-		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.xmlimportproject"), ResourceSupplier.getImageIcon (ResourceClass.UI, "xmlimportproject.gif"));
-		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "file.xmlimportproject.tooltip"));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "project.xmlimportproject"), ResourceSupplier.getImageIcon (ResourceClass.UI, "import.png"));
+		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "project.xmlimportproject.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
+		final CustomFileFilter filter = new CustomFileFilter (
+			new String []{FileUtils.xml},
+			new String []{ResourceSupplier.getString (ResourceClass.UI, "controls", "file.type.xml")}
+		);
+		chooser.addChoosableFileFilter (filter);
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		final Application app = Application.getInstance();
 		// Load Mapping
-		final Mapping mapping = new Mapping();
+//		final Mapping mapping = new Mapping();
 		try{
-			mapping.loadMapping(this.getClass ().getResource ("dataiomap.xml"));
+//			mapping.loadMapping(this.getClass ().getResource ("dataiomap.xml"));
 			
 			final int returnVal = chooser.showOpenDialog(app.getMainForm());
 			
@@ -58,13 +66,20 @@ public final class ProjectXMLImportAction extends javax.swing.AbstractAction imp
 							}
 							try {
 								// Create a Reader to the file to unmarshal from
-								Reader reader = new FileReader(chooser.getSelectedFile());
-
-								// Create a new Unmarshaller
-								Unmarshaller unmarshaller = new Unmarshaller(Project.class);
-								unmarshaller.setMapping(mapping);
+//								Reader reader = new FileReader(chooser.getSelectedFile());
+//
+//								// Create a new Unmarshaller
+//								Unmarshaller unmarshaller = new Unmarshaller(Project.class);
+//								unmarshaller.setMapping(mapping);
 								// Unmarshal the project object
-								Project project = (Project)unmarshaller.unmarshal(reader);
+//								Project project = (Project)unmarshaller.unmarshal(reader);
+								SAXBuilder builder = new SAXBuilder ();
+								
+							final org.jdom.Document data = builder.build (new FileInputStream (chooser.getSelectedFile()));
+							ImportProjectFromXML importer = new ImportProjectFromXML (data);
+							importer.execute ();
+
+							final Project project = importer.getProject ();
 								Application.getLogger ().info ( "Project successfully imported: "+project);
 								app.setProject (project);
 							} catch (Exception ex) {

@@ -11,7 +11,11 @@ import java.util.*;
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.help.*;
 import com.ost.timekeeper.model.*;
+import com.ost.timekeeper.ui.support.GradientPanel;
 import com.ost.timekeeper.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.*;
@@ -138,16 +142,28 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 		
 		buttonPanel.add (directHelpButton);
 		
-		c.weightx = 0.0;
-		c.weighty = 0.0;
-		c.gridx = 0;
-		c.gridy = 2;
-		c.gridwidth = 2;
-		mainPanel.add (buttonPanel, c);
+//		c.weightx = 0.0;
+//		c.weighty = 0.0;
+//		c.gridx = 0;
+//		c.gridy = 2;
+//		c.gridwidth = 2;
+//		mainPanel.add (buttonPanel, c);
 		
 		mainPanel.setPreferredSize (new java.awt.Dimension (340, 220));
 		
-		getContentPane ().add (mainPanel);
+		final JPanel externalContainer = new JPanel (new BorderLayout ());
+		final GradientPanel gradientPanel = new GradientPanel (Color.LIGHT_GRAY, GradientPanel.OBLIQUE);
+		gradientPanel.setPreferredSize (new Dimension (30, 120));
+		
+		externalContainer.add (gradientPanel, java.awt.BorderLayout.WEST);
+		
+		mainPanel.setBorder (new BevelBorder (BevelBorder.RAISED));
+		externalContainer.add (mainPanel, java.awt.BorderLayout.CENTER);
+		
+		externalContainer.add (buttonPanel, BorderLayout.SOUTH);
+			
+		
+		getContentPane ().add (externalContainer);
 		
 		getRootPane ().setDefaultButton (confirmButton);
 		pack ();

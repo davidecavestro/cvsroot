@@ -7,6 +7,8 @@
 package com.ost.timekeeper.conf;
 
 import com.ost.timekeeper.conf.*;
+import com.ost.timekeeper.util.ResourceClass;
+import com.ost.timekeeper.util.ResourceSupplier;
 import com.ost.timekeeper.view.*;
 import java.awt.*;
 
@@ -431,4 +433,36 @@ public final class ApplicationOptions {
 		return 4;
 	}
 	
+	
+	public boolean ringChartAutoload () {
+		final Boolean returnValue = this._settings.ringChartAutoload ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue.booleanValue ();
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.ringChartAutoload ();
+			} else {
+					/*
+					 * Informazione non disponibile.
+					 * Funzionalità disabilitata.
+					 */
+				return false;
+			}
+		}
+	}
+	
+	/**
+	 * Ritorna il formato di visualizzazione ed editazione di una data contenente anche le ore.
+	 *
+	 * @return il formato di visualizzazione ed editazione di una data contenente anche le ore.
+	 */	
+	public String getDateTimeFormat (){
+		return ResourceSupplier.getString (ResourceClass.UI, "global", "date.time.format");
+	}
 }

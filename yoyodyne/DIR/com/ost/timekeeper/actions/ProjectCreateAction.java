@@ -27,8 +27,8 @@ public final class ProjectCreateAction extends javax.swing.AbstractAction implem
 	 * Costruttore vuoto.
 	 */
 	public ProjectCreateAction() {
-		super(ResourceSupplier.getString(ResourceClass.UI, "menu", "file.new"), ResourceSupplier.getImageIcon(ResourceClass.UI, "createproject.gif"));
-		this.putValue(SHORT_DESCRIPTION, ResourceSupplier.getString(ResourceClass.UI, "menu", "file.new.tooltip"));
+		super(ResourceSupplier.getString(ResourceClass.UI, "menu", "project.new"), ResourceSupplier.getImageIcon(ResourceClass.UI, "createproject.png"));
+		this.putValue(SHORT_DESCRIPTION, ResourceSupplier.getString(ResourceClass.UI, "menu", "project.new.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}

@@ -25,7 +25,7 @@ public final class StartNodeEdit extends javax.swing.AbstractAction implements j
 	 * Costruttore vuoto.
 	 */
 	public StartNodeEdit () {
-		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.editnode"), ResourceSupplier.getImageIcon (ResourceClass.UI, "editnode.gif"));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.editnode"), ResourceSupplier.getImageIcon (ResourceClass.UI, "editnode.png"));
 		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.editnode.tooltip"));
 		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled (false);

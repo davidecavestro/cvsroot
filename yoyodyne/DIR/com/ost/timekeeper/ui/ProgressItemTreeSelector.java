@@ -164,6 +164,7 @@ public final class ProgressItemTreeSelector extends javax.swing.JDialog {
 		
 		getRootPane ().setDefaultButton (confirmButton);
 		this.setTitle (this.titleText);
+		getRootPane ().setPreferredSize (new java.awt.Dimension (340, 220));
 		pack ();
 	}
 	

@@ -20,7 +20,7 @@ import com.ost.timekeeper.graph.awt.*;
  * @author  davide
 */
 public abstract class JTreeGraph2D extends JDoubleBufferedComponent implements GraphDataListener {
-	
+
 	        /**
         * Data model.
         */

@@ -8,14 +8,16 @@ package com.ost.timekeeper.ui;
 
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.util.*;
+import com.tomtessier.scrollabledesktop.BaseInternalFrame;
 import java.awt.*;
+import javax.swing.JFrame;
 
 /**
  * Il frame per la gestione delle preferenze utente.
  *
  * @author  davide
  */
-public final class UserSettingsFrame extends javax.swing.JDialog {
+public final class UserSettingsFrame extends /*javax.swing.JDialog*/ JFrame {
 	
 	/**
 	 * Istanza singleton.
@@ -39,7 +41,7 @@ public final class UserSettingsFrame extends javax.swing.JDialog {
 		setTitle (ResourceSupplier.getString (ResourceClass.UI, "controls", "user.settings"));
 		initComponents ();
 		
-//		this.setIconImage (ResourceSupplier.getImageIcon (ResourceClass.UI, "user-settings-frame.gif").getImage ());
+		this.setIconImage (ResourceSupplier.getImageIcon (ResourceClass.UI, "user-settings-frame.png").getImage ());
 		
 		/*
 		 * centra
@@ -74,6 +76,7 @@ public final class UserSettingsFrame extends javax.swing.JDialog {
 		 * Imposta dimensione minima.
 		 */
 //		this.setMinimumSize (new Dimension (250, 150));
+//		getRootPane ().setPreferredSize (new java.awt.Dimension (340, 220));
 		pack ();
 	}
 

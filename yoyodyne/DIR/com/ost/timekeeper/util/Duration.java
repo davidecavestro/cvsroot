@@ -9,7 +9,8 @@ package com.ost.timekeeper.util;
 import java.util.*;
 
 /**
- * Modella una durata.
+ * Modella una durata. La durata può avere una data di inizio e di fine associate, oppure no.
+ * Questo tipo di durata è immutabile.
  *
  * @author  davide
  */
@@ -33,9 +34,14 @@ public final class Duration {
 	public final static long MILLISECONDS_PER_HOUR = MILLISECONDS_PER_MINUTE * MINUTES_PER_HOUR;
 	public final static long MILLISECONDS_PER_DAY = MILLISECONDS_PER_HOUR * HOURS_PER_DAY;
 
-		
+
 	private Date from;
 	private Date to;
+	
+	/**
+	 * Durata nulla.
+	 */
+	public final static Duration ZERODURATION = new Duration (0);
 	
 	/**
 	 * Costruttore con data di inizio e fine periodo.
@@ -50,12 +56,26 @@ public final class Duration {
 	}
 	
 	/**
-	 * Costruttore con durata inmillisecondi.
+	 * Costruttore con durata in millisecondi.
 	 *
 	 * @param milliseconds il numero di millisecondi.
 	 */	
 	public Duration (final long milliseconds) {
 		this.totalMilliseconds = milliseconds;
+		computedTotalMilliseconds = true;
+		computeFields ();
+	}
+	
+	/**
+	 * Costruttore con durata in ore minuti secondi e millisecondi.
+	 *
+	 * @param hour ore
+	 * @param minutes minuti
+	 * @param seconds secondi
+	 * @param milliseconds millisecondi.
+	 */	
+	public Duration (final int hours, final int minutes, final int seconds, final int milliseconds) {
+		this.totalMilliseconds = milliseconds + MILLISECONDS_PER_SECOND*seconds+MILLISECONDS_PER_MINUTE*minutes+MILLISECONDS_PER_HOUR*hours;;
 		computedTotalMilliseconds = true;
 		computeFields ();
 	}

@@ -96,7 +96,7 @@ public final class DefaultSettings implements ApplicationSettings {
 	 * @return ilcolore del desktop.
 	 */	
 	public Color getDesktopColor () {
-		return Color.BLACK;
+		return null;//Color.BLACK;
 	}
 
 	/**
@@ -190,6 +190,15 @@ public final class DefaultSettings implements ApplicationSettings {
 	 * @return lo stato di abilitazione della notifica sonora in presenza di eventi.
 	 */
 	public Boolean beepOnEvents () {
+		return Boolean.TRUE;
+	}
+	
+	/**
+	 * Ritorna lo stato di abilitazione dell'autocaricamento grafico ad anello.
+	 * Per questa implementazione il valore è sempre <TT>TRUE</TT>.
+	 * @return lo stato di abilitazione dell'autocaricamento grafico ad anello.
+	 */
+	public Boolean ringChartAutoload () {
 		return Boolean.TRUE;
 	}
 	

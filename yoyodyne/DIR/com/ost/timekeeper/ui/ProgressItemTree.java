@@ -11,6 +11,15 @@ import com.ost.timekeeper.actions.commands.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.view.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DragSourceAdapter;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceMotionListener;
+import java.awt.dnd.DropTarget;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
@@ -45,7 +54,7 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 	 * @param progressTreeModel il modello.
 	 */
 	private void init (final ProgressTreeModel progressTreeModel){
-//		final ProgressItemCellRenderer progressItemCellRenderer = new ProgressItemCellRenderer ();
+		//		final ProgressItemCellRenderer progressItemCellRenderer = new ProgressItemCellRenderer ();
 		final TableCellEditor treeCellEditor = this.getDefaultEditor (ProgressItem.class);
 		treeCellEditor.addCellEditorListener (new CellEditorListener (){
 			public void editingStopped (ChangeEvent e){
@@ -59,45 +68,134 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 			}
 		});
 		this.setCellEditor (treeCellEditor);
-//		this.setCellRenderer (progressItemCellRenderer);
-//		this.setModel (progressTreeModel);
+		//		this.setCellRenderer (progressItemCellRenderer);
+		//		this.setModel (progressTreeModel);
 		
-		this.getSelectionModel().setSelectionMode (TreeSelectionModel.SINGLE_TREE_SELECTION);
-		this.setDragEnabled(true);
-		
+		this.getSelectionModel ().setSelectionMode (ListSelectionModel.SINGLE_SELECTION);
+		//		this.getSelectionModel ().setSelectionMode (TreeSelectionModel.SINGLE_TREE_SELECTION);
+//		this.setDragEnabled (true);
+//		
 		this.setTransferHandler (new ProgressItemTreeTransferHandler ());
+		
+//		java.awt.event.MouseMotionListener mml = new java.awt.event.MouseMotionAdapter () {
+//			private boolean dragStarted = false;
+//			public void mouseDragged(MouseEvent e) {dragStarted = true;}
+//		};
+//		
+//		this.addMouseMotionListener (mml);
+//		
+//		java.awt.event.MouseListener ml = new java.awt.event.MouseAdapter () {
+//			public void mouseReleased(java.awt.event.MouseEvent e) {
+//				int selRow = tree.getRowForLocation (e.getX (), e.getY ());
+//				TreePath selPath = tree.getPathForLocation (e.getX (), e.getY ());
+//				if(selRow != -1) {
+//					if(e.getClickCount () == 1) {
+////						if (!ProgressItemTree.this.getUI ().isDragPossible(e)){
+////						ProgressItemTree.this.getTree ().getUI ().handleSelection(e);
+////						}
+//					}
+//					else if(e.getClickCount () == 2) {
+////						myDoubleClick (selRow, selPath);
+//					}
+//				}
+//			}
+//		};
+//		this.addMouseListener (ml);
+		
+//		DragSourceMotionListener
+//		DragSourceListener
+//		DropTargetListener
+//		this.setDropTarget (new DropTarget(this, new DragPatch ()));
 	}
+	
+//	private class DragPatch extends DragSourceAdapter implements DragSourceMotionListener {
+//		private boolean success = false;
+//	    public void dragDropEnd(DragSourceDropEvent dsde) {
+//			this.success = dsde.getDropSuccess ();
+//		}
+//	}
 	
 	private final class ProgressItemTreeTransferHandler extends ProgressItemTransferHandler{
 		
-		/*
-		 * If the remove argument is true, the drop has been
-		 * successful and it's time to remove the selected items
-		 * from the list. If the remove argument is false, it
-		 * was a Copy operation and the original list is left
-		 * intact.
+		private final DataFlavor progressItemFlavor = DataFlavors.progressItemFlavor;
+		
+		
+		//	protected abstract ProgressItem exportProgressItem (JComponent c);
+		//	protected abstract void importProgressItem (JComponent c, ProgressItem progressItem);
+		//	protected abstract void cleanup (JComponent c, boolean remove);
+		
+		/**
+		 * Crea un oggetto trasferibile.
+		 *
+		 * @param c l'elemento della UI.
+		 * @return un oggetto trasferibile.
 		 */
+		protected Transferable createTransferable (JComponent c) {
+			return new ProgressItemSelection (exportProgressItem (c));
+		}
+		
+		public int getSourceActions (JComponent c) {
+			return COPY_OR_MOVE;
+		}
+		
+		public boolean importData (JComponent c, Transferable t) {
+			if (canImport (c, t.getTransferDataFlavors ())) {
+				try {
+					if (hasProgressItemFlavor (t.getTransferDataFlavors ())){
+						ProgressItem progressItem = (ProgressItem)t.getTransferData (progressItemFlavor);
+						importProgressItem (c, progressItem);
+						return true;
+					} else if (hasProgressFlavor (t.getTransferDataFlavors ())){
+						
+						final Progress progress = (Progress)t.getTransferData (progressFlavor);
+						importProgress (c, progress);
+						return true;
+					}
+				} catch (UnsupportedFlavorException ufe) {
+					Application.getLogger ().warning ("Error transferring UI data.", ufe);
+				} catch (IOException ioe) {
+					Application.getLogger ().warning ("Error transferring UI data.", ioe);
+				}
+			}
+			
+			return false;
+		}
+		
+		protected void exportDone (JComponent c, Transferable data, int action) {
+			cleanup (c, action == MOVE);
+		}
+		
+		/**
+		 * Does the flavor list have a ProgressItem flavor?
+		 */
+		protected boolean hasProgressItemFlavor (DataFlavor[] flavors) {
+			if (progressItemFlavor == null) {
+				return false;
+			}
+			
+			for (int i = 0; i < flavors.length; i++) {
+				if (progressItemFlavor.equals (flavors[i])) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		/**
+		 * Overridden to include a check for a ProgressItem or Progress flavor.
+		 */
+		public boolean canImport (JComponent c, DataFlavor[] flavors) {
+			return hasProgressItemFlavor (flavors) || hasProgressFlavor (flavors);
+		}
+		
+	/*
+	 * If the remove argument is true, the drop has been
+	 * successful and it's time to remove the selected items
+	 * from the list. If the remove argument is false, it
+	 * was a Copy operation and the original list is left
+	 * intact.
+	 */
 		protected void cleanup (JComponent c, boolean remove) {
-//			if (remove && indices != null) {
-//				JList source = (JList)c;
-//				DefaultListModel model  = (DefaultListModel)source.getModel ();
-//				//If we are moving items around in the same list, we
-//				//need to adjust the indices accordingly, since those
-//				//after the insertion point have moved.
-//				if (addCount > 0) {
-//					for (int i = 0; i < indices.length; i++) {
-//						if (indices[i] > addIndex) {
-//							indices[i] += addCount;
-//						}
-//					}
-//				}
-//				for (int i = indices.length - 1; i >= 0; i--) {
-//					model.remove (indices[i]);
-//				}
-//			}
-//			indices = null;
-//			addCount = 0;
-//			addIndex = -1;
 		}
 		
 		/*
@@ -105,62 +203,16 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		 * as a single string, for export.
 		 */
 		protected com.ost.timekeeper.model.ProgressItem exportProgressItem (JComponent c) {
-//        JList list = (JList)c;
-//        indices = list.getSelectedIndices();
-//        Object[] values = list.getSelectedValues();
-//        
-//        StringBuffer buff = new StringBuffer();
-//
-//        for (int i = 0; i < values.length; i++) {
-//            Object val = values[i];
-//            buff.append(val == null ? "" : val.toString());
-//            if (i != values.length - 1) {
-//                buff.append("\n");
-//            }
-//        }
-//        
-//        return buff.toString();
-		if (c!=ProgressItemTree.this){return null;}
-		return (ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ();
-	}
+			if (c!=ProgressItemTree.this){return null;}
+			return (ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ();
+		}
 		
 		/*
 		 * Take the incoming string and wherever there is a
 		 * newline, break it into a separate item in the list.
 		 */
 		protected void importProgressItem (JComponent c, com.ost.timekeeper.model.ProgressItem progressItem) {
-//			JList target = (JList)c;
-//			DefaultListModel listModel = (DefaultListModel)target.getModel ();
-//			int index = target.getSelectedIndex ();
-//			
-//			//Prevent the user from dropping data back on itself.
-//			//For example, if the user is moving items #4,#5,#6 and #7 and
-//			//attempts to insert the items after item #5, this would
-//			//be problematic when removing the original items.
-//			//So this is not allowed.
-//			if (indices != null && index >= indices[0] - 1 &&
-//			index <= indices[indices.length - 1]) {
-//				indices = null;
-//				return;
-//			}
-//			
-//			int max = listModel.getSize ();
-//			if (index < 0) {
-//				index = max;
-//			} else {
-//				index++;
-//				if (index > max) {
-//					index = max;
-//				}
-//			}
-//			addIndex = index;
-//			String[] values = str.split ("\n");
-//			addCount = values.length;
-//			for (int i = 0; i < values.length; i++) {
-//				listModel.add (index++, values[i]);
-//			}
 			if (c!=ProgressItemTree.this){return;}
-//			ProgressItemTree.this.getDropTarget ().get
 			final ProgressItem target = (ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ();
 			if (progressItem==target){
 				/* Evita drop su se stesso. */
@@ -169,15 +221,95 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 			new MoveNode (progressItem, target, -1).execute ();
 		}
 		
+		
+		
+		
+		
+		private final DataFlavor progressFlavor = DataFlavors.progressFlavor;
+		
+		
+		//		/**
+		//		 * Crea un oggetto trasferibile.
+		//		 *
+		//		 * @param c l'elemento della UI.
+		//		 * @return un oggetto trasferibile.
+		//		 */
+		//		protected Transferable createTransferable (JComponent c) {
+		//			return new ProgressSelection (exportProgress (c));
+		//		}
+		//
+		//		public int getSourceActions (JComponent c) {
+		//			return MOVE;
+		//		}
+		
+		//		public boolean importData (JComponent c, Transferable t) {
+		//			System.out.println ("Importing progress data ");
+		//			if (canImport (c, t.getTransferDataFlavors ())) {
+		//				try {
+		//					final Progress progress = (Progress)t.getTransferData (progressFlavor);
+		//					importProgress (c, progress);
+		//					return true;
+		//				} catch (UnsupportedFlavorException ufe) {
+		//					Application.getLogger ().warning ("Error transferring UI data.", ufe);
+		//				} catch (IOException ioe) {
+		//					Application.getLogger ().warning ("Error transferring UI data.", ioe);
+		//				}
+		//			}
+		//
+		//			return false;
+		//		}
+		//
+		//		protected void exportDone (JComponent c, Transferable data, int action) {
+		//			cleanup (c, action == MOVE);
+		//		}
+		
+		/**
+		 * Does the flavor list have a Progress flavor?
+		 */
+		protected boolean hasProgressFlavor (DataFlavor[] flavors) {
+			if (progressFlavor == null) {
+				return false;
+			}
+			
+			for (int i = 0; i < flavors.length; i++) {
+				if (progressFlavor.equals (flavors[i])) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		//		/**
+		//		 * Overridden to include a check for a Progress flavor.
+		//		 */
+		//		public boolean canImport (JComponent c, DataFlavor[] flavors) {
+		//			return hasProgressFlavor (flavors);
+		//		}
+		
+		
+		
+		
+		protected com.ost.timekeeper.model.Progress exportProgress (JComponent c) {
+			return null;
+			//		if (c!=SubtreeProgressesTable.this){return null;}
+			//		return Application.getInstance ().getSelectedProgress ();//(Progress)SubtreeProgressesTable.this.getTree ().getSelectionPath ().getLastPathComponent ();
+		}
+		
+		protected void importProgress (JComponent c, com.ost.timekeeper.model.Progress progress) {
+			if (c!=ProgressItemTree.this){return;}
+			final ProgressItem target = Application.getInstance ().getSelectedItem ();
+			new MoveProgress (progress, target, -1).execute ();
+		}
+		
 	}
 	
-	public void update(Observable o, Object arg) {
+	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && (arg.equals(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || arg.equals(ObserverCodes.ITEMPROGRESSINGCHANGE))){
+			if (arg!=null && (arg.equals (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || arg.equals (ObserverCodes.ITEMPROGRESSINGCHANGE))){
 				//				this.reloadModel(((Application)o).getSelectedItem());
-				final javax.swing.table.AbstractTableModel tModel = (javax.swing.table.AbstractTableModel)this.getModel();
+				final javax.swing.table.AbstractTableModel tModel = (javax.swing.table.AbstractTableModel)this.getModel ();
 				if (tModel.getRowCount ()>0){
-					tModel.fireTableChanged(new TableModelEvent (tModel, 0, tModel.getRowCount ()-1, 1));
+					tModel.fireTableChanged (new TableModelEvent (tModel, 0, tModel.getRowCount ()-1, 1));
 				}
 			}
 		}

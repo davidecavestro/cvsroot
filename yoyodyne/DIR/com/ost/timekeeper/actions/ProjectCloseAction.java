@@ -26,8 +26,8 @@ public final class ProjectCloseAction extends javax.swing.AbstractAction impleme
 	 * Costruttore vuoto.
 	 */
 	public ProjectCloseAction () {
-		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "file.close")/*, ResourceSupplier.getImageIcon (ResourceClass.UI, "closeproject.gif")*/);
-		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "file.close.tooltip"));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "project.close"), ResourceSupplier.getImageIcon (ResourceClass.UI, "closeproject.png"));
+		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "project.close.tooltip"));
 		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled (false);
 	}

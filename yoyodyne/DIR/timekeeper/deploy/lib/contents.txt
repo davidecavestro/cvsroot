@@ -3,11 +3,23 @@ deployment e/o al funzionamento dell'applicazione.
 
 Segue la lista dei file necessari:
  - btree.jar: {@todo descrizione}.
- - castor.jar: Castor - Implementation-Version v. 0.9.6.3 .
- - castor-xml.jar: Castor: - Implementation-Version v. 0.9.6.3 .
  - jdo.jar: JDO Reference Implementation 1_0_1 .
  - jdori.jar: JDO Reference Implementation 1_0_1 .
  - jhall.jar: Java Help System - Implementation-Version v. 2.0_02 .
  - xerces.jar: {@todo descrizione}.
  - jdopatch.jar: patch necessaria al funzionamento dell'enhancer {@todo 
    controllare eventuale soluzione in release succesive JDORI}.
+ - looks.jar (jgoodies Look&Feel)
+ - animation.jar(jgoodies animation framework)
+ - jdom.jar (JDOM)
+ - jcalendar.jar
+ - jasperreports.jar
+ - itext.jar
+ - commons-beanutils.jar
+ - commons-collections.jar
+ - commons-digester.jar
+ - commons-logging-api.jar
+ - commons-logging.jar
+ - jsci-core.jar
+ - jsci-xtra.jar
+ - skeleton.jar (jgoodies)

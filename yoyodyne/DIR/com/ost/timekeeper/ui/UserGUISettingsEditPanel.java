@@ -49,6 +49,11 @@ public final class UserGUISettingsEditPanel extends ObservablePanel implements O
 	 */
 	private final JCheckBox beepOnEventsBox = new JCheckBox ();
 	
+	/**
+	 * Componente abilitazione auto caricamento graficoad anello.
+	 */
+	final JCheckBox ringChartAutoLoadBox = new JCheckBox ();
+		
 	/**********************************************
 	 * FINE dichiarazione componenti UI interne.
 	 **********************************************/
@@ -101,6 +106,14 @@ public final class UserGUISettingsEditPanel extends ObservablePanel implements O
 			}
 		});
 		
+		final JButton resetColorButton = new JButton (ResourceSupplier.getString (ResourceClass.UI, "controls", "reset"));
+				resetColorButton.addActionListener (new ActionListener (){
+			public void actionPerformed (ActionEvent ae){
+				desktopColorChooser.setColor (null);
+				setDataChanged (true);
+			}
+		});
+
 		/*
 		 * Configurazione abilitazione notifica sonora.
 		 */
@@ -116,36 +129,78 @@ public final class UserGUISettingsEditPanel extends ObservablePanel implements O
 		final GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
-		c.insets = new Insets (3, 3, 3, 3);
+		c.insets = new Insets (3, 10, 3, 10);
 		
 		/*
 		 * Inserimento componenti scelta colore desktop.
 		 */
 		c.gridx = 0;
 		c.gridy = 0;
+		c.gridwidth = 3;
+		add (new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "appeal")), c);
+		c.gridwidth = 1;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.weightx = 0.5;
 		add (desktopColorLabel, c);
-		c.fill = GridBagConstraints.VERTICAL;
 		c.gridx = 1;
-		c.gridy = 0;
+		c.gridy = 1;
+		c.weightx = 1;
 		add (desktopColorChooser, c);
+		c.gridx = 2;
+		c.gridy = 1;
+		c.weightx = 0.5;
+		add (resetColorButton, c);
 		
 		/*
 		 * Inserimento componenti abilitazione notifica sonora.
 		 */
-		c.fill = GridBagConstraints.BOTH;
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = 2;
+		c.gridwidth = 3;
+		add (new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "sound")), c);
+		c.gridwidth = 1;
+		c.gridx = 0;
+		c.gridy = 3;
+		c.weightx = 0.5;
 		add (beepOnEventsLabel, c);
 		c.gridx = 1;
-		c.gridy = 1;
+		c.gridy = 3;
+		c.weightx = 1;
 		add (beepOnEventsBox, c);
+		
+		/*
+		 * Inserimento componenti controllo preferenze grafici.
+		 */
+		c.gridx = 0;
+		c.gridy = 4;
+		c.gridwidth = 3;
+		add (new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "charts")), c);
+		
+		ringChartAutoLoadBox.addActionListener (new ActionListener (){
+			public void actionPerformed (ActionEvent ae){
+				setDataChanged (true);
+			}
+		});
+		
+		final JLabel ringChartAutoLoad = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "ring.chart.auto.load"));
+		beepOnEventsLabel.setLabelFor (ringChartAutoLoadBox);
+		c.gridwidth = 1;
+		c.gridx = 0;
+		c.gridy = 5;
+		c.weightx = 0.5;
+		add (ringChartAutoLoad, c);
+		c.gridx = 1;
+		c.gridy = 5;
+		c.weightx = 1;
+		add (ringChartAutoLoadBox, c);
 		
 		/* etichetta vuota per riempire lo spazio rimanente */
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		c.gridx = 0;
-		c.gridy = 2;
-		c.gridwidth = 2;
+		c.gridy = 6;
+		c.gridwidth = 3;
 		add (new JLabel (""), c);
 		
 //		SpringUtilities.makeCompactGrid (this,
@@ -170,13 +225,21 @@ public final class UserGUISettingsEditPanel extends ObservablePanel implements O
 		/*
 		 * Inizializzazione.
 		 */
-		final Boolean currentUserValue = UserSettings.getInstance ().beepOnEvents ();
-		if (currentUserValue!=null){
-			beepOnEventsBox.setSelected (currentUserValue.booleanValue ());
+		final Boolean beepCurrentUserValue = UserSettings.getInstance ().beepOnEvents ();
+		if (beepCurrentUserValue!=null){
+			beepOnEventsBox.setSelected (beepCurrentUserValue.booleanValue ());
 		} else {
 			/* inizializza con valore opzioni */
 			final boolean currentValue = Application.getOptions ().beepOnEvents ();
 			beepOnEventsBox.setSelected (currentValue);
+		}
+		final Boolean ringChartAutoLoadValue = UserSettings.getInstance ().ringChartAutoload ();
+		if (ringChartAutoLoadValue!=null){
+			ringChartAutoLoadBox.setSelected (ringChartAutoLoadValue.booleanValue ());
+		} else {
+			/* inizializza con valore opzioni */
+			final boolean currentValue = Application.getOptions ().ringChartAutoload ();
+			ringChartAutoLoadBox.setSelected (currentValue);
 		}
 	}
 	
@@ -187,6 +250,7 @@ public final class UserGUISettingsEditPanel extends ObservablePanel implements O
 		Application.getLogger ().info ("Pushing user GUI preferences data.");
 		UserSettings.getInstance ().setDesktopColor (this.desktopColorChooser.getColor ());
 		UserSettings.getInstance ().setBeepOnEvents (BooleanUtils.getBoolean (this.beepOnEventsBox.isSelected ()));
+		UserSettings.getInstance ().setRingChartAutoload (BooleanUtils.getBoolean (this.ringChartAutoLoadBox.isSelected ()));
 		
 		this.setDataChanged (false);
 	}
