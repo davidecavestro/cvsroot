@@ -92,8 +92,8 @@
 			classpathref="jdo.enhancer.classpath"
 		>
 			<arg line="-f "/>
-			<arg line="-j ${lib.dir}/myjdo.jar:${classes.dir}"/>
-			<arg line="-s ${lib.dir}/myjdo.jar:${classes.dir}"/>
+			<arg line="-j ${lib.dir}/jdopatch.jar:${classes.dir}"/>
+			<arg line="-s ${lib.dir}/jdopatch.jar:${classes.dir}"/>
 			<arg line="-d ${classes.dir}"/>
 			<arg value="com/ost/timekeeper/model/Period"/>
 		</java>
@@ -107,8 +107,8 @@
 			classpathref="jdo.enhancer.classpath"
 		>
 			<arg line="-f "/>
-			<arg line="-j ${lib.dir}/myjdo.jar:${classes.dir}"/>
-			<arg line="-s ${lib.dir}/myjdo.jar:${classes.dir}"/>
+			<arg line="-j ${lib.dir}/jdopatch.jar:${classes.dir}"/>
+			<arg line="-s ${lib.dir}/jdopatch.jar:${classes.dir}"/>
 			<arg line="-d ${classes.dir}"/>
 			<arg value="com/ost/timekeeper/model/ProgressItem"/>
 		</java>
@@ -122,8 +122,8 @@
 			classpathref="jdo.enhancer.classpath"
 		>
 			<arg line="-f "/>
-			<arg line="-j ${lib.dir}/myjdo.jar:${classes.dir}"/>
-			<arg line="-s ${lib.dir}/myjdo.jar:${classes.dir}"/>
+			<arg line="-j ${lib.dir}/jdopatch.jar:${classes.dir}"/>
+			<arg line="-s ${lib.dir}/jdopatch.jar:${classes.dir}"/>
 			<arg line="-d ${classes.dir}"/>
 			<arg value="com/ost/timekeeper/model/Project"/>
 		</java>
