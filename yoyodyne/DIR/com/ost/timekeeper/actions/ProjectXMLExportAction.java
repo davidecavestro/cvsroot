@@ -44,29 +44,42 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
-		Application app = Application.getInstance();
+		final Application app = Application.getInstance();
 		// Load Mapping
-		Mapping mapping = new Mapping();
+		final Mapping mapping = new Mapping();
 		try{
 			mapping.loadMapping("modelmapping.xml");
 			
-			int returnVal = chooser.showSaveDialog(app.getMainForm());
-			app.setProcessing (true);
-			try{
-				if(returnVal != JFileChooser.APPROVE_OPTION) {
-					return;
-				}
-				// Create a Reader to the file to unmarshal from
-				Writer writer = new FileWriter(chooser.getSelectedFile().getName());
+			final int returnVal = chooser.showSaveDialog(app.getMainForm());
+			final SwingWorker worker = new SwingWorker() {
+				public Object construct() {
+					app.setProcessing (true);
+					try{
+						if(returnVal != JFileChooser.APPROVE_OPTION) {
+							return null;
+						}
+						try {
+							// Create a Reader to the file to unmarshal from
+							Writer writer = new FileWriter(chooser.getSelectedFile().getName());
 
-				// Create a new Marshaller
-				Marshaller marshaller = new Marshaller(writer);
-				marshaller.setMapping(mapping);
-				// Marshal the project object
-				marshaller.marshal(app.getProject(), writer);
-			} finally {
-				app.setProcessing (false);
-			}
+							// Create a new Marshaller
+							Marshaller marshaller = new Marshaller(writer);
+							marshaller.setMapping(mapping);
+							// Marshal the project object
+							marshaller.marshal(app.getProject(), writer);
+						} catch (Exception ex) {
+							throw new NestedRuntimeException(ex);
+						}
+					} finally {
+						app.setProcessing (false);
+					}
+					
+					JOptionPane.showMessageDialog(Application.getInstance ().getMainForm (), ResourceSupplier.getString(ResourceClass.UI, "controls", "xmlexport.successful"));
+					return null;
+				}
+			};
+			worker.start();
+				
 		} catch (Exception ex) {
 			System.out.println(ExceptionUtils.getStackStrace(ex));
 			throw new NestedRuntimeException(ex);

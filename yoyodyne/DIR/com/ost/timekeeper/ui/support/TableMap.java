@@ -49,7 +49,7 @@
  * @version 1.11 01/23/03
  * @author Philip Milne */
 
-package com.ost.timekeeper.ui;
+package com.ost.timekeeper.ui.support;
 
 import javax.swing.table.*; 
 import javax.swing.event.TableModelListener; 

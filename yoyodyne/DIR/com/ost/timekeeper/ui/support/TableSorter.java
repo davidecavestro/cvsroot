@@ -55,7 +55,7 @@
  * @author Philip Milne
  */
 
-package com.ost.timekeeper.ui;
+package com.ost.timekeeper.ui.support;
 
 import java.util.*;
 

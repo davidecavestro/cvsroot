@@ -40,7 +40,7 @@ public final class NodeCreateAction extends javax.swing.AbstractAction implement
 			 */
 			return;
 		}
-		ProgressItem newNode = new ProgressItem ();
+		ProgressItem newNode = new ProgressItem (newNodeName);
 		Application app = Application.getInstance ();
 		ProgressItem selectedItem = app.getSelectedItem ();
 		app.getMainForm ().getProgressTreeModel ().insertNodeInto (newNode, selectedItem, selectedItem.childCount ());

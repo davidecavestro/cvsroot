@@ -117,17 +117,22 @@ public class Application extends Observable{
 	 * @param args gli argomenti della linea di comando.
 	 */
 	public static void main(String args[]) {
-		Application a = getInstance();
-//		a.getProjectCreateAction ().execute ("Void project");
-		ActionPool.getInstance ().getProjectCloseAction ().execute ();
-		try{
-			a.getMainForm().setBounds(0, 0, 800, 600);
-			a.getMainForm().show();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			JOptionPane.showMessageDialog(a.getMainForm(),
-			ex.toString(), "Warning",
-			JOptionPane.WARNING_MESSAGE);
+		SplashScreen.getInstance ().startSplash ();
+		try {
+			Application a = getInstance();
+	//		a.getProjectCreateAction ().execute ("Void project");
+			ActionPool.getInstance ().getProjectCloseAction ().execute ();
+			try{
+	//			a.getMainForm().setBounds(0, 0, 800, 600);
+				a.getMainForm().show();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				JOptionPane.showMessageDialog(a.getMainForm(),
+				ex.toString(), "Warning",
+				JOptionPane.WARNING_MESSAGE);
+			}
+		} finally {
+			SplashScreen.getInstance ().stopSplash ();
 		}
 	}
 	
@@ -320,7 +325,9 @@ public class Application extends Observable{
 			this._processing++;
 		} else {
 			this._processing--;
-			java.awt.Toolkit.getDefaultToolkit().beep();
+			if (this._processing==0){
+				java.awt.Toolkit.getDefaultToolkit().beep();
+			}
 		}
 		this.setChanged ();
 		this.notifyObservers (ObserverCodes.PROCESSINGCHANGE);

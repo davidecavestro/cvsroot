@@ -19,6 +19,7 @@ import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
+import java.awt.*;
 import java.awt.event.*;
 
 /**
@@ -57,13 +58,25 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 		this.addMouseListener (new MouseAdapter (){
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount ()>1){
-					final ProgressStopAction stopAction = ActionPool.getInstance ().getProgressStopAction ();
-					if (stopAction.isEnabled ()){
-						stopAction.actionPerformed (new ActionEvent (this, 0, null));
-					}
+//					final ProgressStopAction stopAction = ActionPool.getInstance ().getProgressStopAction ();
+//					if (stopAction.isEnabled ()){
+//						stopAction.actionPerformed (new ActionEvent (this, 0, null));
+//					}
 				}
 			}
 		});
+		
+		this.addMouseListener (new MouseAdapter (){
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount ()>1){
+					/*
+					 * Almeno doppio click.
+					 */
+					Desktop.getInstance ().bringToTop (ProgressInspectorFrame.getInstance ());
+				}
+			}
+		});
+		this.setAutoscrolls (true);
 	}
 	
 	/**

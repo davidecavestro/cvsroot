@@ -20,21 +20,21 @@ public final class StringUtils {
 	}
 	
 	/**
-	 * Verifica se un array di stringhe ne contiene una scelta.
+	 * Verifica se un array di stringhe contiene la stringa specificata.
 	 *
 	 * @param container il contenitore.
 	 * @param pattern la stringa da cercare.
 	 * @return <code<true</code>se <code>container</code> contiene <code>pattern</code>;
 	 * <code>false</code> altrimenti.
 	 */	
-	public final static boolean contains (String[] container, String pattern){
+	public final static boolean contains (Object[] container, Object pattern){
 		boolean nullContainer = container==null;
 		boolean nullPattern = pattern==null;
 		if (nullContainer && nullPattern){
 			return true;
 		}
 		for (int i=0;i<container.length;i++){
-			String s = container[i];
+			final Object s = container[i];
 			if (s!=null){
 				if (s.equals(pattern)){
 					return true;

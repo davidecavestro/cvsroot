@@ -34,17 +34,30 @@ public final class ProjectOpenAction extends javax.swing.AbstractAction implemen
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
-		Application app = Application.getInstance();
-		Project choice = ProjectSelectDialog.chooseProject(app.getMainForm(),
-		ResourceSupplier.getString(ResourceClass.UI, "controls", "openproject"),
-		ResourceSupplier.getString(ResourceClass.UI, "controls", "selectprojecttoopen"),
-		true);
-		if (choice!=null){
-			/*
-			 * Scelta valida (non si vuole impostare a NULL il progetto corrente, al massimo lo è già.
-			 */
-			app.setProject(choice);
-		}
+		final Application app = Application.getInstance();
+		
+//		final SwingWorker worker = new SwingWorker() {
+//			public Object construct() {
+//				app.setProcessing (true);
+//				try {
+					Project choice = ProjectSelectDialog.chooseProject(app.getMainForm(),
+					ResourceSupplier.getString(ResourceClass.UI, "controls", "openproject"),
+					ResourceSupplier.getString(ResourceClass.UI, "controls", "selectprojecttoopen"),
+					true);
+					if (choice!=null){
+						/*
+						 * Scelta valida (non si vuole impostare a NULL il progetto corrente, al massimo lo è già.
+						 */
+						app.setProject(choice);
+					}
+//				} finally {
+//					app.setProcessing (false);
+//				}
+//				return null;
+//			}
+//		};
+//		worker.start();
+					
 	}
 	
 	public void update(Observable o, Object arg) {

@@ -39,32 +39,50 @@ public final class ProjectXMLImportAction extends javax.swing.AbstractAction imp
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
-		Application app = Application.getInstance();
+		final Application app = Application.getInstance();
 		// Load Mapping
-		Mapping mapping = new Mapping();
+		final Mapping mapping = new Mapping();
 		try{
 			mapping.loadMapping("modelmapping.xml");
 			
-			int returnVal = chooser.showOpenDialog(app.getMainForm());
+			final int returnVal = chooser.showOpenDialog(app.getMainForm());
 			
-			app.setProcessing (true);
 			try {
-				if(returnVal != JFileChooser.APPROVE_OPTION) {
-					return;
-				}
-				// Create a Reader to the file to unmarshal from
-				Reader reader = new FileReader(chooser.getSelectedFile().getName());
+				final SwingWorker worker = new SwingWorker() {
+					public Object construct() {
+						app.setProcessing (true);
+						try {
+							if(returnVal != JFileChooser.APPROVE_OPTION) {
+								return null;
+							}
+							try {
+								// Create a Reader to the file to unmarshal from
+								Reader reader = new FileReader(chooser.getSelectedFile().getName());
 
-				// Create a new Unmarshaller
-				Unmarshaller unmarshaller = new Unmarshaller(Project.class);
-				unmarshaller.setMapping(mapping);
-				// Unmarshal the project object
-				Project project = (Project)unmarshaller.unmarshal(reader);
-				System.out.println ("progetto importato: "+project);
-				app.setProject (project);
+								// Create a new Unmarshaller
+								Unmarshaller unmarshaller = new Unmarshaller(Project.class);
+								unmarshaller.setMapping(mapping);
+								// Unmarshal the project object
+								Project project = (Project)unmarshaller.unmarshal(reader);
+								System.out.println ("progetto importato: "+project);
+								app.setProject (project);
+							} catch (Exception ex) {
+								throw new NestedRuntimeException(ex);
+							}
+						} finally {
+							app.setProcessing (false);
+						}
+						JOptionPane.showMessageDialog(Application.getInstance ().getMainForm (), ResourceSupplier.getString(ResourceClass.UI, "controls", "xmlimport.successful"));
+						return null;
+							
+					}
+				};
+				worker.start();
 			} finally {
-				app.setProcessing (false);
+//				app.setProcessing (false);
 			}
+			
+			
 		} catch (Exception ex) {
 			throw new NestedRuntimeException(ex);
 		}

@@ -12,10 +12,10 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
-import javax.swing.tree.*;
 
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.*;
+import com.ost.timekeeper.conf.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
@@ -47,6 +47,9 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		this.progressTableModel = this.progressTable.getProgressTableModel ();
 		this.progressTableModel.load (application.getCurrentItem ());
 		postInitComponents ();
+		
+		setBounds (ApplicationOptions.getInstance ().getMainFormBounds ());
+		JFrame.setDefaultLookAndFeelDecorated (true);
 	}
 	
 	/**
@@ -64,22 +67,46 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		statusLabel = new javax.swing.JLabel ();
 		currentDurationLabel = new javax.swing.JLabel ();
 		jobProgress = new javax.swing.JProgressBar ();
-		jLabel3 = new javax.swing.JLabel ();
+//		jLabel3 = new javax.swing.JLabel ();
 		jPanelTree = new javax.swing.JPanel ();
 		jSplit_Tree_Data = new javax.swing.JSplitPane ();
 		progressItemTree = new javax.swing.JTree ();
-		dataTabbedPane = new javax.swing.JTabbedPane ();
+		
+		//		dataTabbedPane = new javax.swing.JTabbedPane ();
+		desktop = Desktop.getInstance ();
+		desktop.setBackground (Color.BLACK);
+		desktop.setDragMode (JDesktopPane.LIVE_DRAG_MODE);
+		
 		progressTable = new com.ost.timekeeper.ui.SubtreeProgressesTable ();
+		progressTable.getSelectionModel ().addListSelectionListener (
+			new ListSelectionListener (){
+				public void valueChanged  (ListSelectionEvent lse){
+					//Ignore extra messages.
+					if (lse.getValueIsAdjusting()){
+						return;
+					}
+
+					Period selectedPeriod = null;
+					ListSelectionModel lsm = (ListSelectionModel)lse.getSource();
+					if (lsm.isSelectionEmpty()) {
+						//no rows are selected
+					} else {
+						int selectedRow = lsm.getMinSelectionIndex();
+						//selectedRow is selected
+						selectedPeriod = (Period)progressTableModel.getProgresses ().get (selectedRow);
+					}
+					Application.getInstance ().setSelectedProgress (selectedPeriod);
+				}
+			}
+		);
 		this.application.addObserver (progressTable);
-		progressItemEditPanel = new ProgressItemEditPanel (this.application);
-		this.application.addObserver (progressItemEditPanel);
-		jLayeredPane1 = new javax.swing.JLayeredPane ();
-		jLabel4 = new javax.swing.JLabel ();
-		jTextField1 = new javax.swing.JTextField ();
-		jLabel5 = new javax.swing.JLabel ();
-		jTextField2 = new javax.swing.JTextField ();
-		jLabel6 = new javax.swing.JLabel ();
-		jTextField3 = new javax.swing.JTextField ();
+//		jLayeredPane1 = new javax.swing.JLayeredPane ();
+//		jLabel4 = new javax.swing.JLabel ();
+//		jTextField1 = new javax.swing.JTextField ();
+//		jLabel5 = new javax.swing.JLabel ();
+//		jTextField2 = new javax.swing.JTextField ();
+//		jLabel6 = new javax.swing.JLabel ();
+//		jTextField3 = new javax.swing.JTextField ();
 		jMenuBarMain = new javax.swing.JMenuBar ();
 		jMenuFile = new javax.swing.JMenu ();
 		jMenuItemNew = new javax.swing.JMenuItem ();
@@ -161,10 +188,10 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		//		jobProgress.setString("");
 		statusBar.add (jobProgress);
 		
-		jLabel3.setFont (new java.awt.Font ("Default", 0, 12));
-		jLabel3.setText ("jLabel3");
-		jLabel3.setBorder (new javax.swing.border.LineBorder (new java.awt.Color (0, 0, 0)));
-		statusBar.add (jLabel3);
+//		jLabel3.setFont (new java.awt.Font ("Default", 0, 12));
+//		jLabel3.setText ("jLabel3");
+//		jLabel3.setBorder (new javax.swing.border.LineBorder (new java.awt.Color (0, 0, 0)));
+//		statusBar.add (jLabel3);
 		
 		jPanelMain.add (statusBar, java.awt.BorderLayout.SOUTH);
 		
@@ -190,49 +217,150 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		progressItemTree.setPreferredSize (new java.awt.Dimension (150, 200));
 		jSplit_Tree_Data.setLeftComponent (new JScrollPane (progressItemTree));
 		
-		dataTabbedPane.setMaximumSize (null);
-		dataTabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "progresses"), new JScrollPane (progressTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		/*
+		 * Gestione doppio click su albero.
+		 */
+		progressItemTree.addMouseListener (new MouseAdapter (){
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount ()>1){
+					/*
+					 * Almeno doppio click.
+					 */
+					Desktop.getInstance ().bringToTop (ProgressItemInspectorFrame.getInstance ());
+				}
+			}
+		});
 		
+		JInternalFrame progressesInspectorFrame = new JInternalFrame (
+			ResourceSupplier.getString (ResourceClass.UI, "controls", "progresses.list"), 
+              true, //resizable
+              false, //closable
+              true, //maximizable
+              true);//iconifiable
+		
+		final JPanel progressesPane = new JPanel (new BorderLayout ());
+		final JComboBox progressesListCombo = new JComboBox (
+		/*
+		 * valori possibili.
+		 * @@@ ATTENZIONE: la posizione è direttamente mappata nel gesore azione.
+		 */
+		new Object[]{
+		ResourceSupplier.getString (ResourceClass.UI, "controls", "local"), 
+		ResourceSupplier.getString (ResourceClass.UI, "controls", "subtree")
+		}
+		);
+		progressesListCombo.addActionListener (new ActionListener (){
+			public void actionPerformed (ActionEvent ae){
+				final int selectedIndex = progressesListCombo.getSelectedIndex ();
+				switch (selectedIndex){
+					case 0: 
+						progressTableModel.setProgressListType (ProgressListType.LOCAL);
+						break;
+					case 1: 
+						progressTableModel.setProgressListType (ProgressListType.SUBTREE);
+						break;
+				}
+			}
+		});
+		final JPanel progressesTopPane = new JPanel (new BorderLayout ());
+		progressesTopPane.add (progressesListCombo, BorderLayout.WEST);
+		progressesPane.add (progressesTopPane, BorderLayout.NORTH);
+		final JPanel progressesBottomPane = new JPanel (new BorderLayout ());
+		progressesBottomPane.add (
+		new JScrollPane (progressTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
+		BorderLayout.CENTER);
+		progressesPane.add (progressesBottomPane, BorderLayout.CENTER);
+		progressesInspectorFrame.setContentPane (progressesPane);
+		int openFrameCount = 1;
+		int xOffset = 30, yOffset = 30;
+		
+        //...Then set the window size or call pack...
+//        setSize(300,300);
+		progressesInspectorFrame.pack ();
+
+        //Set the window's location.
+        progressesInspectorFrame.setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
+
+		progressesInspectorFrame.setVisible (true); //necessary as of 1.3
+		desktop.add (progressesInspectorFrame);
+		try {
+			progressesInspectorFrame.setSelected (true);
+		} catch (java.beans.PropertyVetoException e) {}
+		//		dataTabbedPane.setMaximumSize (null);
+		//		dataTabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "progresses"),
+		//			new JScrollPane (progressTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		
+		//		setContentPane(desktop);
 		//		progressItemEditPanel.setLayout(new java.awt.BorderLayout());
 		//
 		//		progressItemEditPanel.setAutoscrolls(true);
-		jLayeredPane1.setAutoscrolls (true);
-		jLabel4.setText ("jLabel4");
-		jLabel4.setBounds (20, 20, -1, -1);
-		jLayeredPane1.add (jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
-		
-		jTextField1.setText ("jTextField1");
-		jTextField1.setMaximumSize (null);
-		jTextField1.setMinimumSize (null);
-		jTextField1.setBounds (90, 100, 300, -1);
-		jLayeredPane1.add (jTextField1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-		
-		jLabel5.setText ("jLabel4");
-		jLabel5.setBounds (20, 100, -1, -1);
-		jLayeredPane1.add (jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
-		
-		jTextField2.setText ("jTextField1");
-		jTextField2.setMaximumSize (null);
-		jTextField2.setMinimumSize (null);
-		jTextField2.setBounds (90, 60, 300, -1);
-		jLayeredPane1.add (jTextField2, javax.swing.JLayeredPane.DEFAULT_LAYER);
-		
-		jLabel6.setText ("jLabel4");
-		jLabel6.setBounds (20, 60, -1, -1);
-		jLayeredPane1.add (jLabel6, javax.swing.JLayeredPane.DEFAULT_LAYER);
-		
-		jTextField3.setText ("jTextField1");
-		jTextField3.setMaximumSize (null);
-		jTextField3.setMinimumSize (null);
-		jTextField3.setBounds (90, 20, 300, -1);
-		jLayeredPane1.add (jTextField3, javax.swing.JLayeredPane.DEFAULT_LAYER);
+//		jLayeredPane1.setAutoscrolls (true);
+//		jLabel4.setText ("jLabel4");
+//		jLabel4.setBounds (20, 20, -1, -1);
+//		jLayeredPane1.add (jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
+//		
+//		jTextField1.setText ("jTextField1");
+//		jTextField1.setMaximumSize (null);
+//		jTextField1.setMinimumSize (null);
+//		jTextField1.setBounds (90, 100, 300, -1);
+//		jLayeredPane1.add (jTextField1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+//		
+//		jLabel5.setText ("jLabel4");
+//		jLabel5.setBounds (20, 100, -1, -1);
+//		jLayeredPane1.add (jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
+//		
+//		jTextField2.setText ("jTextField1");
+//		jTextField2.setMaximumSize (null);
+//		jTextField2.setMinimumSize (null);
+//		jTextField2.setBounds (90, 60, 300, -1);
+//		jLayeredPane1.add (jTextField2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+//		
+//		jLabel6.setText ("jLabel4");
+//		jLabel6.setBounds (20, 60, -1, -1);
+//		jLayeredPane1.add (jLabel6, javax.swing.JLayeredPane.DEFAULT_LAYER);
+//		
+//		jTextField3.setText ("jTextField1");
+//		jTextField3.setMaximumSize (null);
+//		jTextField3.setMinimumSize (null);
+//		jTextField3.setBounds (90, 20, 300, -1);
+//		jLayeredPane1.add (jTextField3, javax.swing.JLayeredPane.DEFAULT_LAYER);
 		
 		//		jPanel2.add(jLayeredPane1, java.awt.BorderLayout.CENTER);
+
+		/*
+		 * Dettaglio nodo di avanzamento.
+		 */
+		ProgressItemInspectorFrame progressItemInspectorFrame = ProgressItemInspectorFrame.getInstance ();
+		openFrameCount++;
+        //Set the window's location.
+        progressItemInspectorFrame.setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
+		progressItemInspectorFrame.setVisible (true); //necessary as of 1.3
+		desktop.add (progressItemInspectorFrame);
+		try {
+			progressItemInspectorFrame.setSelected (true);
+		} catch (java.beans.PropertyVetoException e) {}
 		
-		dataTabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "detail")
-		, new JScrollPane (progressItemEditPanel));
+		//		dataTabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "detail")
+		//		, new JScrollPane (progressItemEditPanel));
 		
-		jSplit_Tree_Data.setRightComponent (dataTabbedPane);
+		/*
+		 * Dettaglio avanzamento.
+		 */
+		ProgressInspectorFrame periodInspectorFrame = ProgressInspectorFrame.getInstance ();
+		openFrameCount++;
+        //Set the window's location.
+        periodInspectorFrame.setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
+		periodInspectorFrame.setVisible (true); //necessary as of 1.3
+		desktop.add (periodInspectorFrame);
+		try {
+			periodInspectorFrame.setSelected (true);
+		} catch (java.beans.PropertyVetoException e) {}
+		
+
+		//		dataTabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "detail")
+		//		, new JScrollPane (progressItemEditPanel));
+		
+		jSplit_Tree_Data.setRightComponent (desktop);
 		
 		jPanelTree.add (jSplit_Tree_Data, java.awt.BorderLayout.CENTER);
 		
@@ -340,6 +468,12 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuHelp.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help"));
 		jMenuItemAbout.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_QUOTE, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
 		jMenuItemAbout.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help.about"));
+		jMenuItemAbout.addActionListener (new ActionListener (){
+			public void actionPerformed(ActionEvent e){
+				AboutBox.getInstance ().show ();
+			}
+		});
+		
 		jMenuHelp.add (jMenuItemAbout);
 		
 		jMenuItemHelp.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_F1, 0));
@@ -383,10 +517,10 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	// Variables declaration - do not modify
 	private javax.swing.JLabel statusLabel;
 	private javax.swing.JLabel currentDurationLabel;
-	private javax.swing.JLabel jLabel3;
-	private javax.swing.JLabel jLabel4;
-	private javax.swing.JLabel jLabel5;
-	private javax.swing.JLabel jLabel6;
+//	private javax.swing.JLabel jLabel3;
+//	private javax.swing.JLabel jLabel4;
+//	private javax.swing.JLabel jLabel5;
+//	private javax.swing.JLabel jLabel6;
 	private javax.swing.JLayeredPane jLayeredPane1;
 	private javax.swing.JMenu jMenuActions;
 	private javax.swing.JMenuBar jMenuBarMain;
@@ -419,15 +553,15 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JMenuItem jMenuItemStop;
 	private javax.swing.JMenu jMenuTools;
 	private javax.swing.JPanel jPanelTree;
-	private ProgressItemEditPanel progressItemEditPanel;
 	private javax.swing.JPanel jPanelMain;
 	private javax.swing.JPopupMenu progressTreePopup;
 	private javax.swing.JSplitPane jSplit_Tree_Data;
-	private javax.swing.JTabbedPane dataTabbedPane;
+	//	private javax.swing.JTabbedPane dataTabbedPane;
+	private Desktop desktop;
 	private com.ost.timekeeper.ui.SubtreeProgressesTable progressTable;
-	private javax.swing.JTextField jTextField1;
-	private javax.swing.JTextField jTextField2;
-	private javax.swing.JTextField jTextField3;
+//	private javax.swing.JTextField jTextField1;
+//	private javax.swing.JTextField jTextField2;
+//	private javax.swing.JTextField jTextField3;
 	private javax.swing.JToolBar jToolBarMain;
 	private javax.swing.JProgressBar jobProgress;
 	private javax.swing.JTree progressItemTree;
@@ -457,6 +591,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		this.progressItemTree.setInvokesStopCellEditing (true);
 		//		this.progressItemTree.putClientProperty("JTree.lineStyle", "Angled");
 		this.progressTable.setAutoResizeMode (JTable.AUTO_RESIZE_LAST_COLUMN);
+		
 	}
 	
 	private final void initTreeModelListeners (){
@@ -531,11 +666,11 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 				sb.append (durationNumberFormatter.format(duration.getDays()))
 				.append (":")
 				 */
-				sb.append (durationNumberFormatter.format(duration.getHours()))
+				sb.append (durationNumberFormatter.format (duration.getHours ()))
 				.append (":")
-				.append (durationNumberFormatter.format(duration.getMinutes()))
+				.append (durationNumberFormatter.format (duration.getMinutes ()))
 				.append (":")
-				.append (durationNumberFormatter.format(duration.getSeconds()));
+				.append (durationNumberFormatter.format (duration.getSeconds ()));
 				currentDurationLabel.setText (sb.toString ());
 				
 			} else if (arg!=null && (arg.equals (ObserverCodes.PROCESSINGCHANGE))){
