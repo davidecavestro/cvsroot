@@ -24,7 +24,7 @@ import javax.swing.event.*;
  *
  * @author  davide
  */
-public final class UserOtherSettingsEditPanel extends javax.swing.JPanel implements Observer {
+public final class UserOtherSettingsEditPanel extends ObservablePanel implements Observer {
 	
 	public final static String USEROTHERSETTINGSCHANGE = "userothersettingschange";
 	
@@ -67,7 +67,7 @@ public final class UserOtherSettingsEditPanel extends javax.swing.JPanel impleme
 	 */
 	private void initComponents () {
 		
-		setLayout (new javax.swing.SpringLayout ());
+		setLayout (new java.awt.GridBagLayout ());
 		
 		/*
 		 * Configurazione editazione del percorso della directory dello storage.
@@ -84,18 +84,34 @@ public final class UserOtherSettingsEditPanel extends javax.swing.JPanel impleme
 					setDataChanged (true);
 			}});
 			
+		final GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.insets = new Insets (3, 3, 3, 3);
 			
 		/*
 		 * Inserimento componenti editazione dimensione del buffer per il log.
 		 */
-		add (plainTextLogBufferSizeLabel);
-		add (plainTextLogBufferSizeEditor);
+		c.gridx = 0;
+		c.gridy = 0;
+		add (plainTextLogBufferSizeLabel, c);
+		c.gridx = 1;
+		c.gridy = 0;
+		add (plainTextLogBufferSizeEditor, c);
 		
-		SpringUtilities.makeCompactGrid (this,
-		1, 2, //rows, cols
-		6, 6,        //initX, initY
-		6, 6);       //xPad, yPad
+		/* etichetta vuota per riempire lo spazio rimanente */
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 2;
+		add (new JLabel (""), c);
+//		SpringUtilities.makeCompactGrid (this,
+//		1, 2, //rows, cols
+//		6, 6,        //initX, initY
+//		6, 6);       //xPad, yPad
 		
+		this.setMinimumSize (new Dimension (320, 240));
 	}
 	
 	/**
@@ -146,6 +162,11 @@ public final class UserOtherSettingsEditPanel extends javax.swing.JPanel impleme
 	 */
 	private void setDataChanged (boolean changed){
 		this._dataChanged = changed;
+		if (changed){
+			this.setChanged ();
+			//notifica la modifica
+			this.notifyObservers (USEROTHERSETTINGSCHANGE);
+		}
 	}
 	
 	/**

@@ -108,6 +108,8 @@ public final class ProgressListFrame extends javax.swing.JInternalFrame {
 				progressTable.getProgressTableModel ().setProgressListType ((ProgressListType)progressesListCombo.getSelectedItem ());
 			}
 		});
+		progressesListCombo.setToolTipText (ResourceSupplier.getString (ResourceClass.UI, "controls", "progresslist.combo.local_subtree"));
+		
 		final JPanel progressesTopPane = new JPanel (new BorderLayout ());
 		progressesTopPane.add (progressesListCombo, BorderLayout.WEST);
 		progressesPane.add (progressesTopPane, BorderLayout.NORTH);

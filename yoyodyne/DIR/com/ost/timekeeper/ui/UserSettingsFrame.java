@@ -15,7 +15,7 @@ import java.awt.*;
  *
  * @author  davide
  */
-public final class UserSettingsFrame extends javax.swing.JFrame {
+public final class UserSettingsFrame extends javax.swing.JDialog {
 	
 	/**
 	 * Istanza singleton.
@@ -39,7 +39,10 @@ public final class UserSettingsFrame extends javax.swing.JFrame {
 		setTitle (ResourceSupplier.getString (ResourceClass.UI, "controls", "user.settings"));
 		initComponents ();
 		
-				
+		/*
+		 * centra
+		 */
+		this.setLocationRelativeTo (null);
 	}
 	
 	/**
@@ -71,7 +74,12 @@ public final class UserSettingsFrame extends javax.swing.JFrame {
 //		this.setMinimumSize (new Dimension (250, 150));
 		pack ();
 	}
-	
-	
+
+	/**
+	 * Mostra il pannello di editazione della configurazione relativa ai dati.
+	 */
+	public void showDataSettings (){
+		this.editPanel.showDataSettings ();
+	}
 	
 }

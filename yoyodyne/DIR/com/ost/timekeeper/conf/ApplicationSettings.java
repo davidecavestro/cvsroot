@@ -83,6 +83,13 @@ public interface ApplicationSettings {
 	public String getJDOStorageName ();
 	
 	/**
+	 * Ritorna il nome dell'utente JDO.
+	 *
+	 * @return il nome dell'utente JDO.
+	 */
+	public String getJDOUserName ();
+	
+	/**
 	 * Ritorna la dimensione del buffer per il logger di testo semplice.
 	 *
 	 * @return la dimensione del buffer per il logger di testo semplice.

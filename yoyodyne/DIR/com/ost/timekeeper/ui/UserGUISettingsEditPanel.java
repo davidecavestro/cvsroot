@@ -23,7 +23,7 @@ import javax.swing.border.*;
  *
  * @author  davide
  */
-public final class UserGUISettingsEditPanel extends javax.swing.JPanel implements Observer {
+public final class UserGUISettingsEditPanel extends ObservablePanel implements Observer {
 	
 	public final static String USERGUISETTINGSCHANGE = "userguisettingschange";
 	
@@ -74,7 +74,7 @@ public final class UserGUISettingsEditPanel extends javax.swing.JPanel implement
 	 */
 	private void initComponents () {
 		
-		setLayout (new javax.swing.SpringLayout ());
+		setLayout (new java.awt.GridBagLayout ());
 		
 		/*
 		 * Configurazione scelta colore desktop.
@@ -85,7 +85,8 @@ public final class UserGUISettingsEditPanel extends javax.swing.JPanel implement
 		/*
 		 * Inizializzazione.
 		 */
-		desktopColorChooser.setSize (50, 50);
+		desktopColorChooser.setPreferredSize (new Dimension (16, 16));
+		desktopColorChooser.setBorder (new CompoundBorder (new BevelBorder (BevelBorder.RAISED), (new CompoundBorder (new EmptyBorder (2,2,2,2), new BevelBorder (BevelBorder.LOWERED)))));
 		//		desktopColorChooser.setBorder (new EtchedBorder (EtchedBorder.RAISED));
 		desktopColorChooser.addActionListener (new ActionListener (){
 			public void actionPerformed (ActionEvent ae){
@@ -93,8 +94,10 @@ public final class UserGUISettingsEditPanel extends javax.swing.JPanel implement
 				UserGUISettingsEditPanel.this,
 				ResourceSupplier.getString (ResourceClass.UI, "controls", "choose.desktop.color"),
 				UserSettings.getInstance ().getDesktopColor ());
-				desktopColorChooser.setColor (newColor);
-				setDataChanged (true);
+				if (newColor!=null){
+					desktopColorChooser.setColor (newColor);
+					setDataChanged (true);
+				}
 			}
 		});
 		
@@ -110,25 +113,48 @@ public final class UserGUISettingsEditPanel extends javax.swing.JPanel implement
 			}
 		});
 		
+		final GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.insets = new Insets (3, 3, 3, 3);
+		
 		/*
 		 * Inserimento componenti scelta colore desktop.
 		 */
-		add (desktopColorLabel);
-		add (desktopColorChooser);
+		c.gridx = 0;
+		c.gridy = 0;
+		add (desktopColorLabel, c);
+		c.fill = GridBagConstraints.VERTICAL;
+		c.gridx = 1;
+		c.gridy = 0;
+		add (desktopColorChooser, c);
 		
 		/*
 		 * Inserimento componenti abilitazione notifica sonora.
 		 */
-		add (beepOnEventsLabel);
-		add (beepOnEventsBox);
+		c.fill = GridBagConstraints.BOTH;
+		c.gridx = 0;
+		c.gridy = 1;
+		add (beepOnEventsLabel, c);
+		c.gridx = 1;
+		c.gridy = 1;
+		add (beepOnEventsBox, c);
 		
+		/* etichetta vuota per riempire lo spazio rimanente */
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 2;
+		add (new JLabel (""), c);
 		
-		SpringUtilities.makeCompactGrid (this,
-		2, 2, //rows, cols
-		6, 6,        //initX, initY
-		6, 6);       //xPad, yPad
+//		SpringUtilities.makeCompactGrid (this,
+//		2, 2, //rows, cols
+//		6, 6,        //initX, initY
+//		6, 6);       //xPad, yPad
 		
 		//getRootPane().setDefaultButton (confirmButton);
+		this.setMinimumSize (new Dimension (320, 240));
 	}
 	
 	/**
@@ -185,6 +211,11 @@ public final class UserGUISettingsEditPanel extends javax.swing.JPanel implement
 	 */
 	private void setDataChanged (boolean changed){
 		this._dataChanged = changed;
+		if (changed){
+			this.setChanged ();
+			//notifica la modifica
+			this.notifyObservers (USERGUISETTINGSCHANGE);
+		}
 	}
 	
 	/**

@@ -27,6 +27,15 @@ public class UserResources {
 	}
 	
 	/**
+	 * Ritorna il nome dell'acount dell'utente.
+	 *
+	 * @return il nome dell'acount dell'utente.
+	 */	
+	public static String getUserAccount (){
+		return System.getProperty (ResourceNames.USER_ACCOUNT);
+	}
+	
+	/**
 	 * Ritorna il percorso della directory privata dell'utente di supporto all'applicazione .
 	 *
 	 * @return il percorso della directory privata dell'utente di supporto all'applicazione .

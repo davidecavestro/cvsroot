@@ -10,6 +10,7 @@ import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.*;
 import com.ost.timekeeper.conf.*;
 import com.ost.timekeeper.model.*;
+import com.ost.timekeeper.persistence.*;
 import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.util.*;
 import java.awt.*;
@@ -23,7 +24,7 @@ import javax.swing.border.*;
  *
  * @author  davide
  */
-public final class UserDataSettingsEditPanel extends javax.swing.JPanel implements Observer {
+public final class UserDataSettingsEditPanel extends ObservablePanel implements Observer {
 	
 	public final static String USERDATASETTINGSCHANGE = "userdatasettingschange";
 	
@@ -60,7 +61,13 @@ public final class UserDataSettingsEditPanel extends javax.swing.JPanel implemen
 	 * Pulsante di selezione percorso.
 	 */
 	private final javax.swing.JButton jdoStorageDirPathChoice = new javax.swing.JButton ();
-		
+	
+	/**
+	 * Pulsante di inizializzazione storage.
+	 */
+	private final javax.swing.JButton jdoStorageInitButton = new javax.swing.JButton ();
+	
+	
 	/**********************************************
 	 * FINE dichiarazione componenti UI interne.
 	 **********************************************/
@@ -86,7 +93,7 @@ public final class UserDataSettingsEditPanel extends javax.swing.JPanel implemen
 	 */
 	private void initComponents () {
 		
-		setLayout (new javax.swing.SpringLayout ());
+		setLayout (new GridBagLayout ());
 		
 		/*
 		 * Configurazione editazione del percorso della directory dello storage.
@@ -118,13 +125,34 @@ public final class UserDataSettingsEditPanel extends javax.swing.JPanel implemen
 			}
 		});
 		
+		jdoStorageInitButton.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "datastorage.init"));
+		jdoStorageInitButton.addActionListener (new ActionListener (){
+			public void actionPerformed (ActionEvent ae){
+				if (
+				JOptionPane.showConfirmDialog (
+				UserDataSettingsEditPanel.this, ResourceSupplier.getString (ResourceClass.UI, "controls", "datastorage.init.confirm"))==JOptionPane.OK_OPTION){
+					Application.getInstance ().createDataStore ();
+				}
+			}});
 			
+		final GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.insets = new Insets (3, 3, 3, 3);
+		
 		/*
 		 * Inserimento componenti editazione percorso directory storage notifica sonora.
 		 */
-		add (jdoStorageDirPathLabel);
-		add (jdoStorageDirPathEditor);
-		add (jdoStorageDirPathChoice);
+		
+		c.gridx = 0;
+		c.gridy = 0;
+		add (jdoStorageDirPathLabel, c);
+		c.gridx = 1;
+		c.gridy = 0;
+		add (jdoStorageDirPathEditor, c);
+		c.gridx = 2;
+		c.gridy = 0;
+		add (jdoStorageDirPathChoice, c);
 		
 		/*
 		 * Configurazione editazione del nome dello storage.
@@ -132,20 +160,42 @@ public final class UserDataSettingsEditPanel extends javax.swing.JPanel implemen
 		jdoStorageNameLabel.setLabelFor (jdoStorageNameEditor);
 		jdoStorageNameLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "jdostorage.name"));
 		jdoStorageNameEditor.setMinimumSize (new Dimension (150, 16));
+		jdoStorageNameEditor.addActionListener (new ActionListener (){
+			public void actionPerformed (ActionEvent ae){
+				setDataChanged (true);
+			}
+		});
 		
+		
+		c.weightx = 1;
 		/*
 		 * Inserimento componenti editazione nome dello storage.
 		 */
-		add (jdoStorageNameLabel);
-		add (jdoStorageNameEditor);
-		/*etichetta per riempure la griglia*/
-		add (new javax.swing.JLabel ());
+		c.gridx = 0;
+		c.gridy = 1;
+		add (jdoStorageNameLabel, c);
+		c.gridx = 1;
+		c.gridy = 1;
+		add (jdoStorageNameEditor, c);
 		
-		SpringUtilities.makeCompactGrid (this,
-		2, 3, //rows, cols
-		6, 6,        //initX, initY
-		6, 6);       //xPad, yPad
+		c.gridx = 1;
+		c.gridy = 2;
+		add (jdoStorageInitButton, c);
 		
+		/* etichetta vuota per riempire lo spazio rimanente */
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		c.gridx = 0;
+		c.gridy = 3;
+		c.gridwidth = 2;
+		add (new JLabel (""), c);
+		
+//		SpringUtilities.makeCompactGrid (this,
+//		2, 3, //rows, cols
+//		6, 6,        //initX, initY
+//		6, 6);       //xPad, yPad
+		
+		this.setMinimumSize (new Dimension (320, 240));
 	}
 	
 	/**
@@ -193,6 +243,11 @@ public final class UserDataSettingsEditPanel extends javax.swing.JPanel implemen
 	 */
 	private void setDataChanged (boolean changed){
 		this._dataChanged = changed;
+		if (changed){
+			this.setChanged ();
+			//notifica la modifica
+			this.notifyObservers (USERDATASETTINGSCHANGE);
+		}
 	}
 	
 	/**

@@ -162,20 +162,29 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		statusBar.setLayout (new javax.swing.BoxLayout (statusBar, javax.swing.BoxLayout.X_AXIS));
 		
-		statusBar.setMinimumSize (new java.awt.Dimension (10, 30));
+//		statusBar.setMinimumSize (new java.awt.Dimension (10, 30));
 		statusLabel.setFont (new java.awt.Font ("Default", 0, 12));
 		statusLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "statusbar", "statuslabel.idle_UC"));
-		statusLabel.setBorder (new javax.swing.border.LineBorder (new java.awt.Color (0, 0, 0)));
+		statusLabel.setPreferredSize (new Dimension (80, 30));
+		
+//		statusLabel.setBorder (new javax.swing.border.LineBorder (new java.awt.Color (0, 0, 0)));
+		statusLabel.setBorder (new javax.swing.border.BevelBorder (javax.swing.border.BevelBorder.LOWERED));
+		statusLabel.setToolTipText (ResourceSupplier.getString (ResourceClass.UI, "controls", "application.progress.status"));
 		statusBar.add (statusLabel);
 		
 		currentDurationLabel.setFont (new java.awt.Font ("Default", 0, 12));
-		currentDurationLabel.setText ("currentDurationLabel");
+		currentDurationLabel.setText ("00:00:00");
 		currentDurationLabel.setBorder (new javax.swing.border.LineBorder (new java.awt.Color (0, 0, 0)));
+		currentDurationLabel.setBorder (new javax.swing.border.BevelBorder (javax.swing.border.BevelBorder.LOWERED));
+		currentDurationLabel.setToolTipText (ResourceSupplier.getString (ResourceClass.UI, "controls", "progressing.period.duration"));
+		currentDurationLabel.setPreferredSize (new Dimension (70, 30));
+		currentDurationLabel.setHorizontalAlignment (SwingConstants.RIGHT);
 		statusBar.add (currentDurationLabel);
 		
 		jobProgress.setBorder (null);
 		jobProgress.setIndeterminate (false);
 		jobProgress.setValue (0);
+		jobProgress.setPreferredSize (new Dimension (200, 30));
 		statusBar.add (jobProgress);
 		
 		jPanelMain.add (statusBar, java.awt.BorderLayout.SOUTH);
@@ -250,7 +259,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		//		dataTabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "detail")
 		//		, new JScrollPane (progressItemEditPanel));
 		
-		jSplit_Tree_Data.setRightComponent (desktop);
+		jSplit_Tree_Data.setRightComponent (new JScrollPane (desktop));
 		jSplit_Tree_Data.setOneTouchExpandable (true);
 		
 		jPanelTree.add (jSplit_Tree_Data, java.awt.BorderLayout.CENTER);

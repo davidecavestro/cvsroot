@@ -42,6 +42,9 @@ public final class HelpResource {
 	/** La finestra di inserimento del nuovo progetto. */
 	public final static HelpResource NEWPROJECTDIALOG = new HelpResource ("html.newprojectdialog");
 	
+	/** La finestra di modifica preferenze utente. */
+	public final static HelpResource USERSETTINGSDIALOG = new HelpResource ("html.usersettingsdialog");
+	
 	/**
 	 * Costruttore con risorsa specificata.
 	 *

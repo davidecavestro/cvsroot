@@ -211,4 +211,14 @@ public final class DefaultSettings implements ApplicationSettings {
 	public Integer getPlainTextLogBufferSize (){
 		return DEFAULT_PLAINTEXTLOG_BUFFERSIZE;
 	}
+	
+	/**
+	 * Ritorna il nome dell'utente JDO. E' il nome dell'account di sistema per utente corrente.
+	 *
+	 * @return il nome dell'utente JDO.
+	 */
+	public String getJDOUserName (){
+		return UserResources.getUserAccount ();
+	}
+	
 }

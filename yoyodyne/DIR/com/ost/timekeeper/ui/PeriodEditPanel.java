@@ -156,7 +156,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		/*
 		 * Configurazione pannello editazione.
 		 */
-		editPanel.setLayout (new javax.swing.SpringLayout ());
+		editPanel.setLayout (new java.awt.GridBagLayout ());
 		
 		/*
 		 * Configurazione editazione campo INIZIO.
@@ -190,40 +190,69 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		notesEditor.setMinimumSize (new Dimension (120, 20));
 		notesEditor.addKeyListener (this);
 		
+		final GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.insets = new Insets (3, 3, 3, 3);
+			
 		/*
 		 * Inserimento editazione INIZIO.
 		 */
-		editPanel.add (fromLabel);
-		editPanel.add (fromEditor);
+		c.gridx = 0;
+		c.gridy = 0;
+		editPanel.add (fromLabel, c);
+		c.gridx = 1;
+		c.gridy = 0;
+		editPanel.add (fromEditor, c);
 		
 		/*
 		 * Inserimento editazione FINE.
 		 */
-		editPanel.add (toLabel);
-		editPanel.add (toEditor);
+		c.gridx = 0;
+		c.gridy = 1;
+		editPanel.add (toLabel, c);
+		c.gridx = 1;
+		c.gridy = 1;
+		editPanel.add (toEditor, c);
 		
 		/*
 		 * Inserimento editazione DESCRIZIONE.
 		 */
-		editPanel.add (descriptionLabel);
+		c.weightx = 0.0;
+		c.weighty = 0.0;
+		c.gridx = 0;
+		c.gridy = 2;
+		editPanel.add (descriptionLabel, c);
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		c.gridx = 1;
+		c.gridy = 2;
 		editPanel.add (new JScrollPane (descriptionEditor,
 		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), c);
 		
 		/*
 		 * Inserimento editazione NOTE.
 		 */
-		editPanel.add (notesLabel);
+		c.weightx = 0.0;
+		c.weighty = 0.0;
+		c.gridx = 0;
+		c.gridy = 3;
+		editPanel.add (notesLabel, c);
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		c.gridx = 1;
+		c.gridy = 3;
 		editPanel.add (new JScrollPane (notesEditor,
 		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), c);
 		
 		
 		
-		SpringUtilities.makeCompactGrid(editPanel,
-                                4, 2, //rows, cols
-                                6, 6,        //initX, initY
-                                6, 6);       //xPad, yPad
+//		SpringUtilities.makeCompactGrid(editPanel,
+//                                4, 2, //rows, cols
+//                                6, 6,        //initX, initY
+//                                6, 6);       //xPad, yPad
 		
 		/*
 		 * Inserimento pannello editazione.
@@ -323,6 +352,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 	private void setDataChanged (boolean changed){
 		this._dataChanged = changed;
 		this.confirmButton.setEnabled (this._dataChanged);
+		this.resetButton.setEnabled (this._dataChanged);
 	}
 	
 	/**

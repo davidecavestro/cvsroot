@@ -26,6 +26,7 @@ public final class ColorChooser extends JButton{
 	public ColorChooser () {
 		super ();
 		setInternalColor (null);
+		setMinimumSize (new Dimension (16, 16));
 	}
 	
 	/**

@@ -84,6 +84,12 @@ public interface CustomizableSettings extends ApplicationSettings{
 	public final static String PROPNAME_JDOSTORAGENAME = "jdostoragename";
 	
 	/**
+	 * Nome dell'utente JDO.
+	 */
+	public final static String PROPNAME_JDOUSERNAME = "jdousername";
+	
+	
+	/**
 	 * Ritorna il nome del file di preferenze associato a queste impostazioni.
 	 * @return il nome del file di preferenze associato a queste impostazioni.
 	 */	
@@ -167,6 +173,13 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 * @return il nome dello storage JDO (i file contenenti i dati persistenti e gli indici).
 	 */
 	public void setJDOStorageName (final String name);
+	
+	/**
+	 * Imposta il nome dell'utente JDO.
+	 *
+	 * @param name il nome dell'utente JDO.
+	 */
+	public void setJDOUserName (final String name);
 	
 	/**
 	 * Impostala dimensione del buffer per il logger di testo semplice.

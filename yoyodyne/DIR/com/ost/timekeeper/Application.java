@@ -49,6 +49,11 @@ public class Application extends Observable{
 	 */
 	private static CommandLineApplicationEnvironment _applicationEnvironment;
 	
+	/**
+	 * Ambiente di configurazione della persistenza.
+	 */
+	private DataStoreEnvironment _dataStoreEnvironment;
+	
 	/** 
 	 * Costruttore privato. 
 	 */
@@ -168,11 +173,11 @@ public class Application extends Observable{
 		} catch (IOException ioe){
 			System.out.println ("Logging disabled. CAUSE: "+ExceptionUtils.getStackStrace (ioe));
 		}
-		
+		Application a = null;
 		try {
 			SplashScreen.getInstance ().startSplash ();
 			try {
-				Application a = getInstance(args);
+				a = getInstance(args);
 
 		//		a.getProjectCreateAction ().execute ("Void project");
 				ActionPool.getInstance ().getProjectCloseAction ().execute ();
@@ -189,6 +194,13 @@ public class Application extends Observable{
 			} finally {
 				SplashScreen.getInstance ().stopSplash ();
 			}
+					/* testa persistenza*/
+			if (!a.testPersistenceManager (a.getPersistenceManager ())){
+				final UserSettingsFrame usf = UserSettingsFrame.getInstance ();
+				usf.showDataSettings ();
+				usf.show ();
+			}
+
 		} catch (Exception e){
 			e.printStackTrace();
 			System.exit (1);
@@ -316,16 +328,59 @@ public class Application extends Observable{
 	 * Inizializza la gestione della persistenza dei dati.
 	 */
 	private void initPersistence (){
-		if (this.pm!=null){
-			this.pm.currentTransaction().commit ();
+//		if (this.pm!=null){
+//			try {
+//			this.pm.currentTransaction().commit ();
+//			} catch (Exception e){}
+//		}
+//		
+		if (this._dataStoreEnvironment==null){
+			this._dataStoreEnvironment = new DataStoreEnvironment (null);
 		}
-		
-		final Properties properties = DataStoreUtil.getDataStoreProperties ();
+		final Properties properties = this._dataStoreEnvironment.getDataStoreProperties ();
+		properties.put ("javax.jdo.PersistenceManagerFactoryClass", "com.sun.jdori.fostore.FOStorePMF");
+		StringBuffer connectionURL = new StringBuffer ();
+		connectionURL.append ("fostore:");
+		final String storageDirPath = this._applicationOptions.getJDOStorageDirPath ();
+		if (storageDirPath!=null && storageDirPath.length ()>0){
+			connectionURL.append (storageDirPath);
+			if (!storageDirPath.endsWith ("/")){
+				connectionURL.append ("/");
+			}
+		}
+		connectionURL.append (this._applicationOptions.getJDOStorageName ());
+		properties.put ("javax.jdo.option.ConnectionURL", connectionURL.toString ());
+		properties.put ("javax.jdo.option.ConnectionUserName", this._applicationOptions.getJDOUserName ());
 		final PersistenceManagerFactory pmf =
 					  JDOHelper.getPersistenceManagerFactory(properties);
 		this.pm = pmf.getPersistenceManager();
 		this.pm.currentTransaction().begin();
 	}
+	
+	/**
+	 * Ritorna <TT>true</TT> se il persistence manager specificato è utilizzabile.
+	 *
+	 * @param pm il manager della persistenza.
+	 *@todo un test decente di validità della connessione allo storage.
+	 */	
+	private boolean testPersistenceManager (final PersistenceManager pm){
+		try {
+			final Iterator it = pm.getExtent(Project.class, true).iterator();
+		} catch (Exception e){
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Inizializza il repository dei dati persistenti con le impostazioni correnti.
+	 */
+	public void createDataStore (){
+		initPersistence ();
+		DataStoreUtil.createDataStore (getDataStoreEnvironment ());
+		initPersistence ();
+	}
+	
 	/**
 	 * Ritorna il gestore della persistenza dei dati.
 	 * @return il gestore della persistenza dei dati.
@@ -422,6 +477,15 @@ public class Application extends Observable{
 	 */	
 	public static ApplicationEnvironment getEnvironment (){
 		return _applicationEnvironment;
+	}
+	
+	/**
+	 * Ritorna l'ambiente di configurazione del repository.
+	 *
+	 * @return l'ambinete di persistenza.
+	 */	
+	public DataStoreEnvironment getDataStoreEnvironment (){
+		return _dataStoreEnvironment;
 	}
 	
 	/**

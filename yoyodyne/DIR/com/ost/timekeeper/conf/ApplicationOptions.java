@@ -27,194 +27,194 @@ public final class ApplicationOptions {
 	 * L'anello successore nella catena di responsabilità.
 	 */
 	private ApplicationOptions _successor;
-		
-		/**
-		 *
-		 * Costruttore privato, evita istanzazione dall'esterno.
-		 *
-		 * @param settings le impostazioni.
-		 * @param successor l'anello successore nella catena di responsabilità.
-		 */
-		public ApplicationOptions (ApplicationSettings settings, ApplicationOptions successor) {
-			this._settings = settings;
-			this._successor = successor;
-		}
-		
-	/** 
+	
+	/**
+	 *
+	 * Costruttore privato, evita istanzazione dall'esterno.
+	 *
+	 * @param settings le impostazioni.
+	 * @param successor l'anello successore nella catena di responsabilità.
+	 */
+	public ApplicationOptions (ApplicationSettings settings, ApplicationOptions successor) {
+		this._settings = settings;
+		this._successor = successor;
+	}
+	
+	/**
 	 * Ritorna la posizione iniziale della finestra principale.
 	 * @return la posizione iniziale della finestra principale.
-	 */	
-		public Rectangle getMainFormBounds (){
-			final Rectangle returnValue = this._settings.getMainFormBounds ();
-			if (returnValue!=null){
+	 */
+	public Rectangle getMainFormBounds (){
+		final Rectangle returnValue = this._settings.getMainFormBounds ();
+		if (returnValue!=null){
 				/*
 				 * Risposta locale.
 				 */
-				return returnValue;
-			} else {
-				if (_successor!=null){
+			return returnValue;
+		} else {
+			if (_successor!=null){
 					/*
 					 * Delega successore.
 					 */
-					return _successor.getMainFormBounds ();
-				} else {
+				return _successor.getMainFormBounds ();
+			} else {
 					/*
 					 * Informazione non disponibile.
 					 */
-					return null;
-				}
+				return null;
 			}
 		}
-		
-	/** 
+	}
+	
+	/**
 	 * Ritorna la posizione iniziale della finestra di dettaglion odo di avanzamento.
 	 * @return la posizione iniziale della finestra di dettaglion odo di avanzamento.
-	 */	
+	 */
 	public Rectangle getProgressItemInspectorBounds (){
-			final Rectangle returnValue = this._settings.getProgressItemInspectorBounds ();
-			if (returnValue!=null){
+		final Rectangle returnValue = this._settings.getProgressItemInspectorBounds ();
+		if (returnValue!=null){
 				/*
 				 * Risposta locale.
 				 */
-				return returnValue;
-			} else {
-				if (_successor!=null){
+			return returnValue;
+		} else {
+			if (_successor!=null){
 					/*
 					 * Delega successore.
 					 */
-					return _successor.getProgressItemInspectorBounds ();
-				} else {
+				return _successor.getProgressItemInspectorBounds ();
+			} else {
 					/*
 					 * Informazione non disponibile.
 					 */
-					return null;
-				}
+				return null;
 			}
 		}
+	}
 	
-	/** 
+	/**
 	 * Ritorna la posizione iniziale della finestra di dettaglio periodo di avanzamento.
 	 * @return la posizione iniziale della finestra di dettaglio periodo di avanzamento.
-	 */	
+	 */
 	public Rectangle getProgressPeriodInspectorBounds (){
-			final Rectangle returnValue = this._settings.getProgressPeriodInspectorBounds ();
-			if (returnValue!=null){
+		final Rectangle returnValue = this._settings.getProgressPeriodInspectorBounds ();
+		if (returnValue!=null){
 				/*
 				 * Risposta locale.
 				 */
-				return returnValue;
-			} else {
-				if (_successor!=null){
+			return returnValue;
+		} else {
+			if (_successor!=null){
 					/*
 					 * Delega successore.
 					 */
-					return _successor.getProgressPeriodInspectorBounds ();
-				} else {
+				return _successor.getProgressPeriodInspectorBounds ();
+			} else {
 					/*
 					 * Informazione non disponibile.
 					 */
-					return null;
-				}
+				return null;
 			}
 		}
-		
-	/** 
+	}
+	
+	/**
 	 * Ritorna la posizione iniziale della finestra di elenco avanzamenti.
 	 * @return la posizione iniziale della finestra di elenco avanzamenti.
-	 */	
+	 */
 	public Rectangle getProgressListFrameBounds (){
-			final Rectangle returnValue = this._settings.getProgressListFrameBounds ();
-			if (returnValue!=null){
+		final Rectangle returnValue = this._settings.getProgressListFrameBounds ();
+		if (returnValue!=null){
 				/*
 				 * Risposta locale.
 				 */
-				return returnValue;
-			} else {
-				if (_successor!=null){
+			return returnValue;
+		} else {
+			if (_successor!=null){
 					/*
 					 * Delega successore.
 					 */
-					return _successor.getProgressListFrameBounds ();
-				} else {
+				return _successor.getProgressListFrameBounds ();
+			} else {
 					/*
 					 * Informazione non disponibile.
 					 */
-					return null;
-				}
+				return null;
 			}
 		}
-
+	}
 	
-		public String getLogDirPath (){
-			final String returnValue = this._settings.getLogDirPath ();
-			if (returnValue!=null){
+	
+	public String getLogDirPath (){
+		final String returnValue = this._settings.getLogDirPath ();
+		if (returnValue!=null){
 				/*
 				 * Risposta locale.
 				 */
-				return returnValue;
-			} else {
-				if (_successor!=null){
+			return returnValue;
+		} else {
+			if (_successor!=null){
 					/*
 					 * Delega successore.
 					 */
-					return _successor.getLogDirPath ();
-				} else {
+				return _successor.getLogDirPath ();
+			} else {
 					/*
 					 * Informazione non disponibile.
 					 */
-					return null;
-				}
+				return null;
 			}
 		}
-		
+	}
+	
 	/**
 	 * Ritorna il colore del desktop.
 	 *
 	 * @return ilcolore del desktop.
-	 */	
+	 */
 	public Color getDesktopColor () {
-			final Color returnValue = this._settings.getDesktopColor ();
-			if (returnValue!=null){
+		final Color returnValue = this._settings.getDesktopColor ();
+		if (returnValue!=null){
 				/*
 				 * Risposta locale.
 				 */
-				return returnValue;
-			} else {
-				if (_successor!=null){
+			return returnValue;
+		} else {
+			if (_successor!=null){
 					/*
 					 * Delega successore.
 					 */
-					return _successor.getDesktopColor ();
-				} else {
+				return _successor.getDesktopColor ();
+			} else {
 					/*
 					 * Informazione non disponibile.
 					 */
-					return null;
-				}
+				return null;
 			}
+		}
 	}
 	
 	public boolean beepOnEvents () {
-			final Boolean returnValue = this._settings.beepOnEvents ();
-			if (returnValue!=null){
+		final Boolean returnValue = this._settings.beepOnEvents ();
+		if (returnValue!=null){
 				/*
 				 * Risposta locale.
 				 */
-				return returnValue.booleanValue ();
-			} else {
-				if (_successor!=null){
+			return returnValue.booleanValue ();
+		} else {
+			if (_successor!=null){
 					/*
 					 * Delega successore.
 					 */
-					return _successor.beepOnEvents ();
-				} else {
+				return _successor.beepOnEvents ();
+			} else {
 					/*
 					 * Informazione non disponibile.
 					 * Funzionalità disabilitata.
 					 */
-					return false;
-				}
+				return false;
 			}
+		}
 	}
 	
 	/**
@@ -271,5 +271,112 @@ public final class ApplicationOptions {
 				return 8192;
 			}
 		}
-	}	
+	}
+	
+	/**
+	 * Ritorna il percorso del file di configurazione
+	 *
+	 */
+	public String getJDOConnectionURL (){
+		final String storageDirPath = this._settings.getJDOStorageDirPath ();
+		final String storageName = this._settings.getJDOStorageName ();
+		if (storageDirPath!=null && storageName!=null && storageName.length ()>0){
+			return storageDirPath + storageName;
+		} else {
+			if (_successor!=null){
+				/*
+				 * Delega successore.
+				 */
+				return _successor.getJDOConnectionURL ();
+			} else {
+				/*
+				 * Informazione non disponibile.
+				 * Funzionalità disabilitata.
+				 */
+				return "datastore.properties";
+			}
+		}
+	}
+	
+	/**
+	 * Ritorna il percorso della directory contenente i dati persistenti (JDO).
+	 *
+	 * @return il percorso della directory contenente i dati persistenti (JDO).
+	 */
+	public String getJDOStorageDirPath (){
+		final String returnValue = this._settings.getJDOStorageDirPath ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue;
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.getJDOStorageDirPath ();
+			} else {
+					/*
+					 * Informazione non disponibile.
+					 */
+				return null;
+			}
+		}
+	}
+	
+	/**
+	 * Ritorna il nome dello storage JDO (i file contenenti i dati persistenti e gli indici).
+	 *
+	 * @return il nome dello storage JDO (i file contenenti i dati persistenti e gli indici).
+	 */
+	public String getJDOStorageName (){
+		final String returnValue = this._settings.getJDOStorageName ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue;
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.getJDOStorageName ();
+			} else {
+					/*
+					 * Informazione non disponibile.
+					 */
+				return null;
+			}
+		}
+	}
+	
+	/**
+	 * Ritorna il nome dell'utente JDO.
+	 *
+	 * @return il nome dell'utente JDO.
+	 */
+	public String getJDOUserName (){
+		final String returnValue = this._settings.getJDOUserName ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue;
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.getJDOUserName ();
+			} else {
+					/*
+					 * Informazione non disponibile.
+					 */
+				return null;
+			}
+		}
+	}
+	
 }

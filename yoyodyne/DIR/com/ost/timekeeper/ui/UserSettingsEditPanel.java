@@ -9,6 +9,7 @@ package com.ost.timekeeper.ui;
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.*;
 import com.ost.timekeeper.conf.*;
+import com.ost.timekeeper.help.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.util.*;
@@ -45,6 +46,10 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 	 */
 	private final UserOtherSettingsEditPanel otherEditPanel = new UserOtherSettingsEditPanel ();
 	
+	/**
+	 * Il contenitore dei pannelli.
+	 */
+	final JTabbedPane tabbedPane = new JTabbedPane ();
 	
 	/**
 	 * Pulsantiera.
@@ -63,6 +68,8 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 	 */
 	private final javax.swing.JButton resetButton = new javax.swing.JButton ();
 	
+	private final DirectHelpButton directHelpButton = new DirectHelpButton ();
+	
 	/**********************************************
 	 * FINE dichiarazione componenti UI interne.
 	 **********************************************/
@@ -76,6 +83,8 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		 * Inizializzazione componenti grafiche.
 		 */
 		initComponents ();
+		/* inizializza help contestuale */
+		javax.help.CSH.setHelpIDString (this, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.USERSETTINGSDIALOG ));
 	}
 	
 	/**
@@ -103,6 +112,8 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		applyButton.addActionListener (new ActionListener (){
 			public void actionPerformed (ActionEvent e){
 				pushData ();
+				//riabilita il pulsante CONFERMA
+				confirmButton.setEnabled (true);
 			}
 		});
 		applyButton.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "apply"));
@@ -138,8 +149,8 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		 */
 		buttonPanel.add (resetButton);
 		
+		buttonPanel.add (directHelpButton);
 		
-		final JTabbedPane tabbedPane = new JTabbedPane ();
 		tabbedPane.setTabLayoutPolicy (JTabbedPane.SCROLL_TAB_LAYOUT);
 		
 		/*
@@ -151,7 +162,7 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		 * Inserimento pannello editazione.
 		 */
 		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "ui.prefs"), new JScrollPane (uiEditPanel));
-
+		
 		
 		/*
 		 * Inserimento pannello editazione.
@@ -175,6 +186,10 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		this.resynch ();
 		
 		//getRootPane().setDefaultButton (confirmButton);
+		
+		this.dataEditPanel.addObserver (this);
+		this.otherEditPanel.addObserver (this);
+		this.uiEditPanel.addObserver (this);
 	}
 	
 	/**
@@ -184,6 +199,7 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		uiEditPanel.resynch ();
 		dataEditPanel.resynch ();
 		otherEditPanel.resynch ();
+		enableButtons (false);
 	}
 	
 	/**
@@ -193,7 +209,7 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		uiEditPanel.pushData ();
 		dataEditPanel.pushData ();
 		otherEditPanel.pushData ();
-		onDataChanges ();
+		enableButtons (false);
 	}
 	
 	/**
@@ -208,22 +224,35 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 	public void update (Observable o, Object arg) {
 		if (arg!=null && arg.equals (ObserverCodes.USERSETTINGSCHANGE)){
 			this.resynch ();
+		} else if (arg!=null && (
+		arg.equals (UserDataSettingsEditPanel.USERDATASETTINGSCHANGE)
+		|| arg.equals (UserGUISettingsEditPanel.USERGUISETTINGSCHANGE)
+		|| arg.equals (UserOtherSettingsEditPanel.USEROTHERSETTINGSCHANGE)
+		)){
+			
+			enableButtons (true);
 		}
 	}
 	
 	/**
-	 * Imposta il flag di "modifica avvenuta" per questo pannello.
+	 * De/Abilitazione pulsanti.
 	 */
-	private void onDataChanges (){
-		final boolean dataChanged = 
-			uiEditPanel.getDataChanged () 
-			|| dataEditPanel.getDataChanged ()
-			|| otherEditPanel.getDataChanged ()
-			;
-
-		this.confirmButton.setEnabled (dataChanged);
-		this.applyButton.setEnabled (dataChanged);
-		this.resetButton.setEnabled (dataChanged);
+	private void enableButtons (final boolean enable){
+		//		final boolean dataChanged =
+		//			uiEditPanel.getDataChanged ()
+		//			|| dataEditPanel.getDataChanged ()
+		//			|| otherEditPanel.getDataChanged ()
+		//			;
+		
+		this.confirmButton.setEnabled (enable);
+		this.applyButton.setEnabled (enable);
+		this.resetButton.setEnabled (enable);
 	}
 	
+	/**
+	 * Mostra il pannello di editazione della configurazione relativa ai dati.
+	 */
+	public void showDataSettings (){
+		this.tabbedPane.setSelectedIndex (1);
+	}
 }

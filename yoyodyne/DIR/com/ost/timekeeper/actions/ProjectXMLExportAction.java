@@ -18,6 +18,7 @@ import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.util.*;
+import org.xml.sax.*;
 
 /**
  * Esporta i dati relativi ad un progetto in formato XML.
@@ -48,7 +49,7 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 		// Load Mapping
 		final Mapping mapping = new Mapping();
 		try{
-			mapping.loadMapping("modelmapping.xml");
+			mapping.loadMapping(Application.getEnvironment ().getApplicationDirPath ()+"/dataiomap.xml");
 			
 			final int returnVal = chooser.showSaveDialog(app.getMainForm());
 			final SwingWorker worker = new SwingWorker() {

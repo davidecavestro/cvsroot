@@ -53,4 +53,9 @@ public interface ResourceNames {
 	 */
 	public final static String USER_WORKINGDIR_PATH = "user.dir";
 	
+	/**
+	 * Nome account utente corrente.
+	 */
+	public final static String USER_ACCOUNT = "user.name";
+	
 }

@@ -304,6 +304,24 @@ public abstract class AbstractSettings implements CustomizableSettings {
 	}
 	
 	/**
+	 * Ritorna il nome dell'utente JDO.
+	 *
+	 * @return il nome dell'utente JDO.
+	 */
+	public String getJDOUserName (){
+		return SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_JDOUSERNAME);
+	}
+	
+	/**
+	 * Imposta il nome dell'utente JDO.
+	 *
+	 * @param name il nome dell'utente JDO.
+	 */
+	public void setJDOUserName (final String name){
+		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_JDOUSERNAME, name);
+	}
+	
+	/**
 	 * Ritorna la dimensione del buffer per il logger di testo semplice.
 	 *
 	 * @return la dimensione del buffer per il logger di testo semplice.
