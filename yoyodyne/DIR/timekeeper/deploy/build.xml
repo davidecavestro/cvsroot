@@ -1,220 +1,391 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="all" name="timekeeper">
-    <!-- Written to assume that classpath is rooted in the current directory. -->
-    <!-- So this should be OK if you make this script in the root of a filesystem. -->
-    <!-- If not, just change src.dir to be the root of your sources' package tree -->
-    <!-- and use e.g. View over a Filesystem to mount that subdirectory with all capabilities. -->
-    <!-- The idea is that both Ant and NetBeans have to know what the package root is -->
-    <!-- for the classes in your application. -->
+	<!-- Written to assume that classpath is rooted in the current directory. -->
+	<!-- So this should be OK if you make this script in the root of a filesystem. -->
+	<!-- If not, just change src.dir to be the root of your sources' package tree -->
+	<!-- and use e.g. View over a Filesystem to mount that subdirectory with all capabilities. -->
+	<!-- The idea is that both Ant and NetBeans have to know what the package root is -->
+	<!-- for the classes in your application. -->
 
-    <!-- Don't worry if you don't know the Ant syntax completely or need help on some tasks! -->
-    <!-- The standard Ant documentation can be downloaded from AutoUpdate and -->
-    <!-- and then you can access the Ant manual in the online help. -->
+	<!-- Don't worry if you don't know the Ant syntax completely or need help on some tasks! -->
+	<!-- The standard Ant documentation can be downloaded from AutoUpdate and -->
+	<!-- and then you can access the Ant manual in the online help. -->
 
-    <target name="init">
-        <property name="project.name" value="${ant.project.name}"/>
-        <property name="version" value="0.1"/>
-	
-        <property location="work" name="work.dir"/>
-        <property location="lib" name="lib.dir"/>
-        <property location="../src" name="src.dir"/>
-        <property location="${work.dir}/classes" name="classes.dir"/>
-        <property location="${work.dir}/doc/api" name="javadoc.dir"/>
-        <property location="${work.dir}/tmp" name="tmp.dir"/>
-        <property location="${work.dir}/log" name="log.dir"/>
-	
-        <property location="${project.name}-${version}" name="app.dir"/>
-        <property location="${app.dir}/lib" name="app.lib.dir"/>
-        <property location="${app.dir}/res" name="app.res.dir"/>
-	
-        <property location="${app.dir}/${project.name}.jar" name="app.jar"/>
-        <property location="${app.res.dir}/i18n.jar" name="i18n.jar"/>
-        <property location="${app.res.dir}/images.jar" name="images.jar"/>
-        <property location="${app.res.dir}/help.jar" name="help.jar"/>
-	
-        <property location="/usr/local/java/bin/java" name="ext.jvm"/>
-        <property location="/usr/local/java/bin/javac" name="ext.javac"/>
-    </target>
+	<!-- Inizilaizza le risorse interne. -->
+	<target name="init">
+		<tstamp/>
+		<tstamp prefix="file.ts">
+			<format property="TODAY" pattern="yyyyMMdd" />
+		</tstamp>	
+		<property name="project.name" value="${ant.project.name}"/>
+		<property name="version" value="0.1"/>
 
-    <target depends="init" name="compile">
-        <!-- Both srcdir and destdir should be package roots. -->
-        <mkdir dir="${work.dir}"/>
-        <mkdir dir="${classes.dir}"/>
-        <mkdir dir="${tmp.dir}"/>
-        <mkdir dir="${log.dir}"/>
+		<property location="work" name="work.dir"/>
+		<property location="lib" name="lib.dir"/>
+		<property location="../src" name="src.dir"/>
+		<property location="bin" name="bin.dir"/>
+		<property location="${work.dir}/classes" name="classes.dir"/>
+		<property location="${work.dir}/doc/api" name="javadoc.dir"/>
+		<property location="${work.dir}/tmp" name="tmp.dir"/>
+		<property location="${work.dir}/log" name="log.dir"/>
 
-       <javac debug="true" deprecation="true" destdir="${classes.dir}" fork="true" executable="${ext.javac}">
-	    <src>
-                <pathelement location="${src.dir}/com/ost/timekeeper/model"/>
-                <pathelement location="${src.dir}/com/ost/timekeeper/util"/>
-	    </src>
-            <!-- To add something to the classpath: -->
-            <!-- <classpath><pathelement location="${mylib}"/></classpath> -->
-		<!--
-            <classpath>
-                <pathelement location="btree.jar"/>
-                <pathelement location="castor-0.9.5.3.jar"/>
-                <pathelement location="castor-0.9.5.3-xml.jar"/>
-                <pathelement location="jdo.jar"/>
-                <pathelement location="jdori-enhancer.jar"/>
-                <pathelement location="jdori.jar"/>
-                <pathelement location="jhall.jar"/>
-            </classpath>
+		<property name="app.dir.name" value="${project.name}-${file.ts.TODAY}" />
+		<property location="${app.dir.name}" name="app.dir"/>
+		<property location="${app.dir}/lib" name="app.lib.dir"/>
+		<property location="${app.dir}/res" name="app.res.dir"/>
+		<property location="${app.dir}/bin" name="app.bin.dir"/>
+
+		<property location="${app.dir}/${project.name}.jar" name="app.jar"/>
+		<property location="${app.res.dir}/i18n.jar" name="i18n.jar"/>
+		<property location="${app.res.dir}/images.jar" name="images.jar"/>
+		<property location="${app.res.dir}/help.jar" name="help.jar"/>
+
+		<property location="/usr/local/java/bin/java" name="ext.jvm"/>
+		<property location="/usr/local/java/bin/javac" name="ext.javac"/>
+
+		<property location="${project.name}.tar" name="app.tar" />
+		<property location="${project.name}.tar.gz" name="app.zip" />
+
+		<!-- carica le impostazioni esterne. -->
+		<loadproperties srcFile="build.properties"/>
+	</target>
+
+	<!-- Compila il codice sorgente. -->
+	<target depends="init" name="compile">
+		<!-- Prepara le directory di utilità. -->
+		<mkdir dir="${work.dir}"/>
+		<mkdir dir="${classes.dir}"/>
+		<mkdir dir="${tmp.dir}"/>
+		<mkdir dir="${log.dir}"/>
+
+		<!-- Compila SOLO i sorgenti che necessitano dell'enhancemente JDO. -->
+		<javac debug="true" deprecation="true" destdir="${classes.dir}" fork="true" executable="${ext.javac}">
+		<src>
+			<pathelement location="${src.dir}/com/ost/timekeeper/model"/>
+			<pathelement location="${src.dir}/com/ost/timekeeper/util"/>
+		</src>
+		</javac>
+
+		<!-- Prepara le risorse per l'enhancer JDO. -->
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}">
+			<include name="**/*.jdo"/>
+			<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+
+		<!-- Imposta l'ambiente di esecuzione per l'enhancer JDO. -->
+		<path id="jdo.enhancer.classpath">
+			<pathelement location="${lib.dir}/jdo.jar"/>
+			<pathelement location="${lib.dir}/jdori.jar"/>
+		</path>
+
+		<!-- Esegue l'enhancement per il supporto JDO. Passo 1/3. -->
+		<java classname="com.sun.jdori.enhancer.EnhancerMain"
+			fork="true"
+			failonerror="true"
+			maxmemory="128m"
+			dir="${classes.dir}"
+			classpathref="jdo.enhancer.classpath"
+		>
+			<arg line="-f "/>
+			<arg line="-j ${lib.dir}/myjdo.jar:${classes.dir}"/>
+			<arg line="-s ${lib.dir}/myjdo.jar:${classes.dir}"/>
+			<arg line="-d ${classes.dir}"/>
+			<arg value="com/ost/timekeeper/model/Period"/>
+		</java>
+
+		<!-- Esegue l'enhancement per il supporto JDO. Passo 2/3. -->
+		<java classname="com.sun.jdori.enhancer.EnhancerMain"
+			fork="true"
+			failonerror="true"
+			maxmemory="128m"
+			dir="${classes.dir}"
+			classpathref="jdo.enhancer.classpath"
+		>
+			<arg line="-f "/>
+			<arg line="-j ${lib.dir}/myjdo.jar:${classes.dir}"/>
+			<arg line="-s ${lib.dir}/myjdo.jar:${classes.dir}"/>
+			<arg line="-d ${classes.dir}"/>
+			<arg value="com/ost/timekeeper/model/ProgressItem"/>
+		</java>
+
+		<!-- Esegue l'enhancement per il supporto JDO. Passo 3/3. -->
+		<java classname="com.sun.jdori.enhancer.EnhancerMain"
+			fork="true"
+			failonerror="true"
+			maxmemory="128m"
+			dir="${classes.dir}"
+			classpathref="jdo.enhancer.classpath"
+		>
+			<arg line="-f "/>
+			<arg line="-j ${lib.dir}/myjdo.jar:${classes.dir}"/>
+			<arg line="-s ${lib.dir}/myjdo.jar:${classes.dir}"/>
+			<arg line="-d ${classes.dir}"/>
+			<arg value="com/ost/timekeeper/model/Project"/>
+		</java>
+
+		<!-- Elimina i descrittori per l'enhancer JDO. -->
+		<delete>	
+			<fileset dir="${classes.dir}">
+			<include name="**/*.jdo"/>
+			</fileset>
+		</delete>	
+
+
+		<!-- Compila il codice sorgente rimanente. -->
+		<javac debug="true" deprecation="true" destdir="${classes.dir}" srcdir="${src.dir}" fork="true" executable="${ext.javac}" excludesfile="javacexcludes.txt">
+			<classpath>
+			<pathelement location="${lib.dir}/btree.jar"/>
+			<pathelement location="${lib.dir}/castor.jar"/>
+			<pathelement location="${lib.dir}/castor-xml.jar"/>
+			<pathelement location="${lib.dir}/jdo.jar"/>
+			<pathelement location="${lib.dir}/jdori.jar"/>
+			<pathelement location="${lib.dir}/jhall.jar"/>
+			</classpath>
+
+		</javac>
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}">
+			<include name="com/ost/timekeeper/actions/dataiomap.xml"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Genera l'archivio contenente il core dell'applicazione. -->
+	<target depends="init,compile" name="jar">
+		<mkdir dir="${app.dir}"/>
+		<jar basedir="${classes.dir}" compress="true" jarfile="${app.jar}" >
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="com.ost.timekeeper.Application"/>
+				<attribute name="Class-Path" value=". lib/jdo.jar lib/jdori.jar lib/btree.jar lib/castor.jar lib/castor-xml.jar lib/jhall.jar res/i18n.jar lib/xerces.jar res/images.jar res/help.jar"/>
+				<attribute name="Implementation-Title" value="timekeeper"/>
+				<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
+				<attribute name="Implementation-Vendor" value="DateSoft ltd."/>
+			</manifest>
+		</jar>
+	</target>
+
+	<!-- Genera la directory di distribuzione standard. -->
+	<target depends="sign" description="Build everything." name="all"/>
+
+	<!-- Genera la documentazione javadoc di supporto al progetto. -->
+	<target depends="init" description="Javadoc for Timekeeper API." name="javadoc">
+		<mkdir dir="${javadoc.dir}"/>
+		<javadoc destdir="${javadoc.dir}" packagenames="*">
+			<sourcepath>
+				<pathelement location="${src.dir}"/>
+			</sourcepath>
+		</javadoc>
+	</target>
+
+	<target depends="jar" name="deploy" description="Prepara la directory di installazione dell'applicazione." >
+		<mkdir dir="${app.lib.dir}"/>
+		<mkdir dir="${app.res.dir}"/>
+
+		<!-- copia i file di libreria -->
+		<copy toDir="${app.lib.dir}">
+			<fileset dir="${lib.dir}"/>
+		</copy>
+		<!-- copia i file di lancio -->
+		<copy toDir="${app.bin.dir}">
+			<fileset dir="${bin.dir}"/>
+		</copy>
+		<!-- rende i file di lancio leggibili ed eseguibili da tutti gli utenti -->
+		<chmod dir="${app.bin.dir}" perm="ugo+rx" includes="**/*.sh"/>
+
+		<!-- Prepara l'archivio contenente le risorse di localizzazione. -->
+		<jar compress="true" jarfile="${i18n.jar}" >
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Implementation-Title" value="timekeeper" />
+				<attribute name="Implementation-Version" value="${version} ${TODAY}" /> 
+				<attribute name="Implementation-Vendor" value="DateSoft ltd." />
+			</manifest>
+			<fileset dir="${src.dir}" includes="com/ost/timekeeper/ui/bundle/**" />
+		</jar>
+
+		<!-- Prepara l'archivio contenente le risorse grafiche. -->
+		<jar compress="false" jarfile="${images.jar}" >
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Implementation-Title" value="timekeeper" />
+				<attribute name="Implementation-Version" value="${version} ${TODAY}" /> 
+				<attribute name="Implementation-Vendor" value="DateSoft ltd." />
+			</manifest>
+			<fileset dir="${src.dir}" includes="com/ost/timekeeper/ui/images/**" />
+		</jar>
+		<!-- Prepara l'archivio contenente le risorse dell'help. -->
+		<jar compress="true" jarfile="${help.jar}" >
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Implementation-Title" value="timekeeper"/>
+				<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
+				<attribute name="Implementation-Vendor" value="DateSoft ltd."/>
+			</manifest>
+			<fileset dir="${src.dir}" includes="help/**" />
+		</jar>
+
+		<!-- Verifica abilitazione della firma dei jar. -->
+		<condition property="_jarSignEnabled">
+			<and>
+				<isset property="signjar.enabled" />
+				<istrue value="${signjar.enabled}"/>
+			</and>
+		</condition>
+		<echo message="Esito controllo abilitazione della firma dei JAR: ${_jarSignEnabled}" />
+
+		<input
+			message="Please enter keystore password to sign generated archives: "
+			addproperty="signjar.keystore.password"
+		/>
+		
+		<!-- Controllo impostazione alias certificato. -->
+		<condition property="_isKeystoreAliasSet" >
+			<isset property="signjar.keystore.alias" />
+		</condition>
+		<echo message="Esito controllo validità alias del certificato: ${_isKeystoreAliasSet}"/>
+		
+		<!-- Controllo impostazione password certificato. -->
+		<condition property="_isKeystorePasswordSet" >
+			<isset property="signjar.keystore.password" />
+		</condition>
+		<echo message="Esito controllo validità password del certificato: ${_isKeystoreAliasSet}"/>
+		
+		<!-- 
+		Verifica che le condizioni necessarie 
+		al processo di firma dei jar siano soddisfatte. 
 		-->
-            <!-- To exclude some files: -->
-            <!-- <exclude name="com/foo/SomeFile.java"/><exclude name="com/foo/somepackage/"/> -->
-        </javac>
-	<!--
-	<copy todir="${tmp.dir}">
-	    <fileset dir="${src.dir}">
-		<include name="**/*.jdo"/>
-		<exclude name="**/*.java"/>
-	    </fileset>
-	</copy>
-	<copy todir="${tmp.dir}">
-	    <fileset dir="${src.dir}/com/ost/timekeeper/model">
-		<include name="**/package.jdo"/>
-		<exclude name="**/*.java"/>
-	    </fileset>
-	</copy>
-	-->
-	<copy todir="${classes.dir}">
-	    <fileset dir="${src.dir}">
-		<include name="**/*.jdo"/>
-		<exclude name="**/*.java"/>
-	    </fileset>
-	</copy>
-	<!--
-	NON FUNZIONA!!!
-	<path id="jdo.enhancer.classpath">
-	    <pathelement location="jdo.jar"/>
-	    <pathelement location="jdori.jar"/>
-	    <pathelement location="../bin" />
-	</path>
-  	<java classname="com.sun.jdori.enhancer.Main"
-	    fork="true"
-	    failonerror="true"
-	    maxmemory="128m"
-	    dir="${classes.dir}"
-	    classpathref="jdo.enhancer.classpath"
-	>
-	    <arg line="-v -f "/>
-	    <arg line="-s ${tmp.dir}:${classes.dir}"/>
-	    <arg line="-d ${classes.dir}"/>
-	    <arg value="com/ost/timekeeper/model/ProgressItem"/>
-	</java>
-	-->
-	<!--	
-	<exec dir="./" executable="/home/davide/Documents/jdoenhancecommands" output="${log.dir}enhance.log"/>
-	-->
-	<exec dir="./" executable="enhance.sh" output="enhance.log">
-	</exec>
-	<javac debug="true" deprecation="true" destdir="${classes.dir}" srcdir="${src.dir}" fork="true" executable="${ext.javac}">
-	    <!-- To add something to the classpath: -->
-	    <!-- <classpath><pathelement location="${mylib}"/></classpath> -->
-	    <classpath>
-		<pathelement location="${lib.dir}/btree.jar"/>
-		<pathelement location="${lib.dir}/castor.jar"/>
-		<pathelement location="${lib.dir}/castor-xml.jar"/>
-		<pathelement location="${lib.dir}/jdo.jar"/>
-		<pathelement location="${lib.dir}/jdori.jar"/>
-		<pathelement location="${lib.dir}/jhall.jar"/>
-	    </classpath>
+		<condition property="_canSignJars" >
+			<and>
+				<istrue value="${_jarSignEnabled}"/>
+				<istrue value="${_isKeystoreAliasSet}"/>
+				<istrue value="${_isKeystorePasswordSet}"/>
+			</and>
+		</condition>
+		
+		<echo message="Verifica delle condizioni necessarie per la firma dei JAR: ${_canSignJars}" />
 
-	    <!-- To exclude some files: -->
-	    <!-- <exclude name="com/foo/SomeFile.java"/><exclude name="com/foo/somepackage/"/> -->
-	    <exclude name="com/ost/timekeeper/conf/SystemResources.java"/>
-	    
-	</javac>
-	<copy todir="${classes.dir}">
-	    <fileset dir="${src.dir}">
-		<include name="com/ost/timekeeper/action/dataiomap.xml"/>
-	    </fileset>
-	</copy>
-    </target>
+		<!-- Invoca la rimozione dei file temporanei. -->
+		<antcall target="clean.work"/>
+	</target>
 
-    <target depends="init,compile" name="jar">
-        <mkdir dir="${app.dir}"/>
-	
-        <!-- To make a standalone app, insert into <jar>: -->
-        <!-- <manifest><attribute name="Main-Class" value="com.foo.Main"/></manifest> -->
-        <jar basedir="${classes.dir}" compress="true" jarfile="${app.jar}">
-	    <manifest>
-		<attribute name="Built-By" value="${user.name}"/>
-		<attribute name="Main-Class" value="com.ost.timekeeper.Application"/>
-		<attribute name="Class-Path" value=". lib/jdo.jar lib/jdori.jar lib/btree.jar lib/castor.jar lib/castor.xml.jar lib/jhall.jar res/i18n.jar res/images.jar res/help.jar"/>
-		<attribute name="Implementation-Title" value="timekeeper"/>
-		<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
-		<attribute name="Implementation-Vendor" value="DateSoft ltd."/>
-      	    </manifest>
-    	</jar>
-    </target>
+	<!-- Genera il file compresso pronto per essere distribuito. -->
+	<target depends="sign" description="Create application bundle." name="bundle">
+		<buildnumber/>
+		<tar tarfile="${app.tar}" >
+			<tarfileset dir="." preserveLeadingSlashes="true">
+			<include name="${app.dir.name}/**"/>
+			<exclude name="${app.dir.name}/bin/timekeeper.sh"/>
+			</tarfileset>
+			<tarfileset dir="." mode="755" preserveLeadingSlashes="true">
+			<include name="${app.dir.name}/bin/timekeeper.sh"/>
+			</tarfileset>
+		</tar>
+		<gzip zipfile="${app.zip}" src="${app.tar}"/>
+		<delete file="${app.tar}"/>
+		<!-- Invoca la rimozione deila directory di distribuzione. -->
+		<antcall target="clean.app"/>
+	</target>
 
-    <target depends="init,bundle" description="Build everything." name="all"/>
+	<!-- Ripulisce l'ambiente di lavoro. -->
+	<target depends="clean.work,clean.app,clean.zip" description="Clean all build products." name="clean">
+		<echo>Rimozione di tutte le risorse generate.</echo>
+	</target>
 
-    <target depends="init" description="Javadoc for Timekeeper API." name="javadoc">
-        <mkdir dir="${javadoc.dir}"/>
-        <javadoc destdir="${javadoc.dir}" packagenames="*">
-            <sourcepath>
-                <pathelement location="${src.dir}"/>
-            </sourcepath>
-        </javadoc>
-    </target>
+	<!-- Elimina i file tmmporanei di supporto. -->    
+	<target depends="init" description="Clean temporary build products." name="clean.work">
+		<echo>Rimozione directory temporanea di lavoro.</echo>
+		<delete dir="${javadoc.dir}"/>
+		<delete dir="${work.dir}"/>
+	</target>
 
-    <target depends="clean.work, clean.app" description="Clean all build products." name="clean"/>
-    
-    <target depends="init" description="Clean temporary build products." name="clean.work">
-        <delete dir="${classes.dir}"/>
-        <delete dir="${javadoc.dir}"/>
-        <delete dir="${work.dir}"/>
-        <delete dir="${tmp.dir}"/>
-        <delete dir="${app.dir}"/>
-    </target>
-    
-    <target depends="init" description="Clean all build products." name="clean.app">
-        <delete dir="${app.dir}"/>
-    </target>
+	<!-- Elimina la directory distribuibile. -->
+	<target depends="init" description="Clean application resources." name="clean.app">
+		<echo>Rimozione directory di distribuzione.</echo>
+		<delete dir="${app.dir}"/>
+	</target>
 
-    <target depends="jar" name="bundle">
-        <mkdir dir="${app.lib.dir}"/>
-        <mkdir dir="${app.res.dir}"/>
+	<!-- Elimina il file distribuibile.-->
+	<target depends="init" description="Clean application bundle." name="clean.zip">
+		<echo>Rimozione file di distribuzione.</echo>
+		<delete file="${app.tar}"/>
+		<delete file="${app.zip}"/>
+	</target>
 
-	<copy toDir="${app.lib.dir}">
-	    <fileset dir="${lib.dir}"/>
-	</copy>
-        <jar compress="true" jarfile="${i18n.jar}">
-	    <manifest>
-		<attribute name="Built-By" value="${user.name}"/>
-		<attribute name="Implementation-Title" value="timekeeper"/>
-		<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
-		<attribute name="Implementation-Vendor" value="DateSoft ltd."/>
-      	    </manifest>
-	    <fileset dir="${src.dir}"
-             includes="com/ost/timekeeper/ui/bundle/**"
-	    />
-    	</jar>
-        <jar compress="false" jarfile="${images.jar}" >
-	    <manifest>
-		<attribute name="Built-By" value="${user.name}"/>
-		<attribute name="Implementation-Title" value="timekeeper"/>
-		<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
-		<attribute name="Implementation-Vendor" value="DateSoft ltd."/>
-      	    </manifest>
-	    <fileset dir="${src.dir}"
-             includes="com/ost/timekeeper/ui/images/**"
-	    />
-    	</jar>
-        <jar compress="true" jarfile="${help.jar}" >
-	    <manifest>
-		<attribute name="Built-By" value="${user.name}"/>
-		<attribute name="Implementation-Title" value="timekeeper"/>
-		<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
-		<attribute name="Implementation-Vendor" value="DateSoft ltd."/>
-      	    </manifest>
-	    <fileset dir="${src.dir}"
-             includes="help/**"
-	    />
-    	</jar>
-    </target>
+	<!-- Firma i jar generati. -->
+	<target depends="deploy" name="sign" >
+		<echo>Firma dei JAR.</echo>
+		<fail unless="_canSignJars" message="Impossibile firmare i jar." />
+		
+		<antcall target="generatekey"/>
+		
+		<echo message="Signing jars with alias ${signjar.keystore.alias} and password ${signjar.keystore.password}" />
+		<signjar alias="${signjar.keystore.alias}" storepass="${signjar.keystore.password}" >
+			<fileset file="${app.jar}"/>
+			<fileset dir="${app.res.dir}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</signjar>
+	</target>
 
+	<!-- Controlla se la generazione del certificato è abilitata. -->
+	<target name="generatekeyEnabledTest">
+		<echo>Controllo abilitazione della generazione del certificato.</echo>
+		<!-- Verifica abilitazione della generazione del certificato per la firma dei jar. -->
+		<condition property="_keyGenerationEnabled">
+			<and>
+				<isset property="genkey.enabled" />
+				<istrue value="${genkey.enabled}"/>
+			</and>
+		</condition>
+		<echo message="Esito controllo abilitazione generazione certificato: ${_keyGenerationEnabled} "/>
+	</target>
+		
+	<!-- Controlla se è possibile generare il certificato. -->
+	<target name="canGeneratekeyTest" if="_keyGenerationEnabled">
+		<!-- Controllo impostazione alias del certificato. -->
+		<condition property="_isGenkeyAliasSet" >
+			<isset property="genkey.alias" />
+		</condition>
+		<echo message="Esito controllo impostazione alias del certificato: ${_isGenkeyAliasSet} "/>
+		
+		<input
+			message="Please enter password for the new certificate: "
+			addproperty="genkey.password"
+		/>		
+		
+		<!-- Controllo password del certificato. -->
+		<condition property="_isGenkeyPasswordSet" >
+			<isset property="genkey.password" />
+		</condition>
+		<echo message="Esito controllo password del certificato: ${_isGenkeyPasswordSet}"/>
+					
+		<!-- Controlla se sono verificate le condizioni NECESSARIE per la generazione del certificato. -->
+		<condition property="_canGenerateKey">	
+			<and>
+				<istrue value="${_isGenkeyAliasSet}" />
+				<istrue value="${_isGenkeyPasswordSet}" />
+			</and>
+		</condition>
+		<echo message="Esito controllo condizioni per la generazione del certificato: ${_canGenerateKey}"/>
+	</target>
+
+	<!-- Genera il certificato per la firma. -->
+	<target depends="generatekeyEnabledTest,canGeneratekeyTest" name="generatekey" if="_keyGenerationEnabled">
+		<echo message="Generazione del certificato digitale." />
+		<fail unless="_canGenerateKey" message="Impossibile generare il certificato." />
+		<echo message="Generazione certificato con alias: ${genkey.alias} e password ${genkey.password}"/>
+		<genkey alias="${genkey.alias}" storepass="${genkey.password}" >
+			<dname>
+				<param name="CN" value="${genkey.dname.cn}"/>
+				<param name="OU" value="${genkey.dname.ou}"/>
+				<param name="O"  value="${genkey.dname.o}"/>
+				<param name="L"  value="${genkey.dname.l}"/>
+				<param name="S"  value="${genkey.dname.s}"/>
+				<param name="C"  value="${genkey.dname.C}"/>
+			</dname>
+		</genkey>	
+	</target>
 </project>
