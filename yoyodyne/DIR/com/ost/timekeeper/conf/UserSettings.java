@@ -11,6 +11,7 @@ import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.ui.chart.ChartFrame;
 import java.awt.*;
 import java.util.*;
+import javax.swing.UIManager;
 
 /**
  * Le impostazioni personalizzate dell'utente.
@@ -99,6 +100,8 @@ public final class UserSettings extends AbstractSettings implements Observer{
 			this.setProgressItemTreeWidth (new Integer (Application.getInstance ().getMainForm ().getProgressItemTreeWidth ()));
 			/* Salva tipo lista avanzamenti. */
 			this.setProgressListType (ProgressListFrame.getInstance ().getListType ());
+			
+			this.setLookAndFeel (UIManager.getLookAndFeel ().getClass ().getName ());
 		}
 	}
 	

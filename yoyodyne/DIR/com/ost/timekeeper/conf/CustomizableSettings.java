@@ -73,6 +73,9 @@ public interface CustomizableSettings extends ApplicationSettings{
 	/** Autocaricamento grafico ad anello */
 	public final static String PROPNAME_RINGCHARTAUTOLOAD = "ringchartautoload";
 	
+	/** Autocaricamento grafico a barre */
+	public final static String PROPNAME_BARCHARTAUTOLOAD = "barchartautoload";
+	
 	
 	/** Tipo di lista avanzamenti. */
 	public final static String PROPNAME_PROGRESSLISTTYPE = "progresslisttype";
@@ -109,6 +112,11 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 * Numero livelli visibili nel grafico ad anello.
 	 */
 	public final static String PROPNAME_RINGCHART_VISIBLELEVELS = "ringchartvisiblelevels";
+	
+	/**
+	 * Il LookAndFeel.
+	 */
+	public final static String PROPNAME_LOOKANDFEEL = "lookandfeel";
 	
 	
 	/**
@@ -222,4 +230,9 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 * Imposta il numero di livelli visibili per il grafico ad anello.
 	 */
 	void setRingChartVisibleLevels (final Integer depth);
+	
+	/**
+	 * Imposta il LookAndFeel.
+	 */
+	void setLookAndFeel (final String lookAndFeel);
 }

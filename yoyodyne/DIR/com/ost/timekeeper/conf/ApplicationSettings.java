@@ -68,6 +68,12 @@ public interface ApplicationSettings {
 	public Boolean ringChartAutoload ();
 	
 	/**
+	 * Ritorna lo stato di abilitazione dell'autocaricamento grafico a barre.
+	 * @return lo stato di abilitazione dell'autocaricamento grafico a barre.
+	 */
+	public Boolean barChartAutoload ();
+	
+	/**
 	 * Ritorna il tipo di lista degli avanzamenti.
 	 *
 	 * @return il tipo di lista degli avanzamenti.
@@ -120,4 +126,11 @@ public interface ApplicationSettings {
 	 * @return il numero di livelli visibili per il grafico ad anello.
 	 */
 	Integer getRingChartVisibleLevels ();
+	
+	/**
+	 * Ritorna il LookAndFeel.
+	 *
+	 * @return il LookAndFeel.
+	 */	
+	String getLookAndFeel ();
 }

@@ -11,6 +11,7 @@ import com.ost.timekeeper.util.ResourceClass;
 import com.ost.timekeeper.util.ResourceSupplier;
 import com.ost.timekeeper.view.*;
 import java.awt.*;
+import javax.swing.UIManager;
 
 /**
  * Opzioni di configurazione dell'applicazione. E' possibile implementare una catena
@@ -457,6 +458,29 @@ public final class ApplicationOptions {
 		}
 	}
 	
+	public boolean barChartAutoload () {
+		final Boolean returnValue = this._settings.barChartAutoload ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue.booleanValue ();
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.barChartAutoload ();
+			} else {
+					/*
+					 * Informazione non disponibile.
+					 * Funzionalità disabilitata.
+					 */
+				return false;
+			}
+		}
+	}
+	
 	/**
 	 * Ritorna il formato di visualizzazione ed editazione di una data contenente anche le ore.
 	 *
@@ -465,4 +489,36 @@ public final class ApplicationOptions {
 	public String getDateTimeFormat (){
 		return ResourceSupplier.getString (ResourceClass.UI, "global", "date.time.format");
 	}
+	
+	/**
+	 * Ritorna il formato di visualizzazione ed editazione di una data.
+	 *
+	 * @return il formato di visualizzazione ed editazione di una data.
+	 */	
+	public String getDateFormat (){
+		return ResourceSupplier.getString (ResourceClass.UI, "global", "date.format");
+	}
+	
+	public String getLookAndFeel (){
+		final String returnValue = this._settings.getLookAndFeel ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue;
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.getLookAndFeel ();
+			} else {
+					/*
+					 * Default di sistema non disponibile.
+					 */
+				return UIManager.getSystemLookAndFeelClassName ();
+			}
+		}
+	}
+	
 }

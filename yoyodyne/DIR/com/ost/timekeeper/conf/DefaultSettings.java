@@ -203,6 +203,15 @@ public final class DefaultSettings implements ApplicationSettings {
 	}
 	
 	/**
+	 * Ritorna lo stato di abilitazione dell'autocaricamento grafico a barre.
+	 * Per questa implementazione il valore è sempre <TT>TRUE</TT>.
+	 * @return lo stato di abilitazione dell'autocaricamento grafico a barre.
+	 */
+	public Boolean barChartAutoload () {
+		return Boolean.TRUE;
+	}
+	
+	/**
 	 * Ritorna il tipo di lista degli avanzamenti ().
 	 * Per questa implementazione il valore è sempre {@link #DEFAULT_PROGRESSLISTTYPE}.
 	 *
@@ -267,4 +276,14 @@ public final class DefaultSettings implements ApplicationSettings {
 	public Integer getRingChartVisibleLevels (){
 		return _defaultRingChartVisibleLevels;
 	}
+	
+	/**
+	 * Ritorna il lookAndFeel predefinito (JGoodies Plastic3D).
+	 * @return il lookAndFeel.
+	 */
+	public String getLookAndFeel () {
+		return "com.jgoodies.plaf.plastic.Plastic3DLookAndFeel";
+//		return UIManager.getSystemLookAndFeelClassName ();
+	}
+	
 }

@@ -293,6 +293,21 @@ public abstract class AbstractSettings implements CustomizableSettings {
 	}
 	
 	/**
+	 * Autocaricamento grafico a barre.
+	 * @return lo stato di abilitazione dell'autocaricamento grafico a barre.
+	 */
+	public Boolean barChartAutoload () {
+		return SettingsSupport.getBooleanProperty (this.getProperties (), PROPNAME_BARCHARTAUTOLOAD);
+	}
+	
+	/**
+	 * Imposta lo stato di abilitazione dell'autocaricamento grafico a barre..
+	 */
+	public void setBarChartAutoload (Boolean beep) {
+		SettingsSupport.setBooleanProperty (this.getProperties (), PROPNAME_BARCHARTAUTOLOAD, beep);
+	}
+	
+	/**
 	 * Ritorna il tipo di lista degli avanzamenti.
 	 *
 	 * @return il tipo di lista degli avanzamenti.
@@ -412,6 +427,24 @@ public abstract class AbstractSettings implements CustomizableSettings {
 	 */
 	public void setRingChartVisibleLevels (final Integer depth){
 		SettingsSupport.setIntegerProperty (this.getProperties (), PROPNAME_RINGCHART_VISIBLELEVELS, depth);
+	}
+	
+	/**
+	 * Ritorna il LookAndFeel.
+	 *
+	 * @return il LookAndFeel.
+	 */	
+	public String getLookAndFeel (){
+		return SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_LOOKANDFEEL);		
+	}	
+
+	/**
+	 * Imposta il LookAndFeel.
+	 *
+	 * @param lookAndFeel il Look And Feel
+	 */	
+	public void setLookAndFeel (final String lookAndFeel) {
+		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_LOOKANDFEEL, lookAndFeel);
 	}
 	
 }
