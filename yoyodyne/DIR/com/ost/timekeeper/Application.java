@@ -129,7 +129,7 @@ public class Application extends Observable{
 		this.setChanged();
 		this.notifyObservers(ObserverCodes.SELECTEDITEM);
 //		this.setChanged();
-//		this.notifyObservers("currentitem");
+//		this.notifyObservers(ObserverCodes.CURRENTITEM);
 //		this.getProgressStartAction().setEnabled(this.currentItem==null);
 //		this.getNodeCreateAction().setEnabled(this.selectedItem!=null);
 //		this.getNodeDeleteAction().setEnabled(this.selectedItem!=null);
