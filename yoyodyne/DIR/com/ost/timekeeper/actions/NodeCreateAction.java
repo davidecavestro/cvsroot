@@ -28,10 +28,10 @@ public class NodeCreateAction extends javax.swing.AbstractAction {
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
-		ProgressItemNode newNode = new ProgressItemNode(new ProgressItem (askForName ()));
+		ProgressItem newNode = new ProgressItem (askForName ());
 		Application app = Application.getInstance();
-		ProgressItemNode selectedItem = app.getSelectedItem ();
-		app.getMainForm().getProgressTreeModel().insertNodeInto(newNode, selectedItem, selectedItem.getChildCount());
+		ProgressItem selectedItem = app.getSelectedItem ();
+		app.getMainForm().getProgressTreeModel().insertNodeInto(newNode, selectedItem, selectedItem.childCount());
 //		selectedItem.insert(newNode, selectedItem.getChildCount());
 	}
 	

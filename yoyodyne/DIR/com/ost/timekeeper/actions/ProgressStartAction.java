@@ -29,8 +29,8 @@ public class ProgressStartAction extends javax.swing.AbstractAction {
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 //		this.setEnabled(false);
 		Application app = Application.getInstance();
-		ProgressItemNode selectedItem = app.getSelectedItem ();
-		selectedItem.getProgressItem().startPeriod();
+		ProgressItem selectedItem = app.getSelectedItem ();
+		selectedItem.startPeriod();
 		Application.getInstance().setCurrentItem(selectedItem);
 	}
 	

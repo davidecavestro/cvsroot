@@ -29,28 +29,29 @@ public class NodeDeleteAction extends javax.swing.AbstractAction {
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		Application app = Application.getInstance();
-		ProgressItemNode selectedItem = app.getSelectedItem ();
-		ProgressItemNode parent = (ProgressItemNode)selectedItem.getParent();
+		ProgressItem selectedItem = app.getSelectedItem ();
+		ProgressItem parent = selectedItem.getParent();
 		if (parent==null){
 			//non si rimuove la radice;
 			return;
 		}
 		app.getMainForm().getProgressTreeModel ().removeNodeFromParent(selectedItem);
-		int pos = parent.getIndex(selectedItem);
+		int pos = parent.childIndex(selectedItem);
 //		parent.remove(selectedItem);
 		
 		//determina nuova selezione
-		ProgressItemNode newSelection = null;
-		if (parent.getChildCount()!=0){
-			if (parent.getChildCount()>pos){
-				newSelection = (ProgressItemNode)parent.getChildAt(pos);
-			} else {
-				newSelection = (ProgressItemNode)parent.getChildAt(parent.getChildCount()-1);
-			}
-		} else {
-			newSelection = parent;
-		}
-		app.setSelectedItem(newSelection);
+//		ProgressItem newSelection = null;
+//		int childCount = parent.childCount();
+//		if (childCount!=0){
+//			if (childCount>pos){
+//				newSelection = parent.childAt(pos);
+//			} else {
+//				newSelection = parent.childAt(childCount-1);
+//			}
+//		} else {
+//			newSelection = parent;
+//		}
+//		app.setSelectedItem(newSelection);
 	}
 	
 	public String askForName (){

@@ -9,6 +9,7 @@ package com.ost.timekeeper.ui;
 import javax.swing.event.*;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
 
@@ -52,9 +53,9 @@ public class MainForm extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
-        modelTree = new javax.swing.JTree();
+        progressTree = new javax.swing.JTree();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        progressesTable = new com.ost.timekeeper.ui.ProgressesTable ();
+        progressTable = new com.ost.timekeeper.ui.ProgressesTable ();
         jTable2 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLayeredPane1 = new javax.swing.JLayeredPane();
@@ -79,7 +80,7 @@ public class MainForm extends javax.swing.JFrame {
         jMenuActions = new javax.swing.JMenu();
         jMenuItemStart = new javax.swing.JMenuItem();
         jMenuItemStop = new javax.swing.JMenuItem();
-        jMenuItemNodeCreate = new javax.swing.JMenuItem();
+        jMenuItemCreate = new javax.swing.JMenuItem();
         jMenuItemDeleteNode = new javax.swing.JMenuItem();
         jMenuTools = new javax.swing.JMenu();
         jMenuItemOptions = new javax.swing.JMenuItem();
@@ -108,19 +109,19 @@ public class MainForm extends javax.swing.JFrame {
 
         jToolBarMain.setBorder(new javax.swing.border.EtchedBorder());
         jToolBarMain.setRollover(true);
-        ndeCreateButton.setAction(this.application.getInstance().getNodeCreateAction());
+        ndeCreateButton.setAction(this.application.getNodeCreateAction());
         jToolBarMain.add(ndeCreateButton);
 
-        nodeDeleteButton.setAction(this.application.getInstance().getNodeDeleteAction());
+        nodeDeleteButton.setAction(this.application.getNodeDeleteAction());
         jToolBarMain.add(nodeDeleteButton);
 
         jToolBarMain.add(jSeparator2);
 
-        startButton.setAction(this.application.getInstance().getProgressStartAction());
+        startButton.setAction(this.application.getProgressStartAction());
         startButton.setText(ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.start"));
         jToolBarMain.add(startButton);
 
-        stopButton.setAction(this.application.getInstance().getProgressStopAction());
+        stopButton.setAction(this.application.getProgressStopAction());
         jToolBarMain.add(stopButton);
 
         jPanelMainToolbar.add(jToolBarMain, java.awt.BorderLayout.NORTH);
@@ -151,17 +152,17 @@ public class MainForm extends javax.swing.JFrame {
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         jSplitPane1.setToolTipText(ResourceSupplier.getString (ResourceClass.UI, "global", "controls.splitter.tooltip"));
-        modelTree.setCellEditor(new javax.swing.tree.DefaultTreeCellEditor (modelTree, progressItemCellRenderer));
-        modelTree.setCellRenderer(progressItemCellRenderer);
-        modelTree.setMaximumSize(null);
-        modelTree.setMinimumSize(null);
-        modelTree.setModel(null);
-        modelTree.setAutoscrolls(true);
-		modelTree.setPreferredSize (new java.awt.Dimension(100, 200));
-        jSplitPane1.setLeftComponent(modelTree);
+        progressTree.setCellEditor(new javax.swing.tree.DefaultTreeCellEditor (progressTree, progressItemCellRenderer));
+        progressTree.setCellRenderer(progressItemCellRenderer);
+        progressTree.setMaximumSize(null);
+        progressTree.setMinimumSize(null);
+        progressTree.setModel(null);
+        progressTree.setAutoscrolls(true);
+		progressTree.setPreferredSize (new java.awt.Dimension(100, 200));
+        jSplitPane1.setLeftComponent(progressTree);
 
         jTabbedPane1.setMaximumSize(null);
-        jTabbedPane1.addTab("Progresses", progressesTable);
+        jTabbedPane1.addTab("Progresses", progressTable);
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -279,19 +280,19 @@ public class MainForm extends javax.swing.JFrame {
 
         jMenuActions.setText(ResourceSupplier.getString (ResourceClass.UI, "menu", "actions"));
         jMenuItemStart.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItemStart.setAction(this.application.getInstance().getProgressStartAction());
+        jMenuItemStart.setAction(this.application.getProgressStartAction());
         jMenuItemStart.setText(ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.start"));
         jMenuActions.add(jMenuItemStart);
 
         jMenuItemStop.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItemStop.setAction(this.application.getInstance().getProgressStopAction());
+        jMenuItemStop.setAction(this.application.getProgressStopAction());
         jMenuItemStop.setText(ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.stop"));
         jMenuActions.add(jMenuItemStop);
 
-        jMenuItemNodeCreate.setAction(this.application.getInstance().getNodeCreateAction());
-        jMenuActions.add(jMenuItemNodeCreate);
+        jMenuItemCreate.setAction(this.application.getNodeCreateAction());
+        jMenuActions.add(jMenuItemCreate);
 
-        jMenuItemDeleteNode.setAction(this.application.getInstance().getNodeDeleteAction());
+        jMenuItemDeleteNode.setAction(this.application.getNodeDeleteAction());
         jMenuActions.add(jMenuItemDeleteNode);
 
         jMenuBarMain.add(jMenuActions);
@@ -357,7 +358,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemFinish;
     private javax.swing.JMenuItem jMenuItemHelp;
     private javax.swing.JMenuItem jMenuItemNew;
-    private javax.swing.JMenuItem jMenuItemNodeCreate;
+    private javax.swing.JMenuItem jMenuItemCreate;
     private javax.swing.JMenuItem jMenuItemOpen;
     private javax.swing.JMenuItem jMenuItemOptions;
     private javax.swing.JMenuItem jMenuItemPaste;
@@ -373,14 +374,14 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private com.ost.timekeeper.ui.ProgressesTable progressesTable;
+    private com.ost.timekeeper.ui.ProgressesTable progressTable;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JToolBar jToolBarMain;
     private javax.swing.JProgressBar jobProgress;
-    private javax.swing.JTree modelTree;
+    private javax.swing.JTree progressTree;
     private javax.swing.JButton ndeCreateButton;
     private javax.swing.JButton nodeDeleteButton;
     private org.netbeans.examples.lib.timerbean.Timer progressTimer;
@@ -391,22 +392,26 @@ public class MainForm extends javax.swing.JFrame {
 
     private void postInitComponents() {
 		this.progressTreeModel = new ProgressTreeModel (application.getProject());
-		this.modelTree.setModel(this.progressTreeModel);
-		this.modelTree.addTreeSelectionListener (new TreeSelectionListener (){
+		this.progressTree.setModel(this.progressTreeModel);
+		this.progressTree.addTreeSelectionListener (new TreeSelectionListener (){
 			 public void valueChanged(TreeSelectionEvent e){
-				 application.setSelectedItem((ProgressItemNode)e.getPath().getLastPathComponent());
+				 if (e.getNewLeadSelectionPath() == null) {
+					 //gestione caso cancellazione elemento selezionato
+					 return;
+				 }
+				 application.setSelectedItem((ProgressItem)e.getPath().getLastPathComponent());
 			 }
 		});
-		this.modelTree.setSelectionRow(0);
+		this.progressTree.setSelectionRow(0);
 		
-		this.modelTree.getModel ().addTreeModelListener(new TreeModelListener (){
+		this.progressTree.getModel ().addTreeModelListener(new TreeModelListener (){
 			public void treeNodesChanged(TreeModelEvent e){repaint();}
 			public void treeNodesInserted(TreeModelEvent e){repaint();}
 			public void treeNodesRemoved(TreeModelEvent e){repaint();}
 			public void treeStructureChanged(TreeModelEvent e){repaint();}
 		});
-		this.modelTree.addTreeSelectionListener(this.progressesTable);
-		this.modelTree.getModel ().addTreeModelListener(this.progressesTable);
+		this.progressTree.addTreeSelectionListener(this.progressTable);
+		this.progressTree.getModel ().addTreeModelListener(this.progressTable);
 	}
 	private ProgressTreeModel progressTreeModel;
 	public ProgressTreeModel getProgressTreeModel (){

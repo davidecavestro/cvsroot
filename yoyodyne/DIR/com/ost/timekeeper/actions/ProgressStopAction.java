@@ -25,7 +25,7 @@ public class ProgressStopAction extends javax.swing.AbstractAction {
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 //		this.setEnabled(false);
 		Application.getInstance().getProgressStartAction ().setEnabled (true);
-		Application.getInstance().getCurrentItem ().getProgressItem().stopPeriod();
+		Application.getInstance().getCurrentItem ().stopPeriod();
 		Application.getInstance().setCurrentItem (null);
 	}
 	

@@ -33,6 +33,11 @@ public class ProgressItem extends Observable{
 		return this.parent;
 	}
 	
+	private Project project = null;
+	public Project getProject() {
+		return this.project;
+	}
+	
 	/**
 	 * Inserisce un nuovo elemento figlio alla posizione desiderata.
 	 * @param child il nuovo figlio.
@@ -41,6 +46,7 @@ public class ProgressItem extends Observable{
 	public void insert (ProgressItem child, int pos){
 		this.children.add (pos, child);
 		child.parent=this;
+		child.project = this.project;
 		
 		this.setChanged();
 		child.setChanged();
@@ -59,6 +65,7 @@ public class ProgressItem extends Observable{
 	public void remove(int pos) {
 		ProgressItem child = (ProgressItem)this.children.remove(pos);
 		child.parent=null;
+		child.project = null;
 		
 		this.setChanged();
 		child.setChanged();
@@ -159,6 +166,10 @@ public class ProgressItem extends Observable{
 		return (ProgressItem)this.children.get (pos);
 	}
 	
+	public int childCount (){
+		return this.children.size();
+	}
+	
 	/**
 	 * Ritorna la lista di avanzamenti appartnenti a queto item. Non dovrebbe 
 	 * essere usata per apportare modifiche agli avanzamenti.
@@ -179,5 +190,10 @@ public class ProgressItem extends Observable{
 			subProgresses.addAll (((ProgressItem)it.next ()).getSubtreeProgresses ());
 		}
 		return subProgresses;
+	}
+	
+	public void itemChanged() {
+		this.setChanged();
+		this.notifyObservers();
 	}
 }

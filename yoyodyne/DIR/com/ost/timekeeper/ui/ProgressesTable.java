@@ -54,18 +54,22 @@ public class ProgressesTable extends javax.swing.JTable implements TreeSelection
 	public void reloadModel(TreePath newPath){
 		if (this.currentPath!=newPath){
 			this.currentPath = newPath;
-			Application app = Application.getInstance();
-			ProgressItemNode root = null;
+			ProgressItem root = null;
+			List subTreeProgresses = null;
 			if (this.currentPath!=null){
-				root = (ProgressItemNode)this.currentPath.getLastPathComponent();
+				root = (ProgressItem)this.currentPath.getLastPathComponent();
 			}
-			List subTreeProgresses = app.getMainForm().getProgressTreeModel().getProgressesFromRoot(root);
+			subTreeProgresses = root.getSubtreeProgresses();
 			this.setModel(new ProgressTableModel(subTreeProgresses));
 		}
 	}
 	
 	public void valueChanged(TreeSelectionEvent e){
-		this.reloadModel(e.getNewLeadSelectionPath());
+		 if (e.getNewLeadSelectionPath() == null) {
+			 //gestione caso cancellazione elemento selezionato
+			 return;
+		 }
+		this.reloadModel(e.getPath());
 	}
 	
 	private final class ProgressTableModel extends javax.swing.table.AbstractTableModel {
