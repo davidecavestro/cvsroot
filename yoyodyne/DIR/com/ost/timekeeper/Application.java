@@ -68,6 +68,8 @@ public class Application extends Observable{
 		this.addObserver(actionPool.getNodeDeleteAction ());
 		this.addObserver(actionPool.getProgressStartAction ());
 		this.addObserver(actionPool.getProgressStopAction ());
+		this.addObserver(actionPool.getProgressUpdateAction ());
+		this.addObserver(actionPool.getProgressDeleteAction ());
 		this.addObserver(actionPool.getProjectCreateAction ());
 		this.addObserver(actionPool.getProjectDeleteAction ());
 		this.addObserver(actionPool.getProjectCloseAction ());
@@ -75,7 +77,9 @@ public class Application extends Observable{
 		this.addObserver(actionPool.getProjectSaveAction ());
 		this.addObserver(actionPool.getProjectXMLExportAction ());
 		this.addObserver(actionPool.getProjectXMLImportAction ());
-		this.addObserver(actionPool.getProgressItemUpdateAction ());
+		this.addObserver(actionPool.getNodeUpdateAction ());
+		this.addObserver(actionPool.getStartNodeEdit ());
+		this.addObserver(actionPool.getStartProgressEdit ());
 	}
 	
 	/**
@@ -299,13 +303,13 @@ public class Application extends Observable{
 	/**
 	 * L'avanzamento selezionato.
 	 */
-	private Period selectedProgress;
+	private Progress selectedProgress;
 	
 	/**
 	 * Imposta l'avanzamento selezionato.
 	 * @param selected l'avanzamento selezionato.
 	 */	
-	public void setSelectedProgress(Period selected){
+	public void setSelectedProgress(Progress selected){
 		this.selectedProgress = selected;
 		//notifica variazione selezione elemento
 		this.setChanged();
@@ -316,7 +320,7 @@ public class Application extends Observable{
 	 * Ritorna l'acanzamento selezionato.
 	 * @return l'acanzamento selezionato.
 	 */	
-	public Period getSelectedProgress(){
+	public Progress getSelectedProgress(){
 		return this.selectedProgress;
 	}
 
@@ -354,14 +358,14 @@ public class Application extends Observable{
 		final PersistenceManagerFactory pmf =
 					  JDOHelper.getPersistenceManagerFactory(properties);
 		
-		System.out.println ("Setting persistent manager from "+properties);
+//		System.out.println ("Setting persistent manager from "+properties);
 		
 		this.pm = pmf.getPersistenceManager();
 		
 		if (this.pm.currentTransaction().isActive ()){
 			this.pm.currentTransaction().commit();
 		}
-		this.pm.currentTransaction().begin();
+//		this.pm.currentTransaction().begin();
 	}
 	
 	/**
@@ -416,7 +420,7 @@ public class Application extends Observable{
 	 * @return il gestore della persistenza dei dati.
 	 */	
 	public final PersistenceManager getPersistenceManager (){
-		System.out.println ("returning persistent manager for properties "+	this._dataStoreEnvironment.getDataStoreProperties ());
+//		System.out.println ("returning persistent manager for properties "+	this._dataStoreEnvironment.getDataStoreProperties ());
 		return this.pm;
 	}
 	
@@ -426,13 +430,15 @@ public class Application extends Observable{
 	public void flushData (){
 		Transaction tx = this.pm.currentTransaction();
 		try {
-			tx.commit();
+			if (this.pm.currentTransaction().isActive ()){
+				this.pm.currentTransaction().commit();
+			}
 		} catch (Exception e){
 			Application.getLogger ().error ("Error flushing data for persistence. ", e);
 			e.printStackTrace();
 			tx.rollback();
 		}
-		tx.begin();
+//		tx.begin();
 	}
 	
 	/**
@@ -539,8 +545,8 @@ public class Application extends Observable{
 		notifyObservers (ObserverCodes.APPLICATIONEXITING);
 		UserSettings.getInstance ().storeProperties ();
 		final ProgressItem currentItem = this.getCurrentItem ();
-		if (currentItem!=null){
-			currentItem.stopPeriod ();
+		if (currentItem!=null && currentItem.isProgressing ()){
+			ActionPool.getInstance ().getProgressStopAction ().execute ();
 		}
 		ActionPool.getInstance ().getProjectSaveAction ().execute ();
 		/* Forza chiusura logger. */
