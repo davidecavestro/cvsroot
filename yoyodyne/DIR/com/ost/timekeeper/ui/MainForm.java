@@ -33,6 +33,7 @@ public class MainForm extends javax.swing.JFrame {
         jTree1 = new javax.swing.JTree();
         jMenuBarMain = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
+        jMenuItemNew = new javax.swing.JMenuItem();
         jMenuItemOpen = new javax.swing.JMenuItem();
         jMenuExport = new javax.swing.JMenu();
         jMenuItemClose = new javax.swing.JMenuItem();
@@ -52,6 +53,7 @@ public class MainForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(java.util.ResourceBundle.getBundle("com/ost/timekeeper/ui/bundle/global").getString("app.title"));
+        setFont(new java.awt.Font("Default", 0, 10));
         setName("frameMain");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -59,22 +61,25 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
-        jPanelMain.setLayout(new java.awt.GridBagLayout());
+        jPanelMain.setLayout(new java.awt.BorderLayout());
 
-        jPanelMainToolbar.setLayout(new java.awt.GridBagLayout());
+        jPanelMainToolbar.setLayout(new java.awt.BorderLayout());
 
+        jToolBarMain.setBorder(new javax.swing.border.EtchedBorder());
         jToolBarMain.setFloatable(false);
-        jToolBarMain.setOrientation(1);
         jToolBarMain.setRollover(true);
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ost/timekeeper/ui/images/start.gif")));
         jButton2.setText(java.util.ResourceBundle.getBundle("com/ost/timekeeper/ui/bundle/menu").getString("actions.start"));
-        jButton2.setBorder(null);
+        jButton2.setBorder(new javax.swing.border.EtchedBorder());
         jButton2.setRolloverEnabled(true);
         jToolBarMain.add(jButton2);
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ost/timekeeper/ui/images/stop.gif")));
         jButton1.setText(java.util.ResourceBundle.getBundle("com/ost/timekeeper/ui/bundle/menu").getString("actions.stop"));
+        jButton1.setBorder(new javax.swing.border.EtchedBorder());
         jToolBarMain.add(jButton1);
 
-        jPanelMainToolbar.add(jToolBarMain, new java.awt.GridBagConstraints());
+        jPanelMainToolbar.add(jToolBarMain, java.awt.BorderLayout.NORTH);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -87,17 +92,26 @@ public class MainForm extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTable1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTable1KeyPressed(evt);
+            }
+        });
+
         jTabbedPane1.addTab("tab1", jTable1);
 
         jTabbedPane1.addTab("tab2", jTree1);
 
-        jPanelMainToolbar.add(jTabbedPane1, new java.awt.GridBagConstraints());
+        jPanelMainToolbar.add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
-        jPanelMain.add(jPanelMainToolbar, new java.awt.GridBagConstraints());
+        jPanelMain.add(jPanelMainToolbar, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(jPanelMain, java.awt.BorderLayout.CENTER);
 
         jMenuFile.setText(java.util.ResourceBundle.getBundle("com/ost/timekeeper/ui/bundle/menu").getString("file"));
+        jMenuItemNew.setText(java.util.ResourceBundle.getBundle("com/ost/timekeeper/ui/bundle/menu").getString("file.new"));
+        jMenuFile.add(jMenuItemNew);
+
         jMenuItemOpen.setText(java.util.ResourceBundle.getBundle("com/ost/timekeeper/ui/bundle/menu").getString("file.open"));
         jMenuItemOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -164,6 +178,10 @@ public class MainForm extends javax.swing.JFrame {
         pack();
     }//GEN-END:initComponents
 
+	private void jTable1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable1KeyPressed
+		// Add your handling code here:
+	}//GEN-LAST:event_jTable1KeyPressed
+
 	private void jMenuItemCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCloseActionPerformed
 		// Add your handling code here:
 	}//GEN-LAST:event_jMenuItemCloseActionPerformed
@@ -177,12 +195,6 @@ public class MainForm extends javax.swing.JFrame {
 		System.exit(0);
 	}//GEN-LAST:event_exitForm
 	
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		new MainForm().show();
-	}
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -199,6 +211,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemCopy;
     private javax.swing.JMenuItem jMenuItemCut;
     private javax.swing.JMenuItem jMenuItemFinish;
+    private javax.swing.JMenuItem jMenuItemNew;
     private javax.swing.JMenuItem jMenuItemOpen;
     private javax.swing.JMenuItem jMenuItemOptions;
     private javax.swing.JMenuItem jMenuItemPaste;
