@@ -4,7 +4,7 @@
  * Created on 22 febbraio 2004, 10.56
  */
 
-package src.com.ost.timekeeper.ui;
+package com.ost.timekeeper.ui;
 
 /**
  *
