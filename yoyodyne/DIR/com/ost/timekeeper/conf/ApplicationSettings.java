@@ -1,32 +1,30 @@
 /*
  * ApplicationSettings.java
  *
- * Created on 2 maggio 2004, 19.59
+ * Created on 4 dicembre 2004, 14.15
  */
 
 package com.ost.timekeeper.conf;
 
-import java.util.*;
-
-import com.ost.timekeeper.util.*;
+import java.awt.*;
 
 /**
+ * Impostazioni configurazbili.
  *
  * @author  davide
  */
-public abstract class ApplicationSettings {
+public interface ApplicationSettings {
+	/**
+	 * Ritorna la posizione iniziale della finestra principale dell'applicazione.
+	 *
+	 * @return la posizione iniziale della finestra principale dell'applicazione.
+	 */	
+	public Rectangle getMainFormBounds ();
+	/**
+	 * Ritorna la posizione iniziale dello splash screen.
+	 *
+	 * @return la posizione iniziale dello splash screen.
+	 */	
+	public Rectangle getSplashScreenBounds ();
 	
-	private final static String[] TRUE = new String[]{"TRUE", "true"};
-	private final static String[] FALSE = new String[]{"FALSE", "false"};
-	
-	/** Creates a new instance of ApplicationSettings */
-	protected ApplicationSettings() {
-	}
-	
-	public final Boolean getBoolean (String key){
-		String value =this.getProperties ().getProperty (key);
-		return new Boolean (value!=null && StringUtils.contains(TRUE, value));
-	}
-	
-	public abstract Properties getProperties ();
 }

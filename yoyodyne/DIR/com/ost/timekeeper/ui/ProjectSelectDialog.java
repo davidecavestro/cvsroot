@@ -41,6 +41,10 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 		this.titleText = title;
 		this.labelText = label;
 		postInitComponents();
+		/*
+		 * centra
+		 */
+		this.setLocationRelativeTo (null);
 	}
 	
 	/** 

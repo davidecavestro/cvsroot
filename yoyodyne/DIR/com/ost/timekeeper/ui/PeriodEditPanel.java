@@ -16,13 +16,15 @@ import java.awt.event.*;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.*;
 
 /**
  * Pannello di modifica periodo di avanzamento.
  *
  * @author  davide
+ * @todo fix abilitazione pulsante conferma (ora è abilitato di default, si riabilita solo alla pressione dei tasti sui campi).
  */
-public final class PeriodEditPanel extends javax.swing.JPanel implements Observer {
+public final class PeriodEditPanel extends javax.swing.JPanel implements Observer, KeyListener {
 	
 	/**********************************************
 	 * INIZIO dichiarazione componenti UI interne.
@@ -91,6 +93,11 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 	 **********************************************/
 	
 	/**
+	 * Stato modifica ai dati trattati da questo pannello.
+	 */
+	private boolean _dataChanged = false;
+	
+	/**
 	 * Costruttore.
 	 *
 	 */
@@ -145,10 +152,6 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		 */
 		buttonPanel.add (resetButton);
 		
-		//		JScrollPane scrollPane = new JScrollPane (jTextAreaDescription,
-		//		JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-		//		JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		
 		
 		/*
 		 * Configurazione pannello editazione.
@@ -161,6 +164,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		fromLabel.setLabelFor (fromEditor);
 		fromLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "from"));
 //		fromEditor.setMinimumSize (new Dimension (120, 20));
+		fromEditor.addKeyListener (this);
 		
 		/*
 		 * Configurazione editazione campo FINE.
@@ -168,6 +172,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		toLabel.setLabelFor (toEditor);
 		toLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "to"));
 //		toEditor.setMinimumSize (new Dimension (120, 20));
+		toEditor.addKeyListener (this);
 		
 		/*
 		 * Configurazione editazione DESCRIZIONE.
@@ -175,6 +180,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		descriptionLabel.setLabelFor (descriptionEditor);
 		descriptionLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "description"));
 		descriptionEditor.setMinimumSize (new Dimension (120, 20));
+		descriptionEditor.addKeyListener (this);
 		
 		/*
 		 * Configurazione editazione NOTE.
@@ -182,6 +188,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		notesLabel.setLabelFor (notesEditor);
 		notesLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "notes"));
 		notesEditor.setMinimumSize (new Dimension (120, 20));
+		notesEditor.addKeyListener (this);
 		
 		/*
 		 * Inserimento editazione INIZIO.
@@ -264,6 +271,12 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		this.toEditor.setValue (to);
 		this.descriptionEditor.setText (description);
 		this.notesEditor.setText (notes);
+		
+		/*
+		 * resetta flag modifica
+		 */
+		this.setDataChanged (false);
+		
 	}
 	
 	/**
@@ -282,6 +295,8 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 			editSubject.setTo ((Date)this.toEditor.getValue());
 			editSubject.setDescription (this.descriptionEditor.getText () );
 			editSubject.setNotes (this.notesEditor.getText () );
+			
+			this.setDataChanged (false);
 		}
 	}
 	
@@ -302,4 +317,33 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		}
 	}
 	
+	/**
+	 * Imposta il flag di "modifica avvenuta" per questo pannello.
+	 */
+	private void setDataChanged (boolean changed){
+		this._dataChanged = changed;
+		this.confirmButton.setEnabled (this._dataChanged);
+	}
+	
+	/**
+	 * Implementazione vuota.
+	 */
+	public void keyPressed (KeyEvent e) {
+	}
+	
+	/**
+	 * Implementazione vuota.
+	 */
+	public void keyReleased (KeyEvent e) {
+	}
+	
+	/**
+	 * Notifica modifica.
+	 */
+	public void keyTyped (KeyEvent e) {
+		/*
+		 * Notifica modifica dati.
+		 */
+		setDataChanged (true);
+	}
 }

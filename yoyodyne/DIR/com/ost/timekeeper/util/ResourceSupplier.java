@@ -6,6 +6,7 @@
 
 package com.ost.timekeeper.util;
 
+import java.net.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -15,7 +16,13 @@ import javax.swing.*;
  * @author  davide
  */
 public final class ResourceSupplier {
+	/**
+	 * Il percorso delle risorse localizzate.
+	 */
 	private final static String BUNDLE_PATH		= "com/ost/timekeeper/ui/bundle/";
+	/**
+	 * Il percorso delle risorse grafiche.
+	 */
 	private final static String IMAGE_PATH		= "/com/ost/timekeeper/ui/images/";
 	
 	/** 
@@ -52,18 +59,53 @@ public final class ResourceSupplier {
 	 * @param name il nome della risorsa.
 	 * @return l'icona di tipo <TT>resClass</TT> identificata da <TT>name</TT>.
 	 */	
-	public final static ImageIcon getImageIcon (ResourceClass resClass, String name){
+	public final static ImageIcon getImageIcon (ResourceClass resClass, String name) {
+		return getImageIcon (resClass, name, true);
+	}
+	/**
+	 * Ritorna una risorsa di tipo icona.
+	 *
+	 * @return l'icona di tipo <TT>resClass</TT> identificata da <TT>name</TT>.
+	 * @param defaultIfMissing specifica se ritornare l'immagine di default in caso di immagine mancante.
+	 * @param resClass il tipo di risorsa.
+	 * @param name il nome della risorsa.
+	 * @throws MissingReourceException
+	 */	
+	public final static ImageIcon getImageIcon (ResourceClass resClass, String name, boolean defaultIfMissing) throws MissingResourceException{
 		String iamgePath = "";
 		if (resClass==ResourceClass.UI){
 			iamgePath = IMAGE_PATH;
 		}
 		try {
-			return new javax.swing.ImageIcon(ResourceSupplier.class.getResource(iamgePath+name));
-		} catch (Exception e){
-			return getMissingImageIcon ();
+			return loadIcon (ResourceSupplier.class.getResource(iamgePath+name));
+		} catch (MissingResourceException mre) {
+			if (defaultIfMissing){
+				return getMissingImageIcon ();
+			} else {
+				throw mre;
+			}
 		}
 	}
 	
+	/**
+	 * Ritorna una icona a partire da una URL.
+	 *
+	 * @return una icona caricata da <TT>URL</TT>.
+	 * @param url l'URL della risorsa.
+	 * @throws MissingResourceException nel caso in cui l'icona non sia reperibile.
+	 */	
+	private final static ImageIcon loadIcon (URL url) throws MissingResourceException {
+		try {
+			return new javax.swing.ImageIcon(url);
+		} catch (Exception e){
+			throw new MissingResourceException ("Missing icon", url!=null?url.toString ():"null", "");
+		}
+		
+	}
+	
+	/**
+	 * L'immagine di default, da usare in caso di risorsa mancante.
+	 */
 	private static ImageIcon missingImageIcon;
 	
 	public static ImageIcon getMissingImageIcon () {

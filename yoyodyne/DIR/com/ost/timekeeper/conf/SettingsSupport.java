@@ -6,31 +6,31 @@
 
 package com.ost.timekeeper.conf;
 
+import com.ost.timekeeper.util.*;
 import java.util.*;
 
 /**
- * Gestisce la persistenza delle impostazioni personalizzate a livello globale ed utente.
+ * Gestisce la persistenza delle impostazioni personalizzate.
  *
  * @author  davide
  */
-public class SettingsSupport {
+public final class SettingsSupport {
 	
-	private Properties properties;
 	/** 
-	 * Costruttore con risorsa di configurazione.
-	 * @param properties la risorsa di configurazione.
+	 * Costruttore privato.
 	 */
-	public SettingsSupport(Properties properties) {
-		this.properties = properties;
+	private SettingsSupport() {
 	}
 	
 	/**
 	 * Ritorna il valore di una proprietà di tipo booleano.
+	 *
+	 * @param properties la risorsa di configurazione.
 	 * @param propertyName il nome della proprietà.
 	 * @return il valore di una proprietà di tipo booleano.
 	 */	
-	public Boolean getBooleanProperty (String propertyName){
-		String propertyValue = this.properties.getProperty (propertyName);
+	public static Boolean getBooleanProperty (Properties properties, String propertyName){
+		String propertyValue = properties.getProperty (propertyName);
 		if (propertyValue!=null){
 			return new Boolean (propertyValue);
 		} else {
@@ -40,35 +40,40 @@ public class SettingsSupport {
 	
 	/**
 	 * Ritorna il valore di una proprietà di tipo stringa.
+	 *
+	 * @param properties la risorsa di configurazione.
 	 * @param propertyName il nome della proprietà.
 	 * @return il valore di una proprietà di tipo stringa.
 	 */	
-	public String getStringProperty (String propertyName){
-		return this.properties.getProperty (propertyName);
+	public static String getStringProperty (Properties properties, String propertyName){
+		return properties.getProperty (propertyName);
 	}
 	
 	/**
 	 * Ritorna il valore di una proprietà di tipo data.
+	 *
+	 * @param properties la risorsa di configurazione.
 	 * @param propertyName il nome della proprietà.
 	 * @return il valore di una proprietà di tipo data.
 	 */	
-	public Calendar getCalendarProperty (String propertyName){
-//		String propertyValue = this.properties.getProperty (propertyName);
-//		java.sql.Timestamp ts = new java.sql.Timestamp (year
-//		if (propertyValue!=null){
-//			return new Boolean (propertyValue);
-//		} else {@@@
+	public static Calendar getCalendarProperty (Properties properties, String propertyName){
+		String propertyValue = properties.getProperty (propertyName);
+		if (propertyValue!=null){
+			return CalendarUtils.getCalendar (propertyValue, CalendarUtils.TIMESTAMP_FORMAT);
+		} else {
 			return null;
-//		}
+		}
 	}
 	
 	/**
 	 * Ritorna il valore di una proprietà di tipo intero.
+	 *
+	 * @param properties la risorsa di configurazione.
 	 * @param propertyName il nome della proprietà.
 	 * @return il valore di una proprietà di tipo intero.
 	 */	
-	public Integer getIntegerProperty (String propertyName){
-		String propertyValue = this.properties.getProperty (propertyName);
+	public static Integer getIntegerProperty (Properties properties, String propertyName){
+		String propertyValue = properties.getProperty (propertyName);
 		if (propertyValue!=null){
 			return new Integer (propertyValue);
 		} else {

@@ -20,8 +20,9 @@ import javax.swing.*;
  * Pannello di modifica nodo di avanzamento.
  *
  * @author  davide
+ * @todo fix abilitazione pulsante conferma (ora è abilitato di default, si riabilita solo alla pressione dei tasti sui campi).
  */
-public final class ProgressItemEditPanel extends javax.swing.JPanel implements Observer {
+public final class ProgressItemEditPanel extends javax.swing.JPanel implements Observer, KeyListener {
 	
 	/**********************************************
 	 * INIZIO dichiarazione componenti UI interne.
@@ -90,6 +91,11 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 	 **********************************************/
 	
 	/**
+	 * Stato modifica ai dati trattati da questo pannello.
+	 */
+	private boolean _dataChanged = false;
+	
+	/**
 	 * Costruttore.
 	 *
 	 */
@@ -144,10 +150,6 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		 */
 		buttonPanel.add (resetButton);
 		
-		//		JScrollPane scrollPane = new JScrollPane (jTextAreaDescription,
-		//		JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-		//		JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		
 		
 		/*
 		 * Configurazione pannello editazione.
@@ -160,6 +162,7 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		codeLabel.setLabelFor (codeEditor);
 		codeLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "code"));
 		codeEditor.setMinimumSize (new Dimension (120, 20));
+		codeEditor.addKeyListener (this);
 		
 		/*
 		 * Configurazione editazione NOME.
@@ -167,6 +170,7 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		nameLabel.setLabelFor (nameEditor);
 		nameLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "name"));
 		nameEditor.setMinimumSize (new Dimension (120, 20));
+		nameEditor.addKeyListener (this);
 		
 		/*
 		 * Configurazione editazione DESCRIZIONE.
@@ -174,6 +178,7 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		descriptionLabel.setLabelFor (descriptionEditor);
 		descriptionLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "description"));
 		descriptionEditor.setMinimumSize (new Dimension (120, 20));
+		descriptionEditor.addKeyListener (this);
 		
 		/*
 		 * Configurazione editazione NOTE.
@@ -181,6 +186,7 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		notesLabel.setLabelFor (notesEditor);
 		notesLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "notes"));
 		notesEditor.setMinimumSize (new Dimension (120, 20));
+		notesEditor.addKeyListener (this);
 		
 		/*
 		 * Inserimento editazione CODICE.
@@ -211,7 +217,6 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 		
 		
-		
 		SpringUtilities.makeCompactGrid(editPanel,
                                 4, 2, //rows, cols
                                 6, 6,        //initX, initY
@@ -227,12 +232,20 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		 */
 		this.add (buttonPanel, java.awt.BorderLayout.SOUTH);
 		
+		/*
+		 * Inizializza flag a "NON MODIFICATO"
+		 */
+		this.setDataChanged (false);
 	}
 	
 	/**
 	 * Risincronizza il pannello di editazione con i dati del modello.
 	 */
 	private final void resynch (){
+		/*
+		 * resetta flag modifica
+		 */
+		this.setDataChanged (false);
 		final ProgressItem editSubject = Application.getInstance ().getSelectedItem ();
 		final boolean validItem = editSubject!=null;
 		final boolean editingEnabled = validItem;
@@ -273,6 +286,8 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 			editSubject.setName (this.nameEditor.getText ());
 			editSubject.setDescription (this.descriptionEditor.getText () );
 			editSubject.setNotes (this.notesEditor.getText () );
+			
+			this.setDataChanged (false);
 		}
 	}
 	
@@ -291,6 +306,36 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 				this.resynch ();
 			}
 		}
+	}
+	
+	/**
+	 * Imposta il flag di "modifica avvenuta" per questo pannello.
+	 */
+	private void setDataChanged (boolean changed){
+		this._dataChanged = changed;
+		this.confirmButton.setEnabled (this._dataChanged);
+	}
+	
+	/**
+	 * Implementazione vuota.
+	 */
+	public void keyPressed (KeyEvent e) {
+	}
+	
+	/**
+	 * Implementazione vuota.
+	 */
+	public void keyReleased (KeyEvent e) {
+	}
+	
+	/**
+	 * Notifica modifica.
+	 */
+	public void keyTyped (KeyEvent e) {
+		/*
+		 * Notifica modifica dati.
+		 */
+		setDataChanged (true);
 	}
 	
 }
