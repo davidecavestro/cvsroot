@@ -12,6 +12,7 @@ import java.text.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
+import com.ost.timekeeper.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.util.*;
 
@@ -22,6 +23,7 @@ import com.ost.timekeeper.util.*;
 public class ProgressTableModel extends AbstractTableModel {
 	
 	private ProgressItem root;
+//	private int currentPeriodIdx=-1;
 	
 	/** Crea una nuova istanza di ProgressTableModel */
 	public ProgressTableModel(ProgressItem root) {
@@ -37,6 +39,15 @@ public class ProgressTableModel extends AbstractTableModel {
 		} else {
 			this.progresses = new ArrayList ();
 		}
+//		//valorizza indice avanzamento corrente
+//		Application app = Application.getInstance();
+//		for (int i=0;i<this.progresses.size();i++){
+//			Period p = (Period)this.progresses.get (i);
+//			if (p==app.getCurrentItem().getCurrentProgress()){
+//				this.currentPeriodIdx=i;
+//				break;
+//			}
+//		}
 	}
 
 	private static class DurationNumberFormatter extends DecimalFormat {
@@ -93,4 +104,14 @@ public class ProgressTableModel extends AbstractTableModel {
 		}
 	}
 	public boolean isCellEditable(int row, int col) {return false;}
+	
+//	public int getCurrentPeriodIndex (){return this.currentPeriodIdx;}
+//	
+//	public void fireCurrentPeriodUpdated (){
+//		this.fireTableChanged(new TableModelEvent (this, this.currentPeriodIdx));
+//	}
+	
+	public final List getProgresses(){
+		return this.progresses;
+	}
 }

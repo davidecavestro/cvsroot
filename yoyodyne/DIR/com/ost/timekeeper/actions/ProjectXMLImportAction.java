@@ -30,6 +30,7 @@ public class ProjectXMLImportAction extends javax.swing.AbstractAction implement
 	/** Creates a new instance of ProjectXMLImportAction */
 	public ProjectXMLImportAction() {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.xmlimportproject"), ResourceSupplier.getImageIcon (ResourceClass.UI, "xmlimportproject.gif"));
+		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "file.xmlimportproject.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}
@@ -68,7 +69,9 @@ public class ProjectXMLImportAction extends javax.swing.AbstractAction implement
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
 			if (arg!=null && arg.equals ("project")){
-				this.setEnabled(((Application)o).getProject()!=null);
+//				this.setEnabled(((Application)o).getProject()!=null);
+				//indipendente dal progetto corrente
+				this.setEnabled(true);
 			}
 		}
 	}

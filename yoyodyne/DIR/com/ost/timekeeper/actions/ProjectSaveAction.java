@@ -22,7 +22,8 @@ public class ProjectSaveAction extends javax.swing.AbstractAction implements Obs
 	
 	/** Creates a new instance of NodeCreateAction */
 	public ProjectSaveAction() {
-		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.saveproject"), ResourceSupplier.getImageIcon (ResourceClass.UI, "saveproject.gif"));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "file.save"), ResourceSupplier.getImageIcon (ResourceClass.UI, "saveproject.gif"));
+		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "file.save.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}

@@ -23,6 +23,7 @@ public class ProjectDeleteAction extends javax.swing.AbstractAction implements O
 	/** Crea una nuova istanza di ProjectDeleteAction */
 	public ProjectDeleteAction() {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.deleteproject"), ResourceSupplier.getImageIcon (ResourceClass.UI, "deleteproject.gif"));
+		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "file.deleteproject.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}

@@ -350,7 +350,7 @@ space and avoid unnecessary heap allocation.
                 int viewColumn = columnModel.getColumnIndexAtX(e.getX()); 
                 int column = tableView.convertColumnIndexToModel(viewColumn); 
                 if(e.getClickCount() == 1 && column != -1) {
-                    System.out.println("Sorting ..."); 
+//                    System.out.println("Sorting ..."); 
                     int shiftPressed = e.getModifiers()&InputEvent.SHIFT_MASK; 
                     boolean ascending = (shiftPressed == 0); 
                     sorter.sortByColumn(column, ascending); 
@@ -358,7 +358,7 @@ space and avoid unnecessary heap allocation.
              }
          };
         JTableHeader th = tableView.getTableHeader(); 
-        th.addMouseListener(listMouseListener); 
+//        th.addMouseListener(listMouseListener); 
     }
 
 

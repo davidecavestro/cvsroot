@@ -22,7 +22,8 @@ public class ProjectCreateAction extends javax.swing.AbstractAction implements O
 	
 	/** Crea una nuova istanza di ProjectCreateAction */
 	public ProjectCreateAction() {
-		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.createproject"), ResourceSupplier.getImageIcon (ResourceClass.UI, "createproject.gif"));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "file.new"), ResourceSupplier.getImageIcon (ResourceClass.UI, "createproject.gif"));
+		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "file.new.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}

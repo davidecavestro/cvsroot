@@ -22,6 +22,7 @@ public class ProgressStartAction extends javax.swing.AbstractAction implements O
 	/** Creates a new instance of ProgressStartAction */
 	public ProgressStartAction() {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.start"), ResourceSupplier.getImageIcon (ResourceClass.UI, "start.gif"));
+		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.start.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}

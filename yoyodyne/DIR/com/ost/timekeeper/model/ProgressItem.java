@@ -265,4 +265,12 @@ public class ProgressItem extends Observable{
 		this.project=project;
 	}
 	
+	/**
+	 * Ritorna l'avanzamento corrente.
+	 * @return l'avanzamento corrente.
+	 */	
+	public Period getCurrentProgress (){
+		return this.currentProgress;
+	}
+	
 }

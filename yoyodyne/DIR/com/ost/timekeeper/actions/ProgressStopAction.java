@@ -20,6 +20,7 @@ public class ProgressStopAction extends javax.swing.AbstractAction implements ja
 	/** Creates a new instance of ProgressStopAction */
 	public ProgressStopAction() {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.stop"), ResourceSupplier.getImageIcon (ResourceClass.UI, "stop.gif"));
+		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.stop.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}

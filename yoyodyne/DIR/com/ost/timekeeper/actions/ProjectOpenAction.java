@@ -24,24 +24,26 @@ public class ProjectOpenAction extends javax.swing.AbstractAction implements Obs
 	
 	/** Creates a new instance of ProjectOpenAction */
 	public ProjectOpenAction() {
-		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.openproject"), ResourceSupplier.getImageIcon (ResourceClass.UI, "openproject.gif"));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "file.open"), ResourceSupplier.getImageIcon (ResourceClass.UI, "openproject.gif"));
+		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "file.open.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
-		String projectName = askForName ();
+//		String projectName = askForName ();
 		Application app = Application.getInstance();
-		Extent extent = app.getPersistenceManager().getExtent(Project.class, true);
-		Project currentProject = null;
-		for (Iterator it = extent.iterator();it.hasNext();){
-			Project project = (Project)it.next ();
-			if (project.getName().equals(projectName)){
-				currentProject = project;
-				break;
-			}
-		}
-		app.setProject (currentProject);
+		app.setProject (ProjectSelectDialog.createDialog(app.getMainForm(), "Select project", "Select project", true));
+//		Extent extent = app.getPersistenceManager().getExtent(Project.class, true);
+//		Project currentProject = null;
+//		for (Iterator it = extent.iterator();it.hasNext();){
+//			Project project = (Project)it.next ();
+//			if (project.getName().equals(projectName)){
+//				currentProject = project;
+//				break;
+//			}
+//		}
+//		app.setProject (currentProject);
 
 	}
 	

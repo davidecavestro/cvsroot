@@ -36,6 +36,7 @@ public class Application extends Observable{
 		this.addObserver(this.progressStopAction);
 		this.addObserver(this.projectCreateAction);
 		this.addObserver(this.projectDeleteAction);
+		this.addObserver(this.projectCloseAction);
 		this.addObserver(this.projectOpenAction);
 		this.addObserver(this.projectSaveAction);
 		this.addObserver(this.projectXMLExportAction);
@@ -52,7 +53,7 @@ public class Application extends Observable{
 			ActionListener timerActionPerformer = new ActionListener (){
 				public void actionPerformed (ActionEvent ae){
 					instance.setChanged ();
-					instance.notifyObservers ("currentitem");
+					instance.notifyObservers ("itemprogressing");
 				}
 			};
 			instance.timer = new javax.swing.Timer (1000, timerActionPerformer);
@@ -70,8 +71,10 @@ public class Application extends Observable{
 	 */
 	public static void main(String args[]) {
 		Application a = getInstance();
-		a.getProjectCreateAction ().execute ("Void sample");
+//		a.getProjectCreateAction ().execute ("Void project");
+		a.getProjectCloseAction ().execute ();
 		try{
+			a.getMainForm().setBounds(0, 0, 640, 480);
 			a.getMainForm().show();
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -176,6 +179,11 @@ public class Application extends Observable{
 		return this.projectSaveAction;
 	}
 	
+	private final ProjectCloseAction projectCloseAction = new ProjectCloseAction();
+	public ProjectCloseAction getProjectCloseAction(){
+		return this.projectCloseAction;
+	}
+	
 	private final ProjectXMLExportAction projectXMLExportAction = new ProjectXMLExportAction();
 	public ProjectXMLExportAction getProjectXMLExportAction(){
 		return this.projectXMLExportAction;
@@ -208,5 +216,13 @@ public class Application extends Observable{
 			e.printStackTrace();
 			tx.rollback();
 		}
+	}
+	
+	public List getAvailableProjects (){
+		List retValue = new ArrayList ();
+		for (Iterator it = getPersistenceManager().getExtent(Project.class, true).iterator();it.hasNext ();){
+			retValue.add (it.next());
+		}
+		return retValue;
 	}
 }
