@@ -215,7 +215,7 @@
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Main-Class" value="com.ost.timekeeper.Application"/>
-				<attribute name="Class-Path" value=". lib/jdo.jar lib/jdori.jar lib/btree.jar lib/castor.jar lib/castor-xml.jar lib/jhall.jar res/i18n.jar lib/xerces.jar res/images.jar res/help.jar lib/looks.jar lib/skeleton.jar lib/animation.jar lib/jdom.jar lib/jcalendar.jar lib/jasperreports.jar lib/commons-beanutils.jar lib/commons-collections.jar lib/commons-digester.jar lib/commons-logging-api.jar lib/commons-logging.jar lib/jsci-xtra.jar lib/jsci-core.jar lib/itext.jar"/>
+				<attribute name="Class-Path" value=". lib/jdo.jar lib/jdori.jar lib/btree.jar lib/xalan.jar lib/jhall.jar res/i18n.jar lib/xerces.jar res/images.jar res/help.jar lib/looks.jar lib/skeleton.jar lib/animation.jar lib/jdom.jar lib/jcalendar.jar lib/jasperreports.jar lib/commons-beanutils.jar lib/commons-collections.jar lib/commons-digester.jar lib/commons-logging-api.jar lib/commons-logging.jar lib/jsci-xtra.jar lib/jsci-core.jar lib/itext.jar lib/scrollabledesktop.jar"/>
 				<attribute name="Implementation-Title" value="${project.name}"/>
 				<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
 				<attribute name="Implementation-Vendor" value="Davide Cavestro"/>
@@ -480,13 +480,14 @@
 		<expose>
 		    <class classes="private" methods="private" fields="private">
 			<patternset>
-			    <!--
 			    <include name="com.ost.timekeeper.model.**.*"/>
-			    -->
+			    <include name="com.tomtessier.**" />
+			    <!--
 			    <include name="com.ost.timekeeper.model.Period**"/>
 			    <include name="com.ost.timekeeper.model.Progress**"/>
 			    <include name="com.ost.timekeeper.model.ProgressItem**"/>
 			    <include name="com.ost.timekeeper.model.Project**"/>
+			    -->
 			</patternset>
 			<patternset>
 			    <include name="**.*"/>
