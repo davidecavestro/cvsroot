@@ -688,8 +688,8 @@ public class ReportsFrame extends JFrame implements Observer{
 				
 				final com.ost.timekeeper.report.DataExtractor extractor = new com.ost.timekeeper.report.flavors.CumulateProgresses (
 				this.rootFilterEnabled && this._root!=null?this._root:app.getProject ().getRoot (),
-				(com.ost.timekeeper.report.filter.TargetedFilterContainer[])filters.toArray (targetedFilterArray)
-				);
+				(com.ost.timekeeper.report.filter.TargetedFilterContainer[])filters.toArray (targetedFilterArray),
+				new Date (), 1, 7);
 				final com.ost.timekeeper.report.ReportPreferences prefs = new com.ost.timekeeper.report.ReportPreferences (null);
 				final JRBindings jrb = new JRBindings (this.getClass ().getResourceAsStream ("cumulateprogresses.jasper"), "/cumulateprogresses/period", ReportsFrame.this._reportOutputType);
 				

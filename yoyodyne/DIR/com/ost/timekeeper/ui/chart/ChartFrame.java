@@ -82,6 +82,14 @@ public class ChartFrame extends BaseInternalFrame implements Observer{
 				}
 				this.reloadRingChart (root);
 			}
+			if (Application.getOptions ().barChartAutoload ()){
+				final Project  project = Application.getInstance ().getProject ();
+				ProgressItem root = null;
+				if (project!=null){
+					root = project.getRoot ();
+				}
+				this.reloadBarChart (root);
+			}
 
 		}
 	}
@@ -91,6 +99,13 @@ public class ChartFrame extends BaseInternalFrame implements Observer{
 	 */
 	public final void reloadRingChart (final ProgressItem root) {
 		this._ringChartPanel.reloadChart (root);
+	}
+	/**
+	 * Reimposta la radice del grafico a barre, e lo aggiorna.
+	 * @param root la nuova radice.
+	 */
+	public final void reloadBarChart (final ProgressItem root) {
+		this._barGraphPanel.reloadChart (root);
 	}
 	
 }
