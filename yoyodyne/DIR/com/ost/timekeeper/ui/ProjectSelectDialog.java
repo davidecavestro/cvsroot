@@ -12,6 +12,8 @@ import com.ost.timekeeper.*;
 import com.ost.timekeeper.help.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.util.*;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -43,10 +45,9 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 	public ProjectSelectDialog (java.awt.Frame parent, String title, String label, boolean modal, List projects) {
 		super (parent, modal);
 		this.projects=projects;
-		initComponents ();
 		this.titleText = title;
 		this.labelText = label;
-		postInitComponents ();
+		initComponents ();
 		/* inizializza help contestuale */
 		javax.help.CSH.setHelpIDString (this, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PROJECTSELECTDIALOG ));
 		
@@ -67,7 +68,10 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 		cancelButton = new javax.swing.JButton ();
 		directHelpButton = new DirectHelpButton ();
 		
-		getContentPane ().setLayout (new java.awt.BorderLayout ());
+		this.setTitle (this.titleText);
+		
+		final JPanel mainPanel = new JPanel ();
+		mainPanel.setLayout (new java.awt.GridBagLayout ());
 		
 		addWindowListener (new java.awt.event.WindowAdapter () {
 			public void windowClosing (java.awt.event.WindowEvent evt) {
@@ -76,15 +80,22 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 			}
 		});
 		
-		infoLabel.setText ("Choose");
+		this.infoLabel.setText (this.labelText);
 		
-		final JPanel northPanel = new JPanel ();
-		northPanel.setLayout (new java.awt.BorderLayout ());
-		northPanel.add (infoLabel, java.awt.BorderLayout.CENTER);
+		final GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.insets = new Insets (3, 3, 3, 3);
 		
-		northPanel.add (directHelpButton, java.awt.BorderLayout.EAST);
-		northPanel.setBorder (new EmptyBorder (3, 5, 3, 5));
-		getContentPane ().add (northPanel, java.awt.BorderLayout.NORTH);
+		c.weightx = 1.0;
+		c.gridx = 0;
+		c.gridy = 0;
+		mainPanel.add (infoLabel, c);
+		
+		c.weightx = 0.0;
+		c.gridx = 1;
+		c.gridy = 0;
+		mainPanel.add (directHelpButton, c);
 		
 		//Garantisce che il campo abbia sempre il focus iniziale
 		addComponentListener (new ComponentAdapter () {
@@ -101,12 +112,13 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 				}
 			}
 		});
-		final JPanel listPanel = new JPanel ();
-		listPanel.setLayout (new java.awt.BorderLayout ());
-		listPanel.setBorder (new EmptyBorder (3, 5, 3, 5));
-		listPanel.add (new JScrollPane (projectList), java.awt.BorderLayout.CENTER);
 		
-		getContentPane().add(listPanel, java.awt.BorderLayout.CENTER);
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 2;
+		mainPanel.add(new JScrollPane (projectList), c);
 		
 		confirmButton.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.confirm"));
 		confirmButton.addActionListener (new java.awt.event.ActionListener () {
@@ -128,15 +140,17 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 		cancelButton.getActionMap().put("cancel", cancelAction);
 		buttonPanel.add (cancelButton);
 		
-		getContentPane ().add (buttonPanel, java.awt.BorderLayout.SOUTH);
+		c.weightx = 0.0;
+		c.weighty = 0.0;
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 2;
+		mainPanel.add (buttonPanel, c);
+		
+		getContentPane ().add (mainPanel);
 		
 		getRootPane ().setDefaultButton (confirmButton);
 		pack ();
-	}
-	
-	private void postInitComponents () {
-		this.infoLabel.setText (this.labelText);
-		this.setTitle (this.titleText);
 	}
 	
 	private void cancelButtonActionPerformed (java.awt.event.ActionEvent evt) {

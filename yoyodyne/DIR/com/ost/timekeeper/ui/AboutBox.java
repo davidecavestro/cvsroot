@@ -6,6 +6,7 @@
 
 package com.ost.timekeeper.ui;
 
+import com.ost.timekeeper.*;
 import com.ost.timekeeper.conf.*;
 import com.ost.timekeeper.util.*;
 import java.awt.*;
@@ -28,7 +29,7 @@ public final class AboutBox extends JDialog {
 	/**
 	 * Il pannello principale.
 	 */
-	private JPanel mainPanel;
+	private JPanel aboutPanel;
 	
 	/**
 	 * Il pannello dei pulsanti.
@@ -127,9 +128,9 @@ public final class AboutBox extends JDialog {
 //		this.infoPane.setPreferredSize (new Dimension (this.productNameImage.getIconWidth (), this.productNameImage.getIconHeight ()));
 		this.logoPanel.add (infoScrollPane, BorderLayout.CENTER);
 		
-		mainPanel = new JPanel (new BorderLayout ());
+		aboutPanel = new JPanel (new BorderLayout ());
 		
-		this.mainPanel.add (this.logoPanel, BorderLayout.NORTH);
+		this.aboutPanel.add (this.logoPanel, BorderLayout.NORTH);
 		
 		final JPanel otherLogosPanel = new JPanel ();
 
@@ -140,14 +141,7 @@ public final class AboutBox extends JDialog {
 		this.companyLogoLabel.setIcon (this.companyLogoImage);
 		otherLogosPanel.add (this.companyLogoLabel, BorderLayout.NORTH);
 		
-		this.productLogoLabel = new JLabel ();
-//		this.productLogoLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "productlogo"));
-		this.productLogoLabel.setText ("");
-		this.productLogoImage = ResourceSupplier.getImageIcon (ResourceClass.UI, "productlogosmall.jpg");
-		this.productLogoLabel.setIcon (this.productLogoImage);
-		otherLogosPanel.add (this.productLogoLabel, BorderLayout.SOUTH);
-		
-		this.mainPanel.add (otherLogosPanel, BorderLayout.CENTER);		
+		this.aboutPanel.add (otherLogosPanel, BorderLayout.CENTER);		
 		
 		this.buttonPanel = new JPanel ();
 		final JButton confirmButton = new JButton (ResourceSupplier.getString (ResourceClass.UI, "controls", "ok"));
@@ -157,12 +151,110 @@ public final class AboutBox extends JDialog {
 			}
 		});
 		this.buttonPanel.add (confirmButton);
-		this.mainPanel.add (this.buttonPanel, BorderLayout.SOUTH);
+		
+		final JTabbedPane tabbedPanel = new JTabbedPane ();
+		tabbedPanel.addTab ("About", new JScrollPane (aboutPanel));
+		
+		final JPanel detailPanel = new JPanel ();
+		
+		detailPanel.setLayout (new GridBagLayout ());
+		
+		final ApplicationData appData = ApplicationData.getInstance ();
+		
+		final GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.insets = new Insets (3, 3, 3, 3);
+		
+		this.productLogoLabel = new JLabel ();
+//		this.productLogoLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "productlogo"));
+		this.productLogoLabel.setText ("");
+		this.productLogoImage = ResourceSupplier.getImageIcon (ResourceClass.UI, "productlogosmall.jpg");
+		this.productLogoLabel.setIcon (this.productLogoImage);
+		
+		c.weightx = 0.0;
+		c.weighty = 0.0;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 1;
+		detailPanel.add (this.productLogoLabel, c);
+		
+		{
+			final JLabel detailTitle = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "detail.title"));
+			detailTitle.setHorizontalAlignment (JLabel.CENTER);
+			detailTitle.setFont (new java.awt.Font ("Default", Font.BOLD, 12));
+
+			c.weightx = 1.0;
+			c.weighty = 0.0;
+			c.gridx = 1;
+			c.gridy = 0;
+			c.gridwidth = 2;
+			detailPanel.add (detailTitle, c);
+		}
+		
+		{
+			final JLabel productVersionLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.version")+": ");
+			productVersionLabel.setHorizontalAlignment (JLabel.RIGHT);
+			
+			c.weightx = 0.0;
+			c.weighty = 0.0;
+			c.gridx = 1;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			detailPanel.add (productVersionLabel, c);
+		}
+		{
+			final JLabel productVersionValue = new JLabel (appData.getVersionNumber ());
+
+			c.weightx = 1.0;
+			c.weighty = 0.0;
+			c.gridx = 2;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			detailPanel.add (productVersionValue, c);
+		}
+		
+		{
+			final JLabel productBuildLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.build")+": ");
+			productBuildLabel.setHorizontalAlignment (JLabel.RIGHT);
+
+			c.weightx = 0.0;
+			c.weighty = 0.0;
+			c.gridx = 1;
+			c.gridy = 2;
+			c.gridwidth = 1;
+			detailPanel.add (productBuildLabel, c);
+		}
+		{
+			final JLabel productBuildValue = new JLabel (appData.getBuildNumber ());
+
+			c.weightx = 1.0;
+			c.weighty = 0.0;
+			c.gridx = 2;
+			c.gridy = 2;
+			c.gridwidth = 1;
+			detailPanel.add (productBuildValue, c);
+		}
+		
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		c.gridx = 0;
+		c.gridy = 10;
+		detailPanel.add (new JLabel (), c);
+		
+		tabbedPanel.addTab ("Details", new JScrollPane (detailPanel));
+		
+		final JPanel mainPanel = new JPanel ();
+		mainPanel.setLayout (new BorderLayout ());
+		
+		mainPanel.add (tabbedPanel, BorderLayout.CENTER);
+		
+		mainPanel.add (buttonPanel, BorderLayout.SOUTH);
 		
 		/*
 		 * Aggiunge pannello principale.
 		 */
-		this.getContentPane ().add (new JScrollPane (mainPanel));
+		this.getContentPane ().add (mainPanel);
 		
 		this.getRootPane().setDefaultButton (confirmButton);
 		

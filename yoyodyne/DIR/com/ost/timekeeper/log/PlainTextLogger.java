@@ -157,7 +157,7 @@ public class PlainTextLogger implements Logger{
 		try {
 			this._fw.write (sb.toString ());
 //			this._fw.flush ();
-		} catch (IOException ioe){
+		} catch (final IOException ioe){
 			System.out.println (ExceptionUtils.getStackStrace (ioe));
 		}
 	}

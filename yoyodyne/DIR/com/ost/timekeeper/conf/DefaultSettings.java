@@ -190,7 +190,7 @@ public final class DefaultSettings implements ApplicationSettings {
 	 */
 	public String getJDOStorageDirPath (){
 		final StringBuffer sb = new StringBuffer ();
-		sb.append (UserResources.getUserHomeDirPath ()).append ("/").append (ApplicationData.getApplicationInternalName ());
+		sb.append (UserResources.getUserHomeDirPath ()).append ("/").append (ApplicationData.getInstance ().getApplicationInternalName ());
 		return sb.toString ();
 	}
 	
@@ -200,7 +200,7 @@ public final class DefaultSettings implements ApplicationSettings {
 	 * @return il nome dello storage JDO (i file contenenti i dati persistenti e gli indici).
 	 */
 	public String getJDOStorageName (){
-		return ApplicationData.getApplicationInternalName ();
+		return ApplicationData.getInstance ().getApplicationInternalName ();
 	}
 	
 	/**

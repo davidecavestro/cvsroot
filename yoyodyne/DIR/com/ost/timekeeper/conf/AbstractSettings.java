@@ -49,7 +49,12 @@ public abstract class AbstractSettings implements CustomizableSettings {
 				in.close();
 			}
 		} catch (FileNotFoundException fnfe) {
+			try {
 			Application.getLogger ().warning ( "Error loading propoerties. ", fnfe);
+			} catch (Exception e){
+				/* evita eccezioni dovute a dipendenze inizializzazione*/
+				System.out.println (com.ost.timekeeper.util.ExceptionUtils.getStackStrace (e));
+			}
 		} catch (IOException ioe) {
 			throw new NestedRuntimeException (ioe);
 		}

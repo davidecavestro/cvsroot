@@ -274,31 +274,6 @@ public final class ApplicationOptions {
 	}
 	
 	/**
-	 * Ritorna il percorso del file di configurazione
-	 *
-	 */
-	public String getJDOConnectionURL (){
-		final String storageDirPath = this._settings.getJDOStorageDirPath ();
-		final String storageName = this._settings.getJDOStorageName ();
-		if (storageDirPath!=null && storageName!=null && storageName.length ()>0){
-			return storageDirPath + storageName;
-		} else {
-			if (_successor!=null){
-				/*
-				 * Delega successore.
-				 */
-				return _successor.getJDOConnectionURL ();
-			} else {
-				/*
-				 * Informazione non disponibile.
-				 * Funzionalità disabilitata.
-				 */
-				return "datastore.properties";
-			}
-		}
-	}
-	
-	/**
 	 * Ritorna il percorso della directory contenente i dati persistenti (JDO).
 	 *
 	 * @return il percorso della directory contenente i dati persistenti (JDO).

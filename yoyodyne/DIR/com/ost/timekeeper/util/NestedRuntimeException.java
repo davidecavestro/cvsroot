@@ -71,6 +71,6 @@ public final class NestedRuntimeException extends java.lang.RuntimeException {
 	 * @return la stringa che rappresenta questa eccezione.
 	 */	
 	public String toString (){
-		return new StringBuffer (super.toString ()).append(" rootCause: ").append (this.rootCause).toString ();
+		return ExceptionUtils.getStackStrace (this).toString ();
 	}
 }

@@ -49,7 +49,7 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 		// Load Mapping
 		final Mapping mapping = new Mapping();
 		try{
-			mapping.loadMapping(Application.getEnvironment ().getApplicationDirPath ()+"/dataiomap.xml");
+			mapping.loadMapping(this.getClass ().getResource ("com/ost/timnekeeper/actions/dataiomap.xml"));
 			
 			final int returnVal = chooser.showSaveDialog(app.getMainForm());
 			final SwingWorker worker = new SwingWorker() {
@@ -61,7 +61,7 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 						}
 						try {
 							// Create a Reader to the file to unmarshal from
-							Writer writer = new FileWriter(chooser.getSelectedFile().getName());
+							Writer writer = new FileWriter(chooser.getSelectedFile());
 
 							// Create a new Marshaller
 							Marshaller marshaller = new Marshaller(writer);

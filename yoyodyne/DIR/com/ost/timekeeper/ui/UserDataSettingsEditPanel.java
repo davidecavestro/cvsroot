@@ -18,6 +18,7 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.event.*;
 
 /**
  * Pannello di modifica impostazioni utente relative alla gestione dei dati.
@@ -86,6 +87,7 @@ public final class UserDataSettingsEditPanel extends ObservablePanel implements 
 		 * Inizializzazione componenti grafiche.
 		 */
 		initComponents ();
+		resynch ();
 	}
 	
 	/**
@@ -119,8 +121,12 @@ public final class UserDataSettingsEditPanel extends ObservablePanel implements 
 				}
 			}});
 			
-		jdoStorageDirPathEditor.addActionListener (new ActionListener (){
-			public void actionPerformed (ActionEvent ae){
+		jdoStorageDirPathEditor.getDocument ().addDocumentListener (new DocumentListener(){
+		    public void insertUpdate(DocumentEvent e){somethingChanged (e);}
+		    public void removeUpdate(DocumentEvent e){somethingChanged (e);}
+			public void changedUpdate(DocumentEvent e){somethingChanged (e);}
+	
+			private void somethingChanged (DocumentEvent e){
 				setDataChanged (true);
 			}
 		});
@@ -160,8 +166,12 @@ public final class UserDataSettingsEditPanel extends ObservablePanel implements 
 		jdoStorageNameLabel.setLabelFor (jdoStorageNameEditor);
 		jdoStorageNameLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "jdostorage.name"));
 		jdoStorageNameEditor.setMinimumSize (new Dimension (150, 16));
-		jdoStorageNameEditor.addActionListener (new ActionListener (){
-			public void actionPerformed (ActionEvent ae){
+		jdoStorageNameEditor.getDocument ().addDocumentListener (new DocumentListener(){
+		    public void insertUpdate(DocumentEvent e){somethingChanged (e);}
+		    public void removeUpdate(DocumentEvent e){somethingChanged (e);}
+			public void changedUpdate(DocumentEvent e){somethingChanged (e);}
+	
+			private void somethingChanged (DocumentEvent e){
 				setDataChanged (true);
 			}
 		});
@@ -243,6 +253,8 @@ public final class UserDataSettingsEditPanel extends ObservablePanel implements 
 	 */
 	private void setDataChanged (boolean changed){
 		this._dataChanged = changed;
+		/* Abilita il pulsante di inizializzazione archivio solo dopo aver applicato le modifiche. */
+		this.jdoStorageInitButton.setEnabled (!changed);
 		if (changed){
 			this.setChanged ();
 			//notifica la modifica

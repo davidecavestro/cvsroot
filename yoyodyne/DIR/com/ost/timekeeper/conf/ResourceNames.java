@@ -36,12 +36,12 @@ public interface ResourceNames {
 	/**
 	 * Nome file impostazioni utente.
 	 */
-	public final static String USER_SETTINGSFILE_NAME = "conf.properties";
+	public final static String USER_SETTINGSFILE_NAME = "userprefs.properties";
 	
 	/**
 	 * Nome file impostazioni di sistema.
 	 */
-	public final static String SYSTEM_SETTINGSFILE_NAME = "conf.properties";
+	public final static String SYSTEM_SETTINGSFILE_NAME = "systemprefs.properties";
 	
 	/**
 	 * Nome proprietà di sistema contenente il percorso della home directory utente.
