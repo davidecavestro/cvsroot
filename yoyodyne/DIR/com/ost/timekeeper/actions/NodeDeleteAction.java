@@ -18,7 +18,7 @@ import com.ost.timekeeper.util.*;
  *
  * @author  davide
  */
-public class NodeDeleteAction extends javax.swing.AbstractAction {
+public class NodeDeleteAction extends javax.swing.AbstractAction implements java.util.Observer{
 	
 	/** Creates a new instance of NodeDeleteAction */
 	public NodeDeleteAction() {
@@ -36,7 +36,8 @@ public class NodeDeleteAction extends javax.swing.AbstractAction {
 			return;
 		}
 		app.getMainForm().getProgressTreeModel ().removeNodeFromParent(selectedItem);
-		int pos = parent.childIndex(selectedItem);
+		app.getPersistenceManager().deletePersistent(selectedItem);
+//		int pos = parent.childIndex(selectedItem);
 //		parent.remove(selectedItem);
 		
 		//determina nuova selezione
@@ -56,5 +57,13 @@ public class NodeDeleteAction extends javax.swing.AbstractAction {
 	
 	public String askForName (){
 		return StringInputDialog.createDialog(Application.getInstance().getMainForm (), "Ask user", "Enter new node name", true);
+	}
+	
+	public void update(Observable o, Object arg) {
+		if (o instanceof Application){
+			if (arg!=null && arg.equals ("selecteditem")){
+				this.setEnabled(((Application)o).getSelectedItem()!=null);
+			}
+		}
 	}
 }

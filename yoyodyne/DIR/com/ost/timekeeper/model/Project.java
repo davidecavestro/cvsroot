@@ -15,6 +15,10 @@ public class Project {
 	private ProgressItem root;
 	private String name;
 	
+	/** Costruttore vuoto*/
+	public Project() {
+	}
+	
 	/** Creates a new instance of Project */
 	public Project(String name, ProgressItem root) {
 		this.name = name;

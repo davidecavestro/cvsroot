@@ -18,16 +18,21 @@ import com.ost.timekeeper.util.*;
 public class Period extends Observable{
 	
 	/** Holds value of property from. */
-	private Calendar from;
+	private Date from;
 	
 	/** Holds value of property to. */
-	private Calendar to;
+	private Date to;
+	
+	/** Crea una nuova istanza di Period.
+	 */
+	public Period() {
+	}
 	
 	/** Crea una nuova istanza di Period.
 	 * @param from
 	 * @param to
 	 */
-	public Period(final Calendar from, final Calendar to) {
+	public Period(final Date from, final Date to) {
 		this.from = from;
 		this.to = to;
 	}
@@ -36,7 +41,7 @@ public class Period extends Observable{
 	 * @return Value of property from.
 	 *
 	 */
-	public Calendar getFrom() {
+	public Date getFrom() {
 		return this.from;
 	}
 	
@@ -44,7 +49,7 @@ public class Period extends Observable{
 	 * @param from New value of property from.
 	 *
 	 */
-	public void setFrom(Calendar from) {
+	public void setFrom(Date from) {
 		if (!CalendarUtils.equals(this.from,from)){
 			this.from = from;
 			isDurationComputed = false;
@@ -57,7 +62,7 @@ public class Period extends Observable{
 	 * @return Value of property to.
 	 *
 	 */
-	public Calendar getTo() {
+	public Date getTo() {
 		return this.to;
 	}
 	
@@ -65,7 +70,7 @@ public class Period extends Observable{
 	 * @param to New value of property to.
 	 *
 	 */
-	public void setTo(Calendar to) {
+	public void setTo(Date to) {
 		if (!CalendarUtils.equals(this.to,to)){
 			this.to = to;
 			isDurationComputed = false;
@@ -113,7 +118,7 @@ public class Period extends Observable{
 	private Duration computedDuration;
 	public Duration getDuration (){
 		if (this.isEndOpened()){
-			return new Duration (this.from, new GregorianCalendar ());
+			return new Duration (this.from, new GregorianCalendar ().getTime ());
 		} else {
 			if (!isDurationComputed){
 				this.computedDuration = new Duration (this.from, this.to);

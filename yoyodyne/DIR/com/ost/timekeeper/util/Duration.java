@@ -33,11 +33,11 @@ public class Duration {
 	public final static long MILLISECONDS_PER_DAY = MILLISECONDS_PER_HOUR * HOURS_PER_DAY;
 
 		
-	private Calendar from;
-	private Calendar to;
+	private Date from;
+	private Date to;
 	
 	/** Crea una nuova istanza di Duration */
-	public Duration(Calendar from, Calendar to) {
+	public Duration(Date from, Date to) {
 		this.from=from;
 		this.to=to;
 		computeFields ();
@@ -71,7 +71,7 @@ public class Duration {
 	private long totalMilliseconds = 0;
 	private long modMilliseconds = 0;
 	private final void computeMilliseconds (){
-		this.totalMilliseconds = this.to.getTimeInMillis() - this.from.getTimeInMillis();
+		this.totalMilliseconds = this.to.getTime() - this.from.getTime();
 		this.modMilliseconds = this.totalMilliseconds % MILLISECONDS_PER_SECOND;
 		computedMilliseconds = true;
 	}

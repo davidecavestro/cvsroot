@@ -6,6 +6,8 @@
 
 package com.ost.timekeeper.actions;
 
+import java.util.*;
+
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.util.*;
 
@@ -13,7 +15,7 @@ import com.ost.timekeeper.util.*;
  *
  * @author  davide
  */
-public class ProgressStopAction extends javax.swing.AbstractAction {
+public class ProgressStopAction extends javax.swing.AbstractAction implements java.util.Observer{
 	
 	/** Creates a new instance of ProgressStopAction */
 	public ProgressStopAction() {
@@ -29,4 +31,11 @@ public class ProgressStopAction extends javax.swing.AbstractAction {
 		Application.getInstance().setCurrentItem (null);
 	}
 	
+	public void update(Observable o, Object arg) {
+		if (o instanceof Application){
+			if (arg!=null && arg.equals ("currentitem")){
+				this.setEnabled(((Application)o).getCurrentItem()!=null);
+			}
+		}
+	}
 }

@@ -17,7 +17,7 @@ import com.ost.timekeeper.util.*;
  *
  * @author  davide
  */
-public class ProgressStartAction extends javax.swing.AbstractAction {
+public class ProgressStartAction extends javax.swing.AbstractAction implements Observer{
 	
 	/** Creates a new instance of ProgressStartAction */
 	public ProgressStartAction() {
@@ -34,4 +34,12 @@ public class ProgressStartAction extends javax.swing.AbstractAction {
 		Application.getInstance().setCurrentItem(selectedItem);
 	}
 	
+	public void update(Observable o, Object arg) {
+		if (o instanceof Application){
+			if (arg!=null && (arg.equals ("currentitem")) || arg.equals ("selecteditem")){
+				Application app = (Application)o;
+				this.setEnabled (app.getCurrentItem()==null && app.getSelectedItem()!=null);
+			}
+		}
+	}
 }

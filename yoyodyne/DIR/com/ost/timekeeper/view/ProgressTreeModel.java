@@ -28,7 +28,11 @@ public class ProgressTreeModel extends AbstractTreeModel {
 	
 	/** Crea una nuova istanza di ProgressTreeModel */
 	public ProgressTreeModel(Project project) {
-		this.root = project.getRoot();
+		if (project!=null){
+			this.root = project.getRoot();
+		} else {
+			this.root = null;
+		}
 	}
 	
 	public Object getChild(Object parent, int index) {

@@ -23,6 +23,10 @@ public class CreateProjectCommand extends Command {
 	
 	public void execute() {
 		String projectName = askUserForProjectName ();
+		execute (projectName);
+	}
+	
+	public void execute (String projectName){
 		application.setProject (new Project (projectName, new ProgressItem (projectName)));
 	}
 	

@@ -13,12 +13,26 @@ import java.util.*;
  * @author  davide
  */
 public class ProgressItem extends Observable{
-	private final List children = new ArrayList ();
+	private List children = new ArrayList ();
 	
 	/** Holds value of property progressing. */
 	private boolean progressing;
 	
 	private String name;
+	private Period currentProgress;
+	private List progresses = new ArrayList ();
+	
+	private ProgressItem parent = null;
+	
+	private Project project = null;
+	
+	private final List progressListeners = new ArrayList ();
+	
+	/** Costruttore vuoto.
+	 */
+	public ProgressItem() {
+	}
+	
 	/** Crea una nuova istanza di ProgressItem assegnandogli un nome.
 	 * @param name il nome.
 	 */
@@ -28,12 +42,10 @@ public class ProgressItem extends Observable{
 	
 	public String getName (){return this.name;}
 	
-	private ProgressItem parent = null;
 	public ProgressItem getParent() {
 		return this.parent;
 	}
 	
-	private Project project = null;
 	public Project getProject() {
 		return this.project;
 	}
@@ -88,8 +100,6 @@ public class ProgressItem extends Observable{
 		return -1;
 	}
 	
-	private Period currentProgress;
-	private List progresses = new ArrayList ();
 	/**
 	 * Fa partire un avanzamento.
 	 */	
@@ -99,7 +109,7 @@ public class ProgressItem extends Observable{
 			return;
 		}
 		this.progressing = true;
-		this.currentProgress = new Period (new GregorianCalendar (), null);
+		this.currentProgress = new Period (new GregorianCalendar ().getTime(), null);
 		this.progresses.add (this.currentProgress);
 		
 		this.setChanged();
@@ -114,7 +124,7 @@ public class ProgressItem extends Observable{
 		if (!this.progressing){
 			throw new IllegalStateException ();
 		}
-		this.currentProgress.setTo (new GregorianCalendar ());
+		this.currentProgress.setTo (new GregorianCalendar ().getTime());
 		
 		this.setChanged();
 		this.notifyObservers();
@@ -139,7 +149,6 @@ public class ProgressItem extends Observable{
 		visitor.visit (this);
 	}
 	
-	private final List progressListeners = new ArrayList ();
 	public void addProgressListener(ProgressListener l) {
 		progressListeners.add (l);
 	}
@@ -190,6 +199,19 @@ public class ProgressItem extends Observable{
 			subProgresses.addAll (((ProgressItem)it.next ()).getSubtreeProgresses ());
 		}
 		return subProgresses;
+	}
+	/**
+	 * Ritorna gli elementi delsottoalbero.
+	 * @return gli elementi del sottoalbero avente questo item 
+	 * come radice.
+	 */	
+	public List getDescendants (){
+		List children = getChildren ();
+		List retValue = new ArrayList (children);
+		for (Iterator it = children.iterator(); it.hasNext();){
+			retValue.addAll (((ProgressItem)it.next ()).getDescendants());
+		}
+		return retValue;
 	}
 	
 	public void itemChanged() {

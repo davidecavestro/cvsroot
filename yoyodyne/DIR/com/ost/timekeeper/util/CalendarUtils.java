@@ -20,14 +20,14 @@ public final class CalendarUtils {
 	}
 	
 	/**
-	 * Permette di valutare l'uguaglianza fra due <code>Calendar</code>, comprese
+	 * Permette di valutare l'uguaglianza fra due <code>Date</code>, comprese
 	 * istanze <code>null</code>.
 	 * @param c1 la prima istanza da confrontare.
 	 * @param c2 la seconda istanza da confrontare.
 	 * @return <code>true</code> se <code>c1</code> è uguale a <code>c2</code>; 
 	 * <code>false</code> altrimenti.
 	 */	
-	public static boolean equals (Calendar c1, Calendar c2){
+	public static boolean equals (Date c1, Date c2){
 		return (c1==null && c2==null) || 
 			(c1!=null && c2!=null &&
 				(c1.equals(c2)));
@@ -35,10 +35,10 @@ public final class CalendarUtils {
 	
 	private final static SimpleDateFormat dateFormat = new SimpleDateFormat ("dd/MM/yyyy HH:mm:ss");
 	
-	public static String toTSString (Calendar calendar){
+	public static String toTSString (Date calendar){
 		if (calendar==null){
 			return null;
 		}
-		return dateFormat.format(calendar.getTime());
+		return dateFormat.format(calendar);
 	}
 }
