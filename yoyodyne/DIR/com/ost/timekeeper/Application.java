@@ -53,13 +53,13 @@ public class Application extends Observable{
 			ActionListener timerActionPerformer = new ActionListener (){
 				public void actionPerformed (ActionEvent ae){
 					instance.setChanged ();
-					instance.notifyObservers ("itemprogressing");
+					instance.notifyObservers (ObserverCodes.ITEMPROGRESSING);
 				}
 			};
 			instance.timer = new javax.swing.Timer (1000, timerActionPerformer);
 			instance.timer.stop();
 		}
-		return instance;
+		return instance; 
 	}
 	
 	public MainForm getMainForm(){
@@ -96,7 +96,7 @@ public class Application extends Observable{
 //		this.getProjectCreateAction().setEnabled(true);
 //		this.getProjectDeleteAction().setEnabled(project!=null);
 		this.setChanged();
-		this.notifyObservers("project");
+		this.notifyObservers(ObserverCodes.PROJECT);
 	}
 	
 	public Project getProject(){
@@ -108,7 +108,7 @@ public class Application extends Observable{
 	public void setCurrentItem(ProgressItem current){
 		this.currentItem = current;
 		this.setChanged();
-		this.notifyObservers("currentitem");
+		this.notifyObservers(ObserverCodes.CURRENTITEM);
 //		this.getProgressStopAction().setEnabled(current!=null);
 //		this.getProgressStartAction().setEnabled(current==null);
 		if (current!=null){
@@ -127,9 +127,9 @@ public class Application extends Observable{
 	public void setSelectedItem(ProgressItem selected){
 		this.selectedItem = selected;
 		this.setChanged();
-		this.notifyObservers("selecteditem");
-		this.setChanged();
-		this.notifyObservers("currentitem");
+		this.notifyObservers(ObserverCodes.SELECTEDITEM);
+//		this.setChanged();
+//		this.notifyObservers("currentitem");
 //		this.getProgressStartAction().setEnabled(this.currentItem==null);
 //		this.getNodeCreateAction().setEnabled(this.selectedItem!=null);
 //		this.getNodeDeleteAction().setEnabled(this.selectedItem!=null);
@@ -139,6 +139,19 @@ public class Application extends Observable{
 		return this.selectedItem;
 	}
 	
+	
+	private Period selectedProgress;
+	
+	public void setSelectedProgress(Period selected){
+		this.selectedProgress = selected;
+		this.setChanged();
+		this.notifyObservers(ObserverCodes.SELECTEDPROGRESS);
+	}
+	
+	public Period getSelectedProgress(){
+		return this.selectedProgress;
+	}
+		
 	private final ProgressStartAction progressStartAction = new ProgressStartAction();
 	public ProgressStartAction getProgressStartAction(){
 		return this.progressStartAction;
@@ -225,4 +238,12 @@ public class Application extends Observable{
 		}
 		return retValue;
 	}
+	
+    /**
+     * Marks this <tt>Observable</tt> object as having been changed; the 
+     * <tt>hasChanged</tt> method will now return <tt>true</tt>.
+     */
+    public final synchronized void setChanged() {
+		super.setChanged ();
+    }	
 }

@@ -32,7 +32,11 @@ public class ProgressStartAction extends javax.swing.AbstractAction implements O
 		Application app = Application.getInstance();
 		ProgressItem selectedItem = app.getSelectedItem ();
 		selectedItem.startPeriod();
-		Application.getInstance().setCurrentItem(selectedItem);
+		app.setCurrentItem(selectedItem);
+		app.setChanged();
+		app.notifyObservers (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
+		app.setChanged();
+		app.notifyObservers (ObserverCodes.SELECTEDITEM);
 	}
 	
 	public void update(Observable o, Object arg) {
