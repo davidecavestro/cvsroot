@@ -57,6 +57,7 @@
 		<property location="${project.name}.tar.gz" name="app.zip" />
 
 		<property location="${classes.dir}/com/ost/timekeeper/release.properties" name="release.properties" />
+		<property name="_compileWithDebugSymbols" value="off" />
 	</target>
 
 	<!-- Compila il codice sorgente. -->
@@ -158,8 +159,13 @@
 		</delete>	
 
 
+		<condition property="_compileWithDebugSymbols" >
+			<and>
+				<istrue value="${compileWithDebugSymbols}"/>
+			</and>
+		</condition>
 		<!-- Compila il codice sorgente rimanente. -->
-		<javac deprecation="true" destdir="${classes.dir}" srcdir="${src.dir}" fork="true" executable="${ext.javac}" includesfile="javacincludes.txt" excludesfile="javacexcludes.txt">
+		<javac debug="${_compileWithDebugSymbols}" deprecation="true" destdir="${classes.dir}" srcdir="${src.dir}" fork="true" executable="${ext.javac}" includesfile="javacincludes.txt" excludesfile="javacexcludes.txt">
 			<classpath>
 			<fileset dir="${lib.dir}">
 			    <include name="**/*.jar"/>
