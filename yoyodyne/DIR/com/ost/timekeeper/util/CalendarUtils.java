@@ -33,9 +33,12 @@ public final class CalendarUtils {
 				(c1.equals(c2)));
 	}
 	
-	private final static SimpleDateFormat dateFormat = new SimpleDateFormat ("dd/MM/yyyy");
+	private final static SimpleDateFormat dateFormat = new SimpleDateFormat ("dd/MM/yyyy HH:mm:ss");
 	
 	public static String toTSString (Calendar calendar){
-		return dateFormat.format(calendar);
+		if (calendar==null){
+			return null;
+		}
+		return dateFormat.format(calendar.getTime());
 	}
 }

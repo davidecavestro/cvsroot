@@ -158,4 +158,26 @@ public class ProgressItem extends Observable{
 	public ProgressItem childAt (int pos){
 		return (ProgressItem)this.children.get (pos);
 	}
+	
+	/**
+	 * Ritorna la lista di avanzamenti appartnenti a queto item. Non dovrebbe 
+	 * essere usata per apportare modifiche agli avanzamenti.
+	 * @return la lista di avanzamenti appartnenti a queto item.
+	 */	
+	public List getProgresses (){
+		return this.progresses;
+	}
+	
+	/**
+	 * Ritorna gli avanzamenti apparteneneti ad un sottoalbero.
+	 * @return gli avanzamenti apparteneneti al sottoalbero avente questo item 
+	 * come radice.
+	 */	
+	public List getSubtreeProgresses (){
+		List subProgresses = new ArrayList (this.getProgresses());
+		for (Iterator it = this.getChildren().iterator(); it.hasNext();){
+			subProgresses.addAll (((ProgressItem)it.next ()).getSubtreeProgresses ());
+		}
+		return subProgresses;
+	}
 }

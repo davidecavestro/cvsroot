@@ -12,8 +12,16 @@ package com.ost.timekeeper.conf;
  */
 public class UserSettings {
 	
+	private static UserSettings instance;
+	
 	/** Creates a new instance of UserSettings */
-	public UserSettings() {
+	private UserSettings() {
 	}
 	
+	public UserSettings getInstance (){
+		if (instance==null) {
+			instance  = new UserSettings ();
+		}
+		return instance;
+	}
 }

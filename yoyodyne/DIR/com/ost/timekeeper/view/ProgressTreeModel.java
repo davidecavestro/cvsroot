@@ -6,6 +6,7 @@
 
 package com.ost.timekeeper.view;
 
+import java.util.*;
 import javax.swing.tree.*;
 
 import com.ost.timekeeper.model.*;
@@ -21,4 +22,14 @@ public class ProgressTreeModel extends DefaultTreeModel {
 		super (new ProgressItemNode (project.getRoot()));
 	}
 	
+	/**
+	 * Ritorna gli avanzamenti apparteneneti ad un sottoalbero.
+	 * @param root la radice del sottoalbero.
+	 * @return gli avanzamenti apparteneneti al sottoalbero con radice 
+	 * <code>root</code>.
+	 */	
+	public List getProgressesFromRoot (ProgressItemNode root){
+		ProgressItem item = root.getProgressItem();
+		return item.getSubtreeProgresses();
+	}
 }

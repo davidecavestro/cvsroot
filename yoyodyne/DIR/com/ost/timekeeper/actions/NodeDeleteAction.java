@@ -12,6 +12,7 @@ import com.ost.timekeeper.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
+import com.ost.timekeeper.util.*;
 
 /**
  *
@@ -21,7 +22,7 @@ public class NodeDeleteAction extends javax.swing.AbstractAction {
 	
 	/** Creates a new instance of NodeDeleteAction */
 	public NodeDeleteAction() {
-		super (java.util.ResourceBundle.getBundle("com/ost/timekeeper/ui/bundle/menu").getString("actions.deletenode"), new javax.swing.ImageIcon(ProgressStartAction.class.getResource("/com/ost/timekeeper/ui/images/deletenode.gif")));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.deletenode"), ResourceSupplier.getImageIcon (ResourceClass.UI, "deletenode.gif"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}
@@ -30,8 +31,15 @@ public class NodeDeleteAction extends javax.swing.AbstractAction {
 		Application app = Application.getInstance();
 		ProgressItemNode selectedItem = app.getSelectedItem ();
 		ProgressItemNode parent = (ProgressItemNode)selectedItem.getParent();
+		if (parent==null){
+			//non si rimuove la radice;
+			return;
+		}
+		app.getMainForm().getProgressTreeModel ().removeNodeFromParent(selectedItem);
 		int pos = parent.getIndex(selectedItem);
-		parent.remove(selectedItem);
+//		parent.remove(selectedItem);
+		
+		//determina nuova selezione
 		ProgressItemNode newSelection = null;
 		if (parent.getChildCount()!=0){
 			if (parent.getChildCount()>pos){

@@ -6,10 +6,12 @@
 
 package com.ost.timekeeper.actions;
 
+import java.util.*;
+
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
-import java.util.*;
+import com.ost.timekeeper.util.*;
 
 /**
  *
@@ -19,7 +21,7 @@ public class ProgressStartAction extends javax.swing.AbstractAction {
 	
 	/** Creates a new instance of ProgressStartAction */
 	public ProgressStartAction() {
-		super (java.util.ResourceBundle.getBundle("com/ost/timekeeper/ui/bundle/menu").getString("actions.start"), new javax.swing.ImageIcon(ProgressStartAction.class.getResource("/com/ost/timekeeper/ui/images/start.gif")));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.start"), ResourceSupplier.getImageIcon (ResourceClass.UI, "start.gif"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}

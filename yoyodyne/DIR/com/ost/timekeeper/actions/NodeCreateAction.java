@@ -12,6 +12,7 @@ import com.ost.timekeeper.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
+import com.ost.timekeeper.util.*;
 
 /**
  *
@@ -21,7 +22,7 @@ public class NodeCreateAction extends javax.swing.AbstractAction {
 	
 	/** Creates a new instance of NodeCreateAction */
 	public NodeCreateAction() {
-		super (java.util.ResourceBundle.getBundle("com/ost/timekeeper/ui/bundle/menu").getString("actions.createnode"), new javax.swing.ImageIcon(ProgressStartAction.class.getResource("/com/ost/timekeeper/ui/images/newnode.gif")));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.createnode"), ResourceSupplier.getImageIcon (ResourceClass.UI, "newnode.gif"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}
@@ -30,7 +31,8 @@ public class NodeCreateAction extends javax.swing.AbstractAction {
 		ProgressItemNode newNode = new ProgressItemNode(new ProgressItem (askForName ()));
 		Application app = Application.getInstance();
 		ProgressItemNode selectedItem = app.getSelectedItem ();
-		selectedItem.insert(newNode, selectedItem.getChildCount());
+		app.getMainForm().getProgressTreeModel().insertNodeInto(newNode, selectedItem, selectedItem.getChildCount());
+//		selectedItem.insert(newNode, selectedItem.getChildCount());
 	}
 	
 	public String askForName (){

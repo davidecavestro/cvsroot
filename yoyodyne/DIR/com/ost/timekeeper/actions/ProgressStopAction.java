@@ -7,6 +7,7 @@
 package com.ost.timekeeper.actions;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.util.*;
 
 /**
  *
@@ -16,7 +17,7 @@ public class ProgressStopAction extends javax.swing.AbstractAction {
 	
 	/** Creates a new instance of ProgressStopAction */
 	public ProgressStopAction() {
-		super (java.util.ResourceBundle.getBundle("com/ost/timekeeper/ui/bundle/menu").getString("actions.stop"), new javax.swing.ImageIcon(ProgressStartAction.class.getResource("/com/ost/timekeeper/ui/images/stop.gif")));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.stop"), ResourceSupplier.getImageIcon (ResourceClass.UI, "stop.gif"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}
