@@ -8,12 +8,14 @@ package com.ost.timekeeper.model;
 
 import java.util.*;
 
+import com.ost.timekeeper.util.*;
+
 /**
  * Rappresenta un periodo temporale. I metodi che non ammettono periodi temporali 
  * non validi possono sollevare code>InvalidPeriodException</code>
  * @author  davide
  */
-public class Period {
+public class Period extends Observable{
 	
 	/** Holds value of property from. */
 	private Calendar from;
@@ -43,7 +45,11 @@ public class Period {
 	 *
 	 */
 	public void setFrom(Calendar from) {
-		this.from = from;
+		if (!CalendarUtils.equals(this.from,from)){
+			this.from = from;
+			this.setChanged();
+			this.notifyObservers();
+		}
 	}
 	
 	/** Getter for property to.
@@ -59,7 +65,11 @@ public class Period {
 	 *
 	 */
 	public void setTo(Calendar to) {
-		this.to = to;
+		if (!CalendarUtils.equals(this.to,to)){
+			this.to = to;
+			this.setChanged();
+			this.notifyObservers();
+		}
 	}
 	
 	/**
@@ -89,8 +99,8 @@ public class Period {
 	
 	public String toString (){
 		StringBuffer sb = new StringBuffer ();
-		sb.append ("From: ").append (this.from)
-		.append (" to: ").append (this.to);
+		sb.append ("from: ").append (CalendarUtils.toTSString(this.from))
+		.append (" to: ").append (CalendarUtils.toTSString(this.to));
 		return sb.toString ();
 	}
 }

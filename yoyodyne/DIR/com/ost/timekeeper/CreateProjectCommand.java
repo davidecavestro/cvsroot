@@ -6,6 +6,7 @@
 
 package com.ost.timekeeper;
 
+import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.ui.*;
 
 /**
@@ -22,6 +23,7 @@ public class CreateProjectCommand extends Command {
 	
 	public void execute() {
 		String projectName = askUserForProjectName ();
+		application.setProject (new Project (projectName, new ProgressItem (projectName)));
 	}
 	
 	public String askUserForProjectName (){
