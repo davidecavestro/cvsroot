@@ -29,7 +29,27 @@ public class Project {
 		return this.name;
 	}
 	
+	public void setName (String name){
+		this.name = name;
+	}
+	
 	public ProgressItem getRoot (){
 		return this.root;
 	}
+	
+	public String toString (){
+		StringBuffer sb = new StringBuffer ();
+		sb.append ("name: ").append (this.name)
+		.append (" root: ").append (this.root);
+		return sb.toString();
+	}
+	
+	/** Setter for property root.
+	 * @param root New value of property root.
+	 *
+	 */
+	public void setRoot(ProgressItem root) {
+		this.root=root;
+	}
+	
 }

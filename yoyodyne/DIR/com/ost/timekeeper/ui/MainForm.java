@@ -76,6 +76,9 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuItemNew = new javax.swing.JMenuItem();
 		jMenuItemOpen = new javax.swing.JMenuItem();
 		jMenuExport = new javax.swing.JMenu();
+		jMenuItemXMLProjectExport = new javax.swing.JMenuItem();
+		jMenuImport = new javax.swing.JMenu();
+		jMenuItemXMLProjectImport = new javax.swing.JMenuItem();
 		jMenuItemClose = new javax.swing.JMenuItem();
 		jSeparator1 = new javax.swing.JSeparator();
 		jMenuItemFinish = new javax.swing.JMenuItem();
@@ -160,7 +163,17 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		jPanel1.setLayout(new java.awt.BorderLayout());
 		
 		jSplitPane1.setToolTipText(ResourceSupplier.getString(ResourceClass.UI, "global", "controls.splitter.tooltip"));
-		progressTree.setCellEditor(new javax.swing.tree.DefaultTreeCellEditor(progressTree, progressItemCellRenderer));
+		TreeCellEditor treeCellEditor = new javax.swing.tree.DefaultTreeCellEditor(progressTree, progressItemCellRenderer);
+		treeCellEditor.addCellEditorListener(new CellEditorListener (){
+			public void editingStopped(ChangeEvent e){
+				TreeCellEditor source = (TreeCellEditor)e.getSource();
+				String newValue = (String)source.getCellEditorValue();
+				application.getSelectedItem().setName (newValue);
+			}
+
+			public void editingCanceled(ChangeEvent e){System.out.println (e);}			
+		});
+		progressTree.setCellEditor(treeCellEditor);
 		progressTree.setCellRenderer(progressItemCellRenderer);
 		progressTree.setMaximumSize(null);
 		progressTree.setMinimumSize(null);
@@ -252,6 +265,15 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		
 		jMenuExport.setText(ResourceSupplier.getString(ResourceClass.UI, "menu", "file.export"));
 		jMenuFile.add(jMenuExport);
+		
+		jMenuItemXMLProjectExport.setAction (this.application.getProjectXMLExportAction ());
+		jMenuExport.add(jMenuItemXMLProjectExport);
+		
+		jMenuImport.setText(ResourceSupplier.getString(ResourceClass.UI, "menu", "file.import"));
+		jMenuFile.add(jMenuImport);
+		
+		jMenuItemXMLProjectImport.setAction (this.application.getProjectXMLImportAction ());
+		jMenuImport.add(jMenuItemXMLProjectImport);
 		
 		jMenuItemClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
 		jMenuItemClose.setText(ResourceSupplier.getString(ResourceClass.UI, "menu", "file.close"));
@@ -381,6 +403,9 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JMenuBar jMenuBarMain;
 	private javax.swing.JMenu jMenuEdit;
 	private javax.swing.JMenu jMenuExport;
+	private javax.swing.JMenu jMenuImport;
+	private javax.swing.JMenuItem jMenuItemXMLProjectExport;
+	private javax.swing.JMenuItem jMenuItemXMLProjectImport;
 	private javax.swing.JMenu jMenuFile;
 	private javax.swing.JMenu jMenuHelp;
 	private javax.swing.JMenuItem jMenuItemAbout;
@@ -443,6 +468,9 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		this.progressTree.setSelectionRow(0);
 		
 		this.progressTree.addTreeSelectionListener(this.progressTable);
+		this.progressTree.setEditable(true);
+		this.progressTree.setInvokesStopCellEditing (true);
+//		this.progressTree.putClientProperty("JTree.lineStyle", "Angled");
 	}
 	
 	private final void initTreeModelListeners (){

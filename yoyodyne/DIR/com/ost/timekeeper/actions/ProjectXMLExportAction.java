@@ -39,7 +39,7 @@ public class ProjectXMLExportAction extends javax.swing.AbstractAction implement
 		// Load Mapping
 		Mapping mapping = new Mapping();
 		try{
-			mapping.loadMapping("com/ost/jtimekeeper/model/modelmapping.xml");
+			mapping.loadMapping("modelmapping.xml");
 			
 			int returnVal = chooser.showSaveDialog(app.getMainForm());
 			if(returnVal != JFileChooser.APPROVE_OPTION) {
@@ -54,7 +54,8 @@ public class ProjectXMLExportAction extends javax.swing.AbstractAction implement
 			// Marshal the project object
 			marshaller.marshal(app.getProject(), writer);
 		} catch (Exception ex) {
-			throw new RuntimeException(ex);
+			System.out.println (ExceptionUtils.getStackStrace(ex));
+			throw new NestedRuntimeException(ex);
 		}
 	}
 	

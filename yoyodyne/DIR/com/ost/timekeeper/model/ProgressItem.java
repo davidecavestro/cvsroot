@@ -218,4 +218,51 @@ public class ProgressItem extends Observable{
 		this.setChanged();
 		this.notifyObservers();
 	}
+	
+	/** Setter for property children.
+	 * @param children New value of property children.
+	 *
+	 */
+	public void setChildren(List children) {
+		this.children=children;
+	}
+	
+	/** Setter for property name.
+	 * @param name New value of property name.
+	 *
+	 */
+	public void setName(String name) {
+		this.name=name;
+	}
+	
+	/** Setter for property parent.
+	 * @param parent New value of property parent.
+	 *
+	 */
+	public void setParent(ProgressItem parent) {}
+	
+	/** Setter for property progresses.
+	 * @param progresses New value of property progresses.
+	 *
+	 */
+	public void setProgresses(List progresses) {
+		this.progresses=progresses;
+	}
+	
+	/** Setter for property progressing.
+	 * @param progressing New value of property progressing.
+	 *
+	 */
+	public void setProgressing(boolean progressing) {
+		this.progressing=progressing;
+	}
+	
+	/** Setter for property project.
+	 * @param project New value of property project.
+	 *
+	 */
+	public void setProject(Project project) {
+		this.project=project;
+	}
+	
 }

@@ -24,4 +24,9 @@ public final class ExceptionUtils {
 		t.printStackTrace(new PrintWriter (sw));
 		return sw.getBuffer();
 	}
+	
+	public static StringBuffer getStackStrace (NestedRuntimeException nestedException){
+		Throwable rootCause = nestedException.getRootCause();
+		return new StringBuffer ().append (getStackStrace ((Throwable)nestedException)).append ("\nRoot cause:\n").append (getStackStrace (rootCause));
+	}
 }
