@@ -2,16 +2,16 @@
 #Lancia l'applicazione.
 
 if [ -z "$JAVA_HOME" ] ; then
-    echo "Could not find a JDK."
-    echo "Either you have to install a JDK (1.4 or up),"
-    echo "or you have to set JAVA_HOME to your JDK installation directory."
-    exit
+    export JAVA_HOME=/usr/local/java
+    echo "Could not find a JDK. Using default value $JAVA_HOME"
+    
 fi
+
 
 instdir=`dirname "$0"`
 
 JAVACMD=$JAVA_HOME/bin/java
-JARPATH=../timekeeper.jar
+JARPATH=$instdir/../timekeeper.jar
 
 par1=$1
 par2=$2
