@@ -6,6 +6,7 @@
 
 package com.ost.timekeeper.conf;
 
+import com.ost.timekeeper.view.*;
 import java.awt.*;
 
 /**
@@ -22,8 +23,8 @@ public interface ApplicationSettings {
 	public Rectangle getMainFormBounds ();
 	
 	/** 
-	 * Ritorna la posizione iniziale della finestra di dettaglion odo di avanzamento.
-	 * @return la posizione iniziale della finestra di dettaglion odo di avanzamento.
+	 * Ritorna la posizione iniziale della finestra di dettaglio nodo di avanzamento.
+	 * @return la posizione iniziale della finestra di dettaglio nodo di avanzamento.
 	 */	
 	public Rectangle getProgressItemInspectorBounds ();
 		
@@ -53,4 +54,38 @@ public interface ApplicationSettings {
 	 * @return il colore del desktop.
 	 */	
 	public Color getDesktopColor ();
+	
+	/**
+	 * Ritorna lo stato di abilitazione della notifica sonora in presenza di eventi.
+	 * @return lo stato di abilitazione della notifica sonora in presenza di eventi.
+	 */
+	public Boolean beepOnEvents ();
+	
+	/**
+	 * Ritorna il tipo di lista degli avanzamenti.
+	 *
+	 * @return il tipo di lista degli avanzamenti.
+	 */
+	public ProgressListType getProgressListType ();
+	
+	/**
+	 * Ritorna il percorso della directory contenente i dati persistenti (JDO).
+	 *
+	 * @return il percorso della directory contenente i dati persistenti (JDO).
+	 */
+	public String getJDOStorageDirPath ();
+	
+	/**
+	 * Ritorna il nome dello storage JDO (i file contenenti i dati persistenti e gli indici).
+	 *
+	 * @return il nome dello storage JDO (i file contenenti i dati persistenti e gli indici).
+	 */
+	public String getJDOStorageName ();
+	
+	/**
+	 * Ritorna la dimensione del buffer per il logger di testo semplice.
+	 *
+	 * @return la dimensione del buffer per il logger di testo semplice.
+	 */
+	public Integer getPlainTextLogBufferSize ();
 }

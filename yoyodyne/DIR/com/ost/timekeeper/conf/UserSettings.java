@@ -19,20 +19,10 @@ import java.util.*;
 public final class UserSettings extends AbstractSettings implements Observer{
 	
 	/**
-	 * Percorso file impostazioni.
-	 */
-	public final static String PROPERTIES_PATH = ".timekeeper/conf.properties";
-	
-	/**
 	 * header file impostazioni.
 	 */
 	public final static String PROPERTIES_HEADER = " *** USER SETTINGS *** ";
 
-	/**
-	 * Nome proprietà di sistema contenente il percordo della home directory utente.
-	 */
-	public final static String USER_HOMEDIR_PATH = "user.home";
-	
 	/**
 	 * L'istanza del singleton.
 	 */
@@ -57,21 +47,14 @@ public final class UserSettings extends AbstractSettings implements Observer{
 	 */	
 	public String getPropertiesFileName () {
 		final StringBuffer sb = new StringBuffer ();
-		sb.append (getUserHomeDirPath ()).append ("/").append (PROPERTIES_PATH);
+		sb.append (
+			UserResources.getUserApplicationSettingsDirPath ())
+			.append ("/").append (ResourceNames.USER_SETTINGSFILE_NAME);
 		return sb.toString ();
 	}
 
 	public String getPropertiesHeader () {
 		return PROPERTIES_HEADER;
-	}
-	
-	/**
-	 * Ritorna il percorso della HOME directory dell'utente.
-	 *
-	 * @return il percorso della HOME directory dell'utente.
-	 */	
-	public static String getUserHomeDirPath (){
-		return System.getProperty (USER_HOMEDIR_PATH);
 	}
 	
 	/**
@@ -97,7 +80,6 @@ public final class UserSettings extends AbstractSettings implements Observer{
 	private void notifyChanges (){
 		final UserSettingsNotifier notifier = UserSettingsNotifier.getInstance ();
 		notifier.setChanged ();
-		System.out.println ("notifying user changes");
 		
 		notifier.notifyObservers (ObserverCodes.USERSETTINGSCHANGE);
 	}
@@ -111,6 +93,8 @@ public final class UserSettings extends AbstractSettings implements Observer{
 			this.setProgressItemInspectorBounds (ProgressItemInspectorFrame.getInstance ().getBounds ());
 			this.setProgressPeriodInspectorBounds (ProgressInspectorFrame.getInstance ().getBounds ());
 			this.setProgressListFrameBounds (ProgressListFrame.getInstance ().getBounds ());
+			/* Salva tipo lista avanzamenti. */
+			this.setProgressListType (ProgressListFrame.getInstance ().getListType ());
 		}
 	}
 	

@@ -17,11 +17,6 @@ import java.awt.*;
 public final class SystemSettings extends AbstractSettings {
 	
 	/**
-	 * Percorso file impostazioni.
-	 */
-	public final static String PROPERTIES_PATH = ".timekeeper/systemconf.properties";
-	
-	/**
 	 * header file impostazioni.
 	 */
 	public final static String PROPERTIES_HEADER = "SYSTEM SETTINGS";
@@ -44,7 +39,7 @@ public final class SystemSettings extends AbstractSettings {
 	
 	public String getPropertiesFileName () {
 		final StringBuffer sb = new StringBuffer ();
-		sb.append (getSystemApplicationSettingsPath ()).append ("/").append (PROPERTIES_PATH);
+		sb.append (Application.getEnvironment ().getApplicationSettingsPath ()).append ("/").append (ResourceNames.SYSTEM_SETTINGSFILE_NAME);
 		return sb.toString ();
 	}
 
@@ -52,22 +47,5 @@ public final class SystemSettings extends AbstractSettings {
 		return PROPERTIES_HEADER;
 	}
 	
-	/**
-	 * Ritorna il percorso della directory contenente la configurazione dell'applicazione.
-	 *
-	 * @return il percorso della directory contenente la configurazione dell'applicazione.
-	 */	
-	public static String getSystemApplicationSettingsPath (){
-		/**
-		 * Prova a cercare nell'ambiente.
-		 */
-		final String envArg = Application.getEnvironment ().getApplicationSettingsPath ();
-		if (envArg!=null){
-			return envArg;
-		}
-		/**
-		 * Prende variabile di sistema.
-		 */
-		return System.getProperty ("user.dir");
-	}
+
 }

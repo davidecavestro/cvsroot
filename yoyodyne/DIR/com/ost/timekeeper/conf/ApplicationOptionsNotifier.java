@@ -50,7 +50,6 @@ public final class ApplicationOptionsNotifier extends Observable implements Obse
 	public void update (Observable o, Object arg) {
 		if (arg!=null && arg.equals (ObserverCodes.USERSETTINGSCHANGE)){
 			this.setChanged ();
-			System.out.println ("notifying application changes");
 			this.notifyObservers (ObserverCodes.APPLICATIONOPTIONSCHANGE);
 		}
 	}

@@ -9,6 +9,7 @@ package com.ost.timekeeper.actions;
 import java.util.*;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.help.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
@@ -66,7 +67,8 @@ public final class ProjectCreateAction extends javax.swing.AbstractAction implem
 		return StringInputDialog.supplyString(Application.getInstance().getMainForm(),
 		ResourceSupplier.getString(ResourceClass.UI, "controls", "new_project"),
 		ResourceSupplier.getString(ResourceClass.UI, "controls", "new_project.enter_name"),
-		true);
+		true,
+		HelpResource.NEWPROJECTDIALOG);
 	}
 	
 	public void update(Observable o, Object arg) {

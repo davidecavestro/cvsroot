@@ -6,7 +6,9 @@
 
 package com.ost.timekeeper.conf;
 
+import com.ost.timekeeper.*;
 import com.ost.timekeeper.util.*;
+import com.ost.timekeeper.view.*;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
@@ -47,7 +49,7 @@ public abstract class AbstractSettings implements CustomizableSettings {
 				in.close();
 			}
 		} catch (FileNotFoundException fnfe) {
-			System.out.println ("File not found "+fnfe.getMessage ());
+			Application.getLogger ().warning ( "Error loading propoerties. ", fnfe);
 		} catch (IOException ioe) {
 			throw new NestedRuntimeException (ioe);
 		}
@@ -228,4 +230,91 @@ public abstract class AbstractSettings implements CustomizableSettings {
 		SettingsSupport.setColorProperty (this.getProperties (), PROPNAME_DESKTOPCOLOR, color);
 	}
 	
+	/**
+	 * Notifica sonora in presenza di eventi.
+	 * @return lo stato di abilitazione della notifica sonora in presenza di eventi.
+	 */
+	public Boolean beepOnEvents () {
+		return SettingsSupport.getBooleanProperty (this.getProperties (), PROPNAME_BEEPONEVENTS);
+	}
+	
+	/**
+	 * Imposta lo stato di abilitazione del beep di sistema in presenza di eventi.
+	 */
+	public void setBeepOnEvents (Boolean beep) {
+		SettingsSupport.setBooleanProperty (this.getProperties (), PROPNAME_BEEPONEVENTS, beep);
+	}
+	
+	/**
+	 * Ritorna il tipo di lista degli avanzamenti.
+	 *
+	 * @return il tipo di lista degli avanzamenti.
+	 */
+	public ProgressListType getProgressListType (){
+		return ProgressListType.getType (SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_PROGRESSLISTTYPE));
+	}
+	
+	/**
+	 * Imposta il tipo di lista degli avanzamenti.
+	 */
+	public void setProgressListType (com.ost.timekeeper.view.ProgressListType type) {
+		String value = null;
+		if (type!=null){
+			value = type.getInternalValue ();
+		} else {
+			value = "";
+		}
+		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_PROGRESSLISTTYPE, value);
+	}
+	
+	/**
+	 * Ritorna il percorso della directory contenente i dati persistenti (JDO).
+	 *
+	 * @return il percorso della directory contenente i dati persistenti (JDO).
+	 */
+	public String getJDOStorageDirPath (){
+		return SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_JDOSTORAGEDIRPATH);
+	}
+	
+	/**
+	 * Ritorna il nome dello storage JDO (i file contenenti i dati persistenti e gli indici).
+	 *
+	 * @return il nome dello storage JDO (i file contenenti i dati persistenti e gli indici).
+	 */
+	public String getJDOStorageName (){
+		return SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_JDOSTORAGENAME);
+	}
+	
+	/**
+	 * Ritorna il percorso della directory contenente i dati persistenti (JDO).
+	 *
+	 * @return il percorso della directory contenente i dati persistenti (JDO).
+	 */
+	public void setJDOStorageDirPath (String path){
+		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_JDOSTORAGEDIRPATH, path);
+	}
+	
+	/**
+	 * Ritorna il nome dello storage JDO (i file contenenti i dati persistenti e gli indici).
+	 *
+	 * @return il nome dello storage JDO (i file contenenti i dati persistenti e gli indici).
+	 */
+	public void setJDOStorageName (final String name){
+		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_JDOSTORAGENAME, name);
+	}
+	
+	/**
+	 * Ritorna la dimensione del buffer per il logger di testo semplice.
+	 *
+	 * @return la dimensione del buffer per il logger di testo semplice.
+	 */
+	public Integer getPlainTextLogBufferSize (){
+		return SettingsSupport.getIntegerProperty (this.getProperties (), PLAINTEXTLOG_BUFFERSIZE);
+	}
+	/**
+	 * Impostala dimensione del buffer per il logger di testo semplice.
+	 */
+	public void setPlainTextLogBufferSize (final Integer size){
+		SettingsSupport.setIntegerProperty (this.getProperties (), PLAINTEXTLOG_BUFFERSIZE, size);
+	}
 }

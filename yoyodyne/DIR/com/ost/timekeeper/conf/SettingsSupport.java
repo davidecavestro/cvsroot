@@ -33,10 +33,25 @@ public final class SettingsSupport {
 	 */	
 	public static Boolean getBooleanProperty (Properties properties, String propertyName){
 		final String propertyValue = properties.getProperty (propertyName);
-		if (propertyValue!=null){
+		if (propertyValue!=null && propertyValue.trim ().length ()>0){
 			return new Boolean (propertyValue);
 		} else {
 			return null;
+		}
+	}
+	
+	/**
+	 * Imposta il valore di una proprietà di tipo booleano.
+	 *
+	 * @param properties la risorsa di configurazione.
+	 * @param propertyName il nome della proprietà.
+	 * @param propertyValue il valore della proprietà.
+	 */	
+	public static void setBooleanProperty (final Properties properties, final String propertyName, final Boolean propertyValue){
+		if (propertyValue!=null){
+			properties.setProperty (propertyName, propertyValue.toString ());
+		} else {
+			properties.setProperty (propertyName, "");
 		}
 	}
 	
@@ -49,6 +64,17 @@ public final class SettingsSupport {
 	 */	
 	public static String getStringProperty (Properties properties, String propertyName){
 		return properties.getProperty (propertyName);
+	}
+	
+	/**
+	 * Imposta il valore di una proprietà di tipo stringa.
+	 *
+	 * @param properties la risorsa di configurazione.
+	 * @param propertyName il nome della proprietà.
+	 * @param propertyName il valore della proprietà.
+	 */	
+	public static void setStringProperty (final Properties properties, final String propertyName, final String propertyValue){
+		properties.setProperty (propertyName, propertyValue);
 	}
 	
 	/**

@@ -9,6 +9,7 @@ package com.ost.timekeeper.actions;
 import java.util.*;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.actions.commands.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
@@ -32,15 +33,9 @@ public final class NodeDeleteAction extends javax.swing.AbstractAction implement
 	}
 	
 	public void actionPerformed (java.awt.event.ActionEvent e) {
-		Application app = Application.getInstance ();
-		ProgressItem selectedItem = app.getSelectedItem ();
-		ProgressItem parent = selectedItem.getParent ();
-		if (parent==null){
-			//non si rimuove la radice;
-			return;
-		}
-		app.getMainForm ().getProgressTreeModel ().removeNodeFromParent (selectedItem);
-		app.getPersistenceManager ().deletePersistent (selectedItem);
+		final Application app = Application.getInstance ();
+		final ProgressItem deletingNode = app.getSelectedItem ();
+		new DeleteNode (deletingNode).execute ();
 	}
 	
 	public void update (Observable o, Object arg) {

@@ -81,7 +81,7 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 			worker.start();
 				
 		} catch (Exception ex) {
-			System.out.println(ExceptionUtils.getStackStrace(ex));
+			Application.getLogger ().error ( "Error exporting project. ", ex);
 			throw new NestedRuntimeException(ex);
 		}
 	}

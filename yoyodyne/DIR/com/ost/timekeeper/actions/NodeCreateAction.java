@@ -9,6 +9,9 @@ package com.ost.timekeeper.actions;
 import java.util.*;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.actions.commands.*;
+import com.ost.timekeeper.actions.commands.attributes.*;
+import com.ost.timekeeper.help.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
@@ -40,10 +43,9 @@ public final class NodeCreateAction extends javax.swing.AbstractAction implement
 			 */
 			return;
 		}
-		ProgressItem newNode = new ProgressItem (newNodeName);
-		Application app = Application.getInstance ();
-		ProgressItem selectedItem = app.getSelectedItem ();
-		app.getMainForm ().getProgressTreeModel ().insertNodeInto (newNode, selectedItem, selectedItem.childCount ());
+		final Application app = Application.getInstance ();
+		final ProgressItem parent = app.getSelectedItem ();
+		new CreateNode (parent, new Attribute[]{new StringAttribute (CreateNode.NEWNODENAME, newNodeName)}, -1).execute ();
 		//              selectedItem.insert(newNode, selectedItem.getChildCount());
 	}
 	
@@ -56,7 +58,8 @@ public final class NodeCreateAction extends javax.swing.AbstractAction implement
 		return StringInputDialog.supplyString (Application.getInstance ().getMainForm (),
 		ResourceSupplier.getString (ResourceClass.UI, "controls", "new_node"),
 		ResourceSupplier.getString (ResourceClass.UI, "controls", "new_node.enter_name"),
-		true);
+		true,
+		HelpResource.NEWNODEDIALOG);
 	}
 	
 	public void update (Observable o, Object arg) {

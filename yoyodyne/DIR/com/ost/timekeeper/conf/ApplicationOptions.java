@@ -7,6 +7,7 @@
 package com.ost.timekeeper.conf;
 
 import com.ost.timekeeper.conf.*;
+import com.ost.timekeeper.view.*;
 import java.awt.*;
 
 /**
@@ -47,7 +48,7 @@ public final class ApplicationOptions {
 			final Rectangle returnValue = this._settings.getMainFormBounds ();
 			if (returnValue!=null){
 				/*
-				 * Risposta lolcale.
+				 * Risposta locale.
 				 */
 				return returnValue;
 			} else {
@@ -73,7 +74,7 @@ public final class ApplicationOptions {
 			final Rectangle returnValue = this._settings.getProgressItemInspectorBounds ();
 			if (returnValue!=null){
 				/*
-				 * Risposta lolcale.
+				 * Risposta locale.
 				 */
 				return returnValue;
 			} else {
@@ -99,7 +100,7 @@ public final class ApplicationOptions {
 			final Rectangle returnValue = this._settings.getProgressPeriodInspectorBounds ();
 			if (returnValue!=null){
 				/*
-				 * Risposta lolcale.
+				 * Risposta locale.
 				 */
 				return returnValue;
 			} else {
@@ -125,7 +126,7 @@ public final class ApplicationOptions {
 			final Rectangle returnValue = this._settings.getProgressListFrameBounds ();
 			if (returnValue!=null){
 				/*
-				 * Risposta lolcale.
+				 * Risposta locale.
 				 */
 				return returnValue;
 			} else {
@@ -148,7 +149,7 @@ public final class ApplicationOptions {
 			final String returnValue = this._settings.getLogDirPath ();
 			if (returnValue!=null){
 				/*
-				 * Risposta lolcale.
+				 * Risposta locale.
 				 */
 				return returnValue;
 			} else {
@@ -175,7 +176,7 @@ public final class ApplicationOptions {
 			final Color returnValue = this._settings.getDesktopColor ();
 			if (returnValue!=null){
 				/*
-				 * Risposta lolcale.
+				 * Risposta locale.
 				 */
 				return returnValue;
 			} else {
@@ -193,4 +194,82 @@ public final class ApplicationOptions {
 			}
 	}
 	
+	public boolean beepOnEvents () {
+			final Boolean returnValue = this._settings.beepOnEvents ();
+			if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+				return returnValue.booleanValue ();
+			} else {
+				if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+					return _successor.beepOnEvents ();
+				} else {
+					/*
+					 * Informazione non disponibile.
+					 * Funzionalità disabilitata.
+					 */
+					return false;
+				}
+			}
+	}
+	
+	/**
+	 * Ritorna il tipo di lista degli avanzamenti.
+	 *
+	 * @return il tipo di lista degli avanzamenti.
+	 */
+	public ProgressListType getProgressListType (){
+		final ProgressListType returnValue = this._settings.getProgressListType ();
+		if (returnValue!=null){
+			/*
+			 * Risposta locale.
+			 */
+			return returnValue;
+		} else {
+			if (_successor!=null){
+				/*
+				 * Delega successore.
+				 */
+				return _successor.getProgressListType ();
+			} else {
+				/*
+				 * Informazione non disponibile.
+				 * Funzionalità disabilitata.
+				 */
+				return null;
+			}
+		}
+	}
+	
+	/**
+	 * Ritorna la dimensione del buffer per il logger di testo semplice.
+	 *
+	 * @return la dimensione del buffer per il logger di testo semplice.
+	 */
+	public int getPlainTextLogBufferSize (){
+		final Integer returnValue = this._settings.getPlainTextLogBufferSize ();
+		if (returnValue!=null){
+			/*
+			 * Risposta locale.
+			 */
+			return returnValue.intValue ();
+		} else {
+			if (_successor!=null){
+				/*
+				 * Delega successore.
+				 */
+				return _successor.getPlainTextLogBufferSize ();
+			} else {
+				/*
+				 * Informazione non disponibile.
+				 * Funzionalità disabilitata.
+				 */
+				return 8192;
+			}
+		}
+	}	
 }

@@ -64,7 +64,7 @@ public final class ProjectXMLImportAction extends javax.swing.AbstractAction imp
 								unmarshaller.setMapping(mapping);
 								// Unmarshal the project object
 								Project project = (Project)unmarshaller.unmarshal(reader);
-								System.out.println ("progetto importato: "+project);
+								Application.getLogger ().info ( "Project successfully imported: "+project);
 								app.setProject (project);
 							} catch (Exception ex) {
 								throw new NestedRuntimeException(ex);

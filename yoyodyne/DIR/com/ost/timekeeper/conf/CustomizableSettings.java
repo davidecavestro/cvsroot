@@ -7,6 +7,7 @@
 package com.ost.timekeeper.conf;
 
 import com.ost.timekeeper.util.*;
+import com.ost.timekeeper.view.*;
 import java.awt.*;
 import java.util.*;
 
@@ -53,6 +54,15 @@ public interface CustomizableSettings extends ApplicationSettings{
 	/** Altezza della finestra di elenco avanzamenti. */
 	public final static String PROPNAME_PROGRESSLISTFRAME_HEIGHT = "progresslistframeheight";
 	
+	/** Beep in presenza di eventi. */
+	public final static String PROPNAME_BEEPONEVENTS = "beeponevents";
+	
+	/** Tipo di lista avanzamenti. */
+	public final static String PROPNAME_PROGRESSLISTTYPE = "progresslisttype";
+	
+	/** Dimensione del buffer per il log di testo semplice. */
+	public final static String PLAINTEXTLOG_BUFFERSIZE = "palintextlogbuffersize";
+	
 	/**
 	 * Percorso della directory contenente i file di log.
 	 */
@@ -62,6 +72,16 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 * Colore desktop.
 	 */
 	public final static String PROPNAME_DESKTOPCOLOR = "desktopcolor";
+	
+	/**
+	 * Percorso della directory contenente i dati persistenti JDO.
+	 */
+	public final static String PROPNAME_JDOSTORAGEDIRPATH = "jdostoragedirpath";
+	
+	/**
+	 * Nome dei file contenenti di datipersistenti.
+	 */
+	public final static String PROPNAME_JDOSTORAGENAME = "jdostoragename";
 	
 	/**
 	 * Ritorna il nome del file di preferenze associato a queste impostazioni.
@@ -122,4 +142,34 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 * @param r la posizione.
 	 */	
 	public void setProgressListFrameBounds (Rectangle r);
+	
+	/**
+	 * Imposta lo stato di abilitazione della notifica sonora in presenza di eventi.
+	 * @param beep lo stato di abilitazione.
+	 */
+	public void setBeepOnEvents (Boolean beep);
+	
+	/**
+	 * Imposta il tipo di lista degli avanzamenti.
+	 */
+	public void setProgressListType (ProgressListType type);
+	
+	/**
+	 * Ritorna il percorso della directory contenente i dati persistenti (JDO).
+	 *
+	 * @return il percorso della directory contenente i dati persistenti (JDO).
+	 */
+	public void setJDOStorageDirPath (String path);
+	
+	/**
+	 * Ritorna il nome dello storage JDO (i file contenenti i dati persistenti e gli indici).
+	 *
+	 * @return il nome dello storage JDO (i file contenenti i dati persistenti e gli indici).
+	 */
+	public void setJDOStorageName (final String name);
+	
+	/**
+	 * Impostala dimensione del buffer per il logger di testo semplice.
+	 */
+	public void setPlainTextLogBufferSize (final Integer size);
 }

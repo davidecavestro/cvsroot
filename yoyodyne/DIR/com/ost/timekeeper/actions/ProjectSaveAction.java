@@ -32,6 +32,10 @@ public final class ProjectSaveAction extends javax.swing.AbstractAction implemen
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
+		execute ();
+	}
+	
+	public void execute (){
 		Application app = Application.getInstance();
 		app.flushData();
 	}
