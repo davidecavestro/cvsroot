@@ -47,6 +47,7 @@ public class Period extends Observable{
 	public void setFrom(Calendar from) {
 		if (!CalendarUtils.equals(this.from,from)){
 			this.from = from;
+			isDurationComputed = false;
 			this.setChanged();
 			this.notifyObservers();
 		}
@@ -67,6 +68,7 @@ public class Period extends Observable{
 	public void setTo(Calendar to) {
 		if (!CalendarUtils.equals(this.to,to)){
 			this.to = to;
+			isDurationComputed = false;
 			this.setChanged();
 			this.notifyObservers();
 		}
@@ -95,6 +97,29 @@ public class Period extends Observable{
 		return this.from!=null 
 			&& this.to!=null
 			&& !this.from.after(this.to);
+	}
+	
+	/** Specifica se questo periodo non è terminato.
+	 * @return <code>true</code> se questo è un periodo temporale non terminato; 
+	 * <code>false</code> altrimenti.
+	 *
+	 */
+	public boolean isEndOpened() {
+		return this.from!=null 
+			&& this.to==null;
+	}
+	
+	private boolean isDurationComputed = false;
+	private Duration computedDuration;
+	public Duration getDuration (){
+		if (this.isEndOpened()){
+			return new Duration (this.from, new GregorianCalendar ());
+		} else {
+			if (!isDurationComputed){
+				this.computedDuration = new Duration (this.from, this.to);
+			}
+			return this.computedDuration;
+		}
 	}
 	
 	public String toString (){

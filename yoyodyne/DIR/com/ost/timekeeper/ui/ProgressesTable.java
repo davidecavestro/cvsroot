@@ -6,6 +6,7 @@
 
 package com.ost.timekeeper.ui;
 
+import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -72,6 +73,12 @@ public class ProgressesTable extends javax.swing.JTable implements TreeSelection
 		this.reloadModel(e.getPath());
 	}
 	
+	private static class DurationNumberFormatter extends DecimalFormat {
+		public DurationNumberFormatter (){
+			this.setMinimumIntegerDigits (2);
+		}
+	}
+		
 	private final class ProgressTableModel extends javax.swing.table.AbstractTableModel {
 		private List progresses;
 		private Object[] columns;
@@ -80,6 +87,7 @@ public class ProgressesTable extends javax.swing.JTable implements TreeSelection
 			this.columns = new Object[]{
 				ResourceSupplier.getString(ResourceClass.UI, "components", "progress.startdate"),
 				ResourceSupplier.getString(ResourceClass.UI, "components", "progress.finishdate"),
+				ResourceSupplier.getString(ResourceClass.UI, "components", "progress.duration"),
 				ResourceSupplier.getString(ResourceClass.UI, "components", "progress.running"),
 			};
 			this.progresses = progresses;
@@ -93,18 +101,40 @@ public class ProgressesTable extends javax.swing.JTable implements TreeSelection
 			return progresses.size();
 		}
 		
+		private final DurationNumberFormatter durationNumberFormatter = new DurationNumberFormatter ();
+		
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Period period = (Period)progresses.get(rowIndex);
 			switch (columnIndex){
 				case 0: return period.getFrom();
 				case 1: return period.getTo();
-				case 2: return new Boolean(period.getTo()==null);
+				case 2: 
+					Duration duration = period.getDuration ();
+					StringBuffer sb = new StringBuffer ();
+					/*
+					sb.append (durationNumberFormatter.format(duration.getDays()))
+					.append (":")
+					 */
+					sb.append (durationNumberFormatter.format(duration.getHours()))
+					.append (":")
+					.append (durationNumberFormatter.format(duration.getMinutes()))
+					.append (":")
+					.append (durationNumberFormatter.format(duration.getSeconds()));
+					return sb.toString ();
+				case 3: return new Boolean(period.getTo()==null);
 				default: return null;
 			}
 		}
 		
 		public String getColumnName(int column) {return (String)columns[column];}
-		public Class getColumnClass(int c) {return getValueAt(0, c).getClass();}
+		public Class getColumnClass(int c) {
+			Object firstRowCell = getValueAt(0, c);
+			if (firstRowCell!=null){
+				return firstRowCell.getClass();
+			} else {
+				return Object.class;
+			}
+		}
 		public boolean isCellEditable(int row, int col) {return false;}
 	}
 	
