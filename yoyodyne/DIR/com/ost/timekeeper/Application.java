@@ -31,6 +31,8 @@ public class Application extends Observable{
 	 * La finestra principale della GUI.
 	 */
 	private MainForm mainForm;
+	
+	private final ActionPool actionPool = new ActionPool ();
 	/** 
 	 * Costruttore privato. 
 	 */
@@ -38,17 +40,17 @@ public class Application extends Observable{
 		//inizializza il supporto per la persistenza dei dati
 		initPersistence ();
 		//registra le azioni su Application
-		this.addObserver(this.nodeCreateAction);
-		this.addObserver(this.nodeDeleteAction);
-		this.addObserver(this.progressStartAction);
-		this.addObserver(this.progressStopAction);
-		this.addObserver(this.projectCreateAction);
-		this.addObserver(this.projectDeleteAction);
-		this.addObserver(this.projectCloseAction);
-		this.addObserver(this.projectOpenAction);
-		this.addObserver(this.projectSaveAction);
-		this.addObserver(this.projectXMLExportAction);
-		this.addObserver(this.projectXMLImportAction);
+		this.addObserver(actionPool.getNodeCreateAction ());
+		this.addObserver(actionPool.getNodeDeleteAction ());
+		this.addObserver(actionPool.getProgressStartAction ());
+		this.addObserver(actionPool.getProgressStopAction ());
+		this.addObserver(actionPool.getProjectCreateAction ());
+		this.addObserver(actionPool.getProjectDeleteAction ());
+		this.addObserver(actionPool.getProjectCloseAction ());
+		this.addObserver(actionPool.getProjectOpenAction ());
+		this.addObserver(actionPool.getProjectSaveAction ());
+		this.addObserver(actionPool.getProjectXMLExportAction ());
+		this.addObserver(actionPool.getProjectXMLImportAction ());
 	}
 	
 	/**
@@ -101,13 +103,20 @@ public class Application extends Observable{
 	}
 	
 	/**
+	 * Ritorna il pool di azioni.
+	 * @return il pool di azioni.
+	 */	
+	public ActionPool getActionPool (){
+		return this.actionPool;
+	}
+	/**
 	 * Metodo di lancio.
 	 * @param args gli argomenti della linea di comando.
 	 */
 	public static void main(String args[]) {
 		Application a = getInstance();
 //		a.getProjectCreateAction ().execute ("Void project");
-		a.getProjectCloseAction ().execute ();
+		a.getActionPool ().getProjectCloseAction ().execute ();
 		try{
 			a.getMainForm().setBounds(0, 0, 800, 600);
 			a.getMainForm().show();
@@ -232,139 +241,6 @@ public class Application extends Observable{
 		return this.selectedProgress;
 	}
 
-	/**
-	 * Azione di partenza avanzamento.
-	 */
-	private final ProgressStartAction progressStartAction = new ProgressStartAction();
-	
-	/**
-	 * Ritorna l'azione di partenza avanzamento.
-	 * @return l'azione di partenza avanzamento.
-	 */	
-	public ProgressStartAction getProgressStartAction(){
-		return this.progressStartAction;
-	}
-	
-	/**
-	 * Azione di arresto avanzamento.
-	 */
-	private final ProgressStopAction progressStopAction = new ProgressStopAction();
-	/**
-	 * Ritorna l'azione di arresto avanzamento.
-	 * @return l'azione di arresto avanzamento.
-	 */	
-	public ProgressStopAction getProgressStopAction(){
-		return this.progressStopAction;
-	}
-	
-	/**
-	 * Azione di creazione nuovo elemento.
-	 */
-	private final NodeCreateAction nodeCreateAction = new NodeCreateAction();
-	/**
-	 * Ritorna l'azione di creazione nuovo elemento.
-	 * @return l'azione di creazione nuovo elemento.
-	 */	
-	public NodeCreateAction getNodeCreateAction(){
-		return this.nodeCreateAction;
-	}
-	
-	/**
-	 * L'azione di rimozione nuovo elemento.
-	 */	
-	private final NodeDeleteAction nodeDeleteAction = new NodeDeleteAction();
-	/**
-	 * Ritorna l'azione di rimozione nuovo elemento.
-	 * @return l'azione di rimozione nuovo elemento.
-	 */	
-	public NodeDeleteAction getNodeDeleteAction(){
-		return this.nodeDeleteAction;
-	}
-	
-	/**
-	 * L'azione di creazione nuovo progetto.
-	 */	
-	private final ProjectCreateAction projectCreateAction = new ProjectCreateAction();
-	/**
-	 * Ritorna l'azione di creazione nuovo progetto.
-	 * @return l'azione di creazione nuovo progetto.
-	 */	
-	public ProjectCreateAction getProjectCreateAction(){
-		return this.projectCreateAction;
-	}
-	
-	/**
-	 * L'azione di rimozione progetto.
-	 */	
-	private ProjectDeleteAction projectDeleteAction = new ProjectDeleteAction();
-	/**
-	 * Ritorna l'azione di rimozione progetto.
-	 * @return l'azione di rimozione progetto.
-	 */	
-	public ProjectDeleteAction getProjectDeleteAction(){
-		return this.projectDeleteAction;
-	}
-	
-	/**
-	 * L'azione di apertura progetto.
-	 */	
-	private final ProjectOpenAction projectOpenAction = new ProjectOpenAction();
-	/**
-	 * Ritorna l'azione di apertura progetto.
-	 * @return l'azione di apertura progetto.
-	 */	
-	public ProjectOpenAction getProjectOpenAction(){
-		return this.projectOpenAction;
-	}
-	
-	/**
-	 * L'azione di salvataggio progetto.
-	 */	
-	private final ProjectSaveAction projectSaveAction = new ProjectSaveAction();
-	/**
-	 * Ritorna l'azione di salvataggio progetto.
-	 * @return l'azione di salvataggio progetto.
-	 */	
-	public ProjectSaveAction getProjectSaveAction(){
-		return this.projectSaveAction;
-	}
-	
-	/**
-	 * L'azione di chiusura progetto.
-	 */	
-	private final ProjectCloseAction projectCloseAction = new ProjectCloseAction();
-	/**
-	 * Ritorna l'azione di chiusura progetto.
-	 * @return l'azione di chiusura progetto.
-	 */	
-	public ProjectCloseAction getProjectCloseAction(){
-		return this.projectCloseAction;
-	}
-	
-	/**
-	 * L'azione di esportazione progetto da fonte XML.
-	 */	
-	private final ProjectXMLExportAction projectXMLExportAction = new ProjectXMLExportAction();
-	/**
-	 * Ritorna l'azione di esportazione progetto da fonte XML.
-	 * @return l'azione di esportazione progetto da fonte XML.
-	 */	
-	public ProjectXMLExportAction getProjectXMLExportAction(){
-		return this.projectXMLExportAction;
-	}
-	
-	/**
-	 * L'azione di importazione progetto da fonte XML.
-	 */	
-	private final ProjectXMLImportAction projectXMLImportAction = new ProjectXMLImportAction();
-	/**
-	 * Ritorna l'azione di importazione progetto da fonte XML.
-	 * @return l'azione di importazione progetto da fonte XML.
-	 */	
-	public ProjectXMLImportAction getProjectXMLImportAction(){
-		return this.projectXMLImportAction;
-	}
-	
 	/**
 	 * Il gestore della persistenza deidati.
 	 */

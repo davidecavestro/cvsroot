@@ -34,14 +34,26 @@ public class ProjectCreateAction extends javax.swing.AbstractAction implements O
 	}
 	
 	public void execute (String projectName){
+		if (projectName==null || projectName.trim().length()==0){
+			//progetto senza nome non ammesso
+			return;
+		}
 		Application app = Application.getInstance();
 		app.setProject (new Project (projectName, new ProgressItem (projectName)));
-		app.getPersistenceManager().makePersistent(app.getProject());
+		Project newProject = app.getProject();
+		if (newProject!=null){
+			//nuovo progetto
+			//rende persistente nuovo progetto
+			app.getPersistenceManager().makePersistent(newProject);
+		}
 //		app.getMainForm().getProgressTreeModel()
 	}
 	
-	public String askUserForProjectName (){
-		return StringInputDialog.createDialog(Application.getInstance().getMainForm (), "Ask user", "Enter new project name", true);
+	public static String askUserForProjectName (){
+		return StringInputDialog.createDialog(Application.getInstance().getMainForm (), 
+		ResourceSupplier.getString (ResourceClass.UI, "controls", "new_project"), 
+		ResourceSupplier.getString (ResourceClass.UI, "controls", "new_project.enter_name"), 
+		true);
 	}
 	
 	public void update(Observable o, Object arg) {
