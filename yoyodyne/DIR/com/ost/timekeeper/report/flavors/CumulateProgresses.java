@@ -103,6 +103,11 @@ public final class CumulateProgresses extends AbstractDataExtractor {
 		
 		Calendar now = new GregorianCalendar ();
 		
+		now.set (Calendar.HOUR_OF_DAY, 0);
+		now.set (Calendar.MINUTE, 0);
+		now.set (Calendar.SECOND, 0);
+		now.set (Calendar.MILLISECOND, 0);
+//		now.roll (Calendar.DATE, 1);
 		final Date periodFinishDate = new Date (now.getTime ().getTime ());
 		
 		now.roll (Calendar.DATE, -7);
@@ -110,20 +115,20 @@ public final class CumulateProgresses extends AbstractDataExtractor {
 		
 		final TimeCumulationScale map = new TimeCumulationScale (periodStartDate, periodFinishDate, 1);
 		
-		Date currentPeriodStartDate = periodStartDate;
-		Calendar c = new GregorianCalendar ();
-		c.set (Calendar.HOUR_OF_DAY, 0);
-		c.set (Calendar.MINUTE, 0);
-		c.set (Calendar.SECOND, 0);
-		c.set (Calendar.MILLISECOND, 0);
+//		Date currentPeriodStartDate = periodStartDate;
+//		Calendar c = new GregorianCalendar ();
+//		c.set (Calendar.HOUR_OF_DAY, 0);
+//		c.set (Calendar.MINUTE, 0);
+//		c.set (Calendar.SECOND, 0);
+//		c.set (Calendar.MILLISECOND, 0);
 		
-		final int step = 1;
-		c.roll (Calendar.DATE, step);
-		Date currentPeriodFInishDate = new Date (c.getTime ().getTime ());
+//		final int step = 1;
+//		c.roll (Calendar.DATE, step);
+//		Date currentPeriodFInishDate = new Date (c.getTime ().getTime ());
 		
-		CumulationPeriod currentCumulationPeriod;
+//		CumulationPeriod currentCumulationPeriod;
 		final ProgressItem root = this._subtreeRoot;
-		boolean jumpToNextPeriod = false;
+//		boolean jumpToNextPeriod = false;
 		/*@todo implementare l'estrazione dati */
 		for (final Iterator it = root.getSubtreeProgresses ().iterator ();it.hasNext ();){
 			final Progress progress = (Progress)it.next ();
@@ -141,7 +146,7 @@ public final class CumulateProgresses extends AbstractDataExtractor {
 			
 			{
 				final Element element = new Element (PERIODNAME_ELEMENT);
-				element.setText (com.ost.timekeeper.util.CalendarUtils.getTimestamp (cumulationPeriod.getFrom (), "MM-dd"));
+				element.setText (com.ost.timekeeper.util.CalendarUtils.getTimestamp (cumulationPeriod.getFrom (), "MM/dd"));
 				progressElement.addContent (element);
 			}
 			
@@ -225,8 +230,8 @@ public final class CumulateProgresses extends AbstractDataExtractor {
 		}
 		
 		public void addDuration (final ProgressItem progressItem, final Progress progress){
-			final Date from = progress.getFrom ();
-			final Date to = progress.getTo ();
+//			final Date from = progress.getFrom ();
+//			final Date to = progress.getTo ();
 			
 			/*
 			 * pessimizzazione!!!
