@@ -1,5 +1,5 @@
 /*
- * ProgressesTable.java
+ * SubtreeProgressesTable.java
  *
  * Created on 2 maggio 2004, 8.41
  */
@@ -19,14 +19,17 @@ import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
 
 /**
+ * Componente grafica per la gestione della vista delgi avanzamenti relativi ad un sottoalbero.
  *
  * @author  davide
  */
-public class ProgressesTable extends javax.swing.JTable implements TreeSelectionListener, TreeModelListener, Observer{
+public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSelectionListener, TreeModelListener, Observer{
 	
 	private TreePath currentPath;
-	/** Creates a new instance of ProgressesTable */
-	public ProgressesTable() {
+	/** 
+	 * Costruttore vuoto. 
+	 */
+	public SubtreeProgressesTable() {
 		super();
 		setModel(new ProgressTableModel(null));
 		

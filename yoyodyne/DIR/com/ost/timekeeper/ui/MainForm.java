@@ -64,9 +64,9 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		jLabel3 = new javax.swing.JLabel();
 		jPanel1 = new javax.swing.JPanel();
 		jSplitPane1 = new javax.swing.JSplitPane();
-		progressTree = new javax.swing.JTree();
+		progressItemTree = new javax.swing.JTree();
 		jTabbedPane1 = new javax.swing.JTabbedPane();
-		progressTable = new com.ost.timekeeper.ui.ProgressesTable();
+		progressTable = new com.ost.timekeeper.ui.SubtreeProgressesTable();
 		this.application.addObserver (progressTable);
 		jTable2 = new javax.swing.JTable();
 		jPanel2 = new javax.swing.JPanel();
@@ -126,19 +126,19 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		
 		jToolBarMain.setBorder(new javax.swing.border.EtchedBorder());
 		jToolBarMain.setRollover(true);
-		nodeCreateButton.setAction(this.application.getNodeCreateAction());
+		nodeCreateButton.setAction(this.application.getActionPool ().getNodeCreateAction());
 		jToolBarMain.add(nodeCreateButton);
 		
-		nodeDeleteButton.setAction(this.application.getNodeDeleteAction());
+		nodeDeleteButton.setAction(this.application.getActionPool ().getNodeDeleteAction());
 		jToolBarMain.add(nodeDeleteButton);
 		
 		jToolBarMain.add(jSeparator2);
 		
-		startButton.setAction(this.application.getProgressStartAction());
+		startButton.setAction(this.application.getActionPool ().getProgressStartAction());
 //		startButton.setText(ResourceSupplier.getString(ResourceClass.UI, "menu", "actions.start"));
 		jToolBarMain.add(startButton);
 		
-		stopButton.setAction(this.application.getProgressStopAction());
+		stopButton.setAction(this.application.getActionPool ().getProgressStopAction());
 		jToolBarMain.add(stopButton);
 		
 		jPanelMainToolbar.add(jToolBarMain, java.awt.BorderLayout.NORTH);
@@ -169,7 +169,7 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		jPanel1.setLayout(new java.awt.BorderLayout());
 		
 		jSplitPane1.setToolTipText(ResourceSupplier.getString(ResourceClass.UI, "global", "controls.splitter.tooltip"));
-		TreeCellEditor treeCellEditor = new javax.swing.tree.DefaultTreeCellEditor(progressTree, progressItemCellRenderer);
+		TreeCellEditor treeCellEditor = new javax.swing.tree.DefaultTreeCellEditor(progressItemTree, progressItemCellRenderer);
 		treeCellEditor.addCellEditorListener(new CellEditorListener (){
 			public void editingStopped(ChangeEvent e){
 				TreeCellEditor source = (TreeCellEditor)e.getSource();
@@ -179,14 +179,14 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 
 			public void editingCanceled(ChangeEvent e){System.out.println (e);}			
 		});
-		progressTree.setCellEditor(treeCellEditor);
-		progressTree.setCellRenderer(progressItemCellRenderer);
-		progressTree.setMaximumSize(null);
-		progressTree.setMinimumSize(null);
-		progressTree.setModel(this.progressTreeModel);
-		progressTree.setAutoscrolls(true);
-		progressTree.setPreferredSize(new java.awt.Dimension(150, 200));
-		jSplitPane1.setLeftComponent(new JScrollPane (progressTree));
+		progressItemTree.setCellEditor(treeCellEditor);
+		progressItemTree.setCellRenderer(progressItemCellRenderer);
+		progressItemTree.setMaximumSize(null);
+		progressItemTree.setMinimumSize(null);
+		progressItemTree.setModel(this.progressTreeModel);
+		progressItemTree.setAutoscrolls(true);
+		progressItemTree.setPreferredSize(new java.awt.Dimension(150, 200));
+		jSplitPane1.setLeftComponent(new JScrollPane (progressItemTree));
 		
 		jTabbedPane1.setMaximumSize(null);
 		jTabbedPane1.addTab("Progresses", new JScrollPane (progressTable));
@@ -256,11 +256,11 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		
 		jMenuFile.setText(ResourceSupplier.getString(ResourceClass.UI, "menu", "file"));
 		//create project
-		jMenuItemNew.setAction(this.application.getProjectCreateAction());
+		jMenuItemNew.setAction(this.application.getActionPool ().getProjectCreateAction());
 		jMenuFile.add(jMenuItemNew);
 
 		//open project
-		jMenuItemOpen.setAction(this.application.getProjectOpenAction());
+		jMenuItemOpen.setAction(this.application.getActionPool ().getProjectOpenAction());
 		jMenuFile.add(jMenuItemOpen);
 		
 		//close project
@@ -272,14 +272,14 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 //			}
 //		});
 		
-		jMenuItemClose.setAction(this.application.getProjectCloseAction());
+		jMenuItemClose.setAction(this.application.getActionPool ().getProjectCloseAction());
 		jMenuFile.add(jMenuItemClose);
 		
 		//separatore
 		jMenuFile.add(new javax.swing.JSeparator());
 		
 		//save project
-		jMenuItemSave.setAction(this.application.getProjectSaveAction());
+		jMenuItemSave.setAction(this.application.getActionPool ().getProjectSaveAction());
 		jMenuFile.add(jMenuItemSave);
 		
 		//separatore
@@ -290,7 +290,7 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuFile.add(jMenuExport);
 		
 		//export project XML
-		jMenuItemXMLProjectExport.setAction (this.application.getProjectXMLExportAction ());
+		jMenuItemXMLProjectExport.setAction (this.application.getActionPool ().getProjectXMLExportAction ());
 		jMenuExport.add(jMenuItemXMLProjectExport);
 		
 		//import project
@@ -298,7 +298,7 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuFile.add(jMenuImport);
 		
 		//import project XML
-		jMenuItemXMLProjectImport.setAction (this.application.getProjectXMLImportAction ());
+		jMenuItemXMLProjectImport.setAction (this.application.getActionPool ().getProjectXMLImportAction ());
 		jMenuImport.add(jMenuItemXMLProjectImport);
 		
 		//separatore
@@ -348,18 +348,18 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 //		
 //		jMenuActions.addSeparator();
 		
-		jMenuItemCreateNode.setAction(this.application.getNodeCreateAction());
+		jMenuItemCreateNode.setAction(this.application.getActionPool ().getNodeCreateAction());
 		jMenuActions.add(jMenuItemCreateNode);
 		
-		jMenuItemDeleteNode.setAction(this.application.getNodeDeleteAction());
+		jMenuItemDeleteNode.setAction(this.application.getActionPool ().getNodeDeleteAction());
 		jMenuActions.add(jMenuItemDeleteNode);
 		
 		jMenuActions.addSeparator();
 		
-		jMenuItemStart.setAction(this.application.getProgressStartAction());
+		jMenuItemStart.setAction(this.application.getActionPool ().getProgressStartAction());
 		jMenuActions.add(jMenuItemStart);
 		
-		jMenuItemStop.setAction(this.application.getProgressStopAction());
+		jMenuItemStop.setAction(this.application.getActionPool ().getProgressStopAction());
 		jMenuActions.add(jMenuItemStop);
 		
 		jMenuActions.addSeparator();
@@ -391,8 +391,8 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		jPopupMenu.add(treeExpandCollapseAction);
 		jPopupMenu.addSeparator();
 		
-		progressTree.add (jPopupMenu);
-		progressTree.addMouseListener (new PopupTrigger ());
+		progressItemTree.add (jPopupMenu);
+		progressItemTree.addMouseListener (new PopupTrigger ());
 		pack();
 	}
 	
@@ -457,14 +457,14 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JSeparator jSeparator2;
 	private javax.swing.JSplitPane jSplitPane1;
 	private javax.swing.JTabbedPane jTabbedPane1;
-	private com.ost.timekeeper.ui.ProgressesTable progressTable;
+	private com.ost.timekeeper.ui.SubtreeProgressesTable progressTable;
 	private javax.swing.JTable jTable2;
 	private javax.swing.JTextField jTextField1;
 	private javax.swing.JTextField jTextField2;
 	private javax.swing.JTextField jTextField3;
 	private javax.swing.JToolBar jToolBarMain;
 	private javax.swing.JProgressBar jobProgress;
-	private javax.swing.JTree progressTree;
+	private javax.swing.JTree progressItemTree;
 	private javax.swing.JButton nodeCreateButton;
 	private javax.swing.JButton nodeDeleteButton;
 //	private org.netbeans.examples.lib.timerbean.Timer progressTimer;
@@ -474,7 +474,7 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 	// End of variables declaration
 	
 	private void postInitComponents() {
-		this.progressTree.addTreeSelectionListener(new TreeSelectionListener(){
+		this.progressItemTree.addTreeSelectionListener(new TreeSelectionListener(){
 			public void valueChanged(TreeSelectionEvent e){
 				if (e.getNewLeadSelectionPath() == null) {
 					//gestione caso cancellazione elemento selezionato
@@ -485,23 +485,23 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 				treeExpandCollapseAction.makeForPath (thePath);
 			}
 		});
-		this.progressTree.setSelectionRow(0);
+		this.progressItemTree.setSelectionRow(0);
 		
-		this.progressTree.addTreeSelectionListener(this.progressTable);
-		this.progressTree.setEditable(true);
-		this.progressTree.setInvokesStopCellEditing (true);
-//		this.progressTree.putClientProperty("JTree.lineStyle", "Angled");
+		this.progressItemTree.addTreeSelectionListener(this.progressTable);
+		this.progressItemTree.setEditable(true);
+		this.progressItemTree.setInvokesStopCellEditing (true);
+//		this.progressItemTree.putClientProperty("JTree.lineStyle", "Angled");
 		this.progressTable.setAutoResizeMode (JTable.AUTO_RESIZE_LAST_COLUMN);
 	}
 	
 	private final void initTreeModelListeners (){
-		this.progressTree.getModel().addTreeModelListener(new TreeModelListener(){
+		this.progressItemTree.getModel().addTreeModelListener(new TreeModelListener(){
 			public void treeNodesChanged(TreeModelEvent e){repaint();}
 			public void treeNodesInserted(TreeModelEvent e){repaint();}
 			public void treeNodesRemoved(TreeModelEvent e){repaint();}
 			public void treeStructureChanged(TreeModelEvent e){repaint();}
 		});
-		this.progressTree.getModel().addTreeModelListener(this.progressTable);
+		this.progressItemTree.getModel().addTreeModelListener(this.progressTable);
 	}
 	
 	private final void initTableModelListeners (){
@@ -524,14 +524,14 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
 			if (arg!=null && arg.equals (ObserverCodes.PROJECT)){
-//				this.progressTree.setModel(this.progressTreeModel);
+//				this.progressItemTree.setModel(this.progressTreeModel);
 				this.progressTreeModel.load (application.getProject());
 				
 				this.progressTableModel.load (application.getSelectedItem());
 //				this.progressTable.setModel(this.progressTableModel);
 				
 				initTreeModelListeners ();
-				this.progressTree.invalidate();
+				this.progressItemTree.invalidate();
 				initTableModelListeners ();
 			} else if (arg!=null && (arg.equals (ObserverCodes.CURRENTITEM))){
 				Application app = (Application)o;
@@ -542,6 +542,9 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 	
 	private TreePath lastExpandCollapsePath;
 	private TreeExpandCollapseAction treeExpandCollapseAction = new TreeExpandCollapseAction ();
+	/**
+	 * Azione espansione/collasso albero.
+	 */
 	private final class TreeExpandCollapseAction extends javax.swing.AbstractAction {
 		
 		/** Creates a new instance of TreeExpandCollapseAction */
@@ -554,17 +557,17 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 			if (lastExpandCollapsePath==null){
 				return;
 			}
-			if (progressTree.isExpanded(lastExpandCollapsePath)){
-				progressTree.collapsePath(lastExpandCollapsePath);
+			if (progressItemTree.isExpanded(lastExpandCollapsePath)){
+				progressItemTree.collapsePath(lastExpandCollapsePath);
 			} else {
-				progressTree.expandPath(lastExpandCollapsePath);
+				progressItemTree.expandPath(lastExpandCollapsePath);
 			}
 			makeForPath (lastExpandCollapsePath);
 		}
 		
 		public void makeForPath (TreePath path){
 			if (path != null) {
-				if (progressTree.isExpanded(path)){
+				if (progressItemTree.isExpanded(path)){
 					treeExpandCollapseAction.putValue(Action.NAME, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.collapse"));
 				} else {
 					treeExpandCollapseAction.putValue(Action.NAME, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.expand"));
@@ -574,6 +577,9 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		}
 	}
 	
+	/**
+	 * Gestione popup.
+	 */
 	class PopupTrigger extends MouseAdapter {
 		public void mouseReleased(MouseEvent e) {
 			handlePopUp (e);
@@ -585,9 +591,9 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 			if (e.isPopupTrigger()) {
 				int x = e.getX();
 				int y = e.getY();
-				TreePath path = progressTree.getPathForLocation(x, y);
+				TreePath path = progressItemTree.getPathForLocation(x, y);
 				treeExpandCollapseAction.makeForPath (path);
-				jPopupMenu.show(progressTree, x, y);
+				jPopupMenu.show(progressItemTree, x, y);
 			}
 		}
 	}

@@ -50,7 +50,7 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setText("jLabel1");
+        jLabel1.setText("Choose");
         jPanel1.add(jLabel1, java.awt.BorderLayout.NORTH);
 
         jListProjects.setModel(new ProjectListModel (this.projects));
@@ -61,7 +61,7 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
         jButtonOk.setText(ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.confirm"));
         jButtonOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonConfirmActionPerformed(evt);
             }
         });
 
@@ -70,7 +70,7 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
         jButtonCancel.setText(ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.cancel"));
         jButtonCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                jButtonCancelActionPerformed(evt);
             }
         });
 
@@ -86,12 +86,14 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
 		this.setTitle(this.titleText);
 	}
 
-	private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+	private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {
 		// Add your handling code here:
+		System.out.println (this.jListProjects.getSelectedIndex());
+		this.jListProjects.setSelectedIndex(-1);
 		this.hide ();
 	}
 
-	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+	private void jButtonConfirmActionPerformed(java.awt.event.ActionEvent evt) {
 		// Add your handling code here:
 		this.hide();
 	}
