@@ -50,9 +50,14 @@ public final class UserGUISettingsEditPanel extends ObservablePanel implements O
 	private final JCheckBox beepOnEventsBox = new JCheckBox ();
 	
 	/**
-	 * Componente abilitazione auto caricamento graficoad anello.
+	 * Componente abilitazione auto caricamento grafico ad anello.
 	 */
 	final JCheckBox ringChartAutoLoadBox = new JCheckBox ();
+		
+	/**
+	 * Componente abilitazione auto caricamento grafico a barre.
+	 */
+	final JCheckBox barChartAutoLoadBox = new JCheckBox ();
 		
 	/**********************************************
 	 * FINE dichiarazione componenti UI interne.
@@ -195,11 +200,29 @@ public final class UserGUISettingsEditPanel extends ObservablePanel implements O
 		c.weightx = 1;
 		add (ringChartAutoLoadBox, c);
 		
+		barChartAutoLoadBox.addActionListener (new ActionListener (){
+			public void actionPerformed (ActionEvent ae){
+				setDataChanged (true);
+			}
+		});
+		
+		final JLabel barChartAutoLoad = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "bar.chart.auto.load"));
+		beepOnEventsLabel.setLabelFor (barChartAutoLoadBox);
+		c.gridwidth = 1;
+		c.gridx = 0;
+		c.gridy = 6;
+		c.weightx = 0.5;
+		add (barChartAutoLoad, c);
+		c.gridx = 1;
+		c.gridy = 6;
+		c.weightx = 1;
+		add (barChartAutoLoadBox, c);
+		
 		/* etichetta vuota per riempire lo spazio rimanente */
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		c.gridx = 0;
-		c.gridy = 6;
+		c.gridy = 7;
 		c.gridwidth = 3;
 		add (new JLabel (""), c);
 		
@@ -241,6 +264,14 @@ public final class UserGUISettingsEditPanel extends ObservablePanel implements O
 			final boolean currentValue = Application.getOptions ().ringChartAutoload ();
 			ringChartAutoLoadBox.setSelected (currentValue);
 		}
+		final Boolean barChartAutoLoadValue = UserSettings.getInstance ().barChartAutoload ();
+		if (barChartAutoLoadValue!=null){
+			barChartAutoLoadBox.setSelected (barChartAutoLoadValue.booleanValue ());
+		} else {
+			/* inizializza con valore opzioni */
+			final boolean currentValue = Application.getOptions ().barChartAutoload ();
+			barChartAutoLoadBox.setSelected (currentValue);
+		}
 	}
 	
 	/**
@@ -251,6 +282,7 @@ public final class UserGUISettingsEditPanel extends ObservablePanel implements O
 		UserSettings.getInstance ().setDesktopColor (this.desktopColorChooser.getColor ());
 		UserSettings.getInstance ().setBeepOnEvents (BooleanUtils.getBoolean (this.beepOnEventsBox.isSelected ()));
 		UserSettings.getInstance ().setRingChartAutoload (BooleanUtils.getBoolean (this.ringChartAutoLoadBox.isSelected ()));
+		UserSettings.getInstance ().setBarChartAutoload (BooleanUtils.getBoolean (this.barChartAutoLoadBox.isSelected ()));
 		
 		this.setDataChanged (false);
 	}
