@@ -35,9 +35,9 @@ public class ProgressDeleteAction extends javax.swing.AbstractAction implements 
 		app.getPersistenceManager().deletePersistent(selectedProgress);
 	}
 	
-	public String askForName (){
-		return StringInputDialog.createDialog(Application.getInstance().getMainForm (), "Ask user", "Enter new node name", true);
-	}
+//	public String askForName (){
+//		return StringInputDialog.createDialog(Application.getInstance().getMainForm (), "Ask user", "Enter new node name", true);
+//	}
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
