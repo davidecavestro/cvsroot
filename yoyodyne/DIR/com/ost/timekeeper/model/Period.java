@@ -12,63 +12,95 @@ import com.ost.timekeeper.util.*;
 
 /**
  * Rappresenta un periodo temporale. I metodi che non ammettono periodi temporali 
- * non validi possono sollevare code>InvalidPeriodException</code>
+ * non validi possono sollevare <code>{@link com.ost.timekeeper.model.InvalidPeriodException}</code>.
+ *
  * @author  davide
  */
-public class Period extends Observable{
+public final class Period extends Observable{
 	
-	/** Holds value of property from. */
+	/** 
+	 * La data di inizio periodo. 
+	 */
 	private Date from;
 	
-	/** Holds value of property to. */
+	/** 
+	 * La data di fine periodo. 
+	 */
 	private Date to;
 	
-	/** Crea una nuova istanza di Period.
+	/**
+	 * Durata calcolata (valida).
+	 */
+	private boolean isDurationComputed = false;
+	
+	/**
+	 * La durata effettiva attuale (se <TT>isDurationComputed</TT> value <TT>tre</TT>.
+	 */
+	private Duration computedDuration;
+	
+	/** 
+	 * La descrizione di questo periodo. 
+	 */
+	private String description;
+	
+	/** 
+	 * Le note di questo periodo. 
+	 */
+	private String notes;
+	
+	/** 
+	 * Costruttore vuoto.
 	 */
 	public Period() {
 	}
 	
-	/** Crea una nuova istanza di Period.
-	 * @param from
-	 * @param to
+	/** 
+	 * Costruttore con data di inizio e fine.
+	 *
+	 * @param from la data di inizio.
+	 * @param to la data di fine.
 	 */
 	public Period(final Date from, final Date to) {
 		this.from = from;
 		this.to = to;
 	}
 	
-	/** Getter for property from.
-	 * @return Value of property from.
+	/** 
+	 * Ritorna la data di inizio di questo periodo.
 	 *
+	 * @return la data d'inizio.
 	 */
 	public Date getFrom() {
 		return this.from;
 	}
 	
-	/** Setter for property from.
-	 * @param from New value of property from.
+	/** 
+	 * Imposta la data d'inizio per questo periodo.
 	 *
+	 * @param from la nuova data d'inizio.
 	 */
 	public void setFrom(Date from) {
 		if (!CalendarUtils.equals(this.from,from)){
 			this.from = from;
-			isDurationComputed = false;
+			this.isDurationComputed = false;
 			this.setChanged();
 			this.notifyObservers();
 		}
 	}
 	
-	/** Getter for property to.
-	 * @return Value of property to.
+	/** 
+	 * Ritorna la data di fine di questo periodo.
 	 *
+	 * @return la data di fine.
 	 */
 	public Date getTo() {
 		return this.to;
 	}
 	
-	/** Setter for property to.
-	 * @param to New value of property to.
+	/** 
+	 * Imposta la data di fine per questo periodo.
 	 *
+	 * @param to la nuova data di fine del periodo.
 	 */
 	public void setTo(Date to) {
 		if (!CalendarUtils.equals(this.to,to)){
@@ -80,7 +112,8 @@ public class Period extends Observable{
 	}
 	
 	/**
-	 * Specifica se vi è un'intersezione non vuota tra due periodi.
+	 * Verifica l'intersezione non vuota tra due periodi.
+	 *
 	 * @param period il periodo da testare.
 	 * @return <code>true</code> se questo periodo temporale interseca <code>period</code>; 
 	 * <code>false</code> altrimenti.
@@ -93,10 +126,11 @@ public class Period extends Observable{
 			|| this.getTo().before(period.getFrom()));
 	}
 	
-	/** Specifica se questo periodo è valido
+	/** 
+	 * Verifica se questo periodo è valido.
+	 *
 	 * @return <code>true</code> se questo è un periodo temporale valido; 
 	 * <code>false</code> altrimenti.
-	 *
 	 */
 	public boolean isValid() {
 		return this.from!=null 
@@ -104,25 +138,22 @@ public class Period extends Observable{
 			&& !this.from.after(this.to);
 	}
 	
-	/** Specifica se questo periodo non è terminato.
+	/** 
+	 * Verifica se questo periodo non è terminato.
+	 *
 	 * @return <code>true</code> se questo è un periodo temporale non terminato; 
 	 * <code>false</code> altrimenti.
-	 *
 	 */
 	public boolean isEndOpened() {
 		return this.from!=null 
 			&& this.to==null;
 	}
 	
-	private boolean isDurationComputed = false;
-	private Duration computedDuration;
-	
-	/** Holds value of property description. */
-	private String description;
-	
-	/** Holds value of property notes. */
-	private String notes;
-	
+	/**
+	 * Ritorna la durata di questo periodo.
+	 *
+	 * @return la durata.
+	 */	
 	public Duration getDuration (){
 		if (this.isEndOpened()){
 			return new Duration (this.from, new GregorianCalendar ().getTime ());
@@ -134,6 +165,11 @@ public class Period extends Observable{
 		}
 	}
 	
+	/**
+	 * Ritorna la rappresentazione di formato stringa di questo periodo.
+	 *
+	 * @return una stringa che rappresenta questo periodo.
+	 */	
 	public String toString (){
 		StringBuffer sb = new StringBuffer ();
 		sb.append ("from: ").append (CalendarUtils.toTSString(this.from))
@@ -141,33 +177,37 @@ public class Period extends Observable{
 		return sb.toString ();
 	}
 	
-	/** Getter for property description.
-	 * @return Value of property description.
+	/** 
+	 * Ritorna la descrizione di questo periodo.
 	 *
+	 * @return la descrizione.
 	 */
 	public String getDescription() {
 		return this.description;
 	}
 	
-	/** Setter for property description.
-	 * @param description New value of property description.
+	/** 
+	 * Imposta la descrizione di questo periodo.
 	 *
+	 * @param description la nuova descrizione.
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 	
-	/** Getter for property notes.
-	 * @return Value of property notes.
+	/** 
+	 * Ritorna le note relative a questo periodo.
 	 *
+	 * @return le note del periodo.
 	 */
 	public String getNotes() {
 		return this.notes;
 	}
 	
-	/** Setter for property notes.
-	 * @param notes New value of property notes.
+	/** 
+	 * Imposta le note per questo periodo.
 	 *
+	 * @param notes il nuovo valore delle note.
 	 */
 	public void setNotes(String notes) {
 		this.notes = notes;

@@ -10,9 +10,10 @@ import java.util.*;
 
 /**
  * Modella una durata.
+ *
  * @author  davide
  */
-public class Duration {
+public final class Duration {
 	
 	public final static int MILLISECONDS = 0;
 	public final static int SECONDS = 1;
@@ -36,7 +37,12 @@ public class Duration {
 	private Date from;
 	private Date to;
 	
-	/** Crea una nuova istanza di Duration */
+	/**
+	 * Costruttore con data di inizio e fine periodo.
+	 *
+	 * @param from data d'inizio.
+	 * @param to data di fine del periodo.
+	 */
 	public Duration(Date from, Date to) {
 		this.from=from;
 		this.to=to;
@@ -44,12 +50,6 @@ public class Duration {
 	}
 	
 	private final void computeFields (){
-//			switch (field){
-//				case MILLISECONDS: computeMilliseconds ();
-//				case 1: return period.getTo();
-//				case 2: return new Boolean(period.getTo()==null);
-//				default: return null;
-//			}
 		if (!computedMilliseconds){
 			computeMilliseconds ();
 		}
@@ -110,23 +110,56 @@ public class Duration {
 		computedDays = true;
 	}
 	
+	/**
+	 * Ritorna i millisecondi di questa durata.
+	 *
+	 * @return i millisecondi di questa durata.
+	 */	
 	public long getMilliseconds (){
 		return this.modMilliseconds;
 	}
 	
+	/**
+	 * Ritorna i secondi di questa durata.
+	 *
+	 * @return i secondi di questa durata.
+	 */	
 	public long getSeconds (){
 		return this.modSeconds;
 	}
+	
+	/**
+	 * Ritorna i minuti di questa durata.
+	 *
+	 * @return i minuti di questa durata.
+	 */	
 	public long getMinutes (){
 		return this.modMinutes;
 	}
+	
+	/**
+	 * Ritorna le ore di questa durata.
+	 *
+	 * @return le ore di questa durata.
+	 */	
 	public long getHours (){
 		return this.modHours;
 	}
+	
+	/**
+	 * Ritorna i giorni di questa durata.
+	 *
+	 * @return i giorni di questa durata.
+	 */	
 	public long getDays (){
 		return this.totalDays;
 	}
 	
+	/**
+	 * Ritorna il numero totale di ore di questa durata.
+	 *
+	 * @return il numero totale di ore di questa durata.
+	 */	
 	public long getTotalHours (){
 		return this.totalHours;
 	}

@@ -7,42 +7,85 @@
 package com.ost.timekeeper.model;
 
 /**
+ * Implementa l'entità di tipo PROGETTO. 
+ * I principali attributi di un progetto sono:
+ *	<UL>
+ *		<LI>il nome;
+ *		<LI>una gerarchia di nodi sui quali è possibile effettuare avanzamenti.
+ *	</UL>
  *
  * @author  davide
  */
-public class Project {
+public final class Project {
 	
+	/**
+	 * La radice della gerarchia di avanzamenti.
+	 */
 	private ProgressItem root;
+	
+	/**
+	 * Il nome.
+	 */
 	private String name;
 	
-	/** Holds value of property description. */
+	/** 
+	 * La descrizione. 
+	 */
 	private String description;
 	
-	/** Holds value of property notes. */
+	/**
+	 * Le annotazioni.
+	 */
 	private String notes;
 	
-	/** Costruttore vuoto*/
+	/** 
+	 * Costruttore vuoto.
+	 */
 	public Project() {
 	}
 	
-	/** Creates a new instance of Project */
+	/**
+	 * Costruttore con nome e gerarchia nodi.
+	 * @param name
+	 * @param root
+	 */
 	public Project(String name, ProgressItem root) {
 		this.name = name;
 		this.root = root;
 	}
 	
+	/**
+	 * Ritorna il nome di questo progetto.
+	 *
+	 * @return il nome.
+	 */	
 	public String getName (){
 		return this.name;
 	}
 	
+	/**
+	 * Imposta il nome di questo progetto.
+	 *
+	 * @param name il nome da impostare.
+	 */	
 	public void setName (String name){
 		this.name = name;
 	}
 	
+	/**
+	 * Ritorna la radice della gerarchia degli avanzamenti di questo progetto.
+	 *
+	 * @return la radice della gerarchia dei nodi di avanzamento.
+	 */	
 	public ProgressItem getRoot (){
 		return this.root;
 	}
 	
+	/**
+	 * Ritorna la rappresentazione in formato stringa di questo progetto.
+	 *
+	 * @return una stringa che rappresenta questo progetto.
+	 */	
 	public String toString (){
 		StringBuffer sb = new StringBuffer ();
 		sb.append ("name: ").append (this.name)
@@ -50,41 +93,46 @@ public class Project {
 		return sb.toString();
 	}
 	
-	/** Setter for property root.
-	 * @param root New value of property root.
+	/** 
+	 * Imposta il nodo radice della gerarchia di avanzamenti.
 	 *
+	 * @param root la radice della gerarchia di nodi.
 	 */
 	public void setRoot(ProgressItem root) {
 		this.root=root;
 	}
 	
-	/** Getter for property description.
-	 * @return Value of property description.
+	/** 
+	 * Ritorna la descrizione di questo progetto.
 	 *
+	 * @return la descrizione.
 	 */
 	public String getDescription() {
 		return this.description;
 	}
 	
-	/** Setter for property description.
-	 * @param description New value of property description.
+	/** 
+	 * Imposta la descrizione di questo progetto.
 	 *
+	 * @param description la descrizione.
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 	
-	/** Getter for property notes.
-	 * @return Value of property notes.
+	/** 
+	 * Ritorna le annotazioni relative a questo progetto.
 	 *
+	 * @return le note.
 	 */
 	public String getNotes() {
 		return this.notes;
 	}
 	
-	/** Setter for property notes.
-	 * @param notes New value of property notes.
+	/** 
+	 * Imposta le annotazioni relative a questo progetto.
 	 *
+	 * @param notes le note.
 	 */
 	public void setNotes(String notes) {
 		this.notes = notes;

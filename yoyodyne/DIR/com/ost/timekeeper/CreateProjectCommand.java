@@ -31,7 +31,7 @@ public class CreateProjectCommand extends Command {
 	}
 	
 	public String askUserForProjectName (){
-		return StringInputDialog.createDialog(application.getMainForm (), "Ask user", "Enter new project name", true);
+		return StringInputDialog.supplyString(application.getMainForm (), "Ask user", "Enter new project name", true);
 	}
 	
 }

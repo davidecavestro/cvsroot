@@ -15,36 +15,30 @@ import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.util.*;
 
 /**
+ * Rende persistente lo stato di un progetto.
  *
  * @author  davide
  */
-public class ProjectSaveAction extends javax.swing.AbstractAction implements Observer{
+public final class ProjectSaveAction extends javax.swing.AbstractAction implements Observer{
 	
-	/** Creates a new instance of NodeCreateAction */
+	/**
+	 * Costruttore vuoto.
+	 */
 	public ProjectSaveAction() {
-		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "file.save"), ResourceSupplier.getImageIcon (ResourceClass.UI, "saveproject.gif"));
-		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "file.save.tooltip"));
+		super(ResourceSupplier.getString(ResourceClass.UI, "menu", "file.save"), ResourceSupplier.getImageIcon(ResourceClass.UI, "saveproject.gif"));
+		this.putValue(SHORT_DESCRIPTION, ResourceSupplier.getString(ResourceClass.UI, "menu", "file.save.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
-//		ProgressItem newNode = new ProgressItem (askForName ());
 		Application app = Application.getInstance();
 		app.flushData();
-//		ProgressItem selectedItem = app.getSelectedItem ();
-//		app.getMainForm().getProgressTreeModel().insertNodeInto(newNode, selectedItem, selectedItem.childCount());
-//		app.getPersistenceManager().currentTransaction().commit();
-//		selectedItem.insert(newNode, selectedItem.getChildCount());
 	}
-	
-//	public String askForName (){
-//		return StringInputDialog.createDialog(Application.getInstance().getMainForm (), "Ask user", "Enter new node name", true);
-//	}
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals (ObserverCodes.PROJECT)){
+			if (arg!=null && arg.equals(ObserverCodes.PROJECT)){
 				this.setEnabled(((Application)o).getProject()!=null);
 			}
 		}

@@ -20,14 +20,17 @@ import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.util.*;
 
 /**
+ * Importa un progetto da una fonte XML.
  *
  * @author  davide
  */
-public class ProjectXMLImportAction extends javax.swing.AbstractAction implements Observer{
+public final class ProjectXMLImportAction extends javax.swing.AbstractAction implements Observer{
 	
 	private final JFileChooser chooser = new JFileChooser();
 	
-	/** Creates a new instance of ProjectXMLImportAction */
+	/** 
+	 * Costruttore vuoto. 
+	 */
 	public ProjectXMLImportAction() {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.xmlimportproject"), ResourceSupplier.getImageIcon (ResourceClass.UI, "xmlimportproject.gif"));
 		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "file.xmlimportproject.tooltip"));
@@ -36,7 +39,6 @@ public class ProjectXMLImportAction extends javax.swing.AbstractAction implement
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
-//		ProgressItem newNode = new ProgressItem (askForName ());
 		Application app = Application.getInstance();
 		// Load Mapping
 		Mapping mapping = new Mapping();
@@ -62,14 +64,9 @@ public class ProjectXMLImportAction extends javax.swing.AbstractAction implement
 		}
 	}
 	
-//	public String askForName (){
-//		return StringInputDialog.createDialog(Application.getInstance().getMainForm (), "Ask user", "Enter new node name", true);
-//	}
-	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
 			if (arg!=null && arg.equals (ObserverCodes.PROJECT)){
-//				this.setEnabled(((Application)o).getProject()!=null);
 				//indipendente dal progetto corrente
 				this.setEnabled(true);
 			}

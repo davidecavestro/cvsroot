@@ -11,12 +11,15 @@ import javax.swing.tree.*;
 import com.ost.timekeeper.model.*;
 
 /**
+ * Implementa la visualizzazione di un nodo di avanzamento all'interno dell'albero.
  *
  * @author  davide
  */
 public class ProgressItemNode extends DefaultMutableTreeNode {
 	
-	/** Creates a new instance of ProgressItemNode */
+	/** 
+	 * Costruttore con nodo di avanzamento. 
+	 */
 	public ProgressItemNode(ProgressItem progressItem) {
 		super (progressItem);
 	}

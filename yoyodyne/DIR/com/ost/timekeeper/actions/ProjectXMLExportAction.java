@@ -20,17 +20,25 @@ import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.util.*;
 
 /**
+ * Esporta i dati relativi ad un progetto in formato XML.
+ * Utilitzza il file <TT>modelmapping.xml</TT> per la definizione della
+ * mappatura da utilizzare durante la creazione del XML.
  *
  * @author  davide
  */
-public class ProjectXMLExportAction extends javax.swing.AbstractAction implements Observer{
+public final class ProjectXMLExportAction extends javax.swing.AbstractAction implements Observer{
 	
+	/**
+	 * Componente grafica per la selezione del file di esportazione.
+	 */
 	private final JFileChooser chooser = new JFileChooser();
 	
-	/** Creates a new instance of NodeCreateAction */
+	/**
+	 * Costruttore vuoto.
+	 */
 	public ProjectXMLExportAction() {
 		super(ResourceSupplier.getString(ResourceClass.UI, "menu", "actions.xmlexportproject"), ResourceSupplier.getImageIcon(ResourceClass.UI, "xmlexportproject.gif"));
-		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "file.xmlexportproject.tooltip"));
+		this.putValue(SHORT_DESCRIPTION, ResourceSupplier.getString(ResourceClass.UI, "menu", "file.xmlexportproject.tooltip"));
 		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}
@@ -55,14 +63,10 @@ public class ProjectXMLExportAction extends javax.swing.AbstractAction implement
 			// Marshal the project object
 			marshaller.marshal(app.getProject(), writer);
 		} catch (Exception ex) {
-			System.out.println (ExceptionUtils.getStackStrace(ex));
+			System.out.println(ExceptionUtils.getStackStrace(ex));
 			throw new NestedRuntimeException(ex);
 		}
 	}
-	
-	//	public String askForName (){
-	//		return StringInputDialog.createDialog(Application.getInstance().getMainForm (), "Ask user", "Enter new node name", true);
-	//	}
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){

@@ -12,35 +12,37 @@ import com.ost.timekeeper.*;
 import com.ost.timekeeper.util.*;
 
 /**
+ * Termina un avanzamento in esecuzione.
  *
  * @author  davide
  */
-public class ProgressStopAction extends javax.swing.AbstractAction implements java.util.Observer{
+public final class ProgressStopAction extends javax.swing.AbstractAction implements java.util.Observer{
 	
-	/** Creates a new instance of ProgressStopAction */
-	public ProgressStopAction() {
+	/**
+	 * Costruttore vuoto.
+	 */
+	public ProgressStopAction () {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.stop"), ResourceSupplier.getImageIcon (ResourceClass.UI, "stop.gif"));
 		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.stop.tooltip"));
-		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
-		this.setEnabled(false);
+		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
+		this.setEnabled (false);
 	}
 	
-	public void actionPerformed(java.awt.event.ActionEvent e) {
-//		this.setEnabled(false);
-		Application app = Application.getInstance();
+	public void actionPerformed (java.awt.event.ActionEvent e) {
+		Application app = Application.getInstance ();
 		app.getActionPool ().getProgressStartAction ().setEnabled (true);
-		app.getCurrentItem ().stopPeriod();
+		app.getCurrentItem ().stopPeriod ();
 		app.setCurrentItem (null);
-		app.setChanged();
+		app.setChanged ();
 		app.notifyObservers (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
-		app.setChanged();
+		app.setChanged ();
 		app.notifyObservers (ObserverCodes.SELECTEDITEM);
 	}
 	
-	public void update(Observable o, Object arg) {
+	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
 			if (arg!=null && arg.equals (ObserverCodes.CURRENTITEM)){
-				this.setEnabled(((Application)o).getCurrentItem()!=null);
+				this.setEnabled (((Application)o).getCurrentItem ()!=null);
 			}
 		}
 	}

@@ -12,16 +12,25 @@ import com.ost.timekeeper.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.util.*;
 /**
- * Dialog per la selezione di un progetto.
+ * Finestra di selezione di un progetto.
+ *
  * @author  davide
  */
-public class ProjectSelectDialog extends javax.swing.JDialog {
+public final class ProjectSelectDialog extends javax.swing.JDialog {
 	
 	private String titleText;
 	private String labelText;
 	private List projects;
 	
-	/** Creates new form ProjectSelectDialog */
+	/**
+	 * Costruttore con parametri.
+	 *
+	 * @param parent la finestra padre.
+	 * @param title il titolo di questa finestra
+	 * @param label l'etichetta contenete la richiesta di selezione.
+	 * @param modal stato modale.
+	 * @param projects l'insieme di progetti da presentare per la scelta.
+	 */
 	public ProjectSelectDialog(java.awt.Frame parent, String title, String label, boolean modal, List projects) {
 		super(parent, modal);
 		this.projects=projects;
@@ -31,14 +40,14 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
 		postInitComponents();
 	}
 	
-	/** This method is called from within the constructor to
-	 * initialize the form.
+	/** 
+	 * Inizializzazione componenti.
 	 */
     private void initComponents() {
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jPanelMain = new javax.swing.JPanel();
+        jLabelChoose = new javax.swing.JLabel();
         jListProjects = new javax.swing.JList();
-        jPanel2 = new javax.swing.JPanel();
+        jPanelBottom = new javax.swing.JPanel();
         jButtonOk = new javax.swing.JButton();
         jButtonCancel = new javax.swing.JButton();
 
@@ -48,15 +57,15 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        jPanelMain.setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setText("Choose");
-        jPanel1.add(jLabel1, java.awt.BorderLayout.NORTH);
+        jLabelChoose.setText("Choose");
+        jPanelMain.add(jLabelChoose, java.awt.BorderLayout.NORTH);
 
         jListProjects.setModel(new ProjectListModel (this.projects));
-        jPanel1.add(jListProjects, java.awt.BorderLayout.CENTER);
+        jPanelMain.add(jListProjects, java.awt.BorderLayout.CENTER);
 
-        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jPanelMain, java.awt.BorderLayout.CENTER);
 
         jButtonOk.setText(ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.confirm"));
         jButtonOk.addActionListener(new java.awt.event.ActionListener() {
@@ -65,7 +74,7 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel2.add(jButtonOk);
+        jPanelBottom.add(jButtonOk);
 
         jButtonCancel.setText(ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.cancel"));
         jButtonCancel.addActionListener(new java.awt.event.ActionListener() {
@@ -74,15 +83,15 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel2.add(jButtonCancel);
+        jPanelBottom.add(jButtonCancel);
 
-        getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
+        getContentPane().add(jPanelBottom, java.awt.BorderLayout.SOUTH);
 
         pack();
     }
 
 	private void postInitComponents() {
-		this.jLabel1.setText(this.labelText);
+		this.jLabelChoose.setText(this.labelText);
 		this.setTitle(this.titleText);
 	}
 
@@ -98,7 +107,9 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
 		this.hide();
 	}
 	
-	/** Closes the dialog */
+	/** 
+	 * Chiude questa finestra. 
+	 */
 	private void closeDialog(java.awt.event.WindowEvent evt) {
 		setVisible(false);
 		dispose();
@@ -107,18 +118,30 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
     // Variables declaration 
     private javax.swing.JButton jButtonOk;
     private javax.swing.JButton jButtonCancel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel jLabelChoose;
+    private javax.swing.JPanel jPanelMain;
+    private javax.swing.JPanel jPanelBottom;
     private javax.swing.JList jListProjects;
     // End of variables declaration
 	
-	public static Project createDialog (java.awt.Frame parent, String title, String label, boolean modal){
+	/**
+	 * Richiede all'utente di scegliere un progetto tra quelli disponibili, e lo ritorna.
+	 *
+	 * @param parent la finestra padre.
+	 * @param title il titolo.
+	 * @param label l'etichetta di scelta.
+	 * @param modal stato modale.
+	 * @return ritorna il progetto scelto dall'utente.
+	 */	
+	public static Project chooseProject (java.awt.Frame parent, String title, String label, boolean modal){
 		ProjectSelectDialog dialog = new ProjectSelectDialog (parent, title, label, modal, Application.getInstance().getAvailableProjects ());
 		dialog.show ();
 		return (Project)dialog.jListProjects.getSelectedValue();
 	}
 	
+	/**
+	 * Modello dati per la lista di selezione.
+	 */
 	private final class ProjectListModel implements javax.swing.ListModel{
 		
 		private List projects;

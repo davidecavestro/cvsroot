@@ -7,41 +7,58 @@
 package com.ost.timekeeper.util;
 
 /**
+ * Condizione di errore derivata. Può essere usata per incapsulare una eccezione
+ * normale in modo da non doverla dichiarare come sollevabile, ovvero trattarla 
+ * come non prevedibile.
  *
  * @author  davide
  */
-public class NestedRuntimeException extends java.lang.RuntimeException {
+public final class NestedRuntimeException extends java.lang.RuntimeException {
 	
 	private Throwable rootCause;
 	/**
-	 * Creates a new instance of <code>NestedRuntimeException</code> without detail message.
+	 * 
+	 * Costruttore vuoto.
 	 */
 	public NestedRuntimeException() {
 	}
 	
 	
 	/**
-	 * Constructs an instance of <code>NestedRuntimeException</code> with the specified detail message.
-	 * @param msg the detail message.
+	 * Costruttore con messaggio di dettaglio.
+	 *
+	 * @param msg il messaggio di dettaglio.
 	 */
 	public NestedRuntimeException(String msg) {
 		super(msg);
 	}
 	
 	
-	/**
-	 * Creates a new instance of <code>NestedRuntimeException</code> without detail message.
+	/** 
+	 * Costruttore con causa scatenante.
+	 *
+	 * @param rootCause la causa di questa eccezione.
 	 */
 	public NestedRuntimeException(Throwable rootCause) {
 		super ();
 		this.rootCause = rootCause;
 	}
 	
+	/**
+	 * Ritorna la causa che ha portato al sollevamento di questa eccezione.
+	 *
+	 * @return la causa.
+	 */	
 	public Throwable getRootCause (){
 		return this.rootCause;
 	}
 	
+	/**
+	 * Ritorna una rappresentazione in formato stringa di uesta eccezione.
+	 *
+	 * @return la stringa che rappresenta questa eccezione.
+	 */	
 	public String toString (){
-		return new StringBuffer (super.toString ()).append(" rootCause: "+this.rootCause).toString ();
+		return new StringBuffer (super.toString ()).append(" rootCause: ").append (this.rootCause).toString ();
 	}
 }

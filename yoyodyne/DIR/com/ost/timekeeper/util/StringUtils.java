@@ -7,17 +7,21 @@
 package com.ost.timekeeper.util;
 
 /**
+ * Utilità per la manipolazione di stringhe.
  *
  * @author  davide
  */
 public final class StringUtils {
 	
-	/** Creates a new instance of StringUtils */
+	/** 
+	 * Costruttore vuoto.
+	 */
 	private StringUtils() {
 	}
 	
 	/**
 	 * Verifica se un array di stringhe ne contiene una scelta.
+	 *
 	 * @param container il contenitore.
 	 * @param pattern la stringa da cercare.
 	 * @return <code<true</code>se <code>container</code> contiene <code>pattern</code>;

@@ -15,55 +15,38 @@ import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.util.*;
 
 /**
+ * Rimuove un nodo dai dati persistenti.
  *
  * @author  davide
  */
-public class NodeDeleteAction extends javax.swing.AbstractAction implements java.util.Observer{
+public final class NodeDeleteAction extends javax.swing.AbstractAction implements java.util.Observer{
 	
-	/** Creates a new instance of NodeDeleteAction */
-	public NodeDeleteAction() {
+	/**
+	 * Costruttore vuoto.
+	 */
+	public NodeDeleteAction () {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.deletenode"), ResourceSupplier.getImageIcon (ResourceClass.UI, "deletenode.gif"));
 		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.deletenode.tooltip"));
-		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
-		this.setEnabled(false);
+		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
+		this.setEnabled (false);
 	}
 	
-	public void actionPerformed(java.awt.event.ActionEvent e) {
-		Application app = Application.getInstance();
+	public void actionPerformed (java.awt.event.ActionEvent e) {
+		Application app = Application.getInstance ();
 		ProgressItem selectedItem = app.getSelectedItem ();
-		ProgressItem parent = selectedItem.getParent();
+		ProgressItem parent = selectedItem.getParent ();
 		if (parent==null){
 			//non si rimuove la radice;
 			return;
 		}
-		app.getMainForm().getProgressTreeModel ().removeNodeFromParent(selectedItem);
-		app.getPersistenceManager().deletePersistent(selectedItem);
-//		int pos = parent.childIndex(selectedItem);
-//		parent.remove(selectedItem);
-		
-		//determina nuova selezione
-//		ProgressItem newSelection = null;
-//		int childCount = parent.childCount();
-//		if (childCount!=0){
-//			if (childCount>pos){
-//				newSelection = parent.childAt(pos);
-//			} else {
-//				newSelection = parent.childAt(childCount-1);
-//			}
-//		} else {
-//			newSelection = parent;
-//		}
-//		app.setSelectedItem(newSelection);
+		app.getMainForm ().getProgressTreeModel ().removeNodeFromParent (selectedItem);
+		app.getPersistenceManager ().deletePersistent (selectedItem);
 	}
 	
-	public String askForName (){
-		return StringInputDialog.createDialog(Application.getInstance().getMainForm (), "Ask user", "Enter new node name", true);
-	}
-	
-	public void update(Observable o, Object arg) {
+	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
 			if (arg!=null && arg.equals (ObserverCodes.SELECTEDITEM)){
-				this.setEnabled(((Application)o).getSelectedItem()!=null);
+				this.setEnabled (((Application)o).getSelectedItem ()!=null);
 			}
 		}
 	}

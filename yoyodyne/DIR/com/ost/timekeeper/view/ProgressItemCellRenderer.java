@@ -7,12 +7,15 @@
 package com.ost.timekeeper.view;
 
 /**
+ * Implementa comportamenti custom per la visualizzazione delle celle dell'albero dei nodi di avanzamento.
  *
  * @author  davide
  */
 public class ProgressItemCellRenderer extends javax.swing.tree.DefaultTreeCellRenderer {
 	
-	/** Creates a new instance of PRogressItemCellRenderer */
+	/** 
+	 * Costruttore vuoto. 
+	 */
 	public ProgressItemCellRenderer() {
 	}
 	

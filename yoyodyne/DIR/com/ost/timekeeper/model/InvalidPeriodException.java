@@ -10,22 +10,25 @@ package com.ost.timekeeper.model;
  * Segnala che un periodo temporale non è valido.
  * UN periodo temporale è valido quando i suoi limiti sono definiti ed il limite
  * inferiore precede quello superiore.
+ *
  * @author  davide
  */
-public class InvalidPeriodException extends java.lang.IllegalStateException {
+public final class InvalidPeriodException extends java.lang.IllegalStateException {
 	
 	/**
-	 * Crea una nuova <code>InvalidPeriodException</code> senza messaggi di dettaglio.
+	 * Costruttore vuoto.
 	 */
 	public InvalidPeriodException() {
 	}
 	
 	
 	/**
-	 * CCrea una nuova <code>InvalidPeriodException</code> con il messaggio di dettaglio specificato.
+	 * Costruttore con il messaggio di dettaglio.
+	 *
 	 * @param msg il messaggio di dettaglio.
 	 */
 	public InvalidPeriodException(String msg) {
 		super(msg);
 	}
+	
 }

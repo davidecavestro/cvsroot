@@ -11,18 +11,31 @@ import javax.swing.*;
 
 /**
  * Fornisce risorse quali stringhe localizzate, immagini.
+ *
  * @author  davide
  */
 public final class ResourceSupplier {
+	private final static String BUNDLE_PATH		= "com/ost/timekeeper/ui/bundle/";
+	private final static String IMAGE_PATH		= "/com/ost/timekeeper/ui/images/";
 	
-	/** Creates a new instance of ResourceSupplier */
+	/** 
+	 * Costruttore vuoto. 
+	 */
 	private ResourceSupplier() {
 	}
 	
+	/**
+	 * Ritorna una risorsa di tipo stringa.
+	 *
+	 * @param resClass
+	 * @param bundle
+	 * @param key
+	 * @return
+	 */	
 	public final static String getString (ResourceClass resClass, String bundle, String key){
 		String bundlePath = "";
 		if (resClass==ResourceClass.UI){
-			bundlePath = "com/ost/timekeeper/ui/bundle/";
+			bundlePath = BUNDLE_PATH;
 		}
 		try {
 			return java.util.ResourceBundle.getBundle(bundlePath+bundle).getString(key);
@@ -31,10 +44,17 @@ public final class ResourceSupplier {
 		}
 	} 
 	
+	/**
+	 * Ritorna un arisorsa di tipo icona.
+	 *
+	 * @param resClass
+	 * @param name
+	 * @return
+	 */	
 	public final static ImageIcon getImageIcon (ResourceClass resClass, String name){
 		String iamgePath = "";
 		if (resClass==ResourceClass.UI){
-			iamgePath = "/com/ost/timekeeper/ui/images/";
+			iamgePath = IMAGE_PATH;
 		}
 		try {
 			return new javax.swing.ImageIcon(ResourceSupplier.class.getResource(iamgePath+name));

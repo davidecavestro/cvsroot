@@ -25,7 +25,11 @@ import com.ost.timekeeper.view.*;
  */
 public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSelectionListener, TreeModelListener, Observer{
 	
+	/**
+	 * Il percorso determinato dalla selezione corrente nell'albero.
+	 */
 	private TreePath currentPath;
+	
 	/** 
 	 * Costruttore vuoto. 
 	 */
@@ -48,6 +52,9 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 		this.setDefaultRenderer(java.util.Date.class, dateColumnRenderer);
 	}
 	
+	/**
+	 * Componente delegata alla gestione dell'ordinamento nella tabella.
+	 */
 	private ProgressTableSorter dataModel;
 	private class ProgressTableSorter extends TableSorter {
 		private ProgressTableModel progressTableModel;
@@ -61,20 +68,17 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 			Application.getInstance().deleteObserver(this.progressTableModel);
 			this.progressTableModel=progressTableModel;
 		}
+		
 		public void fireCurrentPeriodUpdated (){
 			this.fireTableChanged(new TableModelEvent (this, this.progressTableModel.getCurrentPeriodIndex()));
 		}
 		
-//		public final void setCurrentPeriodIndex (int currentPeriodIdx){
-//			this.currentPeriodIdx = currentPeriodIdx;
-//		}
 		public final int getCurrentPeriodIndex (){
 			return this.progressTableModel.getCurrentPeriodIndex();
 		}
 		
 		public void sort(Object sender) {
 			super.sort(sender);
-//			System.out.println ("could launch ITEMPROGRESSINGPERIODCHANGE");
 			//sincronizza indice avanzamento corrente, dopo riordino
 			this.progressTableModel.synchCurrentPeriodIdx();
 			Application.getInstance().setChanged();
@@ -98,14 +102,6 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 	public ProgressTableModel getProgressTableModel (){
 		return this.progressTableModel;
 	}
-	//	public void setModel (TableModel model){
-	//		if (this.sorter!=null){
-	//			this.sorter.setModel (model);
-	//		} else {
-	//			//permette inizializzazione
-	//			super.setModel (model);
-	//		}
-	//	}
 	
 	public void reloadModel(TreePath newPath){
 		if (this.currentPath!=newPath){
@@ -119,15 +115,15 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 	}
 	
 	/**
-	 * Ricarica il modello su diun sottoalbero target.
+	 * Ricarica il modello su di un sottoalbero target.
 	 *
 	 * @param root la radice del sottoalbero da ricaricare.
 	 */
 	public void reloadModel(ProgressItem root){
 		/*
-		 * Il tableMOdel effettivo puòessere di due tipi:
+		 * Il tableMOdel effettivo può essere di due tipi:
 		 * il wrapper per l'ordinamento (ProgressTableSorter)
-		 * oppure l'originale ProgressTableModel
+		 * oppure l'originale ProgressTableModel.
 		 */
 		TableModel actualTableModel = this.getModel();
 		if (actualTableModel instanceof ProgressTableModel){
@@ -137,12 +133,8 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 			((ProgressTableSorter)actualTableModel).load(((ProgressTableSorter)actualTableModel).progressTableModel);
 		}
 	}
+	
 	public void valueChanged(TreeSelectionEvent e){
-		//		 if (e.getNewLeadSelectionPath() == null) {
-		//			 //gestione caso cancellazione elemento selezionato
-		//			 return;
-		//		 }
-		//		this.reloadModel(e.getPath());
 	}
 	
 	
