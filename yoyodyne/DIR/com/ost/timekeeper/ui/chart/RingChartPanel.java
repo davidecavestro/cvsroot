@@ -81,6 +81,8 @@ public class RingChartPanel extends JPanel{
 		chartContainer.add (this._chartTitleLabel,"Title");
 		chartContainer.add (this._pieChart,"Graph");
 		chartContainer.add (xAxisLabel,"X-axis");
+		this._pieChart.setBackground (java.awt.Color.white);
+		
 		add (new JScrollPane (chartContainer), BorderLayout.CENTER);
 		final JPanel controlsContainer = new JPanel (new GridBagLayout ());
 		
