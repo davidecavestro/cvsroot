@@ -12,20 +12,38 @@
     <!-- and then you can access the Ant manual in the online help. -->
 
     <target name="init">
-        <property location="classes" name="classes.dir"/>
-        <property location="../src" name="src.dir"/>
-        <property location="doc/api" name="javadoc.dir"/>
-        <property location="tmp" name="tmp.dir"/>
         <property name="project.name" value="${ant.project.name}"/>
-        <property location="${project.name}.jar" name="jar"/>
+        <property name="version" value="0.1"/>
+	
+        <property location="work" name="work.dir"/>
+        <property location="lib" name="lib.dir"/>
+        <property location="../src" name="src.dir"/>
+        <property location="${work.dir}/classes" name="classes.dir"/>
+        <property location="${work.dir}/doc/api" name="javadoc.dir"/>
+        <property location="${work.dir}/tmp" name="tmp.dir"/>
+        <property location="${work.dir}/log" name="log.dir"/>
+	
+        <property location="${project.name}-${version}" name="app.dir"/>
+        <property location="${app.dir}/lib" name="app.lib.dir"/>
+        <property location="${app.dir}/res" name="app.res.dir"/>
+	
+        <property location="${app.dir}/${project.name}.jar" name="app.jar"/>
+        <property location="${app.res.dir}/i18n.jar" name="i18n.jar"/>
+        <property location="${app.res.dir}/images.jar" name="images.jar"/>
+        <property location="${app.res.dir}/help.jar" name="help.jar"/>
+	
+        <property location="/usr/local/java/bin/java" name="ext.jvm"/>
+        <property location="/usr/local/java/bin/javac" name="ext.javac"/>
     </target>
 
     <target depends="init" name="compile">
         <!-- Both srcdir and destdir should be package roots. -->
+        <mkdir dir="${work.dir}"/>
         <mkdir dir="${classes.dir}"/>
         <mkdir dir="${tmp.dir}"/>
+        <mkdir dir="${log.dir}"/>
 
-       <javac debug="true" deprecation="true" destdir="${classes.dir}" >
+       <javac debug="true" deprecation="true" destdir="${classes.dir}" fork="true" executable="${ext.javac}">
 	    <src>
                 <pathelement location="${src.dir}/com/ost/timekeeper/model"/>
                 <pathelement location="${src.dir}/com/ost/timekeeper/util"/>
@@ -46,21 +64,34 @@
             <!-- To exclude some files: -->
             <!-- <exclude name="com/foo/SomeFile.java"/><exclude name="com/foo/somepackage/"/> -->
         </javac>
+	<!--
+	<copy todir="${tmp.dir}">
+	    <fileset dir="${src.dir}">
+		<include name="**/*.jdo"/>
+		<exclude name="**/*.java"/>
+	    </fileset>
+	</copy>
 	<copy todir="${tmp.dir}">
 	    <fileset dir="${src.dir}/com/ost/timekeeper/model">
 		<include name="**/package.jdo"/>
 		<exclude name="**/*.java"/>
 	    </fileset>
 	</copy>
+	-->
+	<copy todir="${classes.dir}">
+	    <fileset dir="${src.dir}">
+		<include name="**/*.jdo"/>
+		<exclude name="**/*.java"/>
+	    </fileset>
+	</copy>
+	<!--
+	NON FUNZIONA!!!
 	<path id="jdo.enhancer.classpath">
-	    <!--
-	    <pathelement location="btree.jar"/>
-	    <pathelement location="jdori-enhancer.jar"/>
-	    -->
 	    <pathelement location="jdo.jar"/>
 	    <pathelement location="jdori.jar"/>
+	    <pathelement location="../bin" />
 	</path>
-  	<java classname="com.sun.jdori.enhancer.EnhancerMain"
+  	<java classname="com.sun.jdori.enhancer.Main"
 	    fork="true"
 	    failonerror="true"
 	    maxmemory="128m"
@@ -68,75 +99,58 @@
 	    classpathref="jdo.enhancer.classpath"
 	>
 	    <arg line="-v -f "/>
-	    <arg line="-j ${tmp.dir}:${classes.dir}"/>
 	    <arg line="-s ${tmp.dir}:${classes.dir}"/>
 	    <arg line="-d ${classes.dir}"/>
-	    <!--
-	    <arg path="${classes.dir}:${tmp.dir}"/>
-	    -->
-	    <arg value="com/ost/timekeeper/model/Period"/>
-	</java>
-  	<java classname="com.sun.jdori.enhancer.EnhancerMain"
-	    fork="true"
-	    failonerror="true"
-	    maxmemory="128m"
-	    dir="${classes.dir}"
-	    classpathref="jdo.enhancer.classpath"
-	>
-	    <arg line="-v -f "/>
-	    <arg line="-j ${tmp.dir}:${classes.dir}"/>
-	    <arg line="-s ${tmp.dir}:${classes.dir}"/>
-	    <arg line="-d ${classes.dir}"/>
-	    <!--
-	    <arg path="${classes.dir}:${tmp.dir}"/>
-	    -->
-	    <arg value="com/ost/timekeeper/model/Project"/>
-	</java>
-  	<java classname="com.sun.jdori.enhancer.EnhancerMain"
-	    fork="true"
-	    failonerror="true"
-	    maxmemory="128m"
-	    dir="${classes.dir}"
-	    classpathref="jdo.enhancer.classpath"
-	>
-	    <arg line="-v -f "/>
-	    <arg line="-j ${tmp.dir}:${classes.dir}"/>
-	    <arg line="-s ${tmp.dir}:${classes.dir}"/>
-	    <arg line="-d ${classes.dir}"/>
-	    <!--
-	    <arg path="${classes.dir}:${tmp.dir}"/>
-	    -->
 	    <arg value="com/ost/timekeeper/model/ProgressItem"/>
 	</java>
-	<javac debug="true" deprecation="true" destdir="${classes.dir}" srcdir="${src.dir}">
+	-->
+	<!--	
+	<exec dir="./" executable="/home/davide/Documents/jdoenhancecommands" output="${log.dir}enhance.log"/>
+	-->
+	<exec dir="./" executable="enhance.sh" output="enhance.log">
+	</exec>
+	<javac debug="true" deprecation="true" destdir="${classes.dir}" srcdir="${src.dir}" fork="true" executable="${ext.javac}">
 	    <!-- To add something to the classpath: -->
 	    <!-- <classpath><pathelement location="${mylib}"/></classpath> -->
 	    <classpath>
-		<pathelement location="btree.jar"/>
-		<pathelement location="castor-0.9.5.3.jar"/>
-		<pathelement location="castor-0.9.5.3-xml.jar"/>
-		<pathelement location="jdo.jar"/>
-		<pathelement location="jdori-enhancer.jar"/>
-		<pathelement location="jdori.jar"/>
-		<pathelement location="jhall.jar"/>
+		<pathelement location="${lib.dir}/btree.jar"/>
+		<pathelement location="${lib.dir}/castor.jar"/>
+		<pathelement location="${lib.dir}/castor-xml.jar"/>
+		<pathelement location="${lib.dir}/jdo.jar"/>
+		<pathelement location="${lib.dir}/jdori.jar"/>
+		<pathelement location="${lib.dir}/jhall.jar"/>
 	    </classpath>
 
 	    <!-- To exclude some files: -->
 	    <!-- <exclude name="com/foo/SomeFile.java"/><exclude name="com/foo/somepackage/"/> -->
-	    <exclude name="com/ost/timekeeper/actions/ProjectDeleteAction.java"/>
-	    <exclude name="com/ost/timekeeper/conf/SystemResources.java"/>
 	    <exclude name="com/ost/timekeeper/conf/SystemResources.java"/>
 	    
 	</javac>
+	<copy todir="${classes.dir}">
+	    <fileset dir="${src.dir}">
+		<include name="com/ost/timekeeper/action/dataiomap.xml"/>
+	    </fileset>
+	</copy>
     </target>
 
     <target depends="init,compile" name="jar">
+        <mkdir dir="${app.dir}"/>
+	
         <!-- To make a standalone app, insert into <jar>: -->
         <!-- <manifest><attribute name="Main-Class" value="com.foo.Main"/></manifest> -->
-        <jar basedir="${classes.dir}" compress="true" jarfile="${jar}"/>
+        <jar basedir="${classes.dir}" compress="true" jarfile="${app.jar}">
+	    <manifest>
+		<attribute name="Built-By" value="${user.name}"/>
+		<attribute name="Main-Class" value="com.ost.timekeeper.Application"/>
+		<attribute name="Class-Path" value=". lib/jdo.jar lib/jdori.jar lib/btree.jar lib/castor.jar lib/castor.xml.jar lib/jhall.jar res/i18n.jar res/images.jar res/help.jar"/>
+		<attribute name="Implementation-Title" value="timekeeper"/>
+		<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
+		<attribute name="Implementation-Vendor" value="DateSoft ltd."/>
+      	    </manifest>
+    	</jar>
     </target>
 
-    <target depends="init,jar" description="Build everything." name="all"/>
+    <target depends="init,bundle" description="Build everything." name="all"/>
 
     <target depends="init" description="Javadoc for Timekeeper API." name="javadoc">
         <mkdir dir="${javadoc.dir}"/>
@@ -147,10 +161,60 @@
         </javadoc>
     </target>
 
-    <target depends="init" description="Clean all build products." name="clean">
+    <target depends="clean.work, clean.app" description="Clean all build products." name="clean"/>
+    
+    <target depends="init" description="Clean temporary build products." name="clean.work">
         <delete dir="${classes.dir}"/>
         <delete dir="${javadoc.dir}"/>
-        <delete file="${jar}"/>
+        <delete dir="${work.dir}"/>
+        <delete dir="${tmp.dir}"/>
+        <delete dir="${app.dir}"/>
+    </target>
+    
+    <target depends="init" description="Clean all build products." name="clean.app">
+        <delete dir="${app.dir}"/>
+    </target>
+
+    <target depends="jar" name="bundle">
+        <mkdir dir="${app.lib.dir}"/>
+        <mkdir dir="${app.res.dir}"/>
+
+	<copy toDir="${app.lib.dir}">
+	    <fileset dir="${lib.dir}"/>
+	</copy>
+        <jar compress="true" jarfile="${i18n.jar}">
+	    <manifest>
+		<attribute name="Built-By" value="${user.name}"/>
+		<attribute name="Implementation-Title" value="timekeeper"/>
+		<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
+		<attribute name="Implementation-Vendor" value="DateSoft ltd."/>
+      	    </manifest>
+	    <fileset dir="${src.dir}"
+             includes="com/ost/timekeeper/ui/bundle/**"
+	    />
+    	</jar>
+        <jar compress="false" jarfile="${images.jar}" >
+	    <manifest>
+		<attribute name="Built-By" value="${user.name}"/>
+		<attribute name="Implementation-Title" value="timekeeper"/>
+		<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
+		<attribute name="Implementation-Vendor" value="DateSoft ltd."/>
+      	    </manifest>
+	    <fileset dir="${src.dir}"
+             includes="com/ost/timekeeper/ui/images/**"
+	    />
+    	</jar>
+        <jar compress="true" jarfile="${help.jar}" >
+	    <manifest>
+		<attribute name="Built-By" value="${user.name}"/>
+		<attribute name="Implementation-Title" value="timekeeper"/>
+		<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
+		<attribute name="Implementation-Vendor" value="DateSoft ltd."/>
+      	    </manifest>
+	    <fileset dir="${src.dir}"
+             includes="help/**"
+	    />
+    	</jar>
     </target>
 
 </project>
