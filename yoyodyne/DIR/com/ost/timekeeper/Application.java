@@ -14,6 +14,8 @@ import javax.jdo.*;
 import javax.swing.*;
 
 import com.ost.timekeeper.actions.*;
+import com.ost.timekeeper.conf.*;
+import com.ost.timekeeper.log.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.persistence.*;
 import com.ost.timekeeper.view.*;
@@ -32,10 +34,26 @@ public class Application extends Observable{
 	 */
 	private MainForm mainForm;
 	
+	/**
+	 * Il registro degli eventi dell'applicazione.
+	 */
+	private static Logger _logger;
+	
+	/**
+	 * Le impostazioni di configurazione dell'applicazione.
+	 */
+	private static ApplicationOptions _applicationOptions;
+	
+	/**
+	 * L'ambiente di lancio e inizializzazione.
+	 */
+	private static CommandLineApplicationEnvironment _applicationEnvironment;
+	
 	/** 
 	 * Costruttore privato. 
 	 */
-	private Application() {
+	private Application(String[] args) {
+		
 		//inizializza il supporto per la persistenza dei dati
 		initPersistence ();
 		
@@ -69,9 +87,19 @@ public class Application extends Observable{
 	 * @return l'istanza di questa applicazione.
 	 */
 	public static Application getInstance(){
+		return getInstance (null);
+	}
+	
+	/**
+	 *
+	 * Ritorna l'istanza di questa applicazione.
+	 * @return l'istanza di questa applicazione.
+	 * @param args i parametri di inizializzazione.
+	 */
+	private final static Application getInstance(String[] args){
 		if (instance == null){
 			//istanziazione lazy
-			instance = new Application();
+			instance = new Application(args);
 			
 			//istanzia la finestra principale dell'interfaccia
 			instance.mainForm = new MainForm(instance);
@@ -117,22 +145,47 @@ public class Application extends Observable{
 	 * @param args gli argomenti della linea di comando.
 	 */
 	public static void main(String args[]) {
-		SplashScreen.getInstance ().startSplash ();
+		_applicationEnvironment = 
+			new CommandLineApplicationEnvironment (args);
+		
+		_applicationOptions = 
+			new ApplicationOptions (UserSettings.getInstance (), 
+				new ApplicationOptions (SystemSettings.getInstance (), 
+					new ApplicationOptions (DefaultSettings.getInstance (), null)));
+		
+		
 		try {
-			Application a = getInstance();
-	//		a.getProjectCreateAction ().execute ("Void project");
-			ActionPool.getInstance ().getProjectCloseAction ().execute ();
-			try{
-	//			a.getMainForm().setBounds(0, 0, 800, 600);
-				a.getMainForm().show();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				JOptionPane.showMessageDialog(a.getMainForm(),
-				ex.toString(), "Warning",
-				JOptionPane.WARNING_MESSAGE);
+			_logger = 
+				new CompositeLogger (
+					new PlainTextLogger (
+						new File (_applicationOptions.getLogDirPath ()), true), null);
+		} catch (IOException ioe){
+			System.out.println ("Logging disabled. CAUSE: "+ExceptionUtils.getStackStrace (ioe));
+		}
+		
+		try {
+			SplashScreen.getInstance ().startSplash ();
+			try {
+				Application a = getInstance(args);
+
+		//		a.getProjectCreateAction ().execute ("Void project");
+				ActionPool.getInstance ().getProjectCloseAction ().execute ();
+				Application.getInstance ().addObserver (UserSettings.getInstance ());
+				try{
+		//			a.getMainForm().setBounds(0, 0, 800, 600);
+					a.getMainForm().show();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(a.getMainForm(),
+					ex.toString(), "Warning",
+					JOptionPane.WARNING_MESSAGE);
+				}
+			} finally {
+				SplashScreen.getInstance ().stopSplash ();
 			}
-		} finally {
-			SplashScreen.getInstance ().stopSplash ();
+		} catch (Exception e){
+			e.printStackTrace();
+			System.exit (1);
 		}
 	}
 	
@@ -257,8 +310,8 @@ public class Application extends Observable{
 	 * Inizializza la gestione della persistenza dei dati.
 	 */
 	private void initPersistence (){
-		Properties properties = DataStoreUtil.getDataStoreProperties ();
-		PersistenceManagerFactory pmf =
+		final Properties properties = DataStoreUtil.getDataStoreProperties ();
+		final PersistenceManagerFactory pmf =
 					  JDOHelper.getPersistenceManagerFactory(properties);
 		this.pm = pmf.getPersistenceManager();
 		this.pm.currentTransaction().begin();
@@ -340,4 +393,52 @@ public class Application extends Observable{
 	public boolean isProcessing (){
 		return this._processing>0;
 	}
+	
+	/**
+	 * Ritorna le opzioni di configurazione per questa applicazione.
+	 *
+	 * @return le opzioni di configurazione.
+	 */	
+	public static ApplicationOptions getOptions (){
+		return _applicationOptions;
+	}
+	
+	/**
+	 * Ritorna l'ambiente di lancio per questa applicazione.
+	 *
+	 * @return l'ambinete di lancio.
+	 */	
+	public static ApplicationEnvironment getEnvironment (){
+		return _applicationEnvironment;
+	}
+	
+	/**
+	 * Ritorna il logger.
+	 *
+	 * @return il logger.
+	 */	
+	public static Logger getLogger (){
+		return _logger;
+	}
+	
+	/**
+	 * Operazioni da effettuare prima dell'uscita dall'applicazione, tra le quali:
+	 *	<UL>
+	 *		<LI>Salvataggio impostazioni utente.
+	 *	</UL>
+	 */
+	public void beforeExit (){
+		setChanged ();
+		notifyObservers (ObserverCodes.APPLICATIONEXITING);
+		UserSettings.getInstance ().storeProperties ();
+	}
+
+	/**
+	 * Termina l'applicazione.
+	 */
+	public final void exit (){
+		beforeExit ();
+		System.exit (0);
+	}
+
 }

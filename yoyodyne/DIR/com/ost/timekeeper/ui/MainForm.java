@@ -40,6 +40,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		this.application = app;
 		this.progressTreeModel = new ProgressTreeModel (application.getProject ());
 		this.application.addObserver (progressTreeModel);
+		ApplicationOptionsNotifier.getInstance ().addObserver (this);
 		
 		progressItemCellRenderer = new ProgressItemCellRenderer ();
 		initComponents ();
@@ -47,7 +48,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		ProgressListFrame.getInstance ().getProgressTable ().getProgressTableModel ().load (application.getCurrentItem ());
 		postInitComponents ();
 		
-		setBounds (ApplicationOptions.getInstance ().getMainFormBounds ());
+		setBounds (Application.getInstance ().getOptions ().getMainFormBounds ());
 		JFrame.setDefaultLookAndFeelDecorated (true);
 	}
 	
@@ -73,7 +74,11 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		//		dataTabbedPane = new javax.swing.JTabbedPane ();
 		desktop = Desktop.getInstance ();
-		desktop.setBackground (Color.BLACK);
+		Color desktopColor = Application.getOptions ().getDesktopColor ();
+		if (desktopColor==null) {
+			desktopColor = Color.BLACK;
+		}
+		desktop.setBackground (desktopColor);
 		desktop.setDragMode (JDesktopPane.LIVE_DRAG_MODE);
 		
 
@@ -113,7 +118,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		setName ("frameMain");
 		addWindowListener (new java.awt.event.WindowAdapter () {
 			public void windowClosing (java.awt.event.WindowEvent evt) {
-				exitForm (evt);
+				Application.getInstance ().exit ();
 			}
 		});
 		
@@ -195,16 +200,14 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			}
 		});
 		
-		int openFrameCount = 1;
-		int xOffset = 30, yOffset = 30;
+		final ApplicationOptions options = Application.getInstance ().getOptions ();
 		
 		/*
 		 * Frame lista avanzamenti.
 		 */
 		final ProgressListFrame progressListFrame = ProgressListFrame.getInstance ();
-		openFrameCount++;
         //Set the window's location.
-        progressListFrame.setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
+        progressListFrame.setBounds (options.getProgressListFrameBounds ());
 		progressListFrame.setVisible (true); //necessary as of 1.3
 		desktop.add (progressListFrame);
 		try {
@@ -214,10 +217,9 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		/*
 		 * Dettaglio nodo di avanzamento.
 		 */
-		ProgressItemInspectorFrame progressItemInspectorFrame = ProgressItemInspectorFrame.getInstance ();
-		openFrameCount++;
+		final ProgressItemInspectorFrame progressItemInspectorFrame = ProgressItemInspectorFrame.getInstance ();
         //Set the window's location.
-        progressItemInspectorFrame.setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
+        progressItemInspectorFrame.setBounds (options.getProgressItemInspectorBounds ());
 		progressItemInspectorFrame.setVisible (true); //necessary as of 1.3
 		desktop.add (progressItemInspectorFrame);
 		try {
@@ -230,10 +232,9 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		/*
 		 * Dettaglio avanzamento.
 		 */
-		ProgressInspectorFrame periodInspectorFrame = ProgressInspectorFrame.getInstance ();
-		openFrameCount++;
+		final ProgressInspectorFrame periodInspectorFrame = ProgressInspectorFrame.getInstance ();
         //Set the window's location.
-        periodInspectorFrame.setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
+        periodInspectorFrame.setBounds (options.getProgressPeriodInspectorBounds ());
 		periodInspectorFrame.setVisible (true); //necessary as of 1.3
 		desktop.add (periodInspectorFrame);
 		try {
@@ -299,7 +300,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuItemFinish.addActionListener (new java.awt.event.ActionListener () {
 			public void actionPerformed (java.awt.event.ActionEvent evt) {
 				//chiusura
-				System.exit (0);;
+				Application.getInstance ().exit ();
 			}
 		});
 		jMenuFile.add (jMenuItemFinish);
@@ -345,6 +346,12 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		jMenuTools.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tool"));
 		jMenuItemOptions.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tools.options"));
+		jMenuItemOptions.addActionListener (new ActionListener (){
+			public void actionPerformed(ActionEvent e){
+				UserSettingsFrame.getInstance ().show ();
+			}
+		});
+
 		jMenuTools.add (jMenuItemOptions);
 		
 		jMenuBarMain.add (jMenuTools);
@@ -390,12 +397,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private void jMenuItemOpenActionPerformed (java.awt.event.ActionEvent evt) {
 		// Add your handling code here:
 	}
-	
-	/** Exit the Application */
-	private void exitForm (java.awt.event.WindowEvent evt) {
-		System.exit (0);
-	}
-	
+		
 	
 	
 	// Variables declaration - do not modify
@@ -493,44 +495,47 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	}
 	
 	public void update (Observable o, Object arg) {
-		if (o instanceof Application){
-			if (arg!=null && arg.equals (ObserverCodes.PROJECTCHANGE)){
-				this.progressTreeModel.load (application.getProject ());
-				
-				ProgressListFrame.getInstance ().getProgressTable ().getProgressTableModel ().load (application.getSelectedItem ());
-				
-				initTreeModelListeners ();
-				this.progressItemTree.invalidate ();
-				initTableModelListeners ();
-			} else if (arg!=null && ( arg.equals (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || arg.equals (ObserverCodes.CURRENTITEMCHANGE))){
-				Application app = (Application)o;
-				statusLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "statusbar", app.getCurrentItem ()!=null?"statuslabel.working_UC":"statuslabel.idle_UC"));
-				
-				Duration duration=null;
-				Period selectedProgress = application.getSelectedProgress ();
-				if (selectedProgress!=null){
-					duration = selectedProgress.getDuration ();
-				}
-				if (duration==null){
-					duration = emptyDuration;
-				}
-				StringBuffer sb = new StringBuffer ();
-				/*
-				sb.append (durationNumberFormatter.format(duration.getDays()))
-				.append (":")
-				 */
-				sb.append (durationNumberFormatter.format (duration.getHours ()))
-				.append (":")
-				.append (durationNumberFormatter.format (duration.getMinutes ()))
-				.append (":")
-				.append (durationNumberFormatter.format (duration.getSeconds ()));
-				currentDurationLabel.setText (sb.toString ());
-				
-			} else if (arg!=null && (arg.equals (ObserverCodes.PROCESSINGCHANGE))){
-				Application app = (Application)o;
-				jobProgress.setIndeterminate (app.isProcessing ());
-				jobProgress.setValue (app.isProcessing ()?99:0);
+		if (arg!=null && arg.equals (ObserverCodes.PROJECTCHANGE)){
+			this.progressTreeModel.load (application.getProject ());
+
+			ProgressListFrame.getInstance ().getProgressTable ().getProgressTableModel ().load (application.getSelectedItem ());
+
+			initTreeModelListeners ();
+			this.progressItemTree.invalidate ();
+			initTableModelListeners ();
+		} else if (arg!=null && ( arg.equals (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || arg.equals (ObserverCodes.CURRENTITEMCHANGE))){
+			Application app = Application.getInstance ();
+			statusLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "statusbar", app.getCurrentItem ()!=null?"statuslabel.working_UC":"statuslabel.idle_UC"));
+
+			Duration duration=null;
+			Period selectedProgress = application.getSelectedProgress ();
+			if (selectedProgress!=null){
+				duration = selectedProgress.getDuration ();
 			}
+			if (duration==null){
+				duration = emptyDuration;
+			}
+			StringBuffer sb = new StringBuffer ();
+			/*
+			sb.append (durationNumberFormatter.format(duration.getDays()))
+			.append (":")
+			 */
+			sb.append (durationNumberFormatter.format (duration.getHours ()))
+			.append (":")
+			.append (durationNumberFormatter.format (duration.getMinutes ()))
+			.append (":")
+			.append (durationNumberFormatter.format (duration.getSeconds ()));
+			currentDurationLabel.setText (sb.toString ());
+
+		} else if (arg!=null && (arg.equals (ObserverCodes.PROCESSINGCHANGE))){
+			Application app = Application.getInstance ();
+			jobProgress.setIndeterminate (app.isProcessing ());
+			jobProgress.setValue (app.isProcessing ()?99:0);
+		} else if (arg!=null && arg.equals(ObserverCodes.APPLICATIONOPTIONSCHANGE)){
+			this.desktop.setBackground (Application.getOptions ().getDesktopColor ());
+			System.out.println("changing desktop color: "+Application.getOptions ().getDesktopColor ());
+			this.desktop.revalidate ();
+			this.desktop.repaint ();
 		}
 	}
 	

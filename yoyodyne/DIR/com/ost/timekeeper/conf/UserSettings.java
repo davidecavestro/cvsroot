@@ -6,13 +6,17 @@
 
 package com.ost.timekeeper.conf;
 
+import com.ost.timekeeper.*;
+import com.ost.timekeeper.ui.*;
 import java.awt.*;
+import java.util.*;
 
 /**
+ * Le impostazioni personalizzate dell'utente.
  *
  * @author  davide
  */
-public final class UserSettings extends AbstractSettings {
+public final class UserSettings extends AbstractSettings implements Observer{
 	
 	/**
 	 * Percorso file impostazioni.
@@ -22,9 +26,18 @@ public final class UserSettings extends AbstractSettings {
 	/**
 	 * header file impostazioni.
 	 */
-	public final static String PROPERTIES_HEADER = "USER SETTINGS";
+	public final static String PROPERTIES_HEADER = " *** USER SETTINGS *** ";
+
+	/**
+	 * Nome proprietà di sistema contenente il percordo della home directory utente.
+	 */
+	public final static String USER_HOMEDIR_PATH = "user.home";
 	
+	/**
+	 * L'istanza del singleton.
+	 */
 	private static UserSettings _instance;
+	
 	/** 
 	 * Ritorna l'istanza delle impostazioni utente.
 	 */
@@ -35,47 +48,70 @@ public final class UserSettings extends AbstractSettings {
 		return _instance;
 	}
 	
+
+	
 	/**
-	 * Ritorna la posizione della finestra principale dell'applicazione.
+	 * Ritorna il percorso del file di properties.
 	 *
-	 * @return la posizione della finestra principale dell'applicazione.
+	 * @return il percorso del file di properties.
 	 */	
-	public Rectangle getMainFormBounds (){
-		final Integer xPos = SettingsSupport.getIntegerProperty (this.getProperties (), PROPNAME_MAINFORM_XPOS);
-		if (xPos==null){
-			return null;
-		}
-		final Integer yPos = SettingsSupport.getIntegerProperty (this.getProperties (), PROPNAME_MAINFORM_YPOS);
-		if (yPos==null){
-			return null;
-		}
-		final Integer width = SettingsSupport.getIntegerProperty (this.getProperties (), PROPNAME_MAINFORM_WIDTH);
-		if (width==null){
-			return null;
-		}
-		final Integer height = SettingsSupport.getIntegerProperty (this.getProperties (), PROPNAME_MAINFORM_HEIGHT);
-		if (height==null){
-			return null;
-		}
-		return new Rectangle (xPos.intValue (), yPos.intValue (), width.intValue (), height.intValue ());
-	}
-	
-	/** Imposta la posizione della finestra principale dell'applicazione.
-	 * @param r la posizione.
-	 */	
-	public void setMainFormBounds (Rectangle r){
-		this.getProperties ().setProperty (PROPNAME_MAINFORM_XPOS, Double.toString (r.getX ()));
-		this.getProperties ().setProperty (PROPNAME_MAINFORM_YPOS, Double.toString (r.getY ()));
-		this.getProperties ().setProperty (PROPNAME_MAINFORM_WIDTH, Double.toString (r.getWidth ()));
-		this.getProperties ().setProperty (PROPNAME_MAINFORM_HEIGHT, Double.toString (r.getHeight ()));
-	}
-	
 	public String getPropertiesFileName () {
-		return PROPERTIES_PATH;
+		final StringBuffer sb = new StringBuffer ();
+		sb.append (getUserHomeDirPath ()).append ("/").append (PROPERTIES_PATH);
+		return sb.toString ();
 	}
 
 	public String getPropertiesHeader () {
 		return PROPERTIES_HEADER;
+	}
+	
+	/**
+	 * Ritorna il percorso della HOME directory dell'utente.
+	 *
+	 * @return il percorso della HOME directory dell'utente.
+	 */	
+	public static String getUserHomeDirPath (){
+		return System.getProperty (USER_HOMEDIR_PATH);
+	}
+	
+	/**
+	 * Imposta il colore del desktop.
+	 */
+	public void setDesktopColor (Color color) {
+		super.setDesktopColor (color);
+		notifyChanges ();
+	}
+	
+	/**
+	 * Imposta la posizione della finestra principale dell'applicazione.
+	 * @param r la posizione.
+	 */
+	public void setMainFormBounds (Rectangle r) {
+		super.setMainFormBounds (r);
+//		notifyChanges ();
+	}
+	
+	/**
+	 * Notifica le modifiche avvenute.
+	 */
+	private void notifyChanges (){
+		final UserSettingsNotifier notifier = UserSettingsNotifier.getInstance ();
+		notifier.setChanged ();
+		System.out.println ("notifying user changes");
+		
+		notifier.notifyObservers (ObserverCodes.USERSETTINGSCHANGE);
+	}
+	
+	public void update (Observable o, Object arg) {
+		if (arg!=null && arg.equals (ObserverCodes.APPLICATIONEXITING)){
+			/* Applicazione in fase di chiusura. */
+			/* Salva ultima posizione finestra principale. */
+			this.setMainFormBounds (Application.getInstance ().getMainForm ().getBounds ());
+			/* Salva ultima posizione finestre desktop. */
+			this.setProgressItemInspectorBounds (ProgressItemInspectorFrame.getInstance ().getBounds ());
+			this.setProgressPeriodInspectorBounds (ProgressInspectorFrame.getInstance ().getBounds ());
+			this.setProgressListFrameBounds (ProgressListFrame.getInstance ().getBounds ());
+		}
 	}
 	
 }

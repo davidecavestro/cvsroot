@@ -17,27 +17,7 @@ import java.util.*;
  *
  * @author  davide
  */
-public abstract class AbstractSettings implements ApplicationSettings {
-	
-	/**
-	 * Posizione sull'asse X della finestra principale dellapplicazione.
-	 */
-	public final static String PROPNAME_MAINFORM_XPOS = "mainformxpos";
-	
-	/**
-	 * Posizione sull'asse Y della finestra principale dellapplicazione.
-	 */
-	public final static String PROPNAME_MAINFORM_YPOS = "mainformypos";
-	
-	/**
-	 * Larghezza della finestra principale dellapplicazione.
-	 */
-	public final static String PROPNAME_MAINFORM_WIDTH = "mainformwidth";
-	
-	/**
-	 * ALtezza della finestra principale dellapplicazione.
-	 */
-	public final static String PROPNAME_MAINFORM_HEIGHT = "mainformheight";
+public abstract class AbstractSettings implements CustomizableSettings {
 	
 	/**
 	 * Costruttore.
@@ -67,7 +47,7 @@ public abstract class AbstractSettings implements ApplicationSettings {
 				in.close();
 			}
 		} catch (FileNotFoundException fnfe) {
-			throw new NestedRuntimeException (fnfe);
+			System.out.println ("File not found "+fnfe.getMessage ());
 		} catch (IOException ioe) {
 			throw new NestedRuntimeException (ioe);
 		}
@@ -84,7 +64,12 @@ public abstract class AbstractSettings implements ApplicationSettings {
 		try {
 			final String persistentFileName = this.getPropertiesFileName ();
 			if (persistentFileName!=null){
-				final FileOutputStream out = new FileOutputStream(persistentFileName);
+				/*
+				 * Gerantisce presenza file.
+				 */
+				final File persistentFile = new File (persistentFileName);
+				FileUtils.makeFilePath (persistentFile);
+				final FileOutputStream out = new FileOutputStream(persistentFile);
 				properties.store(out, this.getPropertiesHeader ());
 				out.flush ();
 				out.close();
@@ -118,18 +103,129 @@ public abstract class AbstractSettings implements ApplicationSettings {
 		return this._properties;
 	}
 	
-	private final int SPLAHSCREEN_INSET = 60;
 	/**
-	 * Ritorna la posizione iniziale dello splash screen.
-	 * La posizione risulta indentata 50 pixels da ogni bordo dello schermo.
+	 * Ritorna la posizione della finestra principale dell'applicazione.
 	 *
-	 * @return la posizione iniziale dello splash screen.
+	 * @return la posizione della finestra principale dell'applicazione.
 	 */	
-	public Rectangle getSplashScreenBounds (){
-		final Dimension screenSize = Toolkit.getDefaultToolkit ().getScreenSize ();
-		return new Rectangle (SPLAHSCREEN_INSET, SPLAHSCREEN_INSET,
-		screenSize.width  - SPLAHSCREEN_INSET*2,
-		screenSize.height - SPLAHSCREEN_INSET*2);
+	public Rectangle getMainFormBounds (){
+		return SettingsSupport.getRectangle (
+			this.getProperties (), 
+			PROPNAME_MAINFORM_XPOS, 
+			PROPNAME_MAINFORM_YPOS, 
+			PROPNAME_MAINFORM_WIDTH, 
+			PROPNAME_MAINFORM_HEIGHT);
 	}
-		
+	
+	/**
+	 * Ritorna la posizione della finestra di dettaglio nodo di avanzamento.
+	 *
+	 * @return la posizione della finestra di dettaglio nodo di avanzamento.
+	 */	
+	public Rectangle getProgressItemInspectorBounds (){
+		return SettingsSupport.getRectangle (
+			this.getProperties (), 
+			PROPNAME_PROGRESSITEMINSPECTOR_XPOS, 
+			PROPNAME_PROGRESSITEMINSPECTOR_YPOS, 
+			PROPNAME_PROGRESSITEMINSPECTOR_WIDTH, 
+			PROPNAME_PROGRESSITEMINSPECTOR_HEIGHT);
+	}
+	
+	/**
+	 * Ritorna la posizione della finestra di dettaglio periodo di avanzamento.
+	 *
+	 * @return la posizione della finestra di dettaglio periodo di avanzamento.
+	 */	
+	public Rectangle getProgressPeriodInspectorBounds (){
+		return SettingsSupport.getRectangle (
+			this.getProperties (), 
+			PROPNAME_PROGRESSPERIODINSPECTOR_XPOS, 
+			PROPNAME_PROGRESSPERIODINSPECTOR_YPOS, 
+			PROPNAME_PROGRESSPERIODINSPECTOR_WIDTH, 
+			PROPNAME_PROGRESSPERIODINSPECTOR_HEIGHT);
+	}
+	
+	/**
+	 * Ritorna la posizione della finestra di elenco avanzamenti.
+	 *
+	 * @return la posizione della finestra di elenco avanzamenti.
+	 */	
+	public Rectangle getProgressListFrameBounds (){
+		return SettingsSupport.getRectangle (
+			this.getProperties (), 
+			PROPNAME_PROGRESSLISTFRAME_XPOS, 
+			PROPNAME_PROGRESSLISTFRAME_YPOS, 
+			PROPNAME_PROGRESSLISTFRAME_WIDTH, 
+			PROPNAME_PROGRESSLISTFRAME_HEIGHT);
+	}
+	
+	/** Imposta la posizione della finestra principale dell'applicazione.
+	 * @param r la posizione.
+	 */	
+	public void setMainFormBounds (Rectangle r){
+		SettingsSupport.setRectangle (
+			this.getProperties (), 
+			r, 
+			PROPNAME_MAINFORM_XPOS, 
+			PROPNAME_MAINFORM_YPOS, 
+			PROPNAME_MAINFORM_WIDTH, 
+			PROPNAME_MAINFORM_HEIGHT);
+	}
+	
+	/** Imposta la posizione della finestra di dettaglio nodo di avanzamento.
+	 * @param r la posizione.
+	 */	
+	public void setProgressItemInspectorBounds (Rectangle r){
+		SettingsSupport.setRectangle (
+			this.getProperties (), 
+			r, 
+			PROPNAME_PROGRESSITEMINSPECTOR_XPOS, 
+			PROPNAME_PROGRESSITEMINSPECTOR_YPOS, 
+			PROPNAME_PROGRESSITEMINSPECTOR_WIDTH, 
+			PROPNAME_PROGRESSITEMINSPECTOR_HEIGHT);
+	}	
+	
+	/** Imposta la posizione della finestra di elkenco avanzamenti.
+	 * @param r la posizione.
+	 */	
+	public void setProgressListFrameBounds (Rectangle r) {
+		SettingsSupport.setRectangle (
+			this.getProperties (), 
+			r, 
+			PROPNAME_PROGRESSLISTFRAME_XPOS, 
+			PROPNAME_PROGRESSLISTFRAME_YPOS, 
+			PROPNAME_PROGRESSLISTFRAME_WIDTH, 
+			PROPNAME_PROGRESSLISTFRAME_HEIGHT);
+	}
+	
+	/** Imposta la posizione della finestra di dettaglio periodo di avanzamento.
+	 * @param r la posizione.
+	 */	
+	public void setProgressPeriodInspectorBounds (Rectangle r) {
+		SettingsSupport.setRectangle (
+			this.getProperties (), 
+			r, 
+			PROPNAME_PROGRESSPERIODINSPECTOR_XPOS, 
+			PROPNAME_PROGRESSPERIODINSPECTOR_YPOS, 
+			PROPNAME_PROGRESSPERIODINSPECTOR_WIDTH, 
+			PROPNAME_PROGRESSPERIODINSPECTOR_HEIGHT);
+	}
+	
+	public String getLogDirPath (){
+		return SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_LOGDIRPATH);		
+	}
+	
+	/**
+	 * Ritorna il colore del desktop.
+	 *
+	 * @return il colore del desktop.
+	 */
+	public Color getDesktopColor () {
+		return SettingsSupport.getColorProperty (this.getProperties (), PROPNAME_DESKTOPCOLOR);
+	}
+	
+	public void setDesktopColor (Color color) {
+		SettingsSupport.setColorProperty (this.getProperties (), PROPNAME_DESKTOPCOLOR, color);
+	}
+	
 }

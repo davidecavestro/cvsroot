@@ -111,7 +111,6 @@ public final class SplashScreen extends JWindow {
 	 * Inizializzazione componenti di questa finestra.
 	 */
 	public void initComponents (){
-		setBounds (ApplicationOptions.getInstance ().getSplashScreenBounds ());
 		mainPanel = new JPanel (new BorderLayout ());
 		
 		logoPanel = new JPanel (new BorderLayout ());

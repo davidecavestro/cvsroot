@@ -45,6 +45,18 @@ public final class NestedRuntimeException extends java.lang.RuntimeException {
 	}
 	
 	/**
+	 *
+	 * Costruttore con messaggio e causa scatenante.
+	 *
+	 * @param message il messaggio di errore.
+	 * @param rootCause la causa di questa eccezione.
+	 */
+	public NestedRuntimeException(String message, Throwable rootCause) {
+		super (message);
+		this.rootCause = rootCause;
+	}
+	
+	/**
 	 * Ritorna la causa che ha portato al sollevamento di questa eccezione.
 	 *
 	 * @return la causa.

@@ -6,14 +6,17 @@
 
 package com.ost.timekeeper.conf;
 
+import com.ost.timekeeper.*;
+import com.ost.timekeeper.ui.*;
 import java.awt.*;
+import javax.swing.*;
 
 /**
  * Impostazioni di predefinite.
  *
  * @author  davide
  */
-public final class DefaultSettings extends AbstractSettings {
+public final class DefaultSettings implements ApplicationSettings {
 	
 	/**
 	 * header file impostazioni.
@@ -45,12 +48,59 @@ public final class DefaultSettings extends AbstractSettings {
 		screenSize.height - MAINFORM_INSET*2);
 	}
 	
-	public String getPropertiesFileName () {
-		return null;
+	public String getLogDirPath () {
+		return Application.getEnvironment ().getApplicationDirPath ()+"/logs/";
 	}
 	
-	public String getPropertiesHeader () {
-		return PROPERTIES_HEADER;
+	/**
+	 * Ritorna il colore del desktop.
+	 *
+	 * @return ilcolore del desktop.
+	 */	
+	public Color getDesktopColor () {
+		return Color.BLACK;
+	}
+
+	/**
+	 * Offset orizzontale per frame desktop.
+	 */
+	private final static int DESKTOP_FRAMES_OFFSETX = 30;
+	/**
+	 * Offset verticale per frame desktop.
+	 */
+	private final static int DESKTOP_FRAMES_OFFSETY = 30;
+	
+	public Rectangle getProgressItemInspectorBounds () {
+		final int PROGRESSITEMINSPECTOR_PROSITION = 1;
+		final ProgressItemInspectorFrame frame = ProgressItemInspectorFrame.getInstance ();
+		return new Rectangle (
+			DESKTOP_FRAMES_OFFSETX * PROGRESSITEMINSPECTOR_PROSITION, 
+			DESKTOP_FRAMES_OFFSETY * PROGRESSITEMINSPECTOR_PROSITION, 
+			frame.getWidth (), 
+			frame.getHeight () 
+		);
+	}
+	
+	public Rectangle getProgressListFrameBounds () {
+		final int PROGRESSLIST_PROSITION = 2;
+		final ProgressListFrame frame = ProgressListFrame.getInstance ();
+		return new Rectangle (
+			DESKTOP_FRAMES_OFFSETX * PROGRESSLIST_PROSITION, 
+			DESKTOP_FRAMES_OFFSETY * PROGRESSLIST_PROSITION, 
+			frame.getWidth (), 
+			frame.getHeight () 
+		);
+	}
+	
+	public Rectangle getProgressPeriodInspectorBounds () {
+		final int PROGRESSINSPECTOR_PROSITION = 0;
+		final ProgressInspectorFrame frame = ProgressInspectorFrame.getInstance ();
+		return new Rectangle (
+			DESKTOP_FRAMES_OFFSETX * PROGRESSINSPECTOR_PROSITION, 
+			DESKTOP_FRAMES_OFFSETY * PROGRESSINSPECTOR_PROSITION, 
+			frame.getWidth (), 
+			frame.getHeight () 
+		);
 	}
 	
 }
