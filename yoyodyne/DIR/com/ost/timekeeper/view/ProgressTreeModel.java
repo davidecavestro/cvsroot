@@ -86,18 +86,13 @@ public class ProgressTreeModel extends AbstractTreeModel implements Observer{
 	}
 	
 	public void insertNodeInto(ProgressItem newChild, ProgressItem parent, int index){
-		parent.insert(newChild, index);
 		fireTreeNodesInserted(new TreeModelEvent(this, getPathToRoot(parent),
 		new int[]{index}, new Object[]{newChild}));
 	}
 	
 	public void removeNodeFromParent(ProgressItem toRemove){
-		ProgressItem parent = toRemove.getParent();
-		if(parent == null){
-			throw new IllegalArgumentException("node does not have a parent.");
-		}
+		final ProgressItem parent = toRemove.getParent();
 		int[] childIndex = new int[]{parent.childIndex(toRemove)};
-		parent.remove(toRemove);
 		fireTreeNodesRemoved(new TreeModelEvent(this, getPathToRoot(parent),
 		childIndex, new Object[]{toRemove}));
 	}

@@ -33,61 +33,61 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 	/**
 	 * Pannello di editazione.
 	 */
-	final javax.swing.JPanel editPanel = new javax.swing.JPanel ();
+	private final javax.swing.JPanel editPanel = new javax.swing.JPanel ();
 	
 	/**
 	 * Etichetta supporto editazione data/ora INIZIO.
 	 */
-	final javax.swing.JLabel fromLabel = new javax.swing.JLabel ();
+	private final javax.swing.JLabel fromLabel = new javax.swing.JLabel ();
 	
 	/**
 	 * Etichetta supporto editazione data/ora FINE.
 	 */
-	final javax.swing.JLabel toLabel = new javax.swing.JLabel ();
+	private final javax.swing.JLabel toLabel = new javax.swing.JLabel ();
 	
 	/**
 	 * Etichetta supporto editazione DESCRIZIONE.
 	 */
-	final javax.swing.JLabel descriptionLabel = new javax.swing.JLabel ();
+	private final javax.swing.JLabel descriptionLabel = new javax.swing.JLabel ();
 	
 	/**
 	 * Etichetta supporto editazione NOTE.
 	 */
-	final javax.swing.JLabel notesLabel = new javax.swing.JLabel ();
+	private final javax.swing.JLabel notesLabel = new javax.swing.JLabel ();
 	
 	/**
 	 * Componente editazione INIZIO.
 	 */
-	final javax.swing.JFormattedTextField  fromEditor = new javax.swing.JFormattedTextField  (DateFormat.getDateTimeInstance (DateFormat.DATE_FIELD, DateFormat.MEDIUM));
+	private final javax.swing.JFormattedTextField  fromEditor = new javax.swing.JFormattedTextField  (DateFormat.getDateTimeInstance (DateFormat.DATE_FIELD, DateFormat.MEDIUM));
 	
 	/**
 	 * Componente editazione FINE.
 	 */
-	final javax.swing.JFormattedTextField toEditor = new javax.swing.JFormattedTextField  (DateFormat.getDateTimeInstance (DateFormat.DATE_FIELD, DateFormat.MEDIUM));
+	private final javax.swing.JFormattedTextField toEditor = new javax.swing.JFormattedTextField  (DateFormat.getDateTimeInstance (DateFormat.DATE_FIELD, DateFormat.MEDIUM));
 	
 	/**
 	 * COmponente editazione DESCRIZIONE.
 	 */
-	final javax.swing.JTextArea descriptionEditor = new javax.swing.JTextArea (3, 20);
+	private final javax.swing.JTextArea descriptionEditor = new javax.swing.JTextArea (3, 20);
 	
 	/**
 	 * Componente editazione NOTE.
 	 */
-	final javax.swing.JTextArea notesEditor = new javax.swing.JTextArea (5, 20);
+	private final javax.swing.JTextArea notesEditor = new javax.swing.JTextArea (5, 20);
 	
 	/**
 	 * Pulsantiera.
 	 */
-	final javax.swing.JPanel buttonPanel = new javax.swing.JPanel ();
+	private final javax.swing.JPanel buttonPanel = new javax.swing.JPanel ();
 	/**
 	 * Pulsante di conferma.
 	 */
-	final javax.swing.JButton confirmButton = new javax.swing.JButton ();
+	private final javax.swing.JButton confirmButton = new javax.swing.JButton ();
 	
 	/**
 	 * Pulsante di annullamento modifiche.
 	 */
-	final javax.swing.JButton resetButton = new javax.swing.JButton ();
+	private final javax.swing.JButton resetButton = new javax.swing.JButton ();
 	/**********************************************
 	 * FINE dichiarazione componenti UI interne.
 	 **********************************************/

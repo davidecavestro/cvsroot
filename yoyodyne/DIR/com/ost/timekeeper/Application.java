@@ -115,7 +115,7 @@ public class Application extends Observable{
 				public void actionPerformed (ActionEvent ae){
 					instance.setChanged ();
 					//notifica l'avanzamento
-					instance.notifyObservers (ObserverCodes.ITEMPROGRESSINGCHANGE);
+					instance.notifyObservers (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
 				}
 			};
 			instance.timer = new javax.swing.Timer (1000, timerActionPerformer);
@@ -155,10 +155,16 @@ public class Application extends Observable{
 		
 		
 		try {
+			final StringBuffer sb = new StringBuffer ();
+			sb.append (_applicationOptions.getLogDirPath () ).append ("/")
+			.append (CalendarUtils.getTS (Calendar.getInstance ().getTime (), CalendarUtils.FILENAME_TIMESTAMP_FORMAT))
+			.append (".txt");
+			
+			final File plainTextLogFile = new File (sb.toString ());
 			_logger = 
 				new CompositeLogger (
 					new PlainTextLogger (
-						new File (_applicationOptions.getLogDirPath ()), true), null);
+						plainTextLogFile, true), null);
 		} catch (IOException ioe){
 			System.out.println ("Logging disabled. CAUSE: "+ExceptionUtils.getStackStrace (ioe));
 		}
@@ -310,6 +316,10 @@ public class Application extends Observable{
 	 * Inizializza la gestione della persistenza dei dati.
 	 */
 	private void initPersistence (){
+		if (this.pm!=null){
+			this.pm.currentTransaction().commit ();
+		}
+		
 		final Properties properties = DataStoreUtil.getDataStoreProperties ();
 		final PersistenceManagerFactory pmf =
 					  JDOHelper.getPersistenceManagerFactory(properties);
@@ -333,7 +343,7 @@ public class Application extends Observable{
 			tx.commit();
 			tx.begin();
 		} catch (Exception e){
-			System.out.println (ExceptionUtils.getStackStrace (e).toString ());
+			Application.getLogger ().error ("Error flushing data for persistence. ", e);
 			e.printStackTrace();
 			tx.rollback();
 		}
@@ -379,7 +389,9 @@ public class Application extends Observable{
 		} else {
 			this._processing--;
 			if (this._processing==0){
-				java.awt.Toolkit.getDefaultToolkit().beep();
+				if (Application.getOptions ().beepOnEvents ()){
+					java.awt.Toolkit.getDefaultToolkit().beep();
+				}
 			}
 		}
 		this.setChanged ();
@@ -431,6 +443,13 @@ public class Application extends Observable{
 		setChanged ();
 		notifyObservers (ObserverCodes.APPLICATIONEXITING);
 		UserSettings.getInstance ().storeProperties ();
+		final ProgressItem currentItem = this.getCurrentItem ();
+		if (currentItem!=null){
+			currentItem.stopPeriod ();
+		}
+		ActionPool.getInstance ().getProjectSaveAction ().execute ();
+		/* Forza chiusura logger. */
+		_logger.close ();
 	}
 
 	/**

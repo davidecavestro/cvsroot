@@ -14,6 +14,9 @@ import javax.jdo.*;
  * Classe di utilità per la gestione della persistenza e del repository.
  * E' configurabile tramite il file <TT>datastore.properties</TT>.
  *
+ * @todo siccome l'INFAME che ha fatto la classe JDOHelper chiama direttamente i metodi
+ * di Hashtable, non posso usare le properties di default.
+ *
  * @author  davide
  */
 public final class DataStoreUtil {
@@ -23,9 +26,14 @@ public final class DataStoreUtil {
 	}
 
 	/**
+	 * Proprietà .
+	 */
+	private static Properties _datastoreProperties = new Properties();
+	
+	/**
 	 * Proprietà configurabili.
 	 */
-	private final static Properties datastoreProperties = new Properties();
+//	private final static Properties customizableDatastoreProperties = new Properties();
 	
 	/**
 	 * Inizializzatore.
@@ -35,7 +43,7 @@ public final class DataStoreUtil {
 			/*
 			 * carica dati di configurazione.
 			 */
-			datastoreProperties.load(DataStoreUtil.class.getResourceAsStream("datastore.properties"));
+			_datastoreProperties.load(DataStoreUtil.class.getResourceAsStream("datastore.properties"));
 		} catch (IOException ioe) {
 			throw new RuntimeException (ioe);
 		}
@@ -46,7 +54,10 @@ public final class DataStoreUtil {
 	 * @return le proprietà di configurazione.
 	 */	
 	public static Properties getDataStoreProperties (){
-		return datastoreProperties;
+//		if (_datastoreProperties == null){
+//			_datastoreProperties = new Properties (customizableDatastoreProperties);
+//		}
+		return _datastoreProperties;
 	}
 	
 	/**
@@ -54,7 +65,7 @@ public final class DataStoreUtil {
 	 */
 	public static void createDataStore() {
 		try {
-			Properties properties = datastoreProperties;
+			Properties properties = getDataStoreProperties ();
 			properties.put("com.sun.jdori.option.ConnectionCreate", "true");
 			PersistenceManagerFactory pmf =
 			JDOHelper.getPersistenceManagerFactory(properties);

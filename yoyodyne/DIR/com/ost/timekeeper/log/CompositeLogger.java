@@ -34,39 +34,106 @@ public final class CompositeLogger implements Logger{
 		this._successor = successor;
 	}
 	
-	public void debug (String message) {
-		if (this._actualLogger!=null){
-			this._actualLogger.debug (message);
-		}
-		if (this._successor!=null){
-			this._successor.debug (message);
+	/**
+	 * Registra un messaggio di DEBUG.
+	 * @param message il messaggio.
+	 */
+	public void debug (final String message) {
+		debug (this._actualLogger, message);
+		debug (this._successor, message);
+	}
+	
+	private void debug (final Logger logger, final String message) {
+		if (logger!=null){
+			logger.debug (message);
 		}
 	}
 	
-	public void error (String message) {
-		if (this._actualLogger!=null){
-			this._actualLogger.error (message);
-		}
-		if (this._successor!=null){
-			this._successor.error (message);
+	/**
+	 * Registra un messaggio di ERRORE.
+	 * @param message il messaggio.
+	 */
+	public void error (final String message) {
+		error (this._actualLogger, message);
+		error (this._successor, message);
+	}
+	
+	private void error (final Logger logger, final String message) {
+		if (logger!=null){
+			logger.error (message);
 		}
 	}
 	
-	public void info (String message) {
-		if (this._actualLogger!=null){
-			this._actualLogger.info (message);
-		}
-		if (this._successor!=null){
-			this._successor.info (message);
+	/**
+	 * Registra un messaggio di ERRORE associato ad un evento specificato.
+	 * @param message il messaggio.
+	 * @param t l'evento.
+	 */
+	public void error (final String message, final Throwable t) {
+		error (this._actualLogger, message, t);
+		error (this._successor, message, t);
+	}
+	
+	private void error (final Logger logger, final String message, final Throwable t) {
+		if (logger!=null){
+			logger.error (message, t);
 		}
 	}
 	
-	public void warning (String message) {
-		if (this._actualLogger!=null){
-			this._actualLogger.warning (message);
+	/**
+	 * Registra un messaggio di INFORMAZIONE.
+	 * @param message il messaggio.
+	 */
+	public void info (final String message) {
+		info (this._actualLogger, message);
+		info (this._successor, message);
+	}
+	
+	private void info (final Logger logger, final String message) {
+		if (logger!=null){
+			logger.info (message);
 		}
-		if (this._successor!=null){
-			this._successor.warning (message);
+	}
+	
+	/**
+	 * Registra un messaggio di AVVISO.
+	 * @param message il messaggio.
+	 */
+	public void warning (final String message) {
+		warning (this._actualLogger, message);
+		warning (this._successor, message);
+	}
+	
+	private void warning (final Logger logger, final String message) {
+		if (logger!=null){
+			logger.warning (message);
+		}
+	}
+	
+	/**
+	 * Registra un messaggio di AVVISO associato ad un evento specificato.
+	 * @param message il messaggio.
+	 * @param t l'evento.
+	 */
+	public void warning (final String message, final Throwable t) {
+		warning (this._actualLogger, message,t);
+		warning (this._successor, message, t);
+	}
+	
+	private void warning (final Logger logger, final String message, final Throwable t) {
+		if (logger!=null){
+			logger.warning (message, t);
+		}
+	}
+	
+	public void close () {
+		close (this._actualLogger);
+		close (this._successor);
+	}
+	
+	private void close (final Logger logger) {
+		if (logger!=null){
+			logger.close ();
 		}
 	}
 	

@@ -19,6 +19,11 @@ public final class CalendarUtils {
 	 */
 	public final static String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 	
+	/**
+	 * Formato timestamp per nomi di file.
+	 */
+	public final static String FILENAME_TIMESTAMP_FORMAT = "yyyyMMddHHmmssSSS";
+	
 	/** Costruttore privato, la clase deve esporre solometodi statici */
 	private CalendarUtils() {
 	}
@@ -44,6 +49,20 @@ public final class CalendarUtils {
 			return null;
 		}
 		return dateFormat.format(calendar);
+	}
+	
+	/**
+	 * Ritorna un timestamp della data specificata usando il formato specificato.
+	 *
+	 * @param format il formato.
+	 * @param calendar la data da cui ricavare l timestamp
+	 * @return un timestamp della data specificata usando il formato specificato.
+	 */	
+	public static String getTS (Date calendar, String format){
+		if (calendar==null){
+			return null;
+		}
+		return new SimpleDateFormat (format).format(calendar);
 	}
 	
 	/** Ritorna una istanza di  <TT>Calendar</TT> valorizzata con la data

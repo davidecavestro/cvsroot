@@ -16,21 +16,23 @@ import javax.swing.tree.*;
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.*;
 import com.ost.timekeeper.conf.*;
+import com.ost.timekeeper.help.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
 import java.awt.*;
 import java.text.*;
+import javax.help.*;
 
 /**
  * Finestra principale dell'applicazione.
  *
  * @author  davide
+ * @todo implementare UNDO/REDO
  */
 public final class MainForm extends javax.swing.JFrame implements Observer {
 	
 	private Application application;
-	private ProgressItemCellRenderer progressItemCellRenderer;
 	/**
 	 * Costruttore.
 	 *
@@ -42,7 +44,6 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		this.application.addObserver (progressTreeModel);
 		ApplicationOptionsNotifier.getInstance ().addObserver (this);
 		
-		progressItemCellRenderer = new ProgressItemCellRenderer ();
 		initComponents ();
 		//inizializza table model su dati applicazione
 		ProgressListFrame.getInstance ().getProgressTable ().getProgressTableModel ().load (application.getCurrentItem ());
@@ -58,7 +59,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private void initComponents () {
 		progressTreePopup = new javax.swing.JPopupMenu ();
 		jPanelMain = new javax.swing.JPanel ();
-		jToolBarMain = new javax.swing.JToolBar ();
+		mainToolbar = new javax.swing.JToolBar ();
 		nodeCreateButton = new javax.swing.JButton ();
 		nodeDeleteButton = new javax.swing.JButton ();
 		startButton = new javax.swing.JButton ();
@@ -70,7 +71,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 //		jLabel3 = new javax.swing.JLabel ();
 		jPanelTree = new javax.swing.JPanel ();
 		jSplit_Tree_Data = new javax.swing.JSplitPane ();
-		progressItemTree = new javax.swing.JTree ();
+		progressItemTree = new ProgressItemTree (this.progressTreeModel);
 		
 		//		dataTabbedPane = new javax.swing.JTabbedPane ();
 		desktop = Desktop.getInstance ();
@@ -109,13 +110,14 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuHelp = new javax.swing.JMenu ();
 		jMenuItemAbout = new javax.swing.JMenuItem ();
 		jMenuItemHelp = new javax.swing.JMenuItem ();
+		jMenuItemContextualHelp = new javax.swing.JMenuItem ();
 		
 		setDefaultCloseOperation (javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		setTitle (ResourceSupplier.getString (ResourceClass.UI, "global", "app.title"));
 		setBackground (new java.awt.Color (204, 204, 255));
 		setFont (new java.awt.Font ("Default", 0, 10));
 		setIconImage (getIconImage ());
-		setName ("frameMain");
+		setName ("MainWindow");
 		addWindowListener (new java.awt.event.WindowAdapter () {
 			public void windowClosing (java.awt.event.WindowEvent evt) {
 				Application.getInstance ().exit ();
@@ -124,25 +126,39 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		jPanelMain.setLayout (new java.awt.BorderLayout ());
 		
-		jToolBarMain.setLayout (new java.awt.FlowLayout ( java.awt.FlowLayout.LEFT));
-		jToolBarMain.setBorder (new javax.swing.border.EtchedBorder ());
-		jToolBarMain.setRollover (true);
-		jToolBarMain.setAutoscrolls (true);
+		mainToolbar.setLayout (new java.awt.FlowLayout ( java.awt.FlowLayout.LEFT));
+		mainToolbar.setBorder (new javax.swing.border.EtchedBorder ());
+		mainToolbar.setRollover (true);
+		mainToolbar.setAutoscrolls (true);
 		nodeCreateButton.setAction (ActionPool.getInstance ().getNodeCreateAction ());
-		jToolBarMain.add (nodeCreateButton);
+		nodeCreateButton.setText ("");
+		mainToolbar.add (nodeCreateButton);
 		
 		nodeDeleteButton.setAction (ActionPool.getInstance ().getNodeDeleteAction ());
-		jToolBarMain.add (nodeDeleteButton);
+		nodeDeleteButton.setText ("");
+		mainToolbar.add (nodeDeleteButton);
 		
-		jToolBarMain.add (new javax.swing.JSeparator ());
+		mainToolbar.add (new javax.swing.JSeparator ());
 		
 		startButton.setAction (ActionPool.getInstance ().getProgressStartAction ());
-		jToolBarMain.add (startButton);
+		startButton.setText ("");
+		mainToolbar.add (startButton);
 		
 		stopButton.setAction (ActionPool.getInstance ().getProgressStopAction ());
-		jToolBarMain.add (stopButton);
+		stopButton.setText ("");
+		mainToolbar.add (stopButton);
 		
-		jPanelMain.add (jToolBarMain, java.awt.BorderLayout.NORTH);
+		mainToolbar.add (new javax.swing.JSeparator ());
+		
+		{
+			final DirectHelpButton directHelpButton = new DirectHelpButton ();
+			directHelpButton.setRolloverEnabled (true);
+			directHelpButton.setBorderPainted (true);
+			mainToolbar.add (directHelpButton);
+		}
+		javax.help.CSH.setHelpIDString(mainToolbar, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.MAINTOOLBAR ));
+		
+		jPanelMain.add (mainToolbar, java.awt.BorderLayout.NORTH);
 		
 		statusBar.setLayout (new javax.swing.BoxLayout (statusBar, javax.swing.BoxLayout.X_AXIS));
 		
@@ -167,24 +183,10 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jPanelTree.setLayout (new java.awt.BorderLayout ());
 		
 		jSplit_Tree_Data.setToolTipText (ResourceSupplier.getString (ResourceClass.UI, "global", "controls.splitter.tooltip"));
-		TreeCellEditor treeCellEditor = new javax.swing.tree.DefaultTreeCellEditor (progressItemTree, progressItemCellRenderer);
-		treeCellEditor.addCellEditorListener (new CellEditorListener (){
-			public void editingStopped (ChangeEvent e){
-				TreeCellEditor source = (TreeCellEditor)e.getSource ();
-				String newValue = (String)source.getCellEditorValue ();
-				application.getSelectedItem ().setName (newValue);
-			}
-			
-			public void editingCanceled (ChangeEvent e){System.out.println (e);}
-		});
-		progressItemTree.setCellEditor (treeCellEditor);
-		progressItemTree.setCellRenderer (progressItemCellRenderer);
-		progressItemTree.setMaximumSize (null);
-		progressItemTree.setMinimumSize (null);
-		progressItemTree.setModel (this.progressTreeModel);
 		progressItemTree.setAutoscrolls (true);
 		progressItemTree.setPreferredSize (new java.awt.Dimension (150, 200));
 		jSplit_Tree_Data.setLeftComponent (new JScrollPane (progressItemTree));
+		javax.help.CSH.setHelpIDString(progressItemTree, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PROGRESSITEMTREE ));
 		
 		/*
 		 * Gestione doppio click su albero.
@@ -213,6 +215,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		try {
 			progressListFrame.setSelected (true);
 		} catch (java.beans.PropertyVetoException e) {}
+		javax.help.CSH.setHelpIDString(progressListFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PROGRESSLIST ));
 
 		/*
 		 * Dettaglio nodo di avanzamento.
@@ -225,6 +228,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		try {
 			progressItemInspectorFrame.setSelected (true);
 		} catch (java.beans.PropertyVetoException e) {}
+		javax.help.CSH.setHelpIDString(progressItemInspectorFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PROGRESSITEMINSPECTORFRAME ));
 		
 		//		dataTabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "detail")
 		//		, new JScrollPane (progressItemEditPanel));
@@ -240,12 +244,14 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		try {
 			periodInspectorFrame.setSelected (true);
 		} catch (java.beans.PropertyVetoException e) {}
+		javax.help.CSH.setHelpIDString(periodInspectorFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PERIODINSPECTORFRAME ));
 		
 
 		//		dataTabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "detail")
 		//		, new JScrollPane (progressItemEditPanel));
 		
 		jSplit_Tree_Data.setRightComponent (desktop);
+		jSplit_Tree_Data.setOneTouchExpandable (true);
 		
 		jPanelTree.add (jSplit_Tree_Data, java.awt.BorderLayout.CENTER);
 		
@@ -295,7 +301,9 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuFile.add (new javax.swing.JSeparator ());
 		
 		//separatore
-		jMenuItemFinish.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+		//evitiamo uscite involontarie, almeno finchè non si implementa l'alert
+		//@todo implementare alert richiesta uscita applicazione
+		//jMenuItemFinish.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
 		jMenuItemFinish.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "file.exit"));
 		jMenuItemFinish.addActionListener (new java.awt.event.ActionListener () {
 			public void actionPerformed (java.awt.event.ActionEvent evt) {
@@ -369,8 +377,15 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		jMenuItemHelp.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_F1, 0));
 		jMenuItemHelp.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help.help"));
-		jMenuItemHelp.setActionCommand ("Help");
+//		jMenuItemHelp.setActionCommand ("Help");
+		HelpManager.getInstance ().initialize (jMenuItemHelp);
+		
 		jMenuHelp.add (jMenuItemHelp);
+		
+		jMenuItemContextualHelp.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help.contextualhelp"));
+		jMenuItemContextualHelp.addActionListener(new CSH.DisplayHelpAfterTracking(HelpManager.getInstance ().getMainHelpBroker ()));
+		
+		jMenuHelp.add (jMenuItemContextualHelp);
 		
 		jMenuBarMain.add (jMenuHelp);
 		
@@ -421,6 +436,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JMenuItem jMenuItemTreeExpandCollapse;
 	private javax.swing.JMenuItem jMenuItemFinish;
 	private javax.swing.JMenuItem jMenuItemHelp;
+	private javax.swing.JMenuItem jMenuItemContextualHelp;
 	private javax.swing.JMenuItem jMenuItemNew;
 	private javax.swing.JMenuItem jMenuItemOpen;
 	private javax.swing.JMenuItem jMenuItemSave;
@@ -435,7 +451,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JPopupMenu progressTreePopup;
 	private javax.swing.JSplitPane jSplit_Tree_Data;
 	private Desktop desktop;
-	private javax.swing.JToolBar jToolBarMain;
+	private javax.swing.JToolBar mainToolbar;
 	private javax.swing.JProgressBar jobProgress;
 	private javax.swing.JTree progressItemTree;
 	private javax.swing.JButton nodeCreateButton;
@@ -504,18 +520,23 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			this.progressItemTree.invalidate ();
 			initTableModelListeners ();
 		} else if (arg!=null && ( arg.equals (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || arg.equals (ObserverCodes.CURRENTITEMCHANGE))){
-			Application app = Application.getInstance ();
+			final Application app = Application.getInstance ();
 			statusLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "statusbar", app.getCurrentItem ()!=null?"statuslabel.working_UC":"statuslabel.idle_UC"));
 
 			Duration duration=null;
-			Period selectedProgress = application.getSelectedProgress ();
-			if (selectedProgress!=null){
-				duration = selectedProgress.getDuration ();
+			{
+				final ProgressItem currentProgressItem = application.getCurrentItem ();
+				if (currentProgressItem!=null){
+					final Period currentProgress = currentProgressItem.getCurrentProgress ();
+					if (currentProgress!=null){
+						duration = currentProgress.getDuration ();
+					}
+				}
 			}
 			if (duration==null){
 				duration = emptyDuration;
 			}
-			StringBuffer sb = new StringBuffer ();
+			final StringBuffer sb = new StringBuffer ();
 			/*
 			sb.append (durationNumberFormatter.format(duration.getDays()))
 			.append (":")
@@ -526,14 +547,16 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			.append (":")
 			.append (durationNumberFormatter.format (duration.getSeconds ()));
 			currentDurationLabel.setText (sb.toString ());
-
+			
+			currentDurationLabel.revalidate ();
+			Application.getLogger ().debug ("updating duration label");
+			
 		} else if (arg!=null && (arg.equals (ObserverCodes.PROCESSINGCHANGE))){
 			Application app = Application.getInstance ();
 			jobProgress.setIndeterminate (app.isProcessing ());
 			jobProgress.setValue (app.isProcessing ()?99:0);
 		} else if (arg!=null && arg.equals(ObserverCodes.APPLICATIONOPTIONSCHANGE)){
 			this.desktop.setBackground (Application.getOptions ().getDesktopColor ());
-			System.out.println("changing desktop color: "+Application.getOptions ().getDesktopColor ());
 			this.desktop.revalidate ();
 			this.desktop.repaint ();
 		}
@@ -603,11 +626,14 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			if (e.isPopupTrigger ()) {
 				int x = e.getX ();
 				int y = e.getY ();
-				TreePath path = progressItemTree.getPathForLocation (x, y);
+				final TreePath path = progressItemTree.getPathForLocation (x, y);
+				/* varia selezione corrente */
+				progressItemTree.setSelectionPath (path);
 				treeExpandCollapseAction.makeForPath (path);
 				progressTreePopup.show (progressItemTree, x, y);
 			}
 		}
 	}
+	
 	
 }

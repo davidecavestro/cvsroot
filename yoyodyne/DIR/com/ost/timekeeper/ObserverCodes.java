@@ -14,12 +14,12 @@ package com.ost.timekeeper;
 public interface ObserverCodes {
 	
 	/**
-	 *
+	 * Variazione del periodo di avanzamento corrente.
 	 */
 	public final static String ITEMPROGRESSINGPERIODCHANGE = "itemprogressingperiodchange";
 	
 	/**
-	 * Variazione nodo in corso di avanzamento.
+	 * Variazione del nodo in corso di avanzamento.
 	 */
 	public final static String ITEMPROGRESSINGCHANGE = "itemprogressingchange";
 	

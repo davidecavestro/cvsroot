@@ -10,8 +10,8 @@ import java.util.*;
 
 /**
  * Generico nodo della gerarchia di avanzamenti (nodo di avanzamento).
- * Un nodo puà avere figli, nonchè avanzamenti associati.
- * Un nodo può avere un padre, se non lo ha è esso funge da radice della gerarchia.
+ * Un nodo può avere figli, nonchè avanzamenti associati.
+ * Un nodo può avere un padre, se non lo ha esso funge da radice della gerarchia.
  * Un nodo è associato ad un progetto (lo stesso dei figli e del padre).
  *
  * @author  davide
@@ -90,6 +90,18 @@ public final class ProgressItem extends Observable{
 	}
 	
 	/**
+	 * Costruttore copia.
+	 *
+	 * @param source il nodo sorgente.
+	 */
+	public ProgressItem (final ProgressItem source) {
+		this.code=source.code;
+		this.description = source.description;
+		this.name = source.name;
+		this.notes = source.notes;
+	}
+	
+	/**
 	 * Ritorna il codice di questo nodo.
 	 *
 	 * @return il codice.
@@ -146,9 +158,12 @@ public final class ProgressItem extends Observable{
 	 * questo nodo e sul nuovo figlio.
 	 *
 	 * @param child il nuovo figlio.
+	 * @return la posizione di inserimento del nuovo nodo.
 	 */
-	public void insert (ProgressItem child){
-		insert (child, this.children.size ());
+	public int insert (ProgressItem child){
+		final int position = this.children.size ();
+		insert (child, position);
+		return position;
 	}
 	
 	/**
@@ -293,7 +308,7 @@ public final class ProgressItem extends Observable{
 	 * @return la lista dei figli.
 	 */
 	public List getChildren (){
-		return this.children;
+		return new ArrayList (this.children);
 	}
 	
 	/**
@@ -323,7 +338,7 @@ public final class ProgressItem extends Observable{
 	 * @return la lista di avanzamenti appartnenti a queto nodo.
 	 */
 	public List getProgresses (){
-		return this.progresses;
+		return new ArrayList (this.progresses);
 	}
 	
 	/**
@@ -347,8 +362,8 @@ public final class ProgressItem extends Observable{
 	 * come radice.
 	 */
 	public List getDescendants (){
-		List children = getChildren ();
-		List retValue = new ArrayList (children);
+		final List children = getChildren ();
+		final List retValue = new ArrayList (children);
 		for (Iterator it = children.iterator (); it.hasNext ();){
 			retValue.addAll (((ProgressItem)it.next ()).getDescendants ());
 		}
@@ -370,7 +385,7 @@ public final class ProgressItem extends Observable{
 	 * @param children la nuova lista dei figli di questo nodo.
 	 */
 	public void setChildren (List children) {
-		this.children=children;
+		this.children=new ArrayList (children);
 	}
 	
 	/**
@@ -405,7 +420,7 @@ public final class ProgressItem extends Observable{
 	 * @param progresses Gli avanzamenti.
 	 */
 	public void setProgresses (List progresses) {
-		this.progresses=progresses;
+		this.progresses=new ArrayList (progresses);
 	}
 	
 	/**
@@ -473,4 +488,14 @@ public final class ProgressItem extends Observable{
 		this.notes = notes;
 	}
 	
+	/**
+	 * Ritorna <TT>true</TT> se questo nodo è la radice della gerarchia dei 
+	 * nodi di avanzamento del progetto.
+	 *
+	 * @return <TT>true</TT> se questo nodo è la radice della gerarchia dei 
+	 * nodi di avanzamento del progetto.
+	 */	
+	public boolean isRoot (){
+		return this.parent==null;
+	}
 }

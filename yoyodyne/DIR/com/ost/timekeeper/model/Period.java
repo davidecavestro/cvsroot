@@ -65,6 +65,19 @@ public final class Period extends Observable{
 		this.to = to;
 	}
 	
+	/**
+	 *
+	 * Costruttore copia.
+	 *
+	 * @param source la sorgente della copia.
+	 */
+	public Period(final Period source) {
+		this.description = source.description;
+		this.notes = source.notes;
+		this.from = source.from;
+		this.to = source.to;
+	}
+	
 	/** 
 	 * Ritorna la data di inizio di questo periodo.
 	 *

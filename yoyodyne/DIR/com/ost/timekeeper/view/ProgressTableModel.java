@@ -37,7 +37,7 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	 * @param root il nodo radice.
 	 */
 	public ProgressTableModel(ProgressItem root) {
-		System.out.println ("Creating new ProgressTableModel");
+		Application.getLogger ().debug ("Creating new ProgressTableModel");
 		this.currentPeriodIdx=-1;
 		this.columns = new Object[]{
 			ResourceSupplier.getString(ResourceClass.UI, "controls", "from"),
@@ -160,7 +160,7 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	public boolean isCellEditable(int row, int col) {return false;}
 	
 	/**
-	 * Ritorna l'indice del perdiodo di avanzamento corrente.
+	 * Ritorna l'indice del periodo di avanzamento corrente.
 	 *
 	 * @return l'indice del perdiodo di avanzamento corrente.
 	 */	
@@ -211,7 +211,6 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 			for (int i=0;i<progresses.size();i++){
 				Period p = (Period)progresses.get (i);
 				if (p==app.getCurrentItem().getCurrentProgress()){
-//					System.out.println ("Changing current period idxfrom: "+currentPeriodIdx+" to:"+i+"\nstacktrace: \n"+ExceptionUtils.getStackStrace(new Throwable ()));
 					this.currentPeriodIdx=i;
 					break;
 				}
@@ -229,8 +228,8 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 			if (arg!=null && arg.equals(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE)){
 //				reloadProgresses ();
 				synchCurrentPeriodIdx ();
+				Application.getLogger ().debug ("Updating progress period list. Current perdio IDX = "+this.currentPeriodIdx);
 				this.fireTableChanged(new TableModelEvent(this/*, this.getCurrentPeriodIndex()*/));
-//				System.out.println (this.hashCode()+" current period Idx: "+this.getCurrentPeriodIndex()+"\nstacktrace: \n"+ExceptionUtils.getStackStrace(new Throwable ()));
 			}
 		}
 	}

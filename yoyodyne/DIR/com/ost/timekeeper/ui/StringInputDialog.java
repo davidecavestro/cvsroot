@@ -6,7 +6,13 @@
 
 package com.ost.timekeeper.ui;
 
+import com.ost.timekeeper.help.*;
+import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.util.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.*;
 
 /**
  * Richiede all'utente l'immissione di una gererica stringa.
@@ -22,91 +28,126 @@ public final class StringInputDialog extends javax.swing.JDialog {
 	 * Stato conferma scelta.
 	 */
 	private boolean confirmed = false;
-
+	
 	/**
 	 * Costruttore con parametri.
 	 */
-	public StringInputDialog(java.awt.Frame parent, String title, String label, boolean modal) {
-		super(parent, modal);
-		initComponents();
+	public StringInputDialog (java.awt.Frame parent, String title, String label, boolean modal, HelpResource helpResource) {
+		super (parent, modal);
+		/* inizializza help contestuale */
+		javax.help.CSH.setHelpIDString (this, HelpResourcesResolver.getInstance ().resolveHelpID (helpResource ));
+		
 		this.titleText = title;
 		this.labelText = label;
-		postInitComponents();
+		initComponents ();
+		postInitComponents ();
+		
+		/*
+		 * Centra sullo schermo.
+		 */
+		this.setLocationRelativeTo (null);
 	}
 	
 	/**
 	 * Inizializza le componenti di questa finestra..
 	 */
-	private void initComponents() {
-		jPanelDescription = new javax.swing.JPanel();
-		jTextFieldInput = new javax.swing.JTextField();
-		jPanelData = new javax.swing.JPanel();
-		jButtonConfirm = new javax.swing.JButton();
-		jButtonCancel = new javax.swing.JButton();
+	private void initComponents () {
+		descriptionPanel = new javax.swing.JPanel ();
+		inputPanel = new javax.swing.JPanel ();
+		dataEditor = new javax.swing.JTextField ();
+		buttonPanel = new javax.swing.JPanel ();
+		confirmButon = new javax.swing.JButton ();
+		cancelButton = new javax.swing.JButton ();
 		
-		addWindowListener(new java.awt.event.WindowAdapter() {
-			public void windowClosing(java.awt.event.WindowEvent evt) {
-				closeDialog(evt);
+		getContentPane ().setLayout (new BorderLayout ());
+		
+		addWindowListener (new java.awt.event.WindowAdapter () {
+			public void windowClosing (java.awt.event.WindowEvent evt) {
+				closeDialog (evt);
 			}
 		});
 		
-		jPanelDescription.setLayout(new java.awt.BorderLayout());
+		descriptionPanel.setLayout (new java.awt.BorderLayout ());
+		descriptionPanel.add (new JLabel (this.labelText), BorderLayout.WEST);
+		final DirectHelpButton dhb = new DirectHelpButton ();
+		dhb.setRolloverEnabled (true);
+		descriptionPanel.add (dhb, BorderLayout.EAST);
 		
-		jTextFieldInput.setText("");
-		jPanelDescription.add(jTextFieldInput, java.awt.BorderLayout.CENTER);
+		descriptionPanel.setBorder (new EmptyBorder (3,5,3,5));
+		getContentPane ().add (descriptionPanel, java.awt.BorderLayout.NORTH);
 		
-		getContentPane().add(jPanelDescription, java.awt.BorderLayout.CENTER);
+		inputPanel.setLayout (new java.awt.BorderLayout ());
 		
-		jButtonConfirm.setText(ResourceSupplier.getString(ResourceClass.UI, "global", "controls.button.confirm"));
-		jButtonConfirm.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jButtonConfirmActionPerformed(evt);
+		dataEditor.setText ("");
+		
+		
+		//Garantisce che il campo abbia sempre il focus iniziale
+        addComponentListener(new ComponentAdapter() {
+            public void componentShown(ComponentEvent ce) {
+                dataEditor.requestFocusInWindow();
+            }
+        });		
+		
+		inputPanel.setBorder (new EmptyBorder (3,5,3,5));
+		inputPanel.add (dataEditor, java.awt.BorderLayout.CENTER);
+		getContentPane ().add (inputPanel, java.awt.BorderLayout.CENTER);
+		
+		confirmButon.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.confirm"));
+		confirmButon.addActionListener (new java.awt.event.ActionListener () {
+			public void actionPerformed (java.awt.event.ActionEvent evt) {
+				confirmButtonActionPerformed (evt);
 			}
 		});
 		
-		jPanelData.add(jButtonConfirm);
+		buttonPanel.add (confirmButon);
 		
-		jButtonCancel.setText(ResourceSupplier.getString(ResourceClass.UI, "global", "controls.button.cancel"));
-		jButtonCancel.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jButtonCancelActionPerformed(evt);
+		cancelButton.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.cancel"));
+		final Action cancelAction = new javax.swing.AbstractAction ("cancel"){
+			public void actionPerformed(ActionEvent e) {
+				onCancel ();
 			}
-		});
+		};
+		cancelButton.setAction (cancelAction);
+		cancelButton.getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put (KeyStroke.getKeyStroke ("ESCAPE"), "cancel");
+		cancelButton.getActionMap().put("cancel", cancelAction);
 		
-		jPanelData.add(jButtonCancel);
+		buttonPanel.add (cancelButton);
 		
-		getContentPane().add(jPanelData, java.awt.BorderLayout.SOUTH);
+		getContentPane ().add (buttonPanel, java.awt.BorderLayout.SOUTH);
 		
-		getRootPane().setDefaultButton (jButtonConfirm);
-		pack();
+		inputPanel.setFocusCycleRoot (true);
+		
+		getRootPane ().setDefaultButton (confirmButon);
+		this.setTitle (this.titleText);
+		pack ();
 	}
 	
 	/**
 	 * Post inizializzazione componenti.
 	 */
-	private void postInitComponents() {
-		jPanelDescription.setBorder(new javax.swing.border.TitledBorder(this.labelText));
-		this.setTitle(this.titleText);
-		this.pack();
+	private void postInitComponents () {
 	}
 	
-	private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {
-		// Add your handling code here:
-		this.hide();
+	private void jButtonCancelActionPerformed (java.awt.event.ActionEvent evt) {
+		onCancel ();
 	}
 	
-	private void jButtonConfirmActionPerformed(java.awt.event.ActionEvent evt) {
+	private void onCancel () {
+		this.hide ();
+	}
+	
+	private void confirmButtonActionPerformed (java.awt.event.ActionEvent evt) {
 		// Add your handling code here:
 		this.confirmed = true;
-		this.hide();
+		this.hide ();
 	}
 	
-	/** 
+	/**
 	 * Chiude questa finestra.
 	 */
-	private void closeDialog(java.awt.event.WindowEvent evt) {
-		setVisible(false);
-		dispose();
+	private void closeDialog (java.awt.event.WindowEvent evt) {
+		setVisible (false);
+		dispose ();
 	}
 	
 	/**
@@ -117,13 +158,13 @@ public final class StringInputDialog extends javax.swing.JDialog {
 	public boolean isConfirmed (){
 		return this.confirmed;
 	}
-	// Variables declaration - do not modify
-	private javax.swing.JButton jButtonConfirm;
-	private javax.swing.JButton jButtonCancel;
-	private javax.swing.JPanel jPanelDescription;
-	private javax.swing.JPanel jPanelData;
-	private javax.swing.JTextField jTextFieldInput;
-	// End of variables declaration
+	
+	private javax.swing.JButton confirmButon;
+	private javax.swing.JButton cancelButton;
+	private javax.swing.JPanel descriptionPanel;
+	private javax.swing.JPanel inputPanel;
+	private javax.swing.JPanel buttonPanel;
+	private javax.swing.JTextField dataEditor;
 	
 	/**
 	 * Ritorna una stringa dopo averne richiesto l'immissione all'utente.
@@ -133,11 +174,11 @@ public final class StringInputDialog extends javax.swing.JDialog {
 	 * @param label la richiesta.
 	 * @param modal stato modale.
 	 * @return  una stringa dopo averne immessa all'utente.
-	 */	
-	public static String supplyString(java.awt.Frame parent, String title, String label, boolean modal){
-		StringInputDialog dialog = new StringInputDialog(parent, title, label, modal);
-		dialog.pack();
-		dialog.show();
-		return dialog.isConfirmed ()?dialog.jTextFieldInput.getText():null;
+	 */
+	public static String supplyString (java.awt.Frame parent, String title, String label, boolean modal, HelpResource helpResource){
+		final StringInputDialog dialog = new StringInputDialog (parent, title, label, modal, helpResource);
+		dialog.pack ();
+		dialog.show ();
+		return dialog.isConfirmed ()?dialog.dataEditor.getText ():null;
 	}
 }

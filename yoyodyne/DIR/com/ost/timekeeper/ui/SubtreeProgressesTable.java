@@ -193,7 +193,7 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 		if (o instanceof Application){
 			if (arg!=null && arg.equals(ObserverCodes.SELECTEDITEMCHANGE)){
 				this.reloadModel(((Application)o).getSelectedItem());
-			} else if (arg!=null && arg.equals(ObserverCodes.ITEMPROGRESSINGCHANGE)){
+			} else if (arg!=null && (arg.equals(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || arg.equals(ObserverCodes.ITEMPROGRESSINGCHANGE))){
 				//				this.reloadModel(((Application)o).getSelectedItem());
 				this.dataModel.fireTableChanged(new TableModelEvent(getModel(), this.dataModel.getCurrentPeriodIndex()));
 			}

@@ -28,14 +28,14 @@ public final class ProgressListFrame extends javax.swing.JInternalFrame {
 	private com.ost.timekeeper.ui.SubtreeProgressesTable progressTable;
 	
 	/**
+	 * La componente per la selezione del tipo di lista.
+	 */
+	private JComboBox progressesListCombo;
+	
+	/**
 	 * Istanza singleton.
 	 */
 	private static ProgressListFrame _instance;
-	
-	/**
-	 * Pannello di editazione dettaglio.
-	 */
-	private PeriodEditPanel periodEditPanel;
 	
 	/** 
 	 * Costruttore. 
@@ -93,27 +93,19 @@ public final class ProgressListFrame extends javax.swing.JInternalFrame {
 		);
 		
 		final JPanel progressesPane = new JPanel (new BorderLayout ());
-		final JComboBox progressesListCombo = new JComboBox (
+		this.progressesListCombo = new JComboBox (
 		/*
 		 * valori possibili.
 		 * @@@ ATTENZIONE: la posizione è direttamente mappata nel gesore azione.
 		 */
-		new Object[]{
-		ResourceSupplier.getString (ResourceClass.UI, "controls", "local"), 
-		ResourceSupplier.getString (ResourceClass.UI, "controls", "subtree")
+		new Object[]{ProgressListType.LOCAL, ProgressListType.SUBTREE
+//		ResourceSupplier.getString (ResourceClass.UI, "controls", "local"), 
+//		ResourceSupplier.getString (ResourceClass.UI, "controls", "subtree")
 		}
 		);
 		progressesListCombo.addActionListener (new ActionListener (){
 			public void actionPerformed (ActionEvent ae){
-				final int selectedIndex = progressesListCombo.getSelectedIndex ();
-				switch (selectedIndex){
-					case 0: 
-						progressTable.getProgressTableModel ().setProgressListType (ProgressListType.LOCAL);
-						break;
-					case 1: 
-						progressTable.getProgressTableModel ().setProgressListType (ProgressListType.SUBTREE);
-						break;
-				}
+				progressTable.getProgressTableModel ().setProgressListType ((ProgressListType)progressesListCombo.getSelectedItem ());
 			}
 		});
 		final JPanel progressesTopPane = new JPanel (new BorderLayout ());
@@ -134,6 +126,10 @@ public final class ProgressListFrame extends javax.swing.JInternalFrame {
 		 * Imposta dimensione minima.
 		 */
 		this.setMinimumSize (new Dimension (250, 150));
+		
+		/* Imposta selezione lista avanzamenti. */
+		setListType (Application.getOptions ().getProgressListType ());
+
 		pack ();
 	}
 
@@ -145,5 +141,23 @@ public final class ProgressListFrame extends javax.swing.JInternalFrame {
 		return this.progressTable;
 	}
 	
+	/**
+	 * Imposta il tipo di lista avanzamenti di questa finestra.
+	 *
+	 * @param listType il tipo di lista avanzamenti.
+	 */	
+	public void setListType (ProgressListType listType){
+		if (listType!=null){
+			this.progressesListCombo.setSelectedItem (listType);
+		}
+	}
 	
+	/**
+	 * Ritorna il tipo di lista avanzamenti di questa finestra.
+	 *
+	 * @return il tipo di lista avanzamenti.
+	 */	
+	public ProgressListType getListType (){
+		return (ProgressListType) this.progressesListCombo.getSelectedItem ();
+	}
 }

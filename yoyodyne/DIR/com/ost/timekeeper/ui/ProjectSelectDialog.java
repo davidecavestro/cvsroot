@@ -9,10 +9,12 @@ package com.ost.timekeeper.ui;
 import java.util.*;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.help.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.util.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 /**
  * Finestra di selezione di un progetto.
@@ -24,6 +26,10 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 	private String titleText;
 	private String labelText;
 	private List projects;
+	/**
+	 * Conferma della selezione effettuata.
+	 */
+	private boolean confirmed;
 	
 	/**
 	 * Costruttore con parametri.
@@ -34,113 +40,137 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 	 * @param modal stato modale.
 	 * @param projects l'insieme di progetti da presentare per la scelta.
 	 */
-	public ProjectSelectDialog(java.awt.Frame parent, String title, String label, boolean modal, List projects) {
-		super(parent, modal);
+	public ProjectSelectDialog (java.awt.Frame parent, String title, String label, boolean modal, List projects) {
+		super (parent, modal);
 		this.projects=projects;
-		initComponents();
+		initComponents ();
 		this.titleText = title;
 		this.labelText = label;
-		postInitComponents();
+		postInitComponents ();
+		/* inizializza help contestuale */
+		javax.help.CSH.setHelpIDString (this, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PROJECTSELECTDIALOG ));
+		
 		/*
 		 * centra
 		 */
 		this.setLocationRelativeTo (null);
 	}
 	
-	/** 
+	/**
 	 * Inizializzazione componenti.
 	 */
-    private void initComponents() {
-        jPanelMain = new javax.swing.JPanel();
-        jLabelChoose = new javax.swing.JLabel();
-        jListProjects = new javax.swing.JList();
-        jPanelBottom = new javax.swing.JPanel();
-        jButtonOk = new javax.swing.JButton();
-        jButtonCancel = new javax.swing.JButton();
-
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                closeDialog(evt);
-            }
-        });
-
-        jPanelMain.setLayout(new java.awt.BorderLayout());
-
-        jLabelChoose.setText("Choose");
-        jPanelMain.add(jLabelChoose, java.awt.BorderLayout.NORTH);
-
-        jListProjects.setModel(new ProjectListModel (this.projects));
-		jListProjects.addMouseListener (new MouseAdapter (){
-			public void mouseClicked(MouseEvent e) {
+	private void initComponents () {
+		infoLabel = new javax.swing.JLabel ();
+		projectList = new javax.swing.JList ();
+		buttonPanel = new javax.swing.JPanel ();
+		confirmButton = new javax.swing.JButton ();
+		cancelButton = new javax.swing.JButton ();
+		directHelpButton = new DirectHelpButton ();
+		
+		getContentPane ().setLayout (new java.awt.BorderLayout ());
+		
+		addWindowListener (new java.awt.event.WindowAdapter () {
+			public void windowClosing (java.awt.event.WindowEvent evt) {
+				confirmed=false;
+				closeDialog (evt);
+			}
+		});
+		
+		infoLabel.setText ("Choose");
+		
+		final JPanel northPanel = new JPanel ();
+		northPanel.setLayout (new java.awt.BorderLayout ());
+		northPanel.add (infoLabel, java.awt.BorderLayout.CENTER);
+		
+		northPanel.add (directHelpButton, java.awt.BorderLayout.EAST);
+		northPanel.setBorder (new EmptyBorder (3, 5, 3, 5));
+		getContentPane ().add (northPanel, java.awt.BorderLayout.NORTH);
+		
+		//Garantisce che il campo abbia sempre il focus iniziale
+		addComponentListener (new ComponentAdapter () {
+			public void componentShown (ComponentEvent ce) {
+				projectList.requestFocusInWindow ();
+			}
+		});
+		
+		projectList.setModel (new ProjectListModel (this.projects));
+		projectList.addMouseListener (new MouseAdapter (){
+			public void mouseClicked (MouseEvent e) {
 				if (e.getClickCount ()>1){
-					jButtonConfirmActionPerformed ( null );
+					confirmButtonActionPerformed ( null );
 				}
 			}
 		});
-        jPanelMain.add(new JScrollPane (jListProjects), java.awt.BorderLayout.CENTER);
-
-        getContentPane().add(jPanelMain, java.awt.BorderLayout.CENTER);
-
-        jButtonOk.setText(ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.confirm"));
-        jButtonOk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonConfirmActionPerformed(evt);
-            }
-        });
-
-        jPanelBottom.add(jButtonOk);
-
-        jButtonCancel.setText(ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.cancel"));
-        jButtonCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCancelActionPerformed(evt);
-            }
-        });
-
-        jPanelBottom.add(jButtonCancel);
-
-        getContentPane().add(jPanelBottom, java.awt.BorderLayout.SOUTH);
-
-        getContentPane().add(new JPanel (), java.awt.BorderLayout.WEST);
-        getContentPane().add(new JPanel (), java.awt.BorderLayout.EAST);
+		final JPanel listPanel = new JPanel ();
+		listPanel.setLayout (new java.awt.BorderLayout ());
+		listPanel.setBorder (new EmptyBorder (3, 5, 3, 5));
+		listPanel.add (new JScrollPane (projectList), java.awt.BorderLayout.CENTER);
 		
-		getRootPane().setDefaultButton (jButtonOk);
-        pack();
-    }
-
-	private void postInitComponents() {
-		this.jLabelChoose.setText(this.labelText);
-		this.setTitle(this.titleText);
+		getContentPane().add(listPanel, java.awt.BorderLayout.CENTER);
+		
+		confirmButton.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.confirm"));
+		confirmButton.addActionListener (new java.awt.event.ActionListener () {
+			public void actionPerformed (java.awt.event.ActionEvent evt) {
+				confirmButtonActionPerformed (evt);
+			}
+		});
+		
+		buttonPanel.add (confirmButton);
+		
+		cancelButton.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.cancel"));
+		final Action cancelAction = new javax.swing.AbstractAction ("cancel"){
+			public void actionPerformed(ActionEvent e) {
+				onCancel ();
+			}
+		};
+		cancelButton.setAction (cancelAction);
+		cancelButton.getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put (KeyStroke.getKeyStroke ("ESCAPE"), "cancel");
+		cancelButton.getActionMap().put("cancel", cancelAction);
+		buttonPanel.add (cancelButton);
+		
+		getContentPane ().add (buttonPanel, java.awt.BorderLayout.SOUTH);
+		
+		getRootPane ().setDefaultButton (confirmButton);
+		pack ();
 	}
-
-	private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {
-		// Add your handling code here:
-		System.out.println (this.jListProjects.getSelectedIndex());
-		this.jListProjects.setSelectedValue (null, true);
+	
+	private void postInitComponents () {
+		this.infoLabel.setText (this.labelText);
+		this.setTitle (this.titleText);
+	}
+	
+	private void cancelButtonActionPerformed (java.awt.event.ActionEvent evt) {
+		onCancel ();
+	}
+	
+	private void onCancel () {
+		this.projectList.setSelectedValue (null, true);
 		this.hide ();
 	}
-
-	private void jButtonConfirmActionPerformed(java.awt.event.ActionEvent evt) {
+	
+	private void confirmButtonActionPerformed (java.awt.event.ActionEvent evt) {
 		// Add your handling code here:
-		this.hide();
+		confirmed=true;
+		this.hide ();
 	}
 	
-	/** 
-	 * Chiude questa finestra. 
+	/**
+	 * Chiude questa finestra.
 	 */
-	private void closeDialog(java.awt.event.WindowEvent evt) {
-		setVisible(false);
-		dispose();
+	private void closeDialog (java.awt.event.WindowEvent evt) {
+		setVisible (false);
+		dispose ();
 	}
 	
-    // Variables declaration 
-    private javax.swing.JButton jButtonOk;
-    private javax.swing.JButton jButtonCancel;
-    private javax.swing.JLabel jLabelChoose;
-    private javax.swing.JPanel jPanelMain;
-    private javax.swing.JPanel jPanelBottom;
-    private javax.swing.JList jListProjects;
-    // End of variables declaration
+	// Variables declaration
+	private javax.swing.JButton confirmButton;
+	private javax.swing.JButton cancelButton;
+	private javax.swing.JLabel infoLabel;
+	private javax.swing.JPanel buttonPanel;
+	private javax.swing.JList projectList;
+	private DirectHelpButton directHelpButton;
+	
+	// End of variables declaration
 	
 	/**
 	 * Richiede all'utente di scegliere un progetto tra quelli disponibili, e lo ritorna.
@@ -150,11 +180,11 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 	 * @param label l'etichetta di scelta.
 	 * @param modal stato modale.
 	 * @return ritorna il progetto scelto dall'utente.
-	 */	
+	 */
 	public static Project chooseProject (java.awt.Frame parent, String title, String label, boolean modal){
-		ProjectSelectDialog dialog = new ProjectSelectDialog (parent, title, label, modal, Application.getInstance().getAvailableProjects ());
+		ProjectSelectDialog dialog = new ProjectSelectDialog (parent, title, label, modal, Application.getInstance ().getAvailableProjects ());
 		dialog.show ();
-		return (Project)dialog.jListProjects.getSelectedValue();
+		return dialog.confirmed?(Project)dialog.projectList.getSelectedValue ():null;
 	}
 	
 	/**
@@ -167,18 +197,18 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 		public ProjectListModel (List projects){
 			this.projects = projects;
 		}
-		public void addListDataListener(javax.swing.event.ListDataListener l) {
+		public void addListDataListener (javax.swing.event.ListDataListener l) {
 		}
 		
-		public Object getElementAt(int index) {
-			return this.projects.get(index);
+		public Object getElementAt (int index) {
+			return this.projects.get (index);
 		}
 		
-		public int getSize() {
+		public int getSize () {
 			return this.projects.size ();
 		}
 		
-		public void removeListDataListener(javax.swing.event.ListDataListener l) {
+		public void removeListDataListener (javax.swing.event.ListDataListener l) {
 		}
 		
 	}

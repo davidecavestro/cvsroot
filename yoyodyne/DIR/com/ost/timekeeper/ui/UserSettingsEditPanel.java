@@ -1,7 +1,7 @@
 /*
  * UserSettingsEditPanel.java
  *
- * Created on 12 dicembre2004, 11.51
+ * Created on 12 dicembre 2004, 11.51
  */
 
 package com.ost.timekeeper.ui;
@@ -16,11 +16,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 /**
  * Pannello di modifica impostazioni utente.
  *
  * @author  davide
+ * @todo correggere gestione ablitazione pulsanti, sputtanata dalla creazione dei pannelli secondari.
  */
 public final class UserSettingsEditPanel extends javax.swing.JPanel implements Observer {
 	
@@ -29,41 +31,41 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 	 **********************************************/
 	
 	/**
-	 * Pannello di editazione.
+	 * Pannello di editazione impostazioni dati.
 	 */
-	final javax.swing.JPanel editPanel = new javax.swing.JPanel ();
+	private final UserDataSettingsEditPanel dataEditPanel = new UserDataSettingsEditPanel ();
 	
 	/**
-	 * Etichetta per componente selezione colore desktop.
+	 * Pannello di editazione impostazioni grafiche.
 	 */
-	final javax.swing.JLabel desktopColorLabel = new javax.swing.JLabel ();
+	private final UserGUISettingsEditPanel uiEditPanel = new UserGUISettingsEditPanel ();
 	
 	/**
-	 * Componente selezione colore desktop.
+	 * Pannello di editazione impostazioni grafiche.
 	 */
-	final ColorChooser desktopColorChooser = new ColorChooser ();
+	private final UserOtherSettingsEditPanel otherEditPanel = new UserOtherSettingsEditPanel ();
+	
 	
 	/**
 	 * Pulsantiera.
 	 */
-	final javax.swing.JPanel buttonPanel = new javax.swing.JPanel ();
+	private final javax.swing.JPanel buttonPanel = new javax.swing.JPanel ();
 	/**
 	 * Pulsante di conferma.
 	 */
-	final javax.swing.JButton confirmButton = new javax.swing.JButton ();
-	
+	private final javax.swing.JButton confirmButton = new javax.swing.JButton ();
+	/**
+	 * Pulsante di "applica".
+	 */
+	private final javax.swing.JButton applyButton = new javax.swing.JButton ();
 	/**
 	 * Pulsante di annullamento modifiche.
 	 */
-	final javax.swing.JButton resetButton = new javax.swing.JButton ();
+	private final javax.swing.JButton resetButton = new javax.swing.JButton ();
+	
 	/**********************************************
 	 * FINE dichiarazione componenti UI interne.
 	 **********************************************/
-	
-	/**
-	 * Stato modifica ai dati trattati da questo pannello.
-	 */
-	private boolean _dataChanged = false;
 	
 	/**
 	 * Costruttore.
@@ -89,10 +91,21 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		confirmButton.addActionListener (new ActionListener (){
 			public void actionPerformed (ActionEvent e){
 				pushData ();
+				/* @@@ nasconde finestra */
+				getRootPane ().getParent ().setVisible (false);
 			}
 		});
-		confirmButton.setAction (ActionPool.getInstance ().getProgressItemUpdateAction ());
 		confirmButton.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "confirm"));
+		
+		/*
+		 * Configurazione pulsante APPLICA.
+		 */
+		applyButton.addActionListener (new ActionListener (){
+			public void actionPerformed (ActionEvent e){
+				pushData ();
+			}
+		});
+		applyButton.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "apply"));
 		
 		/*
 		 * Configurazione pulsante ANNULLA.
@@ -116,51 +129,40 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		buttonPanel.add (confirmButton);
 		
 		/*
+		 * Inserimento pulsante APPLICA.
+		 */
+		buttonPanel.add (applyButton);
+		
+		/*
 		 * Inserimento pulsante ANNULLA.
 		 */
 		buttonPanel.add (resetButton);
 		
 		
-		/*
-		 * Configurazione pannello editazione.
-		 */
-		editPanel.setLayout (new javax.swing.SpringLayout ());
-		
-
-		/*
-		 * Configurazione editazione CODICE.
-		 */
-		desktopColorLabel.setLabelFor (desktopColorChooser);
-		desktopColorLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "desktop.color"));
-		desktopColorChooser.setMinimumSize (new Dimension (16, 16));
-		desktopColorChooser.addActionListener (new ActionListener (){
-			public void actionPerformed (ActionEvent ae){
-				final Color newColor = JColorChooser.showDialog(
-						 UserSettingsEditPanel.this,
-						 ResourceSupplier.getString (ResourceClass.UI, "controls", "choose.desktop.color"),
-						 UserSettings.getInstance ().getDesktopColor ());
-				desktopColorChooser.setColor (newColor);
-				setDataChanged (true);
-			}
-		});
-			
-		
-		/*
-		 * Inserimento editazione CODICE.
-		 */
-		editPanel.add (desktopColorLabel);
-		editPanel.add (desktopColorChooser);
-		
-
-		SpringUtilities.makeCompactGrid(editPanel,
-                                1, 2, //rows, cols
-                                6, 6,        //initX, initY
-                                6, 6);       //xPad, yPad
+		final JTabbedPane tabbedPane = new JTabbedPane ();
+		tabbedPane.setTabLayoutPolicy (JTabbedPane.SCROLL_TAB_LAYOUT);
 		
 		/*
 		 * Inserimento pannello editazione.
 		 */
-		this.add (new JScrollPane (editPanel), java.awt.BorderLayout.CENTER);
+		this.add (tabbedPane, java.awt.BorderLayout.CENTER);
+		
+		/*
+		 * Inserimento pannello editazione.
+		 */
+		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "ui.prefs"), new JScrollPane (uiEditPanel));
+
+		
+		/*
+		 * Inserimento pannello editazione.
+		 */
+		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "data.prefs"), new JScrollPane (dataEditPanel));
+		
+		/*
+		 * Inserimento pannello editazione.
+		 */
+		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "other.prefs"), new JScrollPane (otherEditPanel));
+		
 		
 		/*
 		 * Inserimento pulsantiera.
@@ -170,29 +172,28 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 		/*
 		 * Inizializza flag a "NON MODIFICATO"
 		 */
-		this.setDataChanged (false);
+		this.resynch ();
+		
+		//getRootPane().setDefaultButton (confirmButton);
 	}
 	
 	/**
 	 * Risincronizza il pannello di editazione con i dati del modello.
 	 */
 	private final void resynch (){
-		/*
-		 * resetta flag modifica
-		 */
-		this.setDataChanged (false);
-		
-		this.desktopColorChooser.setColor (UserSettings.getInstance ().getDesktopColor ());
+		uiEditPanel.resynch ();
+		dataEditPanel.resynch ();
+		otherEditPanel.resynch ();
 	}
 	
 	/**
 	 * Aggiorna il nodo di avanzamento selezionato con i dati delle componenti di editazione.
 	 */
 	private final void pushData (){
-		System.out.println ("psuhing data");
-		UserSettings.getInstance ().setDesktopColor (this.desktopColorChooser.getColor ());
-
-		this.setDataChanged (false);
+		uiEditPanel.pushData ();
+		dataEditPanel.pushData ();
+		otherEditPanel.pushData ();
+		onDataChanges ();
 	}
 	
 	/**
@@ -203,9 +204,9 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 	 *
 	 * @param o la sorgente della notifica.
 	 * @param arg argomento della notifica.
-	 */	
-	public void update(Observable o, Object arg) {
-		if (arg!=null && arg.equals(ObserverCodes.USERSETTINGSCHANGE)){
+	 */
+	public void update (Observable o, Object arg) {
+		if (arg!=null && arg.equals (ObserverCodes.USERSETTINGSCHANGE)){
 			this.resynch ();
 		}
 	}
@@ -213,31 +214,16 @@ public final class UserSettingsEditPanel extends javax.swing.JPanel implements O
 	/**
 	 * Imposta il flag di "modifica avvenuta" per questo pannello.
 	 */
-	private void setDataChanged (boolean changed){
-		this._dataChanged = changed;
-		this.confirmButton.setEnabled (this._dataChanged);
-	}
-	
-	/**
-	 * Implementazione vuota.
-	 */
-	public void keyPressed (KeyEvent e) {
-	}
-	
-	/**
-	 * Implementazione vuota.
-	 */
-	public void keyReleased (KeyEvent e) {
-	}
-	
-	/**
-	 * Notifica modifica.
-	 */
-	public void keyTyped (KeyEvent e) {
-		/*
-		 * Notifica modifica dati.
-		 */
-		setDataChanged (true);
+	private void onDataChanges (){
+		final boolean dataChanged = 
+			uiEditPanel.getDataChanged () 
+			|| dataEditPanel.getDataChanged ()
+			|| otherEditPanel.getDataChanged ()
+			;
+
+		this.confirmButton.setEnabled (dataChanged);
+		this.applyButton.setEnabled (dataChanged);
+		this.resetButton.setEnabled (dataChanged);
 	}
 	
 }
