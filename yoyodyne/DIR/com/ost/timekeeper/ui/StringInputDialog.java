@@ -19,6 +19,11 @@ public final class StringInputDialog extends javax.swing.JDialog {
 	private String labelText;
 	
 	/**
+	 * Stato conferma scelta.
+	 */
+	private boolean confirmed = false;
+
+	/**
 	 * Costruttore con parametri.
 	 */
 	public StringInputDialog(java.awt.Frame parent, String title, String label, boolean modal) {
@@ -72,6 +77,7 @@ public final class StringInputDialog extends javax.swing.JDialog {
 		
 		getContentPane().add(jPanelData, java.awt.BorderLayout.SOUTH);
 		
+		getRootPane().setDefaultButton (jButtonConfirm);
 		pack();
 	}
 	
@@ -91,6 +97,7 @@ public final class StringInputDialog extends javax.swing.JDialog {
 	
 	private void jButtonConfirmActionPerformed(java.awt.event.ActionEvent evt) {
 		// Add your handling code here:
+		this.confirmed = true;
 		this.hide();
 	}
 	
@@ -102,6 +109,14 @@ public final class StringInputDialog extends javax.swing.JDialog {
 		dispose();
 	}
 	
+	/**
+	 * Ritorna lo stato di conferma della scelta da parte dell'utente.
+	 *
+	 * @return lo stato di conferma della scelta da parte dell'utente.
+	 */
+	public boolean isConfirmed (){
+		return this.confirmed;
+	}
 	// Variables declaration - do not modify
 	private javax.swing.JButton jButtonConfirm;
 	private javax.swing.JButton jButtonCancel;
@@ -123,6 +138,6 @@ public final class StringInputDialog extends javax.swing.JDialog {
 		StringInputDialog dialog = new StringInputDialog(parent, title, label, modal);
 		dialog.pack();
 		dialog.show();
-		return dialog.jTextFieldInput.getText();
+		return dialog.isConfirmed ()?dialog.jTextFieldInput.getText():null;
 	}
 }

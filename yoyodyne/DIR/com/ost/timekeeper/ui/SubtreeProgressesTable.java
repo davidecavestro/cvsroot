@@ -14,9 +14,12 @@ import javax.swing.table.*;
 import javax.swing.tree.*;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.actions.*;
 import com.ost.timekeeper.model.*;
+import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
+import java.awt.event.*;
 
 /**
  * Componente grafica per la gestione della vista delgi avanzamenti relativi ad un sottoalbero.
@@ -50,6 +53,17 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 			}
 		};
 		this.setDefaultRenderer(java.util.Date.class, dateColumnRenderer);
+		
+		this.addMouseListener (new MouseAdapter (){
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount ()>1){
+					final ProgressStopAction stopAction = ActionPool.getInstance ().getProgressStopAction ();
+					if (stopAction.isEnabled ()){
+						stopAction.actionPerformed (new ActionEvent (this, 0, null));
+					}
+				}
+			}
+		});
 	}
 	
 	/**
@@ -164,9 +178,9 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals(ObserverCodes.SELECTEDITEM)){
+			if (arg!=null && arg.equals(ObserverCodes.SELECTEDITEMCHANGE)){
 				this.reloadModel(((Application)o).getSelectedItem());
-			} else if (arg!=null && arg.equals(ObserverCodes.ITEMPROGRESSING)){
+			} else if (arg!=null && arg.equals(ObserverCodes.ITEMPROGRESSINGCHANGE)){
 				//				this.reloadModel(((Application)o).getSelectedItem());
 				this.dataModel.fireTableChanged(new TableModelEvent(getModel(), this.dataModel.getCurrentPeriodIndex()));
 			}

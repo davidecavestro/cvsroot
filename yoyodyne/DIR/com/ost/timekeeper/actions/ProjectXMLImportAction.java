@@ -46,19 +46,25 @@ public final class ProjectXMLImportAction extends javax.swing.AbstractAction imp
 			mapping.loadMapping("modelmapping.xml");
 			
 			int returnVal = chooser.showOpenDialog(app.getMainForm());
-			if(returnVal != JFileChooser.APPROVE_OPTION) {
-				return;
-			}
-			// Create a Reader to the file to unmarshal from
-			Reader reader = new FileReader(chooser.getSelectedFile().getName());
 			
-			// Create a new Unmarshaller
-			Unmarshaller unmarshaller = new Unmarshaller(Project.class);
-			unmarshaller.setMapping(mapping);
-			// Unmarshal the project object
-			Project project = (Project)unmarshaller.unmarshal(reader);
-			System.out.println ("progetto importato: "+project);
-			app.setProject (project);
+			app.setProcessing (true);
+			try {
+				if(returnVal != JFileChooser.APPROVE_OPTION) {
+					return;
+				}
+				// Create a Reader to the file to unmarshal from
+				Reader reader = new FileReader(chooser.getSelectedFile().getName());
+
+				// Create a new Unmarshaller
+				Unmarshaller unmarshaller = new Unmarshaller(Project.class);
+				unmarshaller.setMapping(mapping);
+				// Unmarshal the project object
+				Project project = (Project)unmarshaller.unmarshal(reader);
+				System.out.println ("progetto importato: "+project);
+				app.setProject (project);
+			} finally {
+				app.setProcessing (false);
+			}
 		} catch (Exception ex) {
 			throw new NestedRuntimeException(ex);
 		}
@@ -66,7 +72,7 @@ public final class ProjectXMLImportAction extends javax.swing.AbstractAction imp
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals (ObserverCodes.PROJECT)){
+			if (arg!=null && arg.equals (ObserverCodes.PROJECTCHANGE)){
 				//indipendente dal progetto corrente
 				this.setEnabled(true);
 			}

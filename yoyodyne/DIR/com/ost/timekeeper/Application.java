@@ -32,13 +32,14 @@ public class Application extends Observable{
 	 */
 	private MainForm mainForm;
 	
-	private final ActionPool actionPool = new ActionPool ();
 	/** 
 	 * Costruttore privato. 
 	 */
 	private Application() {
 		//inizializza il supporto per la persistenza dei dati
 		initPersistence ();
+		
+		final ActionPool actionPool = ActionPool.getInstance ();
 		//registra le azioni su Application
 		this.addObserver(actionPool.getNodeCreateAction ());
 		this.addObserver(actionPool.getNodeDeleteAction ());
@@ -51,6 +52,7 @@ public class Application extends Observable{
 		this.addObserver(actionPool.getProjectSaveAction ());
 		this.addObserver(actionPool.getProjectXMLExportAction ());
 		this.addObserver(actionPool.getProjectXMLImportAction ());
+		this.addObserver(actionPool.getProgressItemUpdateAction ());
 	}
 	
 	/**
@@ -85,7 +87,7 @@ public class Application extends Observable{
 				public void actionPerformed (ActionEvent ae){
 					instance.setChanged ();
 					//notifica l'avanzamento
-					instance.notifyObservers (ObserverCodes.ITEMPROGRESSING);
+					instance.notifyObservers (ObserverCodes.ITEMPROGRESSINGCHANGE);
 				}
 			};
 			instance.timer = new javax.swing.Timer (1000, timerActionPerformer);
@@ -102,13 +104,14 @@ public class Application extends Observable{
 		return this.mainForm;
 	}
 	
-	/**
-	 * Ritorna il pool di azioni.
-	 * @return il pool di azioni.
-	 */	
-	public ActionPool getActionPool (){
-		return this.actionPool;
-	}
+//	/**
+//	 * Ritorna il pool di azioni.
+//	 * @return il pool di azioni.
+//	 */	
+//	public ActionPool getActionPool (){
+//		return this.actionPool;
+//	}
+	
 	/**
 	 * Metodo di lancio.
 	 * @param args gli argomenti della linea di comando.
@@ -116,7 +119,7 @@ public class Application extends Observable{
 	public static void main(String args[]) {
 		Application a = getInstance();
 //		a.getProjectCreateAction ().execute ("Void project");
-		a.getActionPool ().getProjectCloseAction ().execute ();
+		ActionPool.getInstance ().getProjectCloseAction ().execute ();
 		try{
 			a.getMainForm().setBounds(0, 0, 800, 600);
 			a.getMainForm().show();
@@ -146,7 +149,7 @@ public class Application extends Observable{
 		}
 		//notifica cambiamento di progetto
 		this.setChanged();
-		this.notifyObservers(ObserverCodes.PROJECT);
+		this.notifyObservers(ObserverCodes.PROJECTCHANGE);
 	}
 	
 	
@@ -171,7 +174,7 @@ public class Application extends Observable{
 		this.currentItem = current;
 		//notifica cambiamento elemento corrente
 		this.setChanged();
-		this.notifyObservers(ObserverCodes.CURRENTITEM);
+		this.notifyObservers(ObserverCodes.CURRENTITEMCHANGE);
 		
 		/*
 		 * Gestione timer notifica avanzamento.
@@ -206,7 +209,7 @@ public class Application extends Observable{
 		this.selectedItem = selected;
 		//notifica variazione elemento selezionato
 		this.setChanged();
-		this.notifyObservers(ObserverCodes.SELECTEDITEM);
+		this.notifyObservers(ObserverCodes.SELECTEDITEMCHANGE);
 	}
 	
 	/**
@@ -230,7 +233,7 @@ public class Application extends Observable{
 		this.selectedProgress = selected;
 		//notifica variazione selezione elemento
 		this.setChanged();
-		this.notifyObservers(ObserverCodes.SELECTEDPROGRESS);
+		this.notifyObservers(ObserverCodes.SELECTEDPROGRESSCHANGE);
 	}
 	
 	/**
@@ -284,8 +287,13 @@ public class Application extends Observable{
 	 */	
 	public List getAvailableProjects (){
 		List retValue = new ArrayList ();
-		for (Iterator it = getPersistenceManager().getExtent(Project.class, true).iterator();it.hasNext ();){
-			retValue.add (it.next());
+		this.setProcessing (true);
+		try {
+			for (Iterator it = getPersistenceManager().getExtent(Project.class, true).iterator();it.hasNext ();){
+				retValue.add (it.next());
+			}
+		} finally {
+			this.setProcessing (false);
 		}
 		return retValue;
 	}
@@ -296,5 +304,33 @@ public class Application extends Observable{
      */
     public final synchronized void setChanged() {
 		super.setChanged ();
-    }	
+    }
+	
+	/**
+	 * Stato elaborazione.
+	 */
+	private int _processing = 0;
+	
+	/**
+	 * Imposta lo stato di elaborazione dell'applicazione.
+	 * @param processing lo stato di elaborazione dell'applicazione.
+	 */	
+	public void setProcessing (boolean processing){
+		if (processing){
+			this._processing++;
+		} else {
+			this._processing--;
+			java.awt.Toolkit.getDefaultToolkit().beep();
+		}
+		this.setChanged ();
+		this.notifyObservers (ObserverCodes.PROCESSINGCHANGE);
+	}
+	
+	/**
+	 * Ritorna lo stato di elaborazione dell'applicazione.
+	 * @return  lo stato di elaborazione dell'applicazione.
+	 */	
+	public boolean isProcessing (){
+		return this._processing>0;
+	}
 }

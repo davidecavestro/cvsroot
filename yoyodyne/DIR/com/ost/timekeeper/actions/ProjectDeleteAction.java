@@ -72,7 +72,7 @@ public final class ProjectDeleteAction extends javax.swing.AbstractAction implem
 	
 	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals (ObserverCodes.PROJECT)){
+			if (arg!=null && arg.equals (ObserverCodes.PROJECTCHANGE)){
 				this.setEnabled (((Application)o).getProject ()!=null);
 			}
 		}

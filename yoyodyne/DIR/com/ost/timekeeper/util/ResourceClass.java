@@ -7,6 +7,7 @@
 package com.ost.timekeeper.util;
 
 /**
+ * I tipi di risorse disponibili.
  *
  * @author  davide
  */
@@ -14,7 +15,9 @@ public final class ResourceClass {
 	
 	public final static ResourceClass UI = new ResourceClass ();
 	
-	/** Creates a new instance of ResourceClass */
+	/** 
+	 * Costruttore vuoto. 
+	 */
 	private ResourceClass() {
 	}
 	

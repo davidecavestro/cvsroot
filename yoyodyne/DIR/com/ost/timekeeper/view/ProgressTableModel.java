@@ -17,6 +17,7 @@ import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.util.*;
 
 /**
+ * La tabella di visualizzazione degli avanzamenticontenente degli avanzamenti.
  *
  * @author  davide
  */
@@ -25,13 +26,17 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	private ProgressItem root;
 	private int currentPeriodIdx;
 	
-	/** Crea una nuova istanza di ProgressTableModel */
+	/** 
+	 * Costruttore con nodo radice.
+	 *
+	 * @param root il nodo radice.
+	 */
 	public ProgressTableModel(ProgressItem root) {
 		System.out.println ("Creating new ProgressTableModel");
 		this.currentPeriodIdx=-1;
 		this.columns = new Object[]{
-			ResourceSupplier.getString(ResourceClass.UI, "components", "progress.startdate"),
-			ResourceSupplier.getString(ResourceClass.UI, "components", "progress.finishdate"),
+			ResourceSupplier.getString(ResourceClass.UI, "controls", "from"),
+			ResourceSupplier.getString(ResourceClass.UI, "controls", "to"),
 			ResourceSupplier.getString(ResourceClass.UI, "components", "progress.duration"),
 			ResourceSupplier.getString(ResourceClass.UI, "components", "progress.running"),
 		};		
@@ -63,14 +68,16 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	private Object[] columns;
 
 	/**
-	 * @return
+	 * Ritorna il numero di colonne di questa tabella.
+	 * @return il numero di colonne.
 	 */	
 	public int getColumnCount() {
 		return columns.length;
 	}
 
 	/**
-	 * @return
+	 * Ritorna il numero di righe di questa tabella.
+	 * @return il numero di righe.
 	 */	
 	public int getRowCount() {
 		return progresses.size();
@@ -79,16 +86,20 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	private final DurationNumberFormatter durationNumberFormatter = new DurationNumberFormatter ();
 
 	/**
-	 * @param object
-	 * @param rowIndex
-	 * @param columnIndex
+	 * Imposta il valore di una cella.
+	 *
+	 * @param object il nuovo valore.
+	 * @param rowIndex l'indice di riga.
+	 * @param columnIndex l'indice di colonna.
 	 */	
 	public void setValueAt(Object object, int rowIndex, int columnIndex) {
 	}
 	/**
-	 * @param rowIndex
-	 * @param columnIndex
-	 * @return
+	 * Ritorna il valore di una cella.
+	 *
+	 * @param rowIndex l'indice di riga.
+	 * @param columnIndex l'indice di colonna.
+	 * @return il valore associato alla cella di riga <TT>rowIndex</TT> e colonna <TT>columnIndex</TT>.
 	 */	
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Period period = (Period)progresses.get(rowIndex);
@@ -114,13 +125,17 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	}
 
 	/**
-	 * @param column
-	 * @return
+	 * Ritorna il nome di una colonna.
+	 *
+	 * @param column l'indice di colonna.
+	 * @return il nome della colonna avente indice <TT>column</TT>.
 	 */	
 	public String getColumnName(int column) {return (String)columns[column];}
 	/**
-	 * @param c
-	 * @return
+	 * Ritorna il tipo di una colonna.
+	 *
+	 * @param c l'indice di colonna.
+	 * @return la classe che rappresenta il tipo dei valori contenuti nella colonna con indice <TT>c</TT>.
 	 */	
 	public Class getColumnClass(int c) {
 		Object firstRowCell = getValueAt(0, c);
@@ -131,14 +146,18 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 		}
 	}
 	/**
-	 * @param row
-	 * @param col
-	 * @return
+	 * Ritorna lo stato di modificabilità di una cella.
+	 *
+	 * @param row l'indice della riga.
+	 * @param col l'indice della colonna.
+	 * @return la modificabilitò della cella alle coordinate <TT>row</TT, <TT>col</TT>.
 	 */	
 	public boolean isCellEditable(int row, int col) {return false;}
 	
 	/**
-	 * @return
+	 * Ritorna l'indice del perdiodo di avanzamento corrente.
+	 *
+	 * @return l'indice del perdiodo di avanzamento corrente.
 	 */	
 	public int getCurrentPeriodIndex (){return this.currentPeriodIdx;}
 	
@@ -196,7 +215,7 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 //				reloadProgresses ();
 				synchCurrentPeriodIdx ();
 				this.fireTableChanged(new TableModelEvent(this/*, this.getCurrentPeriodIndex()*/));
-				System.out.println (this.hashCode()+" current period Idx: "+this.getCurrentPeriodIndex()+"\nstacktrace: \n"+ExceptionUtils.getStackStrace(new Throwable ()));
+//				System.out.println (this.hashCode()+" current period Idx: "+this.getCurrentPeriodIndex()+"\nstacktrace: \n"+ExceptionUtils.getStackStrace(new Throwable ()));
 			}
 		}
 	}

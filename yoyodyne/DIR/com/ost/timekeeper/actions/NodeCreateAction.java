@@ -16,7 +16,7 @@ import com.ost.timekeeper.util.*;
 
 /**
  * Crea un nuovo nodo della gerarchia di {@link
- * com.ost.timekeeper.mode.ProgressItem}.
+ * com.ost.timekeeper.model.ProgressItem}.
  *
  * @author davide
  */
@@ -33,7 +33,14 @@ public final class NodeCreateAction extends javax.swing.AbstractAction implement
 	}
 	
 	public void actionPerformed (java.awt.event.ActionEvent e) {
-		ProgressItem newNode = new ProgressItem (askForName ());
+		final String newNodeName = askForName ();
+		if (newNodeName==null){
+			/*
+			 * Scelta non valida.
+			 */
+			return;
+		}
+		ProgressItem newNode = new ProgressItem ();
 		Application app = Application.getInstance ();
 		ProgressItem selectedItem = app.getSelectedItem ();
 		app.getMainForm ().getProgressTreeModel ().insertNodeInto (newNode, selectedItem, selectedItem.childCount ());
@@ -54,7 +61,7 @@ public final class NodeCreateAction extends javax.swing.AbstractAction implement
 	
 	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals (ObserverCodes.SELECTEDITEM)){
+			if (arg!=null && arg.equals (ObserverCodes.SELECTEDITEMCHANGE)){
 				this.setEnabled (((Application)o).getSelectedItem ()!=null);
 			}
 		}

@@ -51,17 +51,22 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 			mapping.loadMapping("modelmapping.xml");
 			
 			int returnVal = chooser.showSaveDialog(app.getMainForm());
-			if(returnVal != JFileChooser.APPROVE_OPTION) {
-				return;
+			app.setProcessing (true);
+			try{
+				if(returnVal != JFileChooser.APPROVE_OPTION) {
+					return;
+				}
+				// Create a Reader to the file to unmarshal from
+				Writer writer = new FileWriter(chooser.getSelectedFile().getName());
+
+				// Create a new Marshaller
+				Marshaller marshaller = new Marshaller(writer);
+				marshaller.setMapping(mapping);
+				// Marshal the project object
+				marshaller.marshal(app.getProject(), writer);
+			} finally {
+				app.setProcessing (false);
 			}
-			// Create a Reader to the file to unmarshal from
-			Writer writer = new FileWriter(chooser.getSelectedFile().getName());
-			
-			// Create a new Marshaller
-			Marshaller marshaller = new Marshaller(writer);
-			marshaller.setMapping(mapping);
-			// Marshal the project object
-			marshaller.marshal(app.getProject(), writer);
 		} catch (Exception ex) {
 			System.out.println(ExceptionUtils.getStackStrace(ex));
 			throw new NestedRuntimeException(ex);
@@ -70,7 +75,7 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals(ObserverCodes.PROJECT)){
+			if (arg!=null && arg.equals(ObserverCodes.PROJECTCHANGE)){
 				this.setEnabled(((Application)o).getProject()!=null);
 			}
 		}

@@ -38,12 +38,12 @@ public final class ProgressStartAction extends javax.swing.AbstractAction implem
 		app.setChanged ();
 		app.notifyObservers (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
 		app.setChanged ();
-		app.notifyObservers (ObserverCodes.SELECTEDITEM);
+		app.notifyObservers (ObserverCodes.SELECTEDITEMCHANGE);
 	}
 	
 	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && (arg.equals (ObserverCodes.CURRENTITEM)) || arg.equals (ObserverCodes.SELECTEDITEM)){
+			if (arg!=null && (arg.equals (ObserverCodes.CURRENTITEMCHANGE)) || arg.equals (ObserverCodes.SELECTEDITEMCHANGE)){
 				Application app = (Application)o;
 				this.setEnabled (app.getCurrentItem ()==null && app.getSelectedItem ()!=null);
 			}

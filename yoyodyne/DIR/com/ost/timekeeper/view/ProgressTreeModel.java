@@ -54,7 +54,7 @@ public class ProgressTreeModel extends AbstractTreeModel implements Observer{
 			this.fireTreeStructureChanged(new TreeModelEvent (this, this.getPathToRoot(this.root)));
 		} else if (oldRoot!=null){
 			//la radice non cìè, ma ce n'era una prima
-			//@@@this.fireTreeStructureChanged(new TreeModelEvent (this, this.valueForPathChanged(this.getPathToRoot(oldRoot))));
+			this.fireTreeStructureChanged(new TreeModelEvent (this, new Object[]{new ProgressItem ()}));
 		}
 	}
 	
@@ -153,7 +153,7 @@ public class ProgressTreeModel extends AbstractTreeModel implements Observer{
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals(ObserverCodes.PROJECT)){
+			if (arg!=null && arg.equals(ObserverCodes.PROJECTCHANGE)){
 				this.load (((Application)o).getProject());
 			}
 		}

@@ -9,14 +9,40 @@ package com.ost.timekeeper.actions;
 import java.util.*;
 
 /**
+ * Pool di azioni.
  *
  * @author  davide
  */
 public final class ActionPool extends Observable{
 	
-	/** Creates a new instance of ActionPool */
-	public ActionPool() {
+	/**
+	 * L'istanza del singleton.
+	 */
+	private static ActionPool _instance;
+	
+	/** 
+	 * Costruttore vuoto. 
+	 */
+	private ActionPool() {
 	}
+	
+	/**
+	 * Ritorna l'istanza di questo pool.
+	 * Se il pool non è ancora stato referenziato, allora 
+	 * l'istanza viene inizializzata.
+	 *
+	 * @return l'istanza di questo pool.
+	 */	
+	public static ActionPool getInstance (){
+		if (_instance==null){
+			/*
+			 * Istanziazione lazy.
+			 */
+			_instance = new ActionPool ();
+		}
+		return _instance;
+	}
+	
 	/**
 	 * Azione di partenza avanzamento.
 	 */
@@ -63,8 +89,12 @@ public final class ActionPool extends Observable{
 	private ProjectXMLImportAction projectXMLImportAction;
 	
 	/**
-	 * Ritorna l'azione di partenza avanzamento.
-	 * @return l'azione di partenza avanzamento.
+	 * L'azione di importazione progetto da fonte XML.
+	 */	
+	private ProgressItemUpdateAction progressItemUpdateAction;
+	/**
+	 * Ritorna l'azione di modifica nodo di avanzamento.
+	 * @return l'azione di modifica nodo di avanzamento.
 	 */	
 	public ProgressStartAction getProgressStartAction(){
 		if (this.progressStartAction==null){
@@ -194,4 +224,16 @@ public final class ActionPool extends Observable{
 		return this.projectXMLImportAction;
 	}
 		
+	/**
+	 * Ritorna l'azione di modifica nodi di avaznamento.
+	 * @return l'azione di modifica nodi di avaznamento.
+	 */	
+	public ProgressItemUpdateAction getProgressItemUpdateAction(){
+		if (this.progressItemUpdateAction==null){
+			//istanziazione lazy
+			this.progressItemUpdateAction = new ProgressItemUpdateAction ();
+		}
+		return this.progressItemUpdateAction;
+	}
+	
 }

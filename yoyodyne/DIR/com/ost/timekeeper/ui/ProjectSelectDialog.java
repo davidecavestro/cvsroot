@@ -11,6 +11,9 @@ import java.util.*;
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.util.*;
+import java.awt.event.*;
+import javax.swing.*;
+
 /**
  * Finestra di selezione di un progetto.
  *
@@ -63,7 +66,14 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
         jPanelMain.add(jLabelChoose, java.awt.BorderLayout.NORTH);
 
         jListProjects.setModel(new ProjectListModel (this.projects));
-        jPanelMain.add(jListProjects, java.awt.BorderLayout.CENTER);
+		jListProjects.addMouseListener (new MouseAdapter (){
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount ()>1){
+					jButtonConfirmActionPerformed ( null );
+				}
+			}
+		});
+        jPanelMain.add(new JScrollPane (jListProjects), java.awt.BorderLayout.CENTER);
 
         getContentPane().add(jPanelMain, java.awt.BorderLayout.CENTER);
 
@@ -87,6 +97,10 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 
         getContentPane().add(jPanelBottom, java.awt.BorderLayout.SOUTH);
 
+        getContentPane().add(new JPanel (), java.awt.BorderLayout.WEST);
+        getContentPane().add(new JPanel (), java.awt.BorderLayout.EAST);
+		
+		getRootPane().setDefaultButton (jButtonOk);
         pack();
     }
 
@@ -98,7 +112,7 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 	private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {
 		// Add your handling code here:
 		System.out.println (this.jListProjects.getSelectedIndex());
-		this.jListProjects.setSelectedIndex(-1);
+		this.jListProjects.setSelectedValue (null, true);
 		this.hide ();
 	}
 

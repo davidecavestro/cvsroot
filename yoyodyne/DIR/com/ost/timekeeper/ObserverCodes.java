@@ -12,10 +12,11 @@ package com.ost.timekeeper;
  */
 public interface ObserverCodes {
 	public final static String ITEMPROGRESSINGPERIODCHANGE = "itemprogressingperiodchange";
-	public final static String ITEMPROGRESSING = "itemprogressing";
-	public final static String PROJECT = "project";
-	public final static String CURRENTITEM = "currentitem";
-	public final static String SELECTEDITEM = "selecteditem";
-	public final static String SELECTEDPROGRESS = "selectedprogress";
+	public final static String ITEMPROGRESSINGCHANGE = "itemprogressingchange";
+	public final static String PROJECTCHANGE = "projectchange";
+	public final static String CURRENTITEMCHANGE = "currentitemchange";
+	public final static String SELECTEDITEMCHANGE = "selecteditemchange";
+	public final static String SELECTEDPROGRESSCHANGE = "selectedprogresschange";
+	public final static String PROCESSINGCHANGE = "processingchange";
 
 }

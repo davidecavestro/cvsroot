@@ -45,7 +45,7 @@ public final class NodeDeleteAction extends javax.swing.AbstractAction implement
 	
 	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals (ObserverCodes.SELECTEDITEM)){
+			if (arg!=null && arg.equals (ObserverCodes.SELECTEDITEMCHANGE)){
 				this.setEnabled (((Application)o).getSelectedItem ()!=null);
 			}
 		}

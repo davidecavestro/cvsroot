@@ -16,7 +16,7 @@ import com.ost.timekeeper.util.*;
 
 /**
  * Rimuove di un avanzamento {@link
- * com.ost.timekeeper.mode.Period} dai dati persistenti.
+ * com.ost.timekeeper.model.Period} dai dati persistenti.
  *
  * @author  davide
  */
@@ -40,7 +40,7 @@ public final class ProgressDeleteAction extends javax.swing.AbstractAction imple
 	
 	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals (ObserverCodes.SELECTEDITEM)){
+			if (arg!=null && arg.equals (ObserverCodes.SELECTEDITEMCHANGE)){
 				this.setEnabled (((Application)o).getSelectedItem ()!=null);
 			}
 		}

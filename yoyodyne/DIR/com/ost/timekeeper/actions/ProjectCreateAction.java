@@ -32,8 +32,14 @@ public final class ProjectCreateAction extends javax.swing.AbstractAction implem
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
-		String projectName = askUserForProjectName();
-		execute(projectName);
+		final String projectName = askUserForProjectName();
+		
+		if (projectName!=null){
+			/*
+			 * Scelta valida.
+			 */
+			execute(projectName);
+		}
 	}
 	
 	public void execute(String projectName){
@@ -65,7 +71,7 @@ public final class ProjectCreateAction extends javax.swing.AbstractAction implem
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals(ObserverCodes.PROJECT)){
+			if (arg!=null && arg.equals(ObserverCodes.PROJECTCHANGE)){
 				this.setEnabled(true);
 			}
 		}

@@ -35,16 +35,21 @@ public final class ProjectOpenAction extends javax.swing.AbstractAction implemen
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		Application app = Application.getInstance();
-		app.setProject(
-		ProjectSelectDialog.chooseProject(app.getMainForm(),
+		Project choice = ProjectSelectDialog.chooseProject(app.getMainForm(),
 		ResourceSupplier.getString(ResourceClass.UI, "controls", "openproject"),
 		ResourceSupplier.getString(ResourceClass.UI, "controls", "selectprojecttoopen"),
-		true));
+		true);
+		if (choice!=null){
+			/*
+			 * Scelta valida (non si vuole impostare a NULL il progetto corrente, al massimo lo è già.
+			 */
+			app.setProject(choice);
+		}
 	}
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals(ObserverCodes.PROJECT)){
+			if (arg!=null && arg.equals(ObserverCodes.PROJECTCHANGE)){
 				this.setEnabled(true);
 			}
 		}
