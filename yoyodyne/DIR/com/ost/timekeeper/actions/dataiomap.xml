@@ -63,7 +63,7 @@
         <field cst:name="parent" cst:type="com.ost.timekeeper.model.ProgressItem">
             <bind-xml name="parent" node="element" reference="true" />
         </field>
-        <field cst:name="currentProgress" cst:type="com.ost.timekeeper.model.Period">
+        <field cst:name="currentProgress" cst:type="com.ost.timekeeper.model.Progress">
             <bind-xml name="current-progress" node="element" reference="true" />
         </field>
         <!--
@@ -72,8 +72,8 @@
         </field>
         -->
     </class>
-    <class cst:name="com.ost.timekeeper.model.Period">
-        <description>Default mapping for class com.ost.timekeeper.model.Period</description>
+    <class cst:name="com.ost.timekeeper.model.Progress">
+        <description>Default mapping for class com.ost.timekeeper.model.Progress</description>
         <map-to cst:xml="period"/>
         <field cst:name="from" cst:type="java.util.Date">
             <bind-xml name="from" node="element"/>
@@ -83,6 +83,9 @@
         </field>
         <field cst:name="duration" cst:type="com.ost.timekeeper.util.Duration">
             <bind-xml transient="true"/>
+        </field>
+        <field cst:name="progressItem" cst:type="com.ost.timekeeper.model.ProgressItem">
+            <bind-xml name="progressItem" node="element"/>
         </field>
         <field cst:name="description" cst:type="java.lang.String">
             <bind-xml name="description" node="element"/>

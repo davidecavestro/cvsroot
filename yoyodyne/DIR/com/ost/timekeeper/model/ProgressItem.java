@@ -61,7 +61,7 @@ public final class ProgressItem extends Observable{
 	/**
 	 * L'avanzamento corrente di questo nodo.
 	 */
-	private Period currentProgress;
+	private Progress currentProgress;
 	
 	/**
 	 * Il progetto di appartenenza.
@@ -219,13 +219,13 @@ public final class ProgressItem extends Observable{
 	 * Questa azione viene notificata ai listener registrati su
 	 * questo nodo.
 	 */
-	public void startPeriod () {
+	public synchronized void startPeriod () {
 		if (this.progressing){
 			//non ferma avanzamento esistente, lo continua
 			return;
 		}
 		this.progressing = true;
-		this.currentProgress = new Period (new GregorianCalendar ().getTime (), null);
+		this.currentProgress = new Progress (new Date (), null, this);
 		this.progresses.add (this.currentProgress);
 		
 		this.setChanged ();
@@ -239,11 +239,11 @@ public final class ProgressItem extends Observable{
 	 *
 	 * @return il periodo determinato dall'avanzamento terminato.
 	 */
-	public Period stopPeriod () {
+	public synchronized Progress stopPeriod () {
 		if (!this.progressing){
 			throw new IllegalStateException ();
 		}
-		this.currentProgress.setTo (new GregorianCalendar ().getTime ());
+		this.currentProgress.setTo (new Date ());
 		
 		this.setChanged ();
 		this.notifyObservers ();
@@ -344,13 +344,13 @@ public final class ProgressItem extends Observable{
 	/**
 	 * Ritorna gli avanzamenti apparteneneti al sottoalbero avente questo nodo
 	 * come radice.
-	 * Una lista di {@link com.ost.timekeeper.model.Period}.
+	 * Una lista di {@link com.ost.timekeeper.model.Progress}.
 	 *
 	 * @return gli avanzamenti apparteneneti al sottoalbero.
 	 */
 	public List getSubtreeProgresses (){
-		List subProgresses = new ArrayList (this.getProgresses ());
-		for (Iterator it = this.getChildren ().iterator (); it.hasNext ();){
+		final List subProgresses = new ArrayList (this.getProgresses ());
+		for (final Iterator it = this.getChildren ().iterator (); it.hasNext ();){
 			subProgresses.addAll (((ProgressItem)it.next ()).getSubtreeProgresses ());
 		}
 		return subProgresses;
@@ -419,8 +419,8 @@ public final class ProgressItem extends Observable{
 	 *
 	 * @param progresses Gli avanzamenti.
 	 */
-	public void setProgresses (List progresses) {
-		this.progresses=new ArrayList (progresses);
+	public synchronized void setProgresses (List progresses) {
+		this.progresses = new ArrayList (progresses);
 	}
 	
 	/**
@@ -448,7 +448,7 @@ public final class ProgressItem extends Observable{
 	 *
 	 * @return l'avanzamento corrente.
 	 */
-	public Period getCurrentProgress (){
+	public Progress getCurrentProgress (){
 		return this.currentProgress;
 	}
 	
@@ -497,5 +497,19 @@ public final class ProgressItem extends Observable{
 	 */	
 	public boolean isRoot (){
 		return this.parent==null;
+	}
+	
+	/**
+	 * Rimuove il periodo di avanzamento specificato da questo nodo.
+	 */
+	public synchronized void deleteProgress (final Progress progress){
+		final int size = this.progresses.size ();
+		for (int i=0;i<size;i++){
+			final Progress candidate = (Progress)this.progresses.get (i);
+			if (candidate==progress){
+				this.progresses.remove (i);
+				break;
+			}
+		}
 	}
 }

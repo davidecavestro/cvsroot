@@ -52,8 +52,7 @@ public final class StringInputDialog extends javax.swing.JDialog {
 	 * Inizializza le componenti di questa finestra..
 	 */
 	private void initComponents () {
-		descriptionPanel = new javax.swing.JPanel ();
-		inputPanel = new javax.swing.JPanel ();
+		final JPanel mainPanel = new javax.swing.JPanel (new java.awt.GridBagLayout ());
 		dataEditor = new javax.swing.JTextField ();
 		buttonPanel = new javax.swing.JPanel ();
 		confirmButon = new javax.swing.JButton ();
@@ -67,19 +66,18 @@ public final class StringInputDialog extends javax.swing.JDialog {
 			}
 		});
 		
-		descriptionPanel.setLayout (new java.awt.BorderLayout ());
-		descriptionPanel.add (new JLabel (this.labelText), BorderLayout.WEST);
-		final DirectHelpButton dhb = new DirectHelpButton ();
-		dhb.setRolloverEnabled (true);
-		descriptionPanel.add (dhb, BorderLayout.EAST);
+		final GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.insets = new Insets (3, 10, 3, 10);
 		
-		descriptionPanel.setBorder (new EmptyBorder (3,5,3,5));
-		getContentPane ().add (descriptionPanel, java.awt.BorderLayout.NORTH);
-		
-		inputPanel.setLayout (new java.awt.BorderLayout ());
+		c.weightx = 1.0;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 1;
+		mainPanel.add (new TopBorderPane (this.labelText), c);
 		
 		dataEditor.setText ("");
-		
 		
 		//Garantisce che il campo abbia sempre il focus iniziale
         addComponentListener(new ComponentAdapter() {
@@ -88,9 +86,21 @@ public final class StringInputDialog extends javax.swing.JDialog {
             }
         });		
 		
-		inputPanel.setBorder (new EmptyBorder (3,5,3,5));
-		inputPanel.add (dataEditor, java.awt.BorderLayout.CENTER);
-		getContentPane ().add (inputPanel, java.awt.BorderLayout.CENTER);
+		c.weightx = 1.0;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		mainPanel.add (dataEditor, c);
+		
+		/* etichetta filler */
+		c.weightx = 1;
+		c.weighty = 1;
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 1;
+		mainPanel.add (new JLabel (), c);
+		
+		getContentPane ().add (mainPanel, java.awt.BorderLayout.CENTER);
 		
 		confirmButon.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.confirm"));
 		confirmButon.addActionListener (new java.awt.event.ActionListener () {
@@ -113,9 +123,13 @@ public final class StringInputDialog extends javax.swing.JDialog {
 		
 		buttonPanel.add (cancelButton);
 		
+		final DirectHelpButton dhb = new DirectHelpButton ();
+		dhb.setRolloverEnabled (true);
+		buttonPanel.add (dhb);
+		
 		getContentPane ().add (buttonPanel, java.awt.BorderLayout.SOUTH);
 		
-		inputPanel.setFocusCycleRoot (true);
+		mainPanel.setFocusCycleRoot (true);
 		
 		getRootPane ().setDefaultButton (confirmButon);
 		this.setTitle (this.titleText);
@@ -161,8 +175,6 @@ public final class StringInputDialog extends javax.swing.JDialog {
 	
 	private javax.swing.JButton confirmButon;
 	private javax.swing.JButton cancelButton;
-	private javax.swing.JPanel descriptionPanel;
-	private javax.swing.JPanel inputPanel;
 	private javax.swing.JPanel buttonPanel;
 	private javax.swing.JTextField dataEditor;
 	

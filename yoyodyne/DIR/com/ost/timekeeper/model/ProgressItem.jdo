@@ -15,7 +15,7 @@
 	<collection element-type="ProgressItem"/>
       </field>
       <field name="progresses" >
-        <collection element-type="Period"/>
+        <collection element-type="Progress"/>
       </field>
     </class>
   </package>

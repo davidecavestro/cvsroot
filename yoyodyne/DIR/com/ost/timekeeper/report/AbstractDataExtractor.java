@@ -101,4 +101,19 @@ public abstract class AbstractDataExtractor implements DataExtractor{
 		.append (durationNumberFormatter.format (duration.getSeconds ()));
 		return sb.toString ();
 	}
+	
+	public String toString (){
+		final StringBuffer sb = new StringBuffer ();
+		sb.append ("filters: [");
+		if (_filters!=null){
+			for (int i=0;i<_filters.length;i++){
+				if (i>0){
+					sb.append (", ");
+				}
+				sb.append (_filters[i]);
+			}
+		}
+		sb.append ("]");
+		return sb.toString ();
+	}
 }

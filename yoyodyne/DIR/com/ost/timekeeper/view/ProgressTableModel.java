@@ -107,7 +107,7 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	 * @return il valore associato alla cella di riga <TT>rowIndex</TT> e colonna <TT>columnIndex</TT>.
 	 */	
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Period period = (Period)progresses.get(rowIndex);
+		Progress period = (Progress)progresses.get(rowIndex);
 		switch (columnIndex){
 			case 0: return period.getFrom();
 			case 1: return period.getTo();
@@ -209,7 +209,7 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 		if (app.getCurrentItem()!=null){
 			List progresses = this.getProgresses ();
 			for (int i=0;i<progresses.size();i++){
-				Period p = (Period)progresses.get (i);
+				Progress p = (Progress)progresses.get (i);
 				if (p==app.getCurrentItem().getCurrentProgress()){
 					this.currentPeriodIdx=i;
 					break;

@@ -61,7 +61,7 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 	 * Inizializzazione componenti.
 	 */
 	private void initComponents () {
-		infoLabel = new javax.swing.JLabel ();
+		infoLabel = new TopBorderPane ();
 		projectList = new javax.swing.JList ();
 		buttonPanel = new javax.swing.JPanel ();
 		confirmButton = new javax.swing.JButton ();
@@ -70,8 +70,7 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 		
 		this.setTitle (this.titleText);
 		
-		final JPanel mainPanel = new JPanel ();
-		mainPanel.setLayout (new java.awt.GridBagLayout ());
+		final JPanel mainPanel = new JPanel (new java.awt.GridBagLayout ());
 		
 		addWindowListener (new java.awt.event.WindowAdapter () {
 			public void windowClosing (java.awt.event.WindowEvent evt) {
@@ -85,18 +84,15 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 		final GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
-		c.insets = new Insets (3, 3, 3, 3);
+		c.insets = new Insets (3, 10, 3, 10);
 		
 		c.weightx = 1.0;
 		c.gridx = 0;
 		c.gridy = 0;
+		c.gridwidth = 2;
 		mainPanel.add (infoLabel, c);
 		
-		c.weightx = 0.0;
-		c.gridx = 1;
-		c.gridy = 0;
-		mainPanel.add (directHelpButton, c);
-		
+		c.gridwidth = 1;
 		//Garantisce che il campo abbia sempre il focus iniziale
 		addComponentListener (new ComponentAdapter () {
 			public void componentShown (ComponentEvent ce) {
@@ -140,6 +136,8 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 		cancelButton.getActionMap().put("cancel", cancelAction);
 		buttonPanel.add (cancelButton);
 		
+		buttonPanel.add (directHelpButton);
+		
 		c.weightx = 0.0;
 		c.weighty = 0.0;
 		c.gridx = 0;
@@ -147,10 +145,13 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 		c.gridwidth = 2;
 		mainPanel.add (buttonPanel, c);
 		
+		mainPanel.setPreferredSize (new java.awt.Dimension (340, 220));
+		
 		getContentPane ().add (mainPanel);
 		
 		getRootPane ().setDefaultButton (confirmButton);
 		pack ();
+		
 	}
 	
 	private void cancelButtonActionPerformed (java.awt.event.ActionEvent evt) {
@@ -179,7 +180,7 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 	// Variables declaration
 	private javax.swing.JButton confirmButton;
 	private javax.swing.JButton cancelButton;
-	private javax.swing.JLabel infoLabel;
+	private TopBorderPane infoLabel;
 	private javax.swing.JPanel buttonPanel;
 	private javax.swing.JList projectList;
 	private DirectHelpButton directHelpButton;

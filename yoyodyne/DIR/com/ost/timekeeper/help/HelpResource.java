@@ -48,6 +48,12 @@ public final class HelpResource {
 	/** La finestra di generazione dei report. */
 	public final static HelpResource REPORTGENERATIONDIALOG = new HelpResource ("html.reportgenerationdialog");
 	
+	/** La finestra di selezione della radice del grafico ad anello. */
+	public final static HelpResource RINGCHART_ROOTSELECTION_DIALOG = new HelpResource ("html.ringchartrootselectiondialog");
+	
+	/** La finestra di gestione grafici. */
+	public final static HelpResource CHARTFRAME = new HelpResource ("html.chartframe");
+	
 	/**
 	 * Costruttore con risorsa specificata.
 	 *

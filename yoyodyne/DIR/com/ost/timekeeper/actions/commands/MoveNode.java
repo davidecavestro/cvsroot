@@ -39,7 +39,7 @@ public final class MoveNode extends AbstractCommand {
 	 *
 	 * @param movingNode il nodo da spostare.
 	 * @param newParent il nuovo padre.
-	 * @param newPosition la nuova posizione del nodo. Specificare qualsiasi valore negativo per 
+	 * @param newPosition la nuova posizione del nodo. Specificare qualsiasi valore negativo per
 	 * accodare il nodo ai fratelli esistenti.
 	 */
 	public MoveNode (final ProgressItem movingNode, final ProgressItem newParent, final int newPosition) {
@@ -53,27 +53,37 @@ public final class MoveNode extends AbstractCommand {
 	 * Esegue questo comando.
 	 */
 	public void execute (){
-//		if (_movingNode.isRoot ()){
-//			//non si sposta la radice;
-//			throw new IllegalArgumentException("Cannot remove root node.");
-//		}
+		//		if (_movingNode.isRoot ()){
+		//			//non si sposta la radice;
+		//			throw new IllegalArgumentException("Cannot remove root node.");
+		//		}
 		
 		if (_newParent==null){
 			//non si crea una nuova radice;
-			throw new IllegalArgumentException("Cannot generate a new  root node.");
+			throw new IllegalArgumentException ("Cannot generate a new  root node.");
 		}
 		
 		final Application app = Application.getInstance ();
 		app.getMainForm ().getProgressTreeModel ().removeNodeFromParent (_movingNode);
 		
-		final ProgressItem oldParent = _movingNode.getParent ();
-		oldParent.remove(_movingNode);
-		if (this._newPosition>=0){
-			this._newParent.insert (_movingNode, this._newPosition);
-			app.getMainForm ().getProgressTreeModel ().insertNodeInto (_movingNode, _newParent, this._newPosition);
-		} else {
-			final int position = this._newParent.insert (_movingNode);
-			app.getMainForm ().getProgressTreeModel ().insertNodeInto (_movingNode, _newParent, position);
+		final javax.jdo.PersistenceManager pm = app.getPersistenceManager ();
+		final javax.jdo.Transaction tx = pm.currentTransaction ();
+		tx.begin ();
+		try {
+			final ProgressItem oldParent = _movingNode.getParent ();
+			oldParent.remove (_movingNode);
+			if (this._newPosition>=0){
+				this._newParent.insert (_movingNode, this._newPosition);
+				app.getMainForm ().getProgressTreeModel ().insertNodeInto (_movingNode, _newParent, this._newPosition);
+			} else {
+				final int position = this._newParent.insert (_movingNode);
+				app.getMainForm ().getProgressTreeModel ().insertNodeInto (_movingNode, _newParent, position);
+			}
+			
+			tx.commit ();
+		} catch (final Throwable t){
+			tx.rollback ();
+			throw new com.ost.timekeeper.util.NestedRuntimeException (t);
 		}
 	}
 	

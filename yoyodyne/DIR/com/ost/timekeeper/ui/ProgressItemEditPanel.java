@@ -8,6 +8,10 @@ package com.ost.timekeeper.ui;
 
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.*;
+import com.ost.timekeeper.actions.commands.UpdateNode;
+import com.ost.timekeeper.actions.commands.attributes.Attribute;
+import com.ost.timekeeper.actions.commands.attributes.DateAttribute;
+import com.ost.timekeeper.actions.commands.attributes.StringAttribute;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.util.*;
@@ -121,7 +125,7 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 				pushData ();
 			}
 		});
-		confirmButton.setAction (ActionPool.getInstance ().getProgressItemUpdateAction ());
+		confirmButton.setAction (ActionPool.getInstance ().getNodeUpdateAction ());
 		confirmButton.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "confirm"));
 		
 		/*
@@ -188,41 +192,56 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		notesEditor.setMinimumSize (new Dimension (120, 20));
 		notesEditor.addKeyListener (this);
 		
-		final GridBagConstraints c = new GridBagConstraints();
+		final GridBagConstraints c = new GridBagConstraints ();
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
 		c.insets = new Insets (3, 3, 3, 3);
-			
+		
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 2;
+		editPanel.add (new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "main")), c);
+		
+		c.gridwidth = 1;
 		/*
 		 * Inserimento editazione CODICE.
 		 */
 		c.gridx = 0;
-		c.gridy = 0;
+		c.gridy = 1;
 		editPanel.add (codeLabel, c);
 		c.gridx = 1;
-		c.gridy = 0;
+		c.gridy = 1;
 		editPanel.add (codeEditor, c);
 		
 		/*
 		 * Inserimento editazione NOME.
 		 */
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = 2;
 		editPanel.add (nameLabel, c);
 		c.gridx = 1;
-		c.gridy = 1;
+		c.gridy = 2;
 		editPanel.add (nameEditor, c);
+		
+		c.gridx = 0;
+		c.gridy = 3;
+		c.gridwidth = 2;
+		editPanel.add (new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "secondary")), c);
+		
+		c.gridwidth = 1;
 		
 		/*
 		 * Inserimento editazione DESCRIZIONE.
 		 */
+		c.weightx = 0.0;
+		c.weighty = 0.0;
 		c.gridx = 0;
-		c.gridy = 2;
+		c.gridy = 4;
 		editPanel.add (descriptionLabel, c);
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		c.gridx = 1;
-		c.gridy = 2;
+		c.gridy = 4;
 		editPanel.add (new JScrollPane (descriptionEditor,
 		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), c);
@@ -233,21 +252,21 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		c.weightx = 0.0;
 		c.weighty = 0.0;
 		c.gridx = 0;
-		c.gridy = 3;
+		c.gridy = 5;
 		editPanel.add (notesLabel, c);
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		c.gridx = 1;
-		c.gridy = 3;
+		c.gridy = 5;
 		editPanel.add (new JScrollPane (notesEditor,
 		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), c);
 		
 		
-//		SpringUtilities.makeCompactGrid(editPanel,
-//                                4, 2, //rows, cols
-//                                6, 6,        //initX, initY
-//                                6, 6);       //xPad, yPad
+		//		SpringUtilities.makeCompactGrid(editPanel,
+		//                                4, 2, //rows, cols
+		//                                6, 6,        //initX, initY
+		//                                6, 6);       //xPad, yPad
 		
 		/*
 		 * Inserimento pannello editazione.
@@ -284,7 +303,7 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		String description = "";
 		String notes = "";
 		if (validItem){
-			/* 
+			/*
 			 * C'è un nodo selezionato.
 			 * Inizializzazione campi editazione a valori nodo di avanzamento selezionato.
 			 */
@@ -305,14 +324,33 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 	private final void pushData (){
 		final ProgressItem editSubject = Application.getInstance ().getSelectedItem ();
 		if (editSubject!=null){
-			/* 
+			/*
 			 * C'è un nodo selezionato.
 			 * Inizializzazione campi editazione a valori nodo di avanzamento selezionato.
 			 */
-			editSubject.setCode (this.codeEditor.getText ());
-			editSubject.setName (this.nameEditor.getText ());
-			editSubject.setDescription (this.descriptionEditor.getText () );
-			editSubject.setNotes (this.notesEditor.getText () );
+			
+			new UpdateNode (editSubject, 
+				new Attribute[]{
+					new StringAttribute (UpdateNode.NODECODE, this.codeEditor.getText ()),
+					new StringAttribute (UpdateNode.NODENAME, this.nameEditor.getText ()),
+					new StringAttribute (UpdateNode.NODEDESCRIPTION, this.descriptionEditor.getText ()),
+					new StringAttribute (UpdateNode.NODENOTES, this.notesEditor.getText ())
+				}).execute ();
+				
+//			final Application app = Application.getInstance ();
+//			final javax.jdo.PersistenceManager pm = app.getPersistenceManager ();
+//			final javax.jdo.Transaction tx = pm.currentTransaction ();
+//			tx.begin ();
+//			try {
+//				editSubject.setCode (this.codeEditor.getText ());
+//				editSubject.setName (this.nameEditor.getText ());
+//				editSubject.setDescription (this.descriptionEditor.getText () );
+//				editSubject.setNotes (this.notesEditor.getText () );
+//				tx.commit ();
+//			} catch (final Throwable t){
+//				tx.rollback ();
+//				throw new com.ost.timekeeper.util.NestedRuntimeException (t);
+//			}
 			
 			this.setDataChanged (false);
 		}
@@ -326,10 +364,10 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 	 *
 	 * @param o la sorgente della notifica.
 	 * @param arg argomento della notifica.
-	 */	
-	public void update(Observable o, Object arg) {
+	 */
+	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals(ObserverCodes.SELECTEDITEMCHANGE)){
+			if (arg!=null && arg.equals (ObserverCodes.SELECTEDITEMCHANGE)){
 				this.resynch ();
 			}
 		}
@@ -340,7 +378,7 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 	 */
 	private void setDataChanged (boolean changed){
 		this._dataChanged = changed;
-		this.confirmButton.setEnabled (this._dataChanged);
+		this.confirmButton.setEnabled (this._dataChanged && ActionPool.getInstance ().getNodeUpdateAction ().isEnabled ());
 		this.resetButton.setEnabled (this._dataChanged);
 	}
 	

@@ -102,4 +102,16 @@ public interface ApplicationSettings {
 	 * @return l'ampiezza dell'albero dei nodi di avanzamento..
 	 */
 	public Integer getProgressItemTreeWidth ();
+	
+	/**
+	 * Ritorna la posizione iniziale della finestra di gestione grafici.
+	 * @return la posizione iniziale della finestra di gestione grafici.
+	 */
+	public Rectangle getChartFrameBounds ();
+	
+	/**
+	 * Ritorna il numero di livelli visibili per il grafico ad anello.
+	 * @return il numero di livelli visibili per il grafico ad anello.
+	 */
+	Integer getRingChartVisibleLevels ();
 }

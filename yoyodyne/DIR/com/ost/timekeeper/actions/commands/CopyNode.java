@@ -62,14 +62,25 @@ public final class CopyNode extends AbstractCommand {
 		
 		final ProgressItem oldParent = _copyingNode.getParent ();
 		final ProgressItem nodeCopy = new ProgressItem (_copyingNode);
-		if (this._copyPosition>=0){
-			this._newParent.insert (nodeCopy, this._copyPosition);
-			app.getMainForm ().getProgressTreeModel ().insertNodeInto (nodeCopy, _newParent, this._copyPosition);
-		} else {
-			this._newParent.insert (nodeCopy);
-			app.getMainForm ().getProgressTreeModel ().insertNodeInto (nodeCopy, _newParent, _newParent.childCount ());
+		
+		final javax.jdo.PersistenceManager pm = app.getPersistenceManager();
+		final javax.jdo.Transaction tx = pm.currentTransaction();
+		tx.begin();
+		try {
+			if (this._copyPosition>=0){
+				this._newParent.insert (nodeCopy, this._copyPosition);
+				app.getMainForm ().getProgressTreeModel ().insertNodeInto (nodeCopy, _newParent, this._copyPosition);
+			} else {
+				this._newParent.insert (nodeCopy);
+				app.getMainForm ().getProgressTreeModel ().insertNodeInto (nodeCopy, _newParent, _newParent.childCount ());
+			}
+			copySubtree(app, _copyingNode, nodeCopy);
+			
+			tx.commit();			
+		} catch (final Throwable t){
+			tx.rollback ();
+			throw new com.ost.timekeeper.util.NestedRuntimeException (t);
 		}
-		copySubtree(app, _copyingNode, nodeCopy);
 	}
 	
 	/**
@@ -89,8 +100,8 @@ public final class CopyNode extends AbstractCommand {
 		}
 		final List progresses = new ArrayList ();
 		for (final Iterator it = source.getProgresses ().iterator ();it.hasNext ();){
-			final Period sourceProgress = (Period)it.next ();
-			final Period targetProgress = new Period (sourceProgress);
+			final Progress sourceProgress = (Progress)it.next ();
+			final Progress targetProgress = new Progress (sourceProgress);
 			progresses.add (targetProgress);
 		}
 		target.setProgresses (progresses);

@@ -16,7 +16,7 @@ import com.ost.timekeeper.util.*;
  *
  * @author  davide
  */
-public final class Period extends Observable{
+public class Period extends Observable{
 	
 	/** 
 	 * La data di inizio periodo. 
@@ -31,12 +31,12 @@ public final class Period extends Observable{
 	/**
 	 * Durata calcolata (valida).
 	 */
-	private boolean isDurationComputed = false;
+	private transient boolean isDurationComputed = false;
 	
 	/**
 	 * La durata effettiva attuale (se <TT>isDurationComputed</TT> value <TT>tre</TT>.
 	 */
-	private Duration computedDuration;
+	private transient Duration computedDuration;
 	
 	/** 
 	 * La descrizione di questo periodo. 
@@ -51,7 +51,7 @@ public final class Period extends Observable{
 	/** 
 	 * Costruttore vuoto.
 	 */
-	public Period() {
+	public Period () {
 	}
 	
 	/** 
@@ -60,7 +60,7 @@ public final class Period extends Observable{
 	 * @param from la data di inizio.
 	 * @param to la data di fine.
 	 */
-	public Period(final Date from, final Date to) {
+	public Period (final Date from, final Date to) {
 		this.from = from;
 		this.to = to;
 	}
@@ -71,7 +71,7 @@ public final class Period extends Observable{
 	 *
 	 * @param source la sorgente della copia.
 	 */
-	public Period(final Period source) {
+	public Period (final Period source) {
 		this.description = source.description;
 		this.notes = source.notes;
 		this.from = source.from;
@@ -92,7 +92,7 @@ public final class Period extends Observable{
 	 *
 	 * @param from la nuova data d'inizio.
 	 */
-	public void setFrom(Date from) {
+	public synchronized void setFrom(Date from) {
 		if (!CalendarUtils.equals(this.from,from)){
 			this.from = from;
 			this.isDurationComputed = false;
@@ -115,7 +115,7 @@ public final class Period extends Observable{
 	 *
 	 * @param to la nuova data di fine del periodo.
 	 */
-	public void setTo(Date to) {
+	public synchronized void setTo(Date to) {
 		if (!CalendarUtils.equals(this.to,to)){
 			this.to = to;
 			isDurationComputed = false;
@@ -131,7 +131,7 @@ public final class Period extends Observable{
 	 * @return <code>true</code> se questo periodo temporale interseca <code>period</code>; 
 	 * <code>false</code> altrimenti.
 	 */	
-	public boolean intersects (final Period period){
+	public synchronized boolean intersects (final Period period){
 		if (!this.isValid() || !period.isValid()){
 			throw new InvalidPeriodException ();
 		}
@@ -157,7 +157,7 @@ public final class Period extends Observable{
 	 * @return <code>true</code> se questo è un periodo temporale non terminato; 
 	 * <code>false</code> altrimenti.
 	 */
-	public boolean isEndOpened() {
+	public synchronized boolean isEndOpened() {
 		return this.from!=null 
 			&& this.to==null;
 	}
@@ -167,12 +167,13 @@ public final class Period extends Observable{
 	 *
 	 * @return la durata.
 	 */	
-	public Duration getDuration (){
+	public synchronized Duration getDuration (){
 		if (this.isEndOpened()){
-			return new Duration (this.from, new GregorianCalendar ().getTime ());
+			return new Duration (this.from, new Date ());
 		} else {
 			if (!isDurationComputed){
 				this.computedDuration = new Duration (this.from, this.to);
+				isDurationComputed = true;
 			}
 			return this.computedDuration;
 		}

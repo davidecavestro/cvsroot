@@ -54,6 +54,15 @@ public interface CustomizableSettings extends ApplicationSettings{
 	/** Altezza della finestra di elenco avanzamenti. */
 	public final static String PROPNAME_PROGRESSLISTFRAME_HEIGHT = "progresslistframeheight";
 	
+	/** Posizione sull'asse X della finestra di gestione grafici. */
+	public final static String PROPNAME_CHARTFRAME_XPOS = "chartframexpos";
+	/** Posizione sull'asse Y della finestra di gestione grafici. */
+	public final static String PROPNAME_CHARTFRAME_YPOS = "chartframeypos";
+	/** Larghezza della finestra di gestione grafici. */
+	public final static String PROPNAME_CHARTFRAME_WIDTH = "chartframewidth";
+	/** Altezza della finestra di gestione grafici. */
+	public final static String PROPNAME_CHARTFRAME_HEIGHT = "chartframeheight";
+	
 	/** Larghezza dell'albero dei nodi di avanzamento. */
 	public final static String PROPNAME_PROGRESSITEMTREE_WIDTH = "progressitemtreewidth";
 	
@@ -91,6 +100,11 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 * Nome dell'utente JDO.
 	 */
 	public final static String PROPNAME_JDOUSERNAME = "jdousername";
+	
+	/**
+	 * Numero livelli visibili nel grafico ad anello.
+	 */
+	public final static String PROPNAME_RINGCHART_VISIBLELEVELS = "ringchartvisiblelevels";
 	
 	
 	/**
@@ -153,6 +167,11 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 */	
 	public void setProgressListFrameBounds (Rectangle r);
 	
+	/** Imposta la posizione della finestra di gestione grafici.
+	 * @param r la posizione.
+	 */	
+	public void setChartFrameBounds (Rectangle r);
+	
 	/**
 	 * Imposta lo stato di abilitazione della notifica sonora in presenza di eventi.
 	 * @param beep lo stato di abilitazione.
@@ -194,4 +213,9 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 * Imposta la larghezza dell'albero dei nodi di avanzamento.
 	 */
 	public void setProgressItemTreeWidth (final Integer width);
+	
+	/**
+	 * Imposta il numero di livelli visibili per il grafico ad anello.
+	 */
+	void setRingChartVisibleLevels (final Integer depth);
 }

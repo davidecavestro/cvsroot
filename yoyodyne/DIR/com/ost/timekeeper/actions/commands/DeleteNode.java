@@ -41,26 +41,37 @@ public final class DeleteNode extends AbstractCommand {
 		final ProgressItem parent = _deletingNode.getParent ();
 		if (parent==null){
 			//non si rimuove la radice;
-			throw new IllegalArgumentException("Cannot remove root node.");
+			throw new IllegalArgumentException ("Cannot remove root node.");
 		}
 		
 		final Application app = Application.getInstance ();
 		app.getMainForm ().getProgressTreeModel ().removeNodeFromParent (_deletingNode);
-		parent.remove(_deletingNode);
-		deleteSubtreePersistent (app, _deletingNode);
+		
+		final javax.jdo.PersistenceManager pm = app.getPersistenceManager ();
+		final javax.jdo.Transaction tx = pm.currentTransaction ();
+		tx.begin ();
+		try {
+			parent.remove (_deletingNode);
+			deleteSubtreePersistent (app, _deletingNode);
+			
+			tx.commit ();
+		} catch (final Throwable t){
+			tx.rollback ();
+			throw new com.ost.timekeeper.util.NestedRuntimeException (t);
+		}
 	}
 	
 	/**
 	 * Rimuove il sottoalbero, avanzamenti compresi.
 	 *
 	 * @param toDelete la radice del sottoalbero da rimuovere.
-	 */	
+	 */
 	private void deleteSubtreePersistent (final Application app, final ProgressItem toDelete){
 		for (final Iterator it = toDelete.getChildren ().iterator ();it.hasNext ();){
 			deleteSubtreePersistent (app, (ProgressItem)it.next ());
 		}
 		for (final Iterator it = toDelete.getProgresses ().iterator ();it.hasNext ();){
-			app.getPersistenceManager ().deletePersistent ((Period)it.next ());
+			app.getPersistenceManager ().deletePersistent ((Progress)it.next ());
 		}
 		app.getPersistenceManager ().deletePersistent (toDelete);
 	}

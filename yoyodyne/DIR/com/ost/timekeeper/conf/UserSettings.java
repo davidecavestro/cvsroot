@@ -8,6 +8,7 @@ package com.ost.timekeeper.conf;
 
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.ui.*;
+import com.ost.timekeeper.ui.chart.ChartFrame;
 import java.awt.*;
 import java.util.*;
 
@@ -93,6 +94,7 @@ public final class UserSettings extends AbstractSettings implements Observer{
 			this.setProgressItemInspectorBounds (ProgressItemInspectorFrame.getInstance ().getBounds ());
 			this.setProgressPeriodInspectorBounds (ProgressInspectorFrame.getInstance ().getBounds ());
 			this.setProgressListFrameBounds (ProgressListFrame.getInstance ().getBounds ());
+			this.setChartFrameBounds (ChartFrame.getInstance ().getBounds ());
 			/* Salva larghezza albero */
 			this.setProgressItemTreeWidth (new Integer (Application.getInstance ().getMainForm ().getProgressItemTreeWidth ()));
 			/* Salva tipo lista avanzamenti. */

@@ -13,6 +13,7 @@ import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.util.*;
+import javax.swing.JOptionPane;
 
 /**
  * Chiude il progetto attualmente aperto dall'applicazione.
@@ -36,7 +37,22 @@ public final class ProjectCloseAction extends javax.swing.AbstractAction impleme
 	}
 	
 	public void execute (){
-		Application app = Application.getInstance ();
+		final Application app = Application.getInstance ();
+		/*
+		 * termina eventualmente il progress corrente.
+		 */
+		final ProgressItem currentItem = app.getCurrentItem ();
+		if (currentItem!=null && currentItem.isProgressing ()){
+			if (
+				JOptionPane.showConfirmDialog (
+				app.getMainForm (), ResourceSupplier.getString (ResourceClass.UI, "controls", "stop.current.progress.confirm"))!=JOptionPane.OK_OPTION){
+					/*
+					 * Avanzamneto in corso, che non si vuole fermare
+					 */
+				return;
+			}
+			ActionPool.getInstance ().getProgressStopAction ().execute ();
+		}
 		app.setProject (null);
 	}
 	

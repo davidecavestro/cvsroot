@@ -8,6 +8,10 @@ package com.ost.timekeeper.ui;
 
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.*;
+import com.ost.timekeeper.actions.commands.UpdateProgress;
+import com.ost.timekeeper.actions.commands.attributes.Attribute;
+import com.ost.timekeeper.actions.commands.attributes.DateAttribute;
+import com.ost.timekeeper.actions.commands.attributes.StringAttribute;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.util.*;
@@ -123,7 +127,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 				pushData ();
 			}
 		});
-		confirmButton.setAction (ActionPool.getInstance ().getProgressItemUpdateAction ());
+		confirmButton.setAction (ActionPool.getInstance ().getProgressUpdateAction ());
 		confirmButton.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "confirm"));
 		
 		/*
@@ -163,7 +167,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		 */
 		fromLabel.setLabelFor (fromEditor);
 		fromLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "from"));
-//		fromEditor.setMinimumSize (new Dimension (120, 20));
+		//		fromEditor.setMinimumSize (new Dimension (120, 20));
 		fromEditor.addKeyListener (this);
 		
 		/*
@@ -171,7 +175,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		 */
 		toLabel.setLabelFor (toEditor);
 		toLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "to"));
-//		toEditor.setMinimumSize (new Dimension (120, 20));
+		//		toEditor.setMinimumSize (new Dimension (120, 20));
 		toEditor.addKeyListener (this);
 		
 		/*
@@ -190,30 +194,43 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		notesEditor.setMinimumSize (new Dimension (120, 20));
 		notesEditor.addKeyListener (this);
 		
-		final GridBagConstraints c = new GridBagConstraints();
+		final GridBagConstraints c = new GridBagConstraints ();
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
 		c.insets = new Insets (3, 3, 3, 3);
-			
+		
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 2;
+		editPanel.add (new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "main")), c);
+		
+		c.gridwidth = 1;
 		/*
 		 * Inserimento editazione INIZIO.
 		 */
 		c.gridx = 0;
-		c.gridy = 0;
+		c.gridy = 1;
 		editPanel.add (fromLabel, c);
 		c.gridx = 1;
-		c.gridy = 0;
+		c.gridy = 1;
 		editPanel.add (fromEditor, c);
 		
 		/*
 		 * Inserimento editazione FINE.
 		 */
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = 2;
 		editPanel.add (toLabel, c);
 		c.gridx = 1;
-		c.gridy = 1;
+		c.gridy = 2;
 		editPanel.add (toEditor, c);
+		
+		c.gridx = 0;
+		c.gridy = 3;
+		c.gridwidth = 2;
+		editPanel.add (new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "secondary")), c);
+		
+		c.gridwidth = 1;
 		
 		/*
 		 * Inserimento editazione DESCRIZIONE.
@@ -221,12 +238,12 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		c.weightx = 0.0;
 		c.weighty = 0.0;
 		c.gridx = 0;
-		c.gridy = 2;
+		c.gridy = 4;
 		editPanel.add (descriptionLabel, c);
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		c.gridx = 1;
-		c.gridy = 2;
+		c.gridy = 4;
 		editPanel.add (new JScrollPane (descriptionEditor,
 		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), c);
@@ -237,22 +254,22 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		c.weightx = 0.0;
 		c.weighty = 0.0;
 		c.gridx = 0;
-		c.gridy = 3;
+		c.gridy = 5;
 		editPanel.add (notesLabel, c);
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		c.gridx = 1;
-		c.gridy = 3;
+		c.gridy = 5;
 		editPanel.add (new JScrollPane (notesEditor,
 		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), c);
 		
 		
 		
-//		SpringUtilities.makeCompactGrid(editPanel,
-//                                4, 2, //rows, cols
-//                                6, 6,        //initX, initY
-//                                6, 6);       //xPad, yPad
+		//		SpringUtilities.makeCompactGrid(editPanel,
+		//                                4, 2, //rows, cols
+		//                                6, 6,        //initX, initY
+		//                                6, 6);       //xPad, yPad
 		
 		/*
 		 * Inserimento pannello editazione.
@@ -276,7 +293,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 	private final void resynch (){
 		final Application app = Application.getInstance ();
 		
-		final Period editSubject = app.getSelectedProgress ();
+		final Progress editSubject = app.getSelectedProgress ();
 		final boolean validItem = editSubject!=null;
 		final boolean editingEnabled = validItem;
 		
@@ -287,7 +304,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		String description = "";
 		String notes = "";
 		if (validItem){
-			/* 
+			/*
 			 * C'è un nodo selezionato.
 			 * Inizializzazione campi editazione a valori nodo di avanzamento selezionato.
 			 */
@@ -314,16 +331,33 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 	private final void pushData (){
 		final Application app = Application.getInstance ();
 		
-		final Period editSubject = app.getSelectedProgress ();
+		final Progress editSubject = app.getSelectedProgress ();
 		if (editSubject!=null){
-			/* 
-			 * C'è un nodo selezionato.
-			 * Inizializzazione campi editazione a valori nodo di avanzamento selezionato.
+			/*
+			 * C'è un avanzamento selezionato.
+			 * Valorizzazione avanzamento da campi editazione.
 			 */
-			editSubject.setFrom ((Date)this.fromEditor.getValue ());
-			editSubject.setTo ((Date)this.toEditor.getValue());
-			editSubject.setDescription (this.descriptionEditor.getText () );
-			editSubject.setNotes (this.notesEditor.getText () );
+			new UpdateProgress (editSubject, 
+				new Attribute[]{
+					new DateAttribute (UpdateProgress.PROGRESSFROM, (Date)this.fromEditor.getValue ()),
+					new DateAttribute (UpdateProgress.PROGRESSTO, (Date)this.toEditor.getValue ()),
+					new StringAttribute (UpdateProgress.PROGRESSDESCRIPTION, this.descriptionEditor.getText ()),
+					new StringAttribute (UpdateProgress.PROGRESSNOTES, this.notesEditor.getText ())
+				}).execute ();
+
+//			final javax.jdo.PersistenceManager pm = app.getPersistenceManager ();
+//			final javax.jdo.Transaction tx = pm.currentTransaction ();
+//			tx.begin ();
+//			try {
+//				editSubject.setFrom ();
+//				editSubject.setTo ((Date)this.toEditor.getValue ());
+//				editSubject.setDescription (this.descriptionEditor.getText () );
+//				editSubject.setNotes (this.notesEditor.getText () );
+//				tx.commit ();
+//			} catch (final Throwable t){
+//				tx.rollback ();
+//				throw new com.ost.timekeeper.util.NestedRuntimeException (t);
+//			}
 			
 			this.setDataChanged (false);
 		}
@@ -337,10 +371,10 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 	 *
 	 * @param o la sorgente della notifica.
 	 * @param arg argomento della notifica.
-	 */	
-	public void update(Observable o, Object arg) {
+	 */
+	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals(ObserverCodes.SELECTEDPROGRESSCHANGE)){
+			if (arg!=null && arg.equals (ObserverCodes.SELECTEDPROGRESSCHANGE)){
 				this.resynch ();
 			}
 		}
@@ -351,7 +385,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 	 */
 	private void setDataChanged (boolean changed){
 		this._dataChanged = changed;
-		this.confirmButton.setEnabled (this._dataChanged);
+		this.confirmButton.setEnabled (this._dataChanged && ActionPool.getInstance ().getProgressUpdateAction ().isEnabled ());
 		this.resetButton.setEnabled (this._dataChanged);
 	}
 	

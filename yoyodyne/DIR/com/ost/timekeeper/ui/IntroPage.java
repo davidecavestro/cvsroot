@@ -87,12 +87,12 @@ public final class IntroPage {
         Font font = getAnimationFont();
         label1 = new BasicTextLabel(" ");
         label1.setFont(font);
-//        label1.setBounds(0, 0, 350, 100);
+        label1.setBounds(0, 0, 350, 100);
         label1.setOpaque(false);
 
         label2 = new BasicTextLabel(" ");
         label2.setFont(font);
-//        label2.setBounds(0, 0, 350, 100);
+        label2.setBounds(0, 0, 350, 100);
         label2.setOpaque(false);
     }
     
@@ -106,7 +106,7 @@ public final class IntroPage {
         animation = createAnimation();
         
         JPanel panel = new JPanel(null);
-//        panel.setBounds(0, 0, 350, 100);
+        panel.setBounds(0, 0, 350, 100);
         panel.setBackground(Color.white);
         
         panel.add(label1);
@@ -134,7 +134,7 @@ public final class IntroPage {
             BasicTextAnimation.defaultFade(
                 label1,
                 3000,
-                "JTTS",//ApplicationData.getInstance ().getApplicationExternalName (),
+                ApplicationData.getInstance ().getApplicationExternalName (),
                 Color.darkGray);
 
         Animation description =

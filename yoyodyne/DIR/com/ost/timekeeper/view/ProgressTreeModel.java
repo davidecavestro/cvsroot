@@ -189,12 +189,16 @@ public class ProgressTreeModel extends com.ost.timekeeper.ui.support.treetable.A
 		if (o instanceof Application){
 			if (arg!=null && arg.equals(ObserverCodes.PROJECTCHANGE)){
 				this.load (((Application)o).getProject());
-			} else if (arg!=null && arg.equals(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE)){
-				/*
-				 * pessimizzazione!!!
-				 */
-				final TreeModelEvent tme = new TreeModelEvent (this, this.getPathToRoot(Application.getInstance ().getCurrentItem ()));
-				this.fireTreeNodesChanged (this, tme.getPath (), tme.getChildIndices (), tme.getChildren ());
+//			} else if (arg!=null && arg.equals(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE)){
+//				/*
+//				 * pessimizzazione!!!
+//				 */
+//				final ProgressItem[] path = this.getPathToRoot(Application.getInstance ().getCurrentItem ());
+//				if (path!=null){
+//					final TreeModelEvent tme = new TreeModelEvent (this, path);
+////					this.fireTreeNodesChanged (this, tme.getPath (), tme.getChildIndices (), tme.getChildren ());
+////					this.fireTableChanged(this, tme.getPath (), tme.getChildIndices (), tme.getChildren ());
+//				}
 			}
 		}
 	}
@@ -217,7 +221,7 @@ public class ProgressTreeModel extends com.ost.timekeeper.ui.support.treetable.A
 			case 1: 
 				long totalDuration = 0;
 				for (final Iterator it = progressItem.getSubtreeProgresses ().iterator ();it.hasNext ();){
-					final Period period = (Period)it.next ();
+					final Progress period = (Progress)it.next ();
 					totalDuration += period.getDuration ().getTime ();
 				}
 				

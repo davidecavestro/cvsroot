@@ -65,7 +65,7 @@ public final class AfterDateFilter extends AbstractFilter{
 	 * @return <TT>true</TT> se l'oggetto specificato soddisfa questo filtro.
 	 */	
 	public boolean matches (Object obj) {
-		return ((Date)obj).before (this._date);
+		return ((Date)obj).after (this._date);
 	}
 	
 	/**

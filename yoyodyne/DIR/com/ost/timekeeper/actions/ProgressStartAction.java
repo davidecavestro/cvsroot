@@ -33,7 +33,17 @@ public final class ProgressStartAction extends javax.swing.AbstractAction implem
 	public void actionPerformed (java.awt.event.ActionEvent e) {
 		Application app = Application.getInstance ();
 		ProgressItem selectedItem = app.getSelectedItem ();
-		selectedItem.startPeriod ();
+		final javax.jdo.PersistenceManager pm = app.getPersistenceManager ();
+		final javax.jdo.Transaction tx = pm.currentTransaction ();
+		tx.begin ();
+		try {
+			selectedItem.startPeriod ();
+			
+			tx.commit ();
+		} catch (final Throwable t){
+			tx.rollback ();
+			throw new NestedRuntimeException (t);
+		}
 		app.setCurrentItem (selectedItem);
 		app.setChanged ();
 		app.notifyObservers (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);

@@ -57,12 +57,23 @@ public final class CreateNode extends AbstractCommand {
 		
 		final ProgressItem newNode = new ProgressItem (newNodeName);
 		final Application app = Application.getInstance ();
-		if (this._position>=0){
-			this._parent.insert (newNode, this._position);
-			app.getMainForm ().getProgressTreeModel ().insertNodeInto (newNode, _parent, this._position);
-		} else {
-			final int position = this._parent.insert (newNode);			
-			app.getMainForm ().getProgressTreeModel ().insertNodeInto (newNode, _parent, position);
+		
+		final javax.jdo.PersistenceManager pm = app.getPersistenceManager();
+		final javax.jdo.Transaction tx = pm.currentTransaction();
+		tx.begin();
+		try {
+			if (this._position>=0){
+				this._parent.insert (newNode, this._position);
+				app.getMainForm ().getProgressTreeModel ().insertNodeInto (newNode, _parent, this._position);
+			} else {
+				final int position = this._parent.insert (newNode);			
+				app.getMainForm ().getProgressTreeModel ().insertNodeInto (newNode, _parent, position);
+			}
+		
+			tx.commit();			
+		} catch (final Throwable t){
+			tx.rollback ();
+			throw new com.ost.timekeeper.util.NestedRuntimeException (t);
 		}
 	}
 }

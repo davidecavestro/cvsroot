@@ -12,6 +12,7 @@ import com.ost.timekeeper.conf.*;
 import com.ost.timekeeper.util.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import javax.swing.*;
 
 /**
@@ -97,6 +98,11 @@ public final class AboutBox extends JDialog {
 	 */
 	private JPanel introPanel;
 	
+	/**
+	 * Il pannello contenente la licenza.
+	 */
+	private JPanel licensePanel;
+	
 	/** 
 	 * Costruttore. 
 	 */
@@ -126,7 +132,7 @@ public final class AboutBox extends JDialog {
 //		this.productNameLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "productname"));
 		this.productNameLabel.setText ("");
 		this.productNameImage = ResourceSupplier.getImageIcon (ResourceClass.UI, "productname.jpg");
-		this.productNameLabel.setIcon (this.productNameImage);
+//		this.productNameLabel.setIcon (this.productNameImage);
 		this.logoPanel.add (this.productNameLabel, BorderLayout.NORTH);
 		
 		
@@ -146,9 +152,9 @@ public final class AboutBox extends JDialog {
 		
 		aboutPanel = new JPanel (new BorderLayout ());
 		
-		this.aboutPanel.add (this.logoPanel, BorderLayout.NORTH);
+		this.aboutPanel.add (this.logoPanel, BorderLayout.CENTER);
 		
-		final JPanel otherLogosPanel = new JPanel ();
+//		final JPanel otherLogosPanel = new JPanel ();
 
 //		this.companyLogoLabel = new JLabel ();
 ////		this.companyLogoLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "companylogo"));
@@ -157,7 +163,18 @@ public final class AboutBox extends JDialog {
 //		this.companyLogoLabel.setIcon (this.companyLogoImage);
 //		otherLogosPanel.add (this.companyLogoLabel, BorderLayout.NORTH);
 		
-		this.aboutPanel.add (otherLogosPanel, BorderLayout.CENTER);		
+//		this.aboutPanel.add (otherLogosPanel, BorderLayout.CENTER);		
+		
+		this.licensePanel = new JPanel (new BorderLayout ());
+		
+		try {
+			final JEditorPane licenseEditor = new JEditorPane (this.getClass ().getResource ("license.html"));
+			this.infoEditor.setEditable (false);
+			this.licensePanel.add (new JScrollPane (licenseEditor), BorderLayout.CENTER);
+		} catch (final IOException ioe){
+			throw new NestedRuntimeException (ioe);
+		}
+		
 		
 		this.buttonPanel = new JPanel ();
 		final JButton confirmButton = new JButton (ResourceSupplier.getString (ResourceClass.UI, "controls", "ok"));
@@ -181,118 +198,14 @@ public final class AboutBox extends JDialog {
 			ResourceSupplier.getString (ResourceClass.UI, "about", "about.title"),
 			new JScrollPane (aboutPanel));
 		
-		final JPanel detailPanel = new JPanel ();
+		tabbedPanel.addTab (
+			ResourceSupplier.getString (ResourceClass.UI, "about", "about.license"),
+			new JScrollPane (licensePanel));
 		
-		detailPanel.setLayout (new GridBagLayout ());
-		
-		final ApplicationData appData = ApplicationData.getInstance ();
-		
-		final GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.BOTH;
-		c.anchor = GridBagConstraints.FIRST_LINE_START;
-		c.insets = new Insets (3, 3, 3, 3);
-		
-		this.productLogoLabel = new JLabel ();
-//		this.productLogoLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "productlogo"));
-		this.productLogoLabel.setText ("");
-		this.productLogoImage = ResourceSupplier.getImageIcon (ResourceClass.UI, "productlogosmall.jpg");
-		this.productLogoLabel.setIcon (this.productLogoImage);
-		
-		c.weightx = 0.0;
-		c.weighty = 0.0;
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridwidth = 1;
-		detailPanel.add (this.productLogoLabel, c);
-		
-		{
-			final JLabel detailTitle = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "detail.title"));
-			detailTitle.setHorizontalAlignment (JLabel.CENTER);
-			detailTitle.setFont (new java.awt.Font ("Default", Font.BOLD, 12));
-
-			c.weightx = 1.0;
-			c.weighty = 0.0;
-			c.gridx = 1;
-			c.gridy = 0;
-			c.gridwidth = 2;
-			detailPanel.add (detailTitle, c);
-		}
-		
-		{
-			final JLabel productVersionLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.version")+": ");
-			productVersionLabel.setHorizontalAlignment (JLabel.RIGHT);
-			
-			c.weightx = 0.0;
-			c.weighty = 0.0;
-			c.gridx = 1;
-			c.gridy = 1;
-			c.gridwidth = 1;
-			detailPanel.add (productVersionLabel, c);
-		}
-		{
-			final JLabel productVersionValue = new JLabel (appData.getVersionNumber ());
-
-			c.weightx = 1.0;
-			c.weighty = 0.0;
-			c.gridx = 2;
-			c.gridy = 1;
-			c.gridwidth = 1;
-			detailPanel.add (productVersionValue, c);
-		}
-		
-		{
-			final JLabel productBuildLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.build")+": ");
-			productBuildLabel.setHorizontalAlignment (JLabel.RIGHT);
-
-			c.weightx = 0.0;
-			c.weighty = 0.0;
-			c.gridx = 1;
-			c.gridy = 2;
-			c.gridwidth = 1;
-			detailPanel.add (productBuildLabel, c);
-		}
-		{
-			final JLabel productBuildValue = new JLabel (appData.getBuildNumber ());
-
-			c.weightx = 1.0;
-			c.weighty = 0.0;
-			c.gridx = 2;
-			c.gridy = 2;
-			c.gridwidth = 1;
-			detailPanel.add (productBuildValue, c);
-		}
-		
-		{
-			final JLabel productReleaseDateLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.releasedate")+": ");
-			productReleaseDateLabel.setHorizontalAlignment (JLabel.RIGHT);
-
-			c.weightx = 0.0;
-			c.weighty = 0.0;
-			c.gridx = 1;
-			c.gridy = 3;
-			c.gridwidth = 1;
-			detailPanel.add (productReleaseDateLabel, c);
-		}
-		{
-			final JLabel productReleaaseDateValue = new JLabel (CalendarUtils.toTSString (appData.getReleaseDate ().getTime ()));
-
-			c.weightx = 1.0;
-			c.weighty = 0.0;
-			c.gridx = 2;
-			c.gridy = 3;
-			c.gridwidth = 1;
-			detailPanel.add (productReleaaseDateValue, c);
-		}
-		
-		c.weightx = 1.0;
-		c.weighty = 1.0;
-		c.gridx = 0;
-		c.gridy = 10;
-		detailPanel.add (new JLabel (), c);
 		
 		tabbedPanel.addTab (
 			ResourceSupplier.getString (ResourceClass.UI, "about", "details.title"),
-			new JScrollPane (detailPanel)
+			new JScrollPane (createDetailPanel ())
 			);
 		
 		final JPanel systemPanel = new JPanel (new BorderLayout ());
@@ -370,5 +283,123 @@ public final class AboutBox extends JDialog {
 	public void show (){
 		super.show ();
 		this.introPanel.invalidate ();
+	}
+	
+	private JPanel createDetailPanel (){
+		final JPanel container = new JPanel (new BorderLayout ());
+		
+		final JPanel detailPanel = new JPanel (new GridBagLayout ());
+		
+		final ApplicationData appData = ApplicationData.getInstance ();
+		
+		final GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.insets = new Insets (3, 5, 3, 5);
+		
+		this.productLogoLabel = new JLabel ();
+//		this.productLogoLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "global", "productlogo"));
+		this.productLogoLabel.setText ("");
+		this.productLogoImage = ResourceSupplier.getImageIcon (ResourceClass.UI, "productlogosmall.jpg");
+		this.productLogoLabel.setIcon (this.productLogoImage);
+		
+//		c.weightx = 0.0;
+//		c.weighty = 0.0;
+//		c.gridx = 0;
+//		c.gridy = 0;
+//		c.gridwidth = 1;
+//		c.anchor = 0;
+//		detailPanel.add (this.productLogoLabel, c);
+		container.add (this.productLogoLabel, BorderLayout.WEST);
+		{
+//			final JLabel detailTitle = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "detail.title"));
+//			detailTitle.setHorizontalAlignment (JLabel.CENTER);
+//			detailTitle.setFont (new java.awt.Font ("Default", Font.BOLD, 12));
+
+			c.weightx = 1.0;
+			c.weighty = 0.0;
+			c.gridx = 0;
+			c.gridy = 0;
+			c.gridwidth = 2;
+			
+			final TopBorderPane detailTitle = new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "about", "detail.title"));
+			detailPanel.add (detailTitle, c);
+		}
+		
+		{
+			final JLabel productVersionLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.version")+": ");
+			productVersionLabel.setHorizontalAlignment (JLabel.RIGHT);
+			
+			c.weightx = 0.0;
+			c.weighty = 0.0;
+			c.gridx = 0;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			detailPanel.add (productVersionLabel, c);
+		}
+		{
+			final JLabel productVersionValue = new JLabel (appData.getVersionNumber ());
+
+			c.weightx = 1.0;
+			c.weighty = 0.0;
+			c.gridx = 1;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			detailPanel.add (productVersionValue, c);
+		}
+		
+		{
+			final JLabel productBuildLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.build")+": ");
+			productBuildLabel.setHorizontalAlignment (JLabel.RIGHT);
+
+			c.weightx = 0.0;
+			c.weighty = 0.0;
+			c.gridx = 0;
+			c.gridy = 2;
+			c.gridwidth = 1;
+			detailPanel.add (productBuildLabel, c);
+		}
+		{
+			final JLabel productBuildValue = new JLabel (appData.getBuildNumber ());
+
+			c.weightx = 1.0;
+			c.weighty = 0.0;
+			c.gridx = 1;
+			c.gridy = 2;
+			c.gridwidth = 1;
+			detailPanel.add (productBuildValue, c);
+		}
+		
+		{
+			final JLabel productReleaseDateLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.releasedate")+": ");
+			productReleaseDateLabel.setHorizontalAlignment (JLabel.RIGHT);
+
+			c.weightx = 0.0;
+			c.weighty = 0.0;
+			c.gridx = 0;
+			c.gridy = 3;
+			c.gridwidth = 1;
+			detailPanel.add (productReleaseDateLabel, c);
+		}
+		{
+			final JLabel productReleaaseDateValue = new JLabel (CalendarUtils.toTSString (appData.getReleaseDate ().getTime ()));
+
+			c.weightx = 1.0;
+			c.weighty = 0.0;
+			c.gridx = 1;
+			c.gridy = 3;
+			c.gridwidth = 1;
+			c.fill = GridBagConstraints.BOTH;
+			detailPanel.add (productReleaaseDateValue, c);
+		}
+		
+//		c.weightx = 1.0;
+//		c.weighty = 1.0;
+//		c.gridx = 0;
+//		c.gridy = 10;
+//		detailPanel.add (new JLabel (), c);
+		
+		container.add (detailPanel, BorderLayout.CENTER);
+		return container;
 	}
 }

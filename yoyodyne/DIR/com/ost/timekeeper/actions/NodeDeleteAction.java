@@ -14,6 +14,7 @@ import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.util.*;
+import javax.swing.*;
 
 /**
  * Rimuove un nodo dai dati persistenti.
@@ -34,6 +35,11 @@ public final class NodeDeleteAction extends javax.swing.AbstractAction implement
 	
 	public void actionPerformed (java.awt.event.ActionEvent e) {
 		final Application app = Application.getInstance ();
+		if (
+		JOptionPane.showConfirmDialog (
+		app.getMainForm (), ResourceSupplier.getString (ResourceClass.UI, "controls", "delete.node.confirm"))!=JOptionPane.OK_OPTION){
+			return;
+		}
 		final ProgressItem deletingNode = app.getSelectedItem ();
 		new DeleteNode (deletingNode).execute ();
 	}

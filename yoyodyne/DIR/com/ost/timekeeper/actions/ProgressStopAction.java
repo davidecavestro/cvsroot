@@ -29,9 +29,22 @@ public final class ProgressStopAction extends javax.swing.AbstractAction impleme
 	}
 	
 	public void actionPerformed (java.awt.event.ActionEvent e) {
+		execute ();
+	}
+	
+	public void execute (){
 		Application app = Application.getInstance ();
 		ActionPool.getInstance ().getProgressStartAction ().setEnabled (true);
-		app.getCurrentItem ().stopPeriod ();
+		final javax.jdo.PersistenceManager pm = app.getPersistenceManager ();
+		final javax.jdo.Transaction tx = pm.currentTransaction ();
+		tx.begin ();
+		try {
+			app.getCurrentItem ().stopPeriod ();
+			tx.commit ();
+		} catch (final Throwable t){
+			tx.rollback ();
+			throw new NestedRuntimeException (t);
+		}
 		app.setCurrentItem (null);
 		app.setChanged ();
 		app.notifyObservers (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);

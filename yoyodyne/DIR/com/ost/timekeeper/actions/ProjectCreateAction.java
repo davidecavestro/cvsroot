@@ -14,6 +14,7 @@ import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.util.*;
+import javax.jdo.*;
 
 /**
  * Crea un nuovo progetto.
@@ -54,7 +55,16 @@ public final class ProjectCreateAction extends javax.swing.AbstractAction implem
 		if (newProject!=null){
 			//nuovo progetto
 			//rende persistente nuovo progetto
-			app.getPersistenceManager().makePersistent(newProject);
+			final PersistenceManager pm = app.getPersistenceManager();
+			final Transaction tx = pm.currentTransaction();
+			tx.begin();
+			try {
+				pm.makePersistent(newProject);
+				tx.commit();			
+			} catch (final Throwable t){
+				tx.rollback ();
+				throw new NestedRuntimeException (t);
+			}
 		}
 	}
 	

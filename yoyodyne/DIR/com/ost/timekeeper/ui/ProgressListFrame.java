@@ -7,6 +7,7 @@
 package com.ost.timekeeper.ui;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.actions.ActionPool;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
@@ -79,14 +80,14 @@ public final class ProgressListFrame extends BaseInternalFrame {
 						return;
 					}
 
-					Period selectedPeriod = null;
+					Progress selectedPeriod = null;
 					final ListSelectionModel lsm = (ListSelectionModel)lse.getSource();
 					if (lsm.isSelectionEmpty()) {
 						//no rows are selected
 					} else {
 						int selectedRow = lsm.getMinSelectionIndex();
 						//selectedRow is selected
-						selectedPeriod = (Period)progressTable.getProgressTableModel ().getProgresses ().get (selectedRow);
+						selectedPeriod = (Progress)progressTable.getProgressTableModel ().getProgresses ().get (selectedRow);
 					}
 					Application.getInstance ().setSelectedProgress (selectedPeriod);
 				}
@@ -111,9 +112,27 @@ public final class ProgressListFrame extends BaseInternalFrame {
 		});
 		progressesListCombo.setToolTipText (ResourceSupplier.getString (ResourceClass.UI, "controls", "progresslist.combo.local_subtree"));
 		
-		final JPanel progressesTopPane = new JPanel (new BorderLayout ());
-		progressesTopPane.add (progressesListCombo, BorderLayout.WEST);
-		progressesPane.add (progressesTopPane, BorderLayout.NORTH);
+		final javax.swing.JToolBar progressesToolBar = new javax.swing.JToolBar ();
+		progressesToolBar.setLayout (new java.awt.FlowLayout ( java.awt.FlowLayout.LEFT));
+		progressesToolBar.setBorder (new javax.swing.border.EtchedBorder ());
+		progressesToolBar.setRollover (true);
+		progressesToolBar.setAutoscrolls (true);
+		
+        progressesToolBar.putClientProperty("jgoodies.headerStyle", "Both");
+		
+		progressesToolBar.add (progressesListCombo);
+		
+		progressesToolBar.add (new javax.swing.JSeparator ());
+		
+		final javax.swing.JButton editButton = new javax.swing.JButton (ActionPool.getInstance ().getStartProgressEdit ());
+		editButton.setText ("");
+		progressesToolBar.add (editButton);
+		
+		final javax.swing.JButton deleteButton = new javax.swing.JButton (ActionPool.getInstance ().getProgressDeleteAction ());
+		deleteButton.setText ("");
+		progressesToolBar.add (deleteButton);
+		
+		progressesPane.add (progressesToolBar, BorderLayout.NORTH);
 		final JPanel progressesBottomPane = new JPanel (new BorderLayout ());
 		progressesBottomPane.add (
 		new JScrollPane (progressTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 

@@ -6,6 +6,8 @@
 
 package com.ost.timekeeper.report;
 
+import java.io.*;
+
 /**
  * Le impostazioni di configurazione di Jasper per la generazione del report.
  *
@@ -29,29 +31,29 @@ public class JRBindings {
 	/** Comando di generazione CSV. */
 	public static final String TASK_CSV = "csv";
 	
-	private String _reportFileName;
+	private InputStream _reportDescriptor;
 	private String _recordPath;
 	private String _taskType;
 	
 	/**
 	 * Costruttore.
-	 * @param reportFileName il percorso del file descrittore del report.
+	 * @param reportDescriptor il descrittore del report.
 	 * @param recordPath il percorso dei record
 	 * @param taskType il tipo di output desiderato
 	 */
-	public JRBindings (final String reportFileName, final String recordPath, final String taskType) {
-		this._reportFileName = reportFileName;
+	public JRBindings (final InputStream reportDescriptor, final String recordPath, final String taskType) {
+		this._reportDescriptor = reportDescriptor;
 		this._recordPath = recordPath;
 		this._taskType = taskType;
 	}
 	
 	/**
-	 * Ritorna il percorso del file descrittore del report.
+	 * Ritorna il descrittore del report.
 	 *
-	 * @return il percorso del file descrittore del report.
+	 * @return il descrittore del report.
 	 */
-	public String getReportFileName (){
-		return this._reportFileName;
+	public InputStream getReportDescriptor (){
+		return this._reportDescriptor;
 	}
 	
 	/**
@@ -77,7 +79,7 @@ public class JRBindings {
 	 */	
 	public String toString (){
 		final StringBuffer sb = new StringBuffer ();
-		sb.append (" reportFileName: ").append (this._reportFileName);
+		sb.append (" reportDescriptor: ").append (this._reportDescriptor);
 		sb.append (" recordPath: ").append (this._recordPath);
 		sb.append (" taskType: ").append (this._taskType);
 		return sb.toString ();

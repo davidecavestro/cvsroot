@@ -40,6 +40,13 @@ public final class ReportDataGenerator {
 	 * @return il report.
 	 */
 	public void generate ( final DataExtractor extractor, final ReportPreferences prefs, final JRBindings jasperBindings){
+		final StringBuffer logBuffer = new StringBuffer ();
+		logBuffer .append ("Generating report data.\n");
+		logBuffer .append ("extractor: ").append (extractor).append ("\n");
+		logBuffer .append ("preferences: ").append (prefs).append ("\n");
+		logBuffer .append ("bindings: ").append (jasperBindings);
+		Application.getLogger ().debug (logBuffer.toString ());
+				
 		final Document data = extractor.extract ();
 		try {
 			final File dataFile = File.createTempFile ("data", ".xml");
@@ -50,7 +57,7 @@ public final class ReportDataGenerator {
 			//			final File output = prefs.getOutput ();
 			//@todo completare generazione report
 			
-			final String reportFileName = jasperBindings.getReportFileName ();
+			final InputStream reportDescriptor = jasperBindings.getReportDescriptor ();
 			//			final String outFileName = output.getPath ();
 			final String xmlFileName = dataFile.getPath ();
 			final String recordPath = jasperBindings.getRecordPath ();
@@ -59,7 +66,7 @@ public final class ReportDataGenerator {
 			final HashMap hm = new HashMap ();
 			
 			final JasperPrint print = JasperFillManager.fillReport (
-			reportFileName,
+			reportDescriptor,
 			hm,
 			jrxmlds);
 			

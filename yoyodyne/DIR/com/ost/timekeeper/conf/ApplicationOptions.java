@@ -144,6 +144,32 @@ public final class ApplicationOptions {
 		}
 	}
 	
+	/**
+	 * Ritorna la posizione iniziale della finestra di gestione grafici.
+	 * @return la posizione iniziale della finestra di gestione grafici.
+	 */
+	public Rectangle getChartFrameBounds (){
+		final Rectangle returnValue = this._settings.getChartFrameBounds ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue;
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.getChartFrameBounds ();
+			} else {
+					/*
+					 * Informazione non disponibile.
+					 */
+				return null;
+			}
+		}
+	}
+	
 	
 	public String getLogDirPath (){
 		final String returnValue = this._settings.getLogDirPath ();
@@ -379,4 +405,30 @@ public final class ApplicationOptions {
 		 */
 		return -1;
 	}
+	
+	/**
+	 * Ritorna il numero di livelli visibili per il grafico ad anello.
+	 * @return il numero di livelli visibili per il grafico ad anello.
+	 */
+	public int getRingChartVisibleLevels (){
+		final Integer returnValue = this._settings.getRingChartVisibleLevels ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue.intValue ();
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.getRingChartVisibleLevels ();
+			}
+		}
+		/*
+		 * valore default
+		 */
+		return 4;
+	}
+	
 }

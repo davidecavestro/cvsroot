@@ -36,7 +36,7 @@ public final class ProjectDeleteAction extends javax.swing.AbstractAction implem
 		Collection toDelete = new ArrayList ();
 		
 		Project project = app.getProject ();
-		if (project.jdoIsPersistent ()){
+//		if (project.jdoIsPersistent ()){
 			/*
 			 * Progetto persistente.
 			 */
@@ -44,30 +44,40 @@ public final class ProjectDeleteAction extends javax.swing.AbstractAction implem
 			ProgressItem root = project.getRoot ();
 			toDelete.add (root);
 			for (Iterator it=root.getSubtreeProgresses ().iterator ();it.hasNext ();){
-				Period progress = (Period)it.next ();
-				if (progress.jdoIsPersistent ()){
+				final Progress progress = (Progress)it.next ();
+//				if (progress.jdoIsPersistent ()){
 					/*
 					 * Avanzamento persistente.
 					 */
 					toDelete.add (progress);
-				}
+//				}
 			}
 			
 			for (Iterator it=root.getDescendants ().iterator ();it.hasNext ();){
 				ProgressItem node = (ProgressItem)it.next ();
-				if (node.jdoIsPersistent ()){
+//				if (node.jdoIsPersistent ()){
 					/*
 					 * Nodo persistente.
 					 */
 					toDelete.add (node);
-				}
+//				}
 			}
-		}
+//		}
 		app.setProject (null);
-		/*
+		final javax.jdo.PersistenceManager pm = app.getPersistenceManager ();
+		final javax.jdo.Transaction tx = pm.currentTransaction ();
+		tx.begin ();
+		try {		/*
 		 * Rimuove persistenza oggetti determinati.
 		 */
-		app.getPersistenceManager ().deletePersistentAll (toDelete);
+			app.getPersistenceManager ().deletePersistentAll (toDelete);
+			
+			
+			tx.commit ();
+		} catch (final Throwable t){
+			tx.rollback ();
+			throw new NestedRuntimeException (t);
+		}
 	}
 	
 	public void update (Observable o, Object arg) {

@@ -11,6 +11,8 @@ import com.ost.timekeeper.actions.commands.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.view.*;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
@@ -23,7 +25,7 @@ import javax.swing.tree.*;
  * @todo implementare funzionalità TreeTable.
  * @todo supporto icone custom.
  */
-public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treetable.JTreeTable{
+public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treetable.JTreeTable implements Observer{
 	
 	private ProgressTreeModel _progressTreeModel;
 	
@@ -168,4 +170,17 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		}
 		
 	}
+	
+	public void update(Observable o, Object arg) {
+		if (o instanceof Application){
+			if (arg!=null && (arg.equals(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || arg.equals(ObserverCodes.ITEMPROGRESSINGCHANGE))){
+				//				this.reloadModel(((Application)o).getSelectedItem());
+				final javax.swing.table.AbstractTableModel tModel = (javax.swing.table.AbstractTableModel)this.getModel();
+				if (tModel.getRowCount ()>0){
+					tModel.fireTableChanged(new TableModelEvent (tModel, 0, tModel.getRowCount ()-1, 1));
+				}
+			}
+		}
+	}
+	
 }

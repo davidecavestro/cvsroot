@@ -116,7 +116,7 @@ public final class SimpleProgresses extends AbstractDataExtractor {
 		/*@todo implementare l'estrazione dati */
 		for (final Iterator it = aggregates.iterator ();it.hasNext ();){
 			final ProgressAggregate progressAggregate = (ProgressAggregate)it.next ();
-			final Period progress = progressAggregate.getProgress ();
+			final Progress progress = progressAggregate.getProgress ();
 			final ProgressItem node = progressAggregate.getNode ();
 			if (match (PROGRESS_FROM, progress.getFrom ()) 
 				&& match (PROGRESS_TO, progress.getTo ())){
@@ -186,9 +186,9 @@ public final class SimpleProgresses extends AbstractDataExtractor {
 	 */
 	private final class ProgressAggregate {
 		private ProgressItem _node;
-		private Period _progress;
+		private Progress _progress;
 		
-		public ProgressAggregate (final ProgressItem node, final Period progress){
+		public ProgressAggregate (final ProgressItem node, final Progress progress){
 			this._node=node;
 			this._progress=progress;
 		}
@@ -196,7 +196,7 @@ public final class SimpleProgresses extends AbstractDataExtractor {
 		public ProgressItem getNode (){
 			return this._node;
 		}
-		public Period getProgress (){
+		public Progress getProgress (){
 			return this._progress;
 		}
 		
@@ -209,9 +209,11 @@ public final class SimpleProgresses extends AbstractDataExtractor {
 	}
 	
 	private void retrieveSubtreeProgressAggregates (final List result, final ProgressItem root){
-		
+		if (root==null){
+			return;
+		}
 		for (final Iterator it = root.getProgresses ().iterator (); it.hasNext ();){
-			result.add (new SimpleProgresses.ProgressAggregate (root, (Period)it.next ()));
+			result.add (new SimpleProgresses.ProgressAggregate (root, (Progress)it.next ()));
 		}
 		for (final Iterator it = root.getChildren ().iterator (); it.hasNext ();){
 			retrieveSubtreeProgressAggregates (result, (ProgressItem)it.next ());

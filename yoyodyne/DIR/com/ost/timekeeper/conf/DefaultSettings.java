@@ -8,6 +8,7 @@ package com.ost.timekeeper.conf;
 
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.ui.*;
+import com.ost.timekeeper.ui.chart.ChartFrame;
 import com.ost.timekeeper.view.*;
 import java.awt.*;
 import javax.swing.*;
@@ -164,6 +165,25 @@ public final class DefaultSettings implements ApplicationSettings {
 		);
 	}
 	
+	/** Il livello della finestra di gestione grafici. */
+	protected final int CHARTFRAME_LEVEL = 3;
+	/** 
+	 * Ritorna la posizione iniziale della finestra di gestione grafici.
+	 * Per questa implementazione il valore è quello che permette di posizionare 
+	 * la finestra al livello {@link #CHARTFRAME_LEVEL}.
+	 *
+	 * @return la posizione iniziale della finestra di gestione grafici.
+	 */	
+	public Rectangle getChartFrameBounds () {
+		final ChartFrame frame = ChartFrame.getInstance ();
+		return new Rectangle (
+			DESKTOP_FRAMES_OFFSETX * CHARTFRAME_LEVEL, 
+			DESKTOP_FRAMES_OFFSETY * CHARTFRAME_LEVEL, 
+			frame.getWidth (), 
+			frame.getHeight () 
+		);
+	}
+	
 	/**
 	 * Notifica sonora in presenza di eventi. 
 	 * Per questa implementazione il valore è sempre <TT>TRUE</TT>.
@@ -228,5 +248,14 @@ public final class DefaultSettings implements ApplicationSettings {
 	 */
 	public Integer getProgressItemTreeWidth (){
 		return new Integer (-1);
+	}
+	
+	private final static Integer _defaultRingChartVisibleLevels = new Integer (4);
+	/**
+	 * Ritorna il numero di livelli visibili per il grafico ad anello.
+	 * @return il numero di livelli visibili per il grafico ad anello.
+	 */
+	public Integer getRingChartVisibleLevels (){
+		return _defaultRingChartVisibleLevels;
 	}
 }

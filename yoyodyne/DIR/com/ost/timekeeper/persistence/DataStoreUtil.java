@@ -46,9 +46,9 @@ public final class DataStoreUtil {
 			tx.begin();
 			tx.commit ();
 			
-			if (leaveOpen ){
-				tx.begin();
-			}
+//			if (leaveOpen ){
+//				tx.begin();
+//			}
 
 		} catch (final Exception e) {
 			System.out.println("Problem creating database");

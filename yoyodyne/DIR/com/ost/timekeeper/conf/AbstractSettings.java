@@ -166,6 +166,20 @@ public abstract class AbstractSettings implements CustomizableSettings {
 			PROPNAME_PROGRESSLISTFRAME_HEIGHT);
 	}
 	
+	/**
+	 * Ritorna la posizione della finestra di gestione grafici.
+	 *
+	 * @return la posizione della finestra di gestione grafici.
+	 */	
+	public Rectangle getChartFrameBounds (){
+		return SettingsSupport.getRectangle (
+			this.getProperties (), 
+			PROPNAME_CHARTFRAME_XPOS, 
+			PROPNAME_CHARTFRAME_YPOS, 
+			PROPNAME_CHARTFRAME_WIDTH, 
+			PROPNAME_CHARTFRAME_HEIGHT);
+	}
+	
 	/** Imposta la posizione della finestra principale dell'applicazione.
 	 * @param r la posizione.
 	 */	
@@ -216,6 +230,19 @@ public abstract class AbstractSettings implements CustomizableSettings {
 			PROPNAME_PROGRESSPERIODINSPECTOR_YPOS, 
 			PROPNAME_PROGRESSPERIODINSPECTOR_WIDTH, 
 			PROPNAME_PROGRESSPERIODINSPECTOR_HEIGHT);
+	}
+	
+	/** Imposta la posizione della finestra di gestione grafici.
+	 * @param r la posizione.
+	 */	
+	public void setChartFrameBounds (Rectangle r) {
+		SettingsSupport.setRectangle (
+			this.getProperties (), 
+			r, 
+			PROPNAME_CHARTFRAME_XPOS, 
+			PROPNAME_CHARTFRAME_YPOS, 
+			PROPNAME_CHARTFRAME_WIDTH, 
+			PROPNAME_CHARTFRAME_HEIGHT);
 	}
 	
 	public String getLogDirPath (){
@@ -355,6 +382,21 @@ public abstract class AbstractSettings implements CustomizableSettings {
 	 */
 	public void setProgressItemTreeWidth (Integer width) {
 		SettingsSupport.setIntegerProperty (this.getProperties (), PROPNAME_PROGRESSITEMTREE_WIDTH, width);
+	}
+	
+	/**
+	 * Ritorna il numero di livelli visibili per il grafico ad anello.
+	 * @return il numero di livelli visibili per il grafico ad anello.
+	 */
+	public Integer getRingChartVisibleLevels (){
+		return SettingsSupport.getIntegerProperty (this.getProperties (), PROPNAME_RINGCHART_VISIBLELEVELS);		
+	}
+	
+	/**
+	 * Imposta il numero di livelli visibili per il grafico ad anello.
+	 */
+	public void setRingChartVisibleLevels (final Integer depth){
+		SettingsSupport.setIntegerProperty (this.getProperties (), PROPNAME_RINGCHART_VISIBLELEVELS, depth);
 	}
 	
 }

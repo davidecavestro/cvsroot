@@ -4,10 +4,20 @@
   <package name="com.ost.timekeeper.model">
     <class name="Period" 
            identity-type="datastore">
-      <field name="from"/>
-      <field name="to"/>
-      <field name="description"/>
-      <field name="notes"/>
+<!--
+      <field name="from" embedded="true"/>
+      <field name="to" embedded="true"/>
+      <field name="description" embedded="true"/>
+      <field name="notes" embedded="true"/>
+-->
+    </class>
+
+    <class name="Progress" 
+	identity-type="datastore" 
+	persistence-capable-superclass="com.ost.timekeeper.model.Period">
+
+	<field name="progressItem" persistence-modifier="persistent"/>
+
     </class>
 
     <class name="ProgressItem" 
@@ -23,7 +33,7 @@
 	<collection element-type="ProgressItem"/>
       </field>
       <field name="progresses" >
-        <collection element-type="Period"/>
+        <collection element-type="Progress"/>
       </field>
     </class>
     

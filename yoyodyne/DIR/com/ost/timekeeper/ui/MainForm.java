@@ -20,12 +20,14 @@ import com.ost.timekeeper.conf.*;
 import com.ost.timekeeper.help.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.report.*;
+import com.ost.timekeeper.ui.chart.ChartFrame;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
 import com.toedter.components.*;
 import java.awt.*;
 import java.text.*;
 import javax.help.*;
+import javax.swing.border.*;
 import javax.swing.plaf.basic.*;
 
 /**
@@ -84,9 +86,10 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
         initializeLookAndFeels();
 		
 		progressTreePopup = new javax.swing.JPopupMenu ();
-		jPanelMain = new javax.swing.JPanel ();
+		mainPanel = new javax.swing.JPanel ();
 		mainToolbar = new javax.swing.JToolBar ();
 		nodeCreateButton = new javax.swing.JButton ();
+		nodeEditButton = new javax.swing.JButton ();
 		nodeDeleteButton = new javax.swing.JButton ();
 		startButton = new javax.swing.JButton ();
 		stopButton = new javax.swing.JButton ();
@@ -98,6 +101,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jPanelTree = new javax.swing.JPanel ();
 		jSplit_Tree_Data = new javax.swing.JSplitPane ();
 		progressItemTree = new ProgressItemTree (this.progressTreeModel);
+		this.application.addObserver (progressItemTree);
 		
 		//		dataTabbedPane = new javax.swing.JTabbedPane ();
 		desktop = Desktop.getInstance ();
@@ -110,7 +114,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 
 		this.application.addObserver (ProgressListFrame.getInstance ().getProgressTable ());
-		jMenuBarMain = new javax.swing.JMenuBar ();
+		menuBar = new javax.swing.JMenuBar ();
 		jMenuFile = new javax.swing.JMenu ();
 		jMenuItemNew = new javax.swing.JMenuItem ();
 		jMenuItemOpen = new javax.swing.JMenuItem ();
@@ -129,6 +133,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuItemStart = new javax.swing.JMenuItem ();
 		jMenuItemStop = new javax.swing.JMenuItem ();
 		jMenuItemCreateNode = new javax.swing.JMenuItem ();
+		jMenuItemStartNodeEdit = new javax.swing.JMenuItem ();
 		jMenuItemDeleteNode = new javax.swing.JMenuItem ();
 		jMenuItemTreeExpandCollapse = new javax.swing.JMenuItem ();
 		jMenuTools = new javax.swing.JMenu ();
@@ -151,18 +156,24 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			}
 		});
 		
-		jPanelMain.setLayout (new java.awt.BorderLayout ());
+		mainPanel.setLayout (new java.awt.BorderLayout ());
 		
-		mainToolbar.setLayout (new java.awt.FlowLayout ( java.awt.FlowLayout.LEFT));
-		mainToolbar.setBorder (new javax.swing.border.EtchedBorder ());
+//		mainToolbar.setOrientation (JToolBar.VERTICAL);
+		mainToolbar.setLayout (new java.awt.FlowLayout ( java.awt.FlowLayout.LEADING));
+//		mainToolbar.setBorder (new javax.swing.border.EtchedBorder ());
 		mainToolbar.setRollover (true);
 		mainToolbar.setAutoscrolls (true);
-		
-        mainToolbar.putClientProperty("jgoodies.headerStyle", "Both");
+//		mainToolbar.setLayout(new BoxLayout(mainToolbar, BoxLayout.Y_AXIS));
+//		mainToolbar.setAlignmentY(mainToolbar.TOP_ALIGNMENT);
+		mainToolbar.putClientProperty("jgoodies.headerStyle", "Both");
 
 		nodeCreateButton.setAction (ActionPool.getInstance ().getNodeCreateAction ());
 		nodeCreateButton.setText ("");
 		mainToolbar.add (nodeCreateButton);
+		
+		nodeEditButton.setAction (ActionPool.getInstance ().getStartNodeEdit ());
+		nodeEditButton.setText ("");
+		mainToolbar.add (nodeEditButton);
 		
 		nodeDeleteButton.setAction (ActionPool.getInstance ().getNodeDeleteAction ());
 		nodeDeleteButton.setText ("");
@@ -188,7 +199,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		}
 		javax.help.CSH.setHelpIDString(mainToolbar, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.MAINTOOLBAR ));
 		
-		jPanelMain.add (mainToolbar, java.awt.BorderLayout.NORTH);
+		mainPanel.add (mainToolbar, java.awt.BorderLayout.NORTH);
 		
 		statusBar.setLayout (new javax.swing.BoxLayout (statusBar, javax.swing.BoxLayout.X_AXIS));
 		
@@ -211,13 +222,14 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		currentDurationLabel.setHorizontalAlignment (SwingConstants.RIGHT);
 		statusBar.add (currentDurationLabel);
 		
-		jobProgress.setBorder (null);
+//		jobProgress.setBorder (new EmptyBorder (0,0,0,0));
 		jobProgress.setIndeterminate (false);
 		jobProgress.setValue (0);
-		jobProgress.setPreferredSize (new Dimension (200, 30));
+//		jobProgress.setPreferredSize (new Dimension (200, 50));
+		jobProgress.setVisible (false);
 		statusBar.add (jobProgress);
 		
-		jPanelMain.add (statusBar, java.awt.BorderLayout.SOUTH);
+		mainPanel.add (statusBar, java.awt.BorderLayout.SOUTH);
 		
 		jPanelTree.setLayout (new java.awt.BorderLayout ());
 		
@@ -305,6 +317,21 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		} catch (java.beans.PropertyVetoException e) {}
 		javax.help.CSH.setHelpIDString(periodInspectorFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PERIODINSPECTORFRAME ));
 		
+		/*
+		 * Dettaglio avanzamento.
+		 */
+		final ChartFrame chartFrame = ChartFrame.getInstance ();
+        //Set the window's location.
+		{
+			final Rectangle bounds = options.getChartFrameBounds ();
+			chartFrame.setBounds (bounds);
+			chartFrame.setVisible (true); //necessary as of 1.3
+			desktop.add (chartFrame, (int)bounds.getX (), (int)bounds.getY ());
+		}
+		try {
+			chartFrame.setSelected (true);
+		} catch (java.beans.PropertyVetoException e) {}
+		javax.help.CSH.setHelpIDString(chartFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.CHARTFRAME ));
 
 		//		dataTabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "detail")
 		//		, new JScrollPane (progressItemEditPanel));
@@ -338,9 +365,9 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		jPanelTree.add (jSplit_Tree_Data, java.awt.BorderLayout.CENTER);
 		
-		jPanelMain.add (jPanelTree, java.awt.BorderLayout.CENTER);
+		mainPanel.add (jPanelTree, java.awt.BorderLayout.CENTER);
 		
-		getContentPane ().add (jPanelMain, java.awt.BorderLayout.CENTER);
+		getContentPane ().add (mainPanel, java.awt.BorderLayout.CENTER);
 		
 		jMenuFile.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "file"));
 		//create project
@@ -359,7 +386,8 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		//save project
 		jMenuItemSave.setAction (ActionPool.getInstance ().getProjectSaveAction ());
-		jMenuFile.add (jMenuItemSave);
+		/* l'utente non saprebbe che farsene */
+//		jMenuFile.add (jMenuItemSave);
 		
 		//separatore
 		jMenuFile.add (new javax.swing.JSeparator ());
@@ -396,7 +424,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		});
 		jMenuFile.add (jMenuItemFinish);
 		
-		jMenuBarMain.add (jMenuFile);
+		menuBar.add (jMenuFile);
 		
 		jMenuEdit.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "edit"));
 		jMenuItemCut.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
@@ -411,12 +439,15 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuItemPaste.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "edit.paste"));
 		jMenuEdit.add (jMenuItemPaste);
 		
-		jMenuBarMain.add (jMenuEdit);
+		menuBar.add (jMenuEdit);
 		
 		jMenuActions.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions"));
 		
 		jMenuItemCreateNode.setAction (ActionPool.getInstance ().getNodeCreateAction ());
 		jMenuActions.add (jMenuItemCreateNode);
+		
+		jMenuItemStartNodeEdit.setAction (ActionPool.getInstance ().getStartNodeEdit ());
+		jMenuActions.add (jMenuItemStartNodeEdit);
 		
 		jMenuItemDeleteNode.setAction (ActionPool.getInstance ().getNodeDeleteAction ());
 		jMenuActions.add (jMenuItemDeleteNode);
@@ -433,7 +464,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuItemTreeExpandCollapse.setAction (treeExpandCollapseAction);
 		jMenuActions.add (jMenuItemTreeExpandCollapse);
 		
-		jMenuBarMain.add (jMenuActions);
+		menuBar.add (jMenuActions);
 		
 		jMenuTools.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tool"));
 		jMenuItemOptions.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tools.options"));
@@ -456,7 +487,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		jMenuTools.add (jMenuItemReports);
 
-		jMenuBarMain.add (jMenuTools);
+		menuBar.add (jMenuTools);
 
 		
         // Menu for the look and feels (lnfs).
@@ -466,7 +497,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
         JMenu lnfMenu = new JMenu("Look&Feel");
         lnfMenu.setMnemonic('L');
 
-        jMenuBarMain.add(lnfMenu);
+        menuBar.add(lnfMenu);
 
         for (int i = 0; i < lnfs.length; i++) {
             if (!lnfs[i].getName().equals("CDE/Motif")) {
@@ -544,9 +575,10 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuHelp.add (jMenuItemContextualHelp);
 		
 		/* il menu dell'help va aggiunto in coda */
-		jMenuBarMain.add (jMenuHelp);
+		menuBar.add (jMenuHelp);
 		
-		setJMenuBar (jMenuBarMain);
+		menuBar.setBorderPainted (false);
+		setJMenuBar (menuBar);
 		
 		progressTreePopup.add (treeExpandCollapseAction);
 		progressTreePopup.addSeparator ();
@@ -561,9 +593,9 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		progressItemTree.addMouseListener (new PopupTrigger ());
 		
 		// register the menu bar with the scrollable desktop
-		desktop.registerMenuBar(jMenuBarMain);
+		desktop.registerMenuBar(menuBar);
 		
-		jMenuBarMain.add (jMenuHelp);
+		menuBar.add (jMenuHelp);
 
 		// register the default internal frame icon
 //		desktop.registerDefaultFrameIcon(new ImageIcon("images/frmeicon.gif"));
@@ -587,7 +619,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JLabel currentDurationLabel;
 	private javax.swing.JLayeredPane jLayeredPane1;
 	private javax.swing.JMenu jMenuActions;
-	private javax.swing.JMenuBar jMenuBarMain;
+	private javax.swing.JMenuBar menuBar;
 	private javax.swing.JMenu jMenuEdit;
 	private javax.swing.JMenu jMenuExport;
 	private javax.swing.JMenu jMenuImport;
@@ -608,6 +640,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JMenuItem jMenuItemOpen;
 	private javax.swing.JMenuItem jMenuItemSave;
 	private javax.swing.JMenuItem jMenuItemCreateNode;
+	private javax.swing.JMenuItem jMenuItemStartNodeEdit;
 	private javax.swing.JMenuItem jMenuItemOptions;
 	private javax.swing.JMenuItem jMenuItemReports;
 	private javax.swing.JMenuItem jMenuItemPaste;
@@ -615,7 +648,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JMenuItem jMenuItemStop;
 	private javax.swing.JMenu jMenuTools;
 	private javax.swing.JPanel jPanelTree;
-	private javax.swing.JPanel jPanelMain;
+	private javax.swing.JPanel mainPanel;
 	private javax.swing.JPopupMenu progressTreePopup;
 	private javax.swing.JSplitPane jSplit_Tree_Data;
 	private Desktop desktop;
@@ -623,6 +656,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JProgressBar jobProgress;
 	private ProgressItemTree progressItemTree;
 	private javax.swing.JButton nodeCreateButton;
+	private javax.swing.JButton nodeEditButton;
 	private javax.swing.JButton nodeDeleteButton;
 	private javax.swing.JButton startButton;
 	private javax.swing.JPanel statusBar;
@@ -695,7 +729,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			{
 				final ProgressItem currentProgressItem = application.getCurrentItem ();
 				if (currentProgressItem!=null){
-					final Period currentProgress = currentProgressItem.getCurrentProgress ();
+					final Progress currentProgress = currentProgressItem.getCurrentProgress ();
 					if (currentProgress!=null){
 						duration = currentProgress.getDuration ();
 					}
@@ -723,6 +757,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			Application app = Application.getInstance ();
 			jobProgress.setIndeterminate (app.isProcessing ());
 			jobProgress.setValue (app.isProcessing ()?99:0);
+			jobProgress.setVisible (app.isProcessing ());
 		} else if (arg!=null && arg.equals(ObserverCodes.APPLICATIONOPTIONSCHANGE)){
 			this.desktop.setBackground (Application.getOptions ().getDesktopColor ());
 			this.desktop.revalidate ();
