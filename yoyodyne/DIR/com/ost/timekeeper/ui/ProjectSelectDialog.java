@@ -10,7 +10,7 @@ import java.util.*;
 
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.model.*;
-
+import com.ost.timekeeper.util.*;
 /**
  * Dialog per la selezione di un progetto.
  * @author  davide
@@ -37,10 +37,10 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
     private void initComponents() {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jList1 = new javax.swing.JList();
+        jListProjects = new javax.swing.JList();
         jPanel2 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jButtonOk = new javax.swing.JButton();
+        jButtonCancel = new javax.swing.JButton();
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -53,28 +53,28 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
         jLabel1.setText("jLabel1");
         jPanel1.add(jLabel1, java.awt.BorderLayout.NORTH);
 
-        jList1.setModel(new ProjectListModel (this.projects));
-        jPanel1.add(jList1, java.awt.BorderLayout.CENTER);
+        jListProjects.setModel(new ProjectListModel (this.projects));
+        jPanel1.add(jListProjects, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonOk.setText(ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.confirm"));
+        jButtonOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jPanel2.add(jButton1);
+        jPanel2.add(jButtonOk);
 
-        jButton2.setText("jButton2");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        jButtonCancel.setText(ResourceSupplier.getString (ResourceClass.UI, "global", "controls.button.cancel"));
+        jButtonCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
-        jPanel2.add(jButton2);
+        jPanel2.add(jButtonCancel);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
 
@@ -103,18 +103,18 @@ public class ProjectSelectDialog extends javax.swing.JDialog {
 	}
 	
     // Variables declaration 
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButtonOk;
+    private javax.swing.JButton jButtonCancel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JList jList1;
+    private javax.swing.JList jListProjects;
     // End of variables declaration
 	
 	public static Project createDialog (java.awt.Frame parent, String title, String label, boolean modal){
 		ProjectSelectDialog dialog = new ProjectSelectDialog (parent, title, label, modal, Application.getInstance().getAvailableProjects ());
 		dialog.show ();
-		return (Project)dialog.jList1.getSelectedValue();
+		return (Project)dialog.jListProjects.getSelectedValue();
 	}
 	
 	private final class ProjectListModel implements javax.swing.ListModel{

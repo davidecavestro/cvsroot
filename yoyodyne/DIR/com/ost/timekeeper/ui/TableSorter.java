@@ -121,7 +121,7 @@ The Number subclasses in the JDK are immutable and so will not be used in
 this way but other subclasses of Number might want to do this to save 
 space and avoid unnecessary heap allocation. 
 */
-        if (type.isAssignableFrom(java.lang.Number.class))
+        if (java.lang.Number.class.isAssignableFrom(type))
             {
                 Number n1 = (Number)data.getValueAt(row1, column);
                 double d1 = n1.doubleValue();
@@ -135,7 +135,7 @@ space and avoid unnecessary heap allocation.
                 else
                     return 0;
             }
-        else if (type.isAssignableFrom(java.util.Date.class))
+        else if (java.util.Date.class.isAssignableFrom(type))
             {
                 Date d1 = (Date)data.getValueAt(row1, column);
                 long n1 = d1.getTime();
@@ -148,7 +148,7 @@ space and avoid unnecessary heap allocation.
                     return 1;
                 else return 0;
             }
-        else if (type.isAssignableFrom(java.util.Calendar.class))
+        else if (java.util.Calendar.class.isAssignableFrom(type))
             {
                 Calendar d1 = (Calendar)data.getValueAt(row1, column);
                 long n1 = d1.getTime().getTime();
@@ -161,7 +161,7 @@ space and avoid unnecessary heap allocation.
                     return 1;
                 else return 0;
             }
-        else if (type.isAssignableFrom(String.class))
+        else if (String.class.isAssignableFrom(type))
             {
                 String s1 = (String)data.getValueAt(row1, column);
                 String s2    = (String)data.getValueAt(row2, column);
@@ -173,7 +173,7 @@ space and avoid unnecessary heap allocation.
                     return 1;
                 else return 0;
             }
-        else if (type.isAssignableFrom(Boolean.class))
+        else if (Boolean.class.isAssignableFrom(type))
             {
                 Boolean bool1 = (Boolean)data.getValueAt(row1, column);
                 boolean b1 = bool1.booleanValue();

@@ -44,4 +44,5 @@ public final class StringUtils {
 		}
 		return false;
 	}
+	
 }

@@ -33,7 +33,11 @@ public class ProjectOpenAction extends javax.swing.AbstractAction implements Obs
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 //		String projectName = askForName ();
 		Application app = Application.getInstance();
-		app.setProject (ProjectSelectDialog.createDialog(app.getMainForm(), "Select project", "Select project", true));
+		app.setProject (
+			ProjectSelectDialog.createDialog(app.getMainForm(), 
+				ResourceSupplier.getString (ResourceClass.UI, "controls", "openproject"), 
+				ResourceSupplier.getString (ResourceClass.UI, "controls", "selectprojecttoopen"), 
+				true));
 //		Extent extent = app.getPersistenceManager().getExtent(Project.class, true);
 //		Project currentProject = null;
 //		for (Iterator it = extent.iterator();it.hasNext();){
@@ -53,7 +57,7 @@ public class ProjectOpenAction extends javax.swing.AbstractAction implements Obs
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals ("project")){
+			if (arg!=null && arg.equals (ObserverCodes.PROJECT)){
 				this.setEnabled(true);
 			}
 		}

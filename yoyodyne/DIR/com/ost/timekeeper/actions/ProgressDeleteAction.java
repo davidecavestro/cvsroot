@@ -41,7 +41,7 @@ public class ProgressDeleteAction extends javax.swing.AbstractAction implements 
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals ("selecteditem")){
+			if (arg!=null && arg.equals (ObserverCodes.SELECTEDITEM)){
 				this.setEnabled(((Application)o).getSelectedItem()!=null);
 			}
 		}

@@ -46,7 +46,7 @@ public class ProjectCreateAction extends javax.swing.AbstractAction implements O
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals ("project")){
+			if (arg!=null && arg.equals (ObserverCodes.PROJECT)){
 				this.setEnabled(true);
 			}
 		}

@@ -38,6 +38,7 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 		load (root);
 		//registra interesse per eventi di variazione periodo avanzamento corrente
 		Application.getInstance().addObserver(this);
+		synchCurrentPeriodIdx ();
 	}
 
 	/**
@@ -176,7 +177,7 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 			for (int i=0;i<progresses.size();i++){
 				Period p = (Period)progresses.get (i);
 				if (p==app.getCurrentItem().getCurrentProgress()){
-					System.out.println ("Changing current period idxfrom: "+currentPeriodIdx+" to:"+i);
+					System.out.println ("Changing current period idxfrom: "+currentPeriodIdx+" to:"+i+"\nstacktrace: \n"+ExceptionUtils.getStackStrace(new Throwable ()));
 					this.currentPeriodIdx=i;
 					break;
 				}
@@ -191,11 +192,11 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	 */	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals("itemprogressingperiodchange")){
+			if (arg!=null && arg.equals(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE)){
 //				reloadProgresses ();
-//				synchCurrentPeriodIdx ();
-//				this.fireTableChanged(new TableModelEvent(this, this.getCurrentPeriodIndex()));
-				System.out.println (this.hashCode()+" current period Idx: "+this.getCurrentPeriodIndex());
+				synchCurrentPeriodIdx ();
+				this.fireTableChanged(new TableModelEvent(this/*, this.getCurrentPeriodIndex()*/));
+				System.out.println (this.hashCode()+" current period Idx: "+this.getCurrentPeriodIndex()+"\nstacktrace: \n"+ExceptionUtils.getStackStrace(new Throwable ()));
 			}
 		}
 	}

@@ -32,10 +32,12 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 		this.application = app;
 		this.progressTreeModel = new ProgressTreeModel(application.getProject());
 		this.application.addObserver (progressTreeModel);
-		this.progressTableModel = new ProgressTableModel(application.getCurrentItem());
 		
 		progressItemCellRenderer = new ProgressItemCellRenderer();
 		initComponents();
+		//inizializza table model su dati applicazione
+		this.progressTableModel = this.progressTable.getProgressTableModel();
+		this.progressTableModel.load(application.getCurrentItem());
 		postInitComponents();
 	}
 	
@@ -521,7 +523,7 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals ("project")){
+			if (arg!=null && arg.equals (ObserverCodes.PROJECT)){
 //				this.progressTree.setModel(this.progressTreeModel);
 				this.progressTreeModel.load (application.getProject());
 				
@@ -531,7 +533,7 @@ public class MainForm extends javax.swing.JFrame implements Observer {
 				initTreeModelListeners ();
 				this.progressTree.invalidate();
 				initTableModelListeners ();
-			} else if (arg!=null && (arg.equals ("currentitem"))){
+			} else if (arg!=null && (arg.equals (ObserverCodes.CURRENTITEM))){
 				Application app = (Application)o;
 				statusLabel.setText(ResourceSupplier.getString (ResourceClass.UI, "statusbar", app.getCurrentItem()!=null?"statuslabel.working_UC":"statuslabel.idle_UC"));
 			}

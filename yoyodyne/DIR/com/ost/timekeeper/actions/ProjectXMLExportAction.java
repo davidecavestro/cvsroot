@@ -66,7 +66,7 @@ public class ProjectXMLExportAction extends javax.swing.AbstractAction implement
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals("project")){
+			if (arg!=null && arg.equals(ObserverCodes.PROJECT)){
 				this.setEnabled(((Application)o).getProject()!=null);
 			}
 		}

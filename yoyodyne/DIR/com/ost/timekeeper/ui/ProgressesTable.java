@@ -55,6 +55,7 @@ public class ProgressesTable extends javax.swing.JTable implements TreeSelection
 		
 		public void load (ProgressTableModel progressTableModel){
 			super.setModel (progressTableModel);
+			Application.getInstance().deleteObserver(this.progressTableModel);
 			this.progressTableModel=progressTableModel;
 		}
 		public void fireCurrentPeriodUpdated (){
@@ -70,24 +71,30 @@ public class ProgressesTable extends javax.swing.JTable implements TreeSelection
 		
 		public void sort(Object sender) {
 			super.sort(sender);
+//			System.out.println ("could launch ITEMPROGRESSINGPERIODCHANGE");
+			//sincronizza indice avanzamento corrente, dopo riordino
+			this.progressTableModel.synchCurrentPeriodIdx();
 			Application.getInstance().setChanged();
 			Application.getInstance().notifyObservers(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
-//			//sincronizza indice avanzamento corrente, dopo riordino
-//			this.progressTableModel.synchCurrentPeriodIdx();
 		}
 		
 	}
 	
+	private ProgressTableModel progressTableModel;
 	public void setModel(ProgressTableModel dataModel) {
 		if (this.dataModel!=null){
 			this.dataModel.removeTableModelListener(this);
 		}
+		this.progressTableModel=dataModel;
 		this.dataModel = new ProgressTableSorter(dataModel);
 		// Install a mouse listener in the TableHeader as the sorter UI.
 		this.dataModel.addMouseListenerToHeaderInTable(this);
 		super.setModel(this.dataModel);
 	}
 	
+	public ProgressTableModel getProgressTableModel (){
+		return this.progressTableModel;
+	}
 	//	public void setModel (TableModel model){
 	//		if (this.sorter!=null){
 	//			this.sorter.setModel (model);
@@ -162,9 +169,9 @@ public class ProgressesTable extends javax.swing.JTable implements TreeSelection
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals("selecteditem")){
+			if (arg!=null && arg.equals(ObserverCodes.SELECTEDITEM)){
 				this.reloadModel(((Application)o).getSelectedItem());
-			} else if (arg!=null && arg.equals("itemprogressing")){
+			} else if (arg!=null && arg.equals(ObserverCodes.ITEMPROGRESSING)){
 				//				this.reloadModel(((Application)o).getSelectedItem());
 				this.dataModel.fireTableChanged(new TableModelEvent(getModel(), this.dataModel.getCurrentPeriodIndex()));
 			}

@@ -153,7 +153,7 @@ public class ProgressTreeModel extends AbstractTreeModel implements Observer{
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals("project")){
+			if (arg!=null && arg.equals(ObserverCodes.PROJECT)){
 				this.load (((Application)o).getProject());
 			}
 		}

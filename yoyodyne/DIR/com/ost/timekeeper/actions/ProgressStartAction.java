@@ -41,7 +41,7 @@ public class ProgressStartAction extends javax.swing.AbstractAction implements O
 	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && (arg.equals ("currentitem")) || arg.equals ("selecteditem")){
+			if (arg!=null && (arg.equals (ObserverCodes.CURRENTITEM)) || arg.equals (ObserverCodes.SELECTEDITEM)){
 				Application app = (Application)o;
 				this.setEnabled (app.getCurrentItem()==null && app.getSelectedItem()!=null);
 			}
