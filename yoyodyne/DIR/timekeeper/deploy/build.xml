@@ -17,6 +17,10 @@
 		<tstamp prefix="file.ts">
 			<format property="TODAY" pattern="yyyyMMdd" />
 		</tstamp>	
+		
+		<!-- carica le impostazioni esterne. -->
+		<loadproperties srcFile="build.properties"/>
+		
 		<property name="project.name" value="${ant.project.name}"/>
 		<property name="version" value="0.1"/>
 
@@ -46,8 +50,7 @@
 		<property location="${project.name}.tar" name="app.tar" />
 		<property location="${project.name}.tar.gz" name="app.zip" />
 
-		<!-- carica le impostazioni esterne. -->
-		<loadproperties srcFile="build.properties"/>
+		<property location="${app.dir}/release.properties" name="release.properties" />
 	</target>
 
 	<!-- Compila il codice sorgente. -->
@@ -155,23 +158,33 @@
 	<!-- Genera l'archivio contenente il core dell'applicazione. -->
 	<target depends="init,compile" name="jar">
 		<mkdir dir="${app.dir}"/>
+		
+		<!-- prepara le informazioni di release. -->
+		<buildnumber/>
+		<propertyfile
+			file="${release.properties}"
+			comment="Release properties">
+			<entry  key="build.number" value="${build.number}"/>
+			<entry  key="build.date" type="date" value="now"/>
+		</propertyfile>		
+		
 		<jar basedir="${classes.dir}" compress="true" jarfile="${app.jar}" >
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Main-Class" value="com.ost.timekeeper.Application"/>
 				<attribute name="Class-Path" value=". lib/jdo.jar lib/jdori.jar lib/btree.jar lib/castor.jar lib/castor-xml.jar lib/jhall.jar res/i18n.jar lib/xerces.jar res/images.jar res/help.jar"/>
-				<attribute name="Implementation-Title" value="timekeeper"/>
+				<attribute name="Implementation-Title" value="${project.name}"/>
 				<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
-				<attribute name="Implementation-Vendor" value="DateSoft ltd."/>
+				<attribute name="Implementation-Vendor" value="DaveSoft ltd."/>
 			</manifest>
 		</jar>
 	</target>
 
 	<!-- Genera la directory di distribuzione standard. -->
-	<target depends="sign" description="Build everything." name="all"/>
+	<target depends="bundle" description="Build everything." name="all"/>
 
 	<!-- Genera la documentazione javadoc di supporto al progetto. -->
-	<target depends="init" description="Javadoc for Timekeeper API." name="javadoc">
+	<target depends="init" description="Javadoc for ${project.name} API." name="javadoc">
 		<mkdir dir="${javadoc.dir}"/>
 		<javadoc destdir="${javadoc.dir}" packagenames="*">
 			<sourcepath>
@@ -181,6 +194,7 @@
 	</target>
 
 	<target depends="jar" name="deploy" description="Prepara la directory di installazione dell'applicazione." >
+		
 		<mkdir dir="${app.lib.dir}"/>
 		<mkdir dir="${app.res.dir}"/>
 
@@ -199,9 +213,9 @@
 		<jar compress="true" jarfile="${i18n.jar}" >
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Implementation-Title" value="timekeeper" />
+				<attribute name="Implementation-Title" value="${project.name}" />
 				<attribute name="Implementation-Version" value="${version} ${TODAY}" /> 
-				<attribute name="Implementation-Vendor" value="DateSoft ltd." />
+				<attribute name="Implementation-Vendor" value="DaveSoft ltd." />
 			</manifest>
 			<fileset dir="${src.dir}" includes="com/ost/timekeeper/ui/bundle/**" />
 		</jar>
@@ -210,9 +224,9 @@
 		<jar compress="false" jarfile="${images.jar}" >
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Implementation-Title" value="timekeeper" />
+				<attribute name="Implementation-Title" value="${project.name}" />
 				<attribute name="Implementation-Version" value="${version} ${TODAY}" /> 
-				<attribute name="Implementation-Vendor" value="DateSoft ltd." />
+				<attribute name="Implementation-Vendor" value="DaveSoft ltd." />
 			</manifest>
 			<fileset dir="${src.dir}" includes="com/ost/timekeeper/ui/images/**" />
 		</jar>
@@ -220,52 +234,12 @@
 		<jar compress="true" jarfile="${help.jar}" >
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
-				<attribute name="Implementation-Title" value="timekeeper"/>
+				<attribute name="Implementation-Title" value="${project.name}"/>
 				<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
-				<attribute name="Implementation-Vendor" value="DateSoft ltd."/>
+				<attribute name="Implementation-Vendor" value="DaveSoft ltd."/>
 			</manifest>
 			<fileset dir="${src.dir}" includes="help/**" />
 		</jar>
-
-		<!-- Verifica abilitazione della firma dei jar. -->
-		<condition property="_jarSignEnabled">
-			<and>
-				<isset property="signjar.enabled" />
-				<istrue value="${signjar.enabled}"/>
-			</and>
-		</condition>
-		<echo message="Esito controllo abilitazione della firma dei JAR: ${_jarSignEnabled}" />
-
-		<input
-			message="Please enter keystore password to sign generated archives: "
-			addproperty="signjar.keystore.password"
-		/>
-		
-		<!-- Controllo impostazione alias certificato. -->
-		<condition property="_isKeystoreAliasSet" >
-			<isset property="signjar.keystore.alias" />
-		</condition>
-		<echo message="Esito controllo validità alias del certificato: ${_isKeystoreAliasSet}"/>
-		
-		<!-- Controllo impostazione password certificato. -->
-		<condition property="_isKeystorePasswordSet" >
-			<isset property="signjar.keystore.password" />
-		</condition>
-		<echo message="Esito controllo validità password del certificato: ${_isKeystoreAliasSet}"/>
-		
-		<!-- 
-		Verifica che le condizioni necessarie 
-		al processo di firma dei jar siano soddisfatte. 
-		-->
-		<condition property="_canSignJars" >
-			<and>
-				<istrue value="${_jarSignEnabled}"/>
-				<istrue value="${_isKeystoreAliasSet}"/>
-				<istrue value="${_isKeystorePasswordSet}"/>
-			</and>
-		</condition>
-		
-		<echo message="Verifica delle condizioni necessarie per la firma dei JAR: ${_canSignJars}" />
 
 		<!-- Invoca la rimozione dei file temporanei. -->
 		<antcall target="clean.work"/>
@@ -273,14 +247,13 @@
 
 	<!-- Genera il file compresso pronto per essere distribuito. -->
 	<target depends="sign" description="Create application bundle." name="bundle">
-		<buildnumber/>
 		<tar tarfile="${app.tar}" >
 			<tarfileset dir="." preserveLeadingSlashes="true">
 			<include name="${app.dir.name}/**"/>
-			<exclude name="${app.dir.name}/bin/timekeeper.sh"/>
+			<exclude name="${app.dir.name}/bin/launch.sh"/>
 			</tarfileset>
 			<tarfileset dir="." mode="755" preserveLeadingSlashes="true">
-			<include name="${app.dir.name}/bin/timekeeper.sh"/>
+			<include name="${app.dir.name}/bin/launch.sh"/>
 			</tarfileset>
 		</tar>
 		<gzip zipfile="${app.zip}" src="${app.tar}"/>
@@ -314,8 +287,63 @@
 		<delete file="${app.zip}"/>
 	</target>
 
+	<!-- Verifica abilitazione della firma dei jar. -->
+	<target name="jarSignEnabledTest">
+		<condition property="_jarSignEnabled">
+			<and>
+				<isset property="signjar.enabled" />
+				<istrue value="${signjar.enabled}"/>
+			</and>
+		</condition>
+		<echo message="Esito controllo abilitazione della firma dei JAR: ${_jarSignEnabled}" />
+	</target>
+	
+	<target name="inputJarSignPassword" unless="_isKeystorePasswordSet">
+		<input
+			message="Please enter keystore password to sign generated archives: "
+			addproperty="signjar.keystore.password"
+		/>
+	</target>
+	
+	<!-- 
+	Verifica che le condizioni necessarie 
+	al processo di firma dei jar siano soddisfatte. 
+	-->
+	<target depends="inputJarSignPassword" name="canSignJarTest" if="_jarSignEnabled" >
+		
+		<!-- Controllo impostazione alias certificato. -->
+		<condition property="_isKeystoreAliasSet" >
+			<isset property="signjar.keystore.alias" />
+		</condition>
+		<echo message="Esito controllo validità alias del certificato: ${_isKeystoreAliasSet}"/>
+		
+		<!-- Controllo impostazione password certificato. -->
+		<condition property="_isKeystorePasswordSet" >
+			<isset property="signjar.keystore.password" />
+		</condition>
+		
+		<antcall target="inputJarSignPassword"/>
+		
+		<!-- RIpete controllo impostazione password certificato dopo immissione. -->
+		<condition property="_isKeystorePasswordSet" >
+			<isset property="signjar.keystore.password" />
+		</condition>
+		
+		<echo message="Esito controllo validità password del certificato: ${_isKeystoreAliasSet}"/>
+		
+		<condition property="_canSignJars" >
+			<and>
+				<istrue value="${_jarSignEnabled}"/>
+				<istrue value="${_isKeystoreAliasSet}"/>
+				<istrue value="${_isKeystorePasswordSet}"/>
+			</and>
+		</condition>
+		
+		<echo message="Verifica delle condizioni necessarie per la firma dei JAR: ${_canSignJars}" />
+	</target>
+	
 	<!-- Firma i jar generati. -->
-	<target depends="deploy" name="sign" >
+	<target depends="deploy,jarSignEnabledTest,canSignJarTest" name="sign" if="_jarSignEnabled">
 		<echo>Firma dei JAR.</echo>
 		<fail unless="_canSignJars" message="Impossibile firmare i jar." />
 		
