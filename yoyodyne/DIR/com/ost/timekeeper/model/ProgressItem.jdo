@@ -5,6 +5,8 @@
     <class name="ProgressItem" 
            identity-type="datastore">
       <field name="name"/>
+      <field name="description"/>
+      <field name="notes"/>
       <field name="currentProgress" persistence-modifier="persistent"/>
       <field name="parent" persistence-modifier="persistent"/>
       <field name="project" persistence-modifier="persistent"/>

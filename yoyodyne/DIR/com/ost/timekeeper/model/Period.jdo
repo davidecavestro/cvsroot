@@ -6,6 +6,8 @@
            identity-type="datastore">
       <field name="from"/>
       <field name="to"/>
+      <field name="description"/>
+      <field name="notes"/>
     </class>
   </package>
 </jdo>

@@ -116,6 +116,13 @@ public class Period extends Observable{
 	
 	private boolean isDurationComputed = false;
 	private Duration computedDuration;
+	
+	/** Holds value of property description. */
+	private String description;
+	
+	/** Holds value of property notes. */
+	private String notes;
+	
 	public Duration getDuration (){
 		if (this.isEndOpened()){
 			return new Duration (this.from, new GregorianCalendar ().getTime ());
@@ -133,4 +140,37 @@ public class Period extends Observable{
 		.append (" to: ").append (CalendarUtils.toTSString(this.to));
 		return sb.toString ();
 	}
+	
+	/** Getter for property description.
+	 * @return Value of property description.
+	 *
+	 */
+	public String getDescription() {
+		return this.description;
+	}
+	
+	/** Setter for property description.
+	 * @param description New value of property description.
+	 *
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	/** Getter for property notes.
+	 * @return Value of property notes.
+	 *
+	 */
+	public String getNotes() {
+		return this.notes;
+	}
+	
+	/** Setter for property notes.
+	 * @param notes New value of property notes.
+	 *
+	 */
+	public void setNotes(String notes) {
+		this.notes = notes;
+	}
+	
 }
