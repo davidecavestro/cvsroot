@@ -23,6 +23,11 @@ import com.ost.timekeeper.util.*;
  */
 public final class ProgressTableModel extends AbstractTableModel implements Observer {
 	
+	/**
+	 * Tipo di lista degli avanzamenti (LOCALE o SOTTOALBERO).
+	 */
+	private ProgressListType _progressListType = ProgressListType.LOCAL;
+	
 	private ProgressItem root;
 	private int currentPeriodIdx;
 	
@@ -178,7 +183,17 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	 */
 	public final void reloadProgresses (){
 		if (root!=null){
-			this.progresses = root.getSubtreeProgresses ();
+			if (this._progressListType==ProgressListType.LOCAL){
+				/*
+				 * Lista avanzamenti locali al nodo.
+				 */
+				this.progresses = root.getProgresses ();
+			} else {
+				/*
+				 * Lista avanzamenti del sottoalbero.
+				 */
+				this.progresses = root.getSubtreeProgresses ();
+			}
 		} else {
 			this.progresses = new ArrayList ();
 		}
@@ -196,7 +211,7 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 			for (int i=0;i<progresses.size();i++){
 				Period p = (Period)progresses.get (i);
 				if (p==app.getCurrentItem().getCurrentProgress()){
-					System.out.println ("Changing current period idxfrom: "+currentPeriodIdx+" to:"+i+"\nstacktrace: \n"+ExceptionUtils.getStackStrace(new Throwable ()));
+//					System.out.println ("Changing current period idxfrom: "+currentPeriodIdx+" to:"+i+"\nstacktrace: \n"+ExceptionUtils.getStackStrace(new Throwable ()));
 					this.currentPeriodIdx=i;
 					break;
 				}
@@ -220,4 +235,16 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 		}
 	}
 	
+	/**
+	 * Imposta il tipo di lista di questo modello.
+	 *
+	 * @param progressListType il tipo di lista.
+	 */	
+	public void setProgressListType (final ProgressListType progressListType){
+		if (progressListType==null){
+			return;
+		}
+		this._progressListType = progressListType;
+		this.load (this.root);
+	}
 }
