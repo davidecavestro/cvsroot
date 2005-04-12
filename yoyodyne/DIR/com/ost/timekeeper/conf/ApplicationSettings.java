@@ -133,4 +133,11 @@ public interface ApplicationSettings {
 	 * @return il LookAndFeel.
 	 */	
 	String getLookAndFeel ();
+	
+	/**
+	 * Ritorna il nome dell'ultimo progetto caricato.
+	 *
+	 * @return il nome dell'ultimo progetto caricato.
+	 */	
+	String getLastProjectName ();
 }

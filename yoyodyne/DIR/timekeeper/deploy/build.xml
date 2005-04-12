@@ -214,7 +214,7 @@
 			file="${release.properties}"
 			comment="Release properties">
 			<entry  key="build.number" value="${build.number}"/>
-			<entry  key="build.date" type="date" value="now"/>
+			<entry  key="build.date" type="date" value="now" pattern="yyyy-MM-DD HH:mm:ss.SSS"/>
 		</propertyfile>		
 		
 		<jar basedir="${classes.dir}" compress="true" jarfile="${app.jar}" >

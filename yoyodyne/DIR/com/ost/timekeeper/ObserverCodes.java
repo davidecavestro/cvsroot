@@ -68,5 +68,10 @@ public interface ObserverCodes {
 	 */
 	public final static String APPLICATIONEXITING = "applicationexiting";
 
+	/**
+	 * Applicazione in fase di modifica L&F.
+	 */
+	public final static String LOOKANDFEEL_CHANGING = "lookandfeelchanging";
+
 
 }

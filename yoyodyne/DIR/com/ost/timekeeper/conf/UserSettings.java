@@ -7,6 +7,7 @@
 package com.ost.timekeeper.conf;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.model.Project;
 import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.ui.chart.ChartFrame;
 import java.awt.*;
@@ -102,6 +103,9 @@ public final class UserSettings extends AbstractSettings implements Observer{
 			this.setProgressListType (ProgressListFrame.getInstance ().getListType ());
 			
 			this.setLookAndFeel (UIManager.getLookAndFeel ().getClass ().getName ());
+			final Application application = Application.getInstance ();
+			final Project lastProject = application.getProject ();
+			this.setLastProjectName (lastProject!=null?lastProject.getName ():"");
 		}
 	}
 	

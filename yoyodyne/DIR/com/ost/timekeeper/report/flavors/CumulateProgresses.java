@@ -19,6 +19,8 @@ import org.jdom.*;
 
 /**
  * Estrae i deti per il report degli avanzamenti cumulati.
+ * Il report avanzamenti cumulati aggrega i dati relativi agli 
+ * avanzamenti locali ad un dato nodo radice e del sottoalbero in funzione del nodo radice e del periodo .
  *
  * @author  davide
  */
@@ -242,6 +244,11 @@ public final class CumulateProgresses extends AbstractDataExtractor {
 		sb.append (durationNumberFormatter.format(duration.getDays()))
 		.append (":")
 		 */
+		final long days = duration.getDays ();
+		if (days>0){
+			sb.append (durationNumberFormatter.format (days))
+			.append (":");
+		}
 		sb.append (durationNumberFormatter.format (duration.getHours ()))
 		.append (":")
 		.append (durationNumberFormatter.format (duration.getMinutes ()))

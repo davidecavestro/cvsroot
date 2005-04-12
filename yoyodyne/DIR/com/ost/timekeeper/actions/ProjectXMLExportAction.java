@@ -66,20 +66,38 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 //		final Mapping mapping = new Mapping();
 		try{
 //			mapping.loadMapping(this.getClass ().getResource ("dataiomap.xml"));
-			
-			final int returnVal = chooser.showSaveDialog(app.getMainForm());
+
+			int returnVal;
+			boolean nullFile;
+			boolean needOverwriteConfirm;
+			do {
+				returnVal = chooser.showSaveDialog(app.getMainForm());
+				if (returnVal != JFileChooser.APPROVE_OPTION) {
+					return;
+				}
+				nullFile = chooser.getSelectedFile ()==null;
+				final boolean overwriting = !nullFile && chooser.getSelectedFile ().exists ();
+				if (overwriting){
+					final int overwriteConfirmResponse = JOptionPane.showConfirmDialog (Application.getInstance ().getMainForm (), ResourceSupplier.getString (ResourceClass.UI, "controls", "File.overwrite.confirm"));
+					if (overwriteConfirmResponse==JOptionPane.CANCEL_OPTION){
+						return;
+					}
+					needOverwriteConfirm = overwriteConfirmResponse!=JOptionPane.OK_OPTION;
+				} else {
+					needOverwriteConfirm = false;
+				}
+			} while (nullFile || needOverwriteConfirm);
+				
 			final SwingWorker worker = new SwingWorker() {
 				public Object construct() {
-					app.setProcessing (true);
+					app.setProcessing (true, ResourceSupplier.getString (ResourceClass.UI, "controls", "exmporting.project"));
 					try{
-						if(returnVal != JFileChooser.APPROVE_OPTION) {
-							return null;
-						}
 						try {
 							final org.jdom.Document data = new org.jdom.Document ();
 							new ExportProjectToXML (app.getProject (), data).execute ();
 							
 							final XMLOutputter xo = new XMLOutputter ();
+							
 							xo.output (data, new FileOutputStream (chooser.getSelectedFile()));
 							
 //							// Create a Reader to the file to unmarshal from

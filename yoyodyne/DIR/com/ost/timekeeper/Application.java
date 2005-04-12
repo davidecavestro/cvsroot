@@ -203,8 +203,28 @@ public class Application extends Observable{
 				final UserSettingsFrame usf = UserSettingsFrame.getInstance ();
 				usf.showDataSettings ();
 				usf.show ();
+			} else {
+				
+				a.setProcessing (true, ResourceSupplier.getString (ResourceClass.UI, "controls", "loading.project"));
+				try {
+					
+					final String lastProjectName = _applicationOptions.getLastProjectName ();
+					try {
+						for (final Iterator it = a.getPersistenceManager ().getExtent (Project.class, true).iterator ();it.hasNext ();){
+							final Project candidate = (Project)it.next ();
+							if (candidate.getName ().equals (lastProjectName)){
+								a.setProject (candidate);
+								break;
+							}
+						}
+					} catch (final Throwable t){
+						a.getLogger ().error ("Cannot load last project", t);
+					}
+					
+				} finally {
+					a.setProcessing (false);
+				}
 			}
-
 		} catch (Exception e){
 			e.printStackTrace();
 			System.exit (1);
@@ -476,10 +496,22 @@ public class Application extends Observable{
 	 * @param processing lo stato di elaborazione dell'applicazione.
 	 */	
 	public void setProcessing (boolean processing){
+		this.setProcessing (processing, ResourceSupplier.getString (ResourceClass.UI, "controls", "processing"));
+	}
+	
+	private final Stack _processingMessages = new Stack ();
+	/**
+	 * Imposta lo stato di elaborazione dell'applicazione.
+	 * @param message messaggio.
+	 * @param processing lo stato di elaborazione dell'applicazione.
+	 */	
+	public void setProcessing (boolean processing, final String message){
 		if (processing){
 			this._processing++;
+			this._processingMessages.push (message);
 		} else {
 			this._processing--;
+			this._processingMessages.pop ();
 			if (this._processing==0){
 				if (Application.getOptions ().beepOnEvents ()){
 					java.awt.Toolkit.getDefaultToolkit().beep();
@@ -488,6 +520,19 @@ public class Application extends Observable{
 		}
 		this.setChanged ();
 		this.notifyObservers (ObserverCodes.PROCESSINGCHANGE);
+	}
+	
+	/**
+	 * Ritorna il messaggio di elaborazione corrente.
+	 *
+	 * @return il messaggio di elaborazione corrente.
+	 */	
+	public String getProcessingMessage (){
+		if (!this._processingMessages.isEmpty ()){
+			return (String)this._processingMessages.peek ();
+		} else {
+			return null;
+		}
 	}
 	
 	/**

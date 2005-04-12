@@ -57,19 +57,19 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 	 */
 	private void init (final ProgressTreeModel progressTreeModel){
 		//		final ProgressItemCellRenderer progressItemCellRenderer = new ProgressItemCellRenderer ();
-		final TableCellEditor treeCellEditor = this.getDefaultEditor (ProgressItem.class);
-		treeCellEditor.addCellEditorListener (new CellEditorListener (){
-			public void editingStopped (ChangeEvent e){
-				CellEditor source = (CellEditor)e.getSource ();
-				String newValue = (String)source.getCellEditorValue ();
-				Application.getInstance ().getSelectedItem ().setName (newValue);
-			}
-			
-			public void editingCanceled (ChangeEvent e){
-				//				System.out.println (e);
-			}
-		});
-		this.setCellEditor (treeCellEditor);
+//		final TableCellEditor treeCellEditor = this.getDefaultEditor (ProgressItem.class);
+//		treeCellEditor.addCellEditorListener (new CellEditorListener (){
+//			public void editingStopped (ChangeEvent e){
+//				CellEditor source = (CellEditor)e.getSource ();
+//				String newValue = (String)source.getCellEditorValue ();
+//				Application.getInstance ().getSelectedItem ().setName (newValue);
+//			}
+//			
+//			public void editingCanceled (ChangeEvent e){
+//				//				System.out.println (e);
+//			}
+//		});
+//		this.setCellEditor (treeCellEditor);
 		//		this.setCellRenderer (progressItemCellRenderer);
 		//		this.setModel (progressTreeModel);
 		
@@ -108,6 +108,7 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 //		DragSourceListener
 //		DropTargetListener
 //		this.setDropTarget (new DropTarget(this, new DragPatch ()));
+		tree.setEditable (false);
 	}
 	
 //	private class DragPatch extends DragSourceAdapter implements DragSourceMotionListener {
@@ -317,9 +318,4 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		}
 	}
 	
-//	public boolean isCellEditable(EventObject e) {
-//		super.isCellEditable (e);
-//	    return true;
-//	}
-
 }

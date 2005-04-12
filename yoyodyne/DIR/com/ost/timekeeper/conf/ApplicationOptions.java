@@ -499,6 +499,11 @@ public final class ApplicationOptions {
 		return ResourceSupplier.getString (ResourceClass.UI, "global", "date.format");
 	}
 	
+	/**
+	 * Ritorna il L&F impostato.
+	 *
+	 * @return il L&F impostato.
+	 */	
 	public String getLookAndFeel (){
 		final String returnValue = this._settings.getLookAndFeel ();
 		if (returnValue!=null){
@@ -517,6 +522,33 @@ public final class ApplicationOptions {
 					 * Default di sistema non disponibile.
 					 */
 				return UIManager.getSystemLookAndFeelClassName ();
+			}
+		}
+	}
+	
+	/**
+	 * Ritorna il nome dell'ultimo progetto caricato.
+	 *
+	 * @return il nome dell'ultimo progetto caricato.
+	 */	
+	public String getLastProjectName (){
+		final String returnValue = this._settings.getLastProjectName ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue;
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.getLastProjectName ();
+			} else {
+					/*
+					 * Default di sistema non disponibile.
+					 */
+				return null;
 			}
 		}
 	}

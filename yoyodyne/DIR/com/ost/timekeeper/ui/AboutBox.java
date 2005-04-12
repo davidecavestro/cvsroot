@@ -373,36 +373,13 @@ public final class AboutBox extends JDialog {
 		}
 		
 		{
-			final JLabel productBuildLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.build")+": ");
-			productBuildLabel.setHorizontalAlignment (JLabel.RIGHT);
-
-			c.weightx = 0.0;
-			c.weighty = 0.0;
-			c.gridx = 0;
-			c.gridy = 2;
-			c.gridwidth = 1;
-			detailPanel.add (productBuildLabel, c);
-		}
-		{
-			final JLabel productBuildValue = new JLabel (appData.getBuildNumber ());
-			productBuildValue.setFont (valueFont);
-
-			c.weightx = 1.0;
-			c.weighty = 0.0;
-			c.gridx = 1;
-			c.gridy = 2;
-			c.gridwidth = 1;
-			detailPanel.add (productBuildValue, c);
-		}
-		
-		{
 			final JLabel productReleaseDateLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.releasedate")+": ");
 			productReleaseDateLabel.setHorizontalAlignment (JLabel.RIGHT);
 
 			c.weightx = 0.0;
 			c.weighty = 0.0;
 			c.gridx = 0;
-			c.gridy = 3;
+			c.gridy = 2;
 			c.gridwidth = 1;
 			detailPanel.add (productReleaseDateLabel, c);
 		}
@@ -413,16 +390,70 @@ public final class AboutBox extends JDialog {
 			c.weightx = 1.0;
 			c.weighty = 0.0;
 			c.gridx = 1;
-			c.gridy = 3;
+			c.gridy = 2;
 			c.gridwidth = 1;
 			c.fill = GridBagConstraints.BOTH;
 			detailPanel.add (productReleaaseDateValue, c);
 		}
 		
 		c.weightx = 1.0;
+		c.weighty = 0.0;
+		c.gridx = 0;
+		c.gridy = 3;
+		c.gridwidth = 2;
+		detailPanel.add (new JLabel (), c);
+		
+		{
+			final JLabel productBuildLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.build")+": ");
+			productBuildLabel.setHorizontalAlignment (JLabel.RIGHT);
+
+			c.weightx = 0.0;
+			c.weighty = 0.0;
+			c.gridx = 0;
+			c.gridy = 4;
+			c.gridwidth = 1;
+			detailPanel.add (productBuildLabel, c);
+		}
+		{
+			final JLabel productBuildValue = new JLabel (appData.getBuildNumber ());
+			productBuildValue.setFont (valueFont);
+
+			c.weightx = 1.0;
+			c.weighty = 0.0;
+			c.gridx = 1;
+			c.gridy = 4;
+			c.gridwidth = 1;
+			detailPanel.add (productBuildValue, c);
+		}
+		
+		{
+			final JLabel productBuildDateLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "about", "product.builddate")+": ");
+			productBuildDateLabel.setHorizontalAlignment (JLabel.RIGHT);
+
+			c.weightx = 0.0;
+			c.weighty = 0.0;
+			c.gridx = 0;
+			c.gridy = 5;
+			c.gridwidth = 1;
+			detailPanel.add (productBuildDateLabel, c);
+		}
+		{
+			final JLabel productBuildDateValue = new JLabel (CalendarUtils.toTSString (appData.getBuildDate ().getTime ()));
+			productBuildDateValue.setFont (valueFont);
+
+			c.weightx = 1.0;
+			c.weighty = 0.0;
+			c.gridx = 1;
+			c.gridy = 5;
+			c.gridwidth = 1;
+			c.fill = GridBagConstraints.BOTH;
+			detailPanel.add (productBuildDateValue, c);
+		}
+		
+		c.weightx = 1.0;
 		c.weighty = 1.0;
 		c.gridx = 0;
-		c.gridy = 4;
+		c.gridy = 6;
 		detailPanel.add (new JLabel (), c);
 		
 		container.add (detailPanel, BorderLayout.CENTER);

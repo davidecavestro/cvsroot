@@ -21,6 +21,7 @@ import com.ost.timekeeper.help.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.report.*;
 import com.ost.timekeeper.ui.chart.ChartFrame;
+import com.ost.timekeeper.ui.support.JToolButton;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
 import com.toedter.components.*;
@@ -106,11 +107,11 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		progressTreePopup = new javax.swing.JPopupMenu ();
 		mainPanel = new javax.swing.JPanel ();
 		mainToolbar = new javax.swing.JToolBar ();
-		nodeCreateButton = new javax.swing.JButton ();
-		nodeEditButton = new javax.swing.JButton ();
-		nodeDeleteButton = new javax.swing.JButton ();
-		startButton = new javax.swing.JButton ();
-		stopButton = new javax.swing.JButton ();
+		nodeCreateButton = new JToolButton (ActionPool.getInstance ().getNodeCreateAction ());
+		nodeEditButton = new JToolButton (ActionPool.getInstance ().getStartNodeEdit ());
+		nodeDeleteButton = new JToolButton (ActionPool.getInstance ().getNodeDeleteAction ());
+		startButton = new JToolButton (ActionPool.getInstance ().getProgressStartAction ());
+		stopButton = new JToolButton (ActionPool.getInstance ().getProgressStopAction ());
 		statusBar = new javax.swing.JPanel ();
 		statusLabel = new javax.swing.JLabel ();
 		currentDurationLabel = new javax.swing.JLabel ();
@@ -188,34 +189,32 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		//		mainToolbar.setAlignmentY(mainToolbar.TOP_ALIGNMENT);
 		mainToolbar.putClientProperty ("jgoodies.headerStyle", "Both");
 		
-		nodeCreateButton.setAction (ActionPool.getInstance ().getNodeCreateAction ());
-		nodeCreateButton.setText ("");
 		mainToolbar.add (nodeCreateButton);
 		
-		nodeEditButton.setAction (ActionPool.getInstance ().getStartNodeEdit ());
-		nodeEditButton.setText ("");
 		mainToolbar.add (nodeEditButton);
 		
-		nodeDeleteButton.setAction (ActionPool.getInstance ().getNodeDeleteAction ());
-		nodeDeleteButton.setText ("");
 		mainToolbar.add (nodeDeleteButton);
 		
 		mainToolbar.add (new javax.swing.JSeparator ());
 		
-		startButton.setAction (ActionPool.getInstance ().getProgressStartAction ());
-		startButton.setText ("");
 		mainToolbar.add (startButton);
 		
-		stopButton.setAction (ActionPool.getInstance ().getProgressStopAction ());
-		stopButton.setText ("");
 		mainToolbar.add (stopButton);
+		
+		mainToolbar.add (new javax.swing.JSeparator ());
+		
+		
+		{
+			final JButton reportButton = new JToolButton (ActionPool.getInstance ().getShowReportsDialog ());
+
+			mainToolbar.add (reportButton);
+		}
 		
 		mainToolbar.add (new javax.swing.JSeparator ());
 		
 		{
 			final DirectHelpButton directHelpButton = new DirectHelpButton ();
-			directHelpButton.setRolloverEnabled (true);
-			directHelpButton.setBorderPainted (true);
+			JToolButton.makeToolButton (directHelpButton);
 			mainToolbar.add (directHelpButton);
 		}
 		javax.help.CSH.setHelpIDString (mainToolbar, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.MAINTOOLBAR ));
@@ -267,10 +266,23 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			null, null
 			), BorderLayout.NORTH);
  */
-		JScrollPane treeScroller = new JScrollPane (progressItemTree);
+		final JScrollPane treeScroller = new JScrollPane (progressItemTree);
 		treePanel.add (treeScroller, BorderLayout.CENTER);
 		
 		treeScroller.getViewport ().setBackground (progressItemTree.getBackground ());
+		
+		/*
+		 * mantiene il background allineato con l'albero
+		 */
+			application.addObserver (new Observer (){
+			public void update(Observable o, Object arg){
+				if (o instanceof Application){
+					if (arg!=null && arg.equals (ObserverCodes.LOOKANDFEEL_CHANGING)){
+						treeScroller.getViewport ().setBackground (progressItemTree.getBackground ());
+					}
+				}				
+			}
+		});
 		
 		treePanel.setPreferredSize (new Dimension (180, 200));
 		jSplit_Tree_Data.setLeftComponent (treePanel);
@@ -520,14 +532,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		menuBar.add (jMenuActions);
 		
-		jMenuItemReports.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tools.reports"));
-		jMenuItemReports.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "printer1.png"));
-		jMenuItemReports.addActionListener (new ActionListener (){
-			public void actionPerformed (ActionEvent e){
-				ReportsFrame.getInstance ().show ();
-			}
-		});
-		
+		jMenuItemReports.setAction (ActionPool.getInstance ().getShowReportsDialog ());
 		jMenuTools.add (jMenuItemReports);
 		
 		jMenuTools.add (new javax.swing.JSeparator ());
@@ -620,7 +625,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		/* il menu dell'help va aggiunto in coda */
 		menuBar.add (jMenuHelp);
 		
-		menuBar.setBorderPainted (false);
+//		menuBar.setBorderPainted (false);
 		setJMenuBar (menuBar);
 		
 		progressTreePopup.add (treeExpandCollapseAction);
@@ -723,8 +728,8 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		this.progressItemTree.getTree ().setSelectionRow (0);
 		
 		this.progressItemTree.getTree ().addTreeSelectionListener (ProgressListFrame.getInstance ().getProgressTable ());
-		this.progressItemTree.getTree ().setEditable (true);
-		this.progressItemTree.getTree ().setInvokesStopCellEditing (true);
+//		this.progressItemTree.getTree ().setEditable (true);
+//		this.progressItemTree.getTree ().setInvokesStopCellEditing (true);
 	}
 	
 	private final void initTreeModelListeners (){
@@ -818,6 +823,16 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			jobProgress.setIndeterminate (app.isProcessing ());
 			jobProgress.setValue (app.isProcessing ()?99:0);
 			jobProgress.setVisible (app.isProcessing ());
+			
+			final String processingMessage = app.getProcessingMessage ();
+			final boolean stringPainted = processingMessage!=null;
+			jobProgress.setStringPainted (stringPainted);
+			if (stringPainted){
+				jobProgress.setString (processingMessage);
+			} else {
+				jobProgress.setString (null);
+			}
+			
 		} else if (arg!=null && arg.equals (ObserverCodes.APPLICATIONOPTIONSCHANGE)){
 			this.desktop.setBackground (Application.getOptions ().getDesktopColor ());
 			this.desktop.revalidate ();
@@ -953,6 +968,9 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			System.err.println ("Unable to set UI " + e.getMessage ());
 		}
 		updateLookAndFeelMenuItemsState ();
+		final Application application = Application.getInstance ();
+		application.setChanged ();
+		application.notifyObservers (ObserverCodes.LOOKANDFEEL_CHANGING);
 	}
 	
 	/**

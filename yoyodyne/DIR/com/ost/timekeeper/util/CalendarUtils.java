@@ -183,4 +183,34 @@ public final class CalendarUtils {
 		}
 		return new SimpleDateFormat ( format ).parse ( strDate );
 	}
+	
+	/**
+	 * Reimposta a 0 le ore, minuti, secondi e frazioni della data specificata.
+	 *
+	 * @param date la data.
+	 */	
+	public static void resetTime (Date date ){
+		final Calendar now = new GregorianCalendar ();
+		
+		if (date!=null){
+			now.setTime (date);
+		}
+		now.set (Calendar.HOUR_OF_DAY, 0);
+		now.set (Calendar.MINUTE, 0);
+		now.set (Calendar.SECOND, 0);
+		now.set (Calendar.MILLISECOND, 0);
+
+		date.setTime (now.getTime ().getTime ());
+	}
+	
+	/**
+	 * Ritorna una data a partire della data specificata con le ore, minuti, secondi e frazioni azzerate.
+	 *
+	 * @param date la data.
+	 */	
+	public static Date resetTimeCopy (final Date date ){
+		final Date clone = new Date (date.getTime ());
+		resetTime (clone);
+		return clone;
+	}
 }

@@ -315,4 +315,21 @@ public final class ActionPool extends Observable{
 		return this.progressDeleteAction;
 	}
 	
+	/**
+	 * L'azione visualizzazione finestra lancio report.
+	 */
+	private ShowReportsDialog showReportsDialog;
+	
+	/**
+	 * Ritorna l'azione visualizzazione finestra lancio report.
+	 * @return l'azione visualizzazione finestra lancio report.
+	 */
+	public ShowReportsDialog getShowReportsDialog (){
+		if (this.showReportsDialog==null){
+			//istanziazione lazy
+			this.showReportsDialog = new ShowReportsDialog ();
+		}
+		return this.showReportsDialog;
+	}
+	
 }

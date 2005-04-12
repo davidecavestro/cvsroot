@@ -118,6 +118,11 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 */
 	public final static String PROPNAME_LOOKANDFEEL = "lookandfeel";
 	
+	/**
+	 * Il nome dell'ultimo progetto caricato.
+	 */
+	public final static String PROPNAME_LASTPROJECT_NAME = "lastprojectname";
+	
 	
 	/**
 	 * Ritorna il nome del file di preferenze associato a queste impostazioni.
@@ -235,4 +240,9 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 * Imposta il LookAndFeel.
 	 */
 	void setLookAndFeel (final String lookAndFeel);
+	
+	/**
+	 * Imposta il nome dell'ultimo progetto caricato.
+	 */
+	void setLastProjectName (final String lastProjectName);
 }

@@ -286,4 +286,13 @@ public final class DefaultSettings implements ApplicationSettings {
 //		return UIManager.getSystemLookAndFeelClassName ();
 	}
 	
+	/**
+	 * Ritorna il nome dell'ultimo progetto caricato predefinito (nullo).
+	 *
+	 * @return il nome dell'ultimo progetto caricato.
+	 */	
+	public String getLastProjectName () {
+		return null;
+	}
+	
 }

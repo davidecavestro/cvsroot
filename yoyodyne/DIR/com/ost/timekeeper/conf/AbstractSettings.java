@@ -447,4 +447,19 @@ public abstract class AbstractSettings implements CustomizableSettings {
 		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_LOOKANDFEEL, lookAndFeel);
 	}
 	
+	/**
+	 * Imposta il nome dell'ultimo progetto caricato.
+	 */
+	public void setLastProjectName (final String lastProjectName) {
+		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_LASTPROJECT_NAME, lastProjectName);
+	}
+	
+	/**
+	 * Ritorna il nome dell'ultimo progetto caricato.
+	 *
+	 * @return il nome dell'ultimo progetto caricato.
+	 */	
+	public String getLastProjectName (){
+		return SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_LASTPROJECT_NAME);		
+	}
 }

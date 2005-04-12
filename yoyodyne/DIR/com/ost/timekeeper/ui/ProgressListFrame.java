@@ -14,6 +14,8 @@ import com.ost.timekeeper.view.*;
 import com.tomtessier.scrollabledesktop.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -139,6 +141,19 @@ public final class ProgressListFrame extends BaseInternalFrame {
 		final JScrollPane tableScroller = new JScrollPane (progressTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		tableScroller.getViewport ().setBackground (progressTable.getBackground ());
 		
+		/*
+		 * mantiene il background allineato con la tabela
+		 */
+		app.addObserver (new Observer (){
+			public void update(Observable o, Object arg){
+				if (o instanceof Application){
+					if (arg!=null && arg.equals (ObserverCodes.LOOKANDFEEL_CHANGING)){
+						tableScroller.getViewport ().setBackground (progressTable.getBackground ());
+					}
+				}				
+			}
+		});
+				
 		progressesBottomPane.add (tableScroller, BorderLayout.CENTER);
 
 //		progressTable.setIntercellSpacing (new Dimension (5, 3));

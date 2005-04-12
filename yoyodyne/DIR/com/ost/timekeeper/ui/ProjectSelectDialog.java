@@ -15,6 +15,7 @@ import com.ost.timekeeper.ui.support.GradientPanel;
 import com.ost.timekeeper.util.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -112,6 +113,8 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 				}
 			}
 		});
+		projectList.setCellRenderer (new ProjectCellRenderes ());
+		projectList.setSelectionMode (ListSelectionModel.SINGLE_SELECTION);
 		
 		c.weightx = 1.0;
 		c.weighty = 1.0;
@@ -242,5 +245,31 @@ public final class ProjectSelectDialog extends javax.swing.JDialog {
 		public void removeListDataListener (javax.swing.event.ListDataListener l) {
 		}
 		
+	}
+	
+	private final class ProjectCellRenderes extends JLabel implements ListCellRenderer {
+		public Component getListCellRendererComponent (
+		JList list,
+		Object value,            // value to display
+		int index,               // cell index
+		boolean isSelected,      // is the cell selected
+		boolean cellHasFocus)    // the list and the cell have the focus
+		{
+			String s = ((Project)value).getName ();
+			setText (s);
+//			setIcon ((s.length () > 10) ? longIcon : shortIcon);
+			if (isSelected) {
+				setBackground (list.getSelectionBackground ());
+				setForeground (list.getSelectionForeground ());
+			}
+			else {
+				setBackground (list.getBackground ());
+				setForeground (list.getForeground ());
+			}
+			setEnabled (list.isEnabled ());
+			setFont (list.getFont ());
+			setOpaque (true);
+			return this;
+		}
 	}
 }

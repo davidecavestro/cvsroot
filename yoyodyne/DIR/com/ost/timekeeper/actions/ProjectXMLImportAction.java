@@ -59,7 +59,7 @@ public final class ProjectXMLImportAction extends javax.swing.AbstractAction imp
 			try {
 				final SwingWorker worker = new SwingWorker() {
 					public Object construct() {
-						app.setProcessing (true);
+						app.setProcessing (true, ResourceSupplier.getString (ResourceClass.UI, "controls", "importing.project"));
 						try {
 							if(returnVal != JFileChooser.APPROVE_OPTION) {
 								return null;

@@ -50,6 +50,11 @@ public final class ApplicationData {
 	public final static String PROPNAME_RELEASE_DATE = "release.date";
 
 	/**
+	 * Nome della proprietà contenente la data di preparazione dell'applicazione.
+	 */
+	public final static String PROPNAME_BUILD_DATE = "build.date";
+
+	/**
 	 * L'istanza del singleton.
 	 */
 	private static ApplicationData _instance;
@@ -157,6 +162,22 @@ public final class ApplicationData {
 			_releaseDate = new DisposableData (SettingsSupport.getCalendarProperty (_releaseProperties, PROPNAME_RELEASE_DATE));
 		}
 		return (Calendar)_releaseDate.getData ();
+	}
+	
+	/**
+	 * La data di preparazione (cache).
+	 */
+	private DisposableData _buildDate;
+	/**
+	 * Ritorna la data di preparazione.
+	 *
+	 * @return la data di preparazione.
+	 */	
+	public final Calendar getBuildDate (){
+		if (_buildDate==null || !_buildDate.isValid ()){
+			_buildDate = new DisposableData (SettingsSupport.getCalendarProperty (_releaseProperties, PROPNAME_BUILD_DATE));
+		}
+		return (Calendar)_buildDate.getData ();
 	}
 	
 }
