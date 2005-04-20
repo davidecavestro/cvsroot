@@ -212,11 +212,12 @@ public class JRingChart  extends JTreeGraph2D {
 		_levelWidthSeed=(origin.x-this.padX)/this._gridLevels;
 		_levelHeightSeed=(origin.y-this.padY)/this._gridLevels;
 	
+		/* nodo radice */
          Graphics2D big = bi.createGraphics();
-         big.setColor(Color.lightGray);
+         big.setColor(this.getBackground ());
          big.fillRect(0, 0, 5, 5);
-         big.setColor(Color.white);
-         big.fillOval(0, 0, 5, 5);
+//         big.setColor(Color.white);
+//         big.fillOval(0, 0, 5, 5);
 		 
 		computeShapes (new JRingChart.NodeGraphData (model.getRoot (), 
 		new TexturePaint(bi, textureRectangle)),
