@@ -93,15 +93,23 @@ public class ImportProjectFromXML implements Command, Elements {
 			
 			final List children = new ArrayList ();
 			for (final Iterator it = element.getChildren (PROGRESSITEM_ELEMENT).iterator ();it.hasNext ();){
-				final ProgressItem child = new ProgressItemElement ((Element)it.next (), project).getProgressItem ();
-				child.setParent (this._progressItem);
-				children.add (child);
+				try {
+					final ProgressItem child = new ProgressItemElement ((Element)it.next (), project).getProgressItem ();
+					child.setParent (this._progressItem);
+					children.add (child);
+				} catch (Exception e){
+					Application.getLogger ().error ("error importing node ", e);
+				}
 			}
 			this._progressItem.setChildren (children);
 			final List progresses = new ArrayList ();
 			for (final Iterator it = element.getChildren (PROGRESS_ELEMENT).iterator ();it.hasNext ();){
-				final Progress progress = new ProgressElement ((Element)it.next (), this._progressItem).getProgress ();
-				progresses.add (progress);
+				try {
+					final Progress progress = new ProgressElement ((Element)it.next (), this._progressItem).getProgress ();
+					progresses.add (progress);
+				} catch (Exception e){
+					Application.getLogger ().error ("error importing progress ", e);
+				}
 			}
 			this._progressItem.setProgresses (progresses);
 		}

@@ -6,6 +6,7 @@
 
 package com.ost.timekeeper.actions.commands;
 
+import com.ost.timekeeper.Application;
 import com.ost.timekeeper.ApplicationData;
 import com.ost.timekeeper.actions.commands.xml.Elements;
 import com.ost.timekeeper.model.Progress;
@@ -44,7 +45,7 @@ public class ExportProjectToXML implements Command, Elements {
 	public void execute () {
 		final ProjectElement projectElement = new ProjectElement (this._project);
 		this._document.setRootElement (projectElement);
-	}	
+	}
 	
 	private final class ProgressItemElement extends Element {
 		public ProgressItemElement (final ProgressItem progressItem){
@@ -57,7 +58,9 @@ public class ExportProjectToXML implements Command, Elements {
 			
 			for (final Iterator it = progressItem.getChildren ().iterator ();it.hasNext ();){
 				final ProgressItem child = (ProgressItem)it.next ();
-				addContent (new ProgressItemElement (child));
+				try {
+					addContent (new ProgressItemElement (child));
+				} catch (Exception e){Application.getLogger ().error ("error exporting node", e);}
 			}
 			for (final Iterator it = progressItem.getProgresses ().iterator ();it.hasNext ();){
 				final Progress progress = (Progress)it.next ();
@@ -82,10 +85,18 @@ public class ExportProjectToXML implements Command, Elements {
 	private final class ProgressElement extends Element {
 		public ProgressElement (final Progress progress){
 			super (PROGRESS_ELEMENT);
-			addContent (new NullableSingleValueElement (FROM_PROPERTY, CalendarUtils.getTS (progress.getFrom (), CalendarUtils.TIMESTAMP_FORMAT)));
-			addContent (new NullableSingleValueElement (TO_PROPERTY, CalendarUtils.getTS (progress.getTo (), CalendarUtils.TIMESTAMP_FORMAT)));
-			addContent (new NullableSingleValueElement (DESCRIPTION_PROPERTY, progress.getDescription ()));
-			addContent (new NullableSingleValueElement (NOTES_PROPERTY, progress.getNotes ()));
+			try {
+				addContent (new NullableSingleValueElement (FROM_PROPERTY, CalendarUtils.getTS (progress.getFrom (), CalendarUtils.TIMESTAMP_FORMAT)));
+			} catch (Exception e){Application.getLogger ().error ("error exporting progress", e);}
+			try {
+				addContent (new NullableSingleValueElement (TO_PROPERTY, CalendarUtils.getTS (progress.getTo (), CalendarUtils.TIMESTAMP_FORMAT)));
+			} catch (Exception e){Application.getLogger ().error ("error exporting progress", e);}
+			try {
+				addContent (new NullableSingleValueElement (DESCRIPTION_PROPERTY, progress.getDescription ()));
+			} catch (Exception e){Application.getLogger ().error ("error exporting progress", e);}
+			try {
+				addContent (new NullableSingleValueElement (NOTES_PROPERTY, progress.getNotes ()));
+			} catch (Exception e){Application.getLogger ().error ("error exporting progress", e);}
 			
 		}
 	}
