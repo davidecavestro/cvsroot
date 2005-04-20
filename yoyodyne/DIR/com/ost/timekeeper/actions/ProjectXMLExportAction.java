@@ -20,6 +20,7 @@ import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.ui.support.CustomFileFilter;
 import com.ost.timekeeper.util.*;
+import java.awt.event.ActionEvent;
 import org.jdom.Document;
 import org.jdom.output.XMLOutputter;
 import org.xml.sax.*;
@@ -55,11 +56,19 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) {
+		if (0!=(e.getModifiers() & ActionEvent.SHIFT_MASK)){
+			/* pressione tasto SHIFT*/
+			execute (ProjectExportDialog.chooseProject(Application.getInstance ().getMainForm(),
+		ResourceSupplier.getString(ResourceClass.UI, "controls", "exportproject"),
+		ResourceSupplier.getString(ResourceClass.UI, "controls", "selectprojecttoexport"),
+		true));
+		} else {
+			execute (Application.getInstance ().getProject ());
+		}
+	}
+	public void execute(final Project project) {
 		final Application app = Application.getInstance();
 		
-
-	
-	
 	
 		
 		// Load Mapping
@@ -94,7 +103,7 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 					try{
 						try {
 							final org.jdom.Document data = new org.jdom.Document ();
-							new ExportProjectToXML (app.getProject (), data).execute ();
+							new ExportProjectToXML (project, data).execute ();
 							
 							final XMLOutputter xo = new XMLOutputter ();
 							
