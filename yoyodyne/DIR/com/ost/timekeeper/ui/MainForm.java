@@ -152,6 +152,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuItemPaste = new javax.swing.JMenuItem ();
 		jMenuActions = new javax.swing.JMenu ();
 		jMenuItemStart = new javax.swing.JMenuItem ();
+		jMenuItemCreateProgress = new javax.swing.JMenuItem ();
 		jMenuItemStop = new javax.swing.JMenuItem ();
 		jMenuItemCreateNode = new javax.swing.JMenuItem ();
 		jMenuItemStartNodeEdit = new javax.swing.JMenuItem ();
@@ -266,6 +267,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			null, null
 			), BorderLayout.NORTH);
  */
+		
 		final JScrollPane treeScroller = new JScrollPane (progressItemTree);
 		treePanel.add (treeScroller, BorderLayout.CENTER);
 		
@@ -520,8 +522,16 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		jMenuActions.addSeparator ();
 		
+
+		//import project
+		final JMenu startProgress = new JMenu (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.new.progress"));
+		jMenuActions.add (startProgress);
+		
 		jMenuItemStart.setAction (ActionPool.getInstance ().getProgressStartAction ());
-		jMenuActions.add (jMenuItemStart);
+		startProgress.add (jMenuItemStart);
+		
+		jMenuItemCreateProgress.setAction (ActionPool.getInstance ().getStartNewProgressCreation ());
+		startProgress.add (jMenuItemCreateProgress);
 		
 		jMenuItemStop.setAction (ActionPool.getInstance ().getProgressStopAction ());
 		jMenuActions.add (jMenuItemStop);
@@ -695,6 +705,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JMenuItem jMenuItemReports;
 	private javax.swing.JMenuItem jMenuItemPaste;
 	private javax.swing.JMenuItem jMenuItemStart;
+	private javax.swing.JMenuItem jMenuItemCreateProgress;
 	private javax.swing.JMenuItem jMenuItemStop;
 	private javax.swing.JMenu jMenuTools;
 	private javax.swing.JPanel jPanelTree;

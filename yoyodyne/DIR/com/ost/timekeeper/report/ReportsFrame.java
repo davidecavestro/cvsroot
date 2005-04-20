@@ -606,13 +606,17 @@ public class ReportsFrame extends JFrame implements Observer, FlavorModel, Flavo
 			/*
 			 * Configurazione pulsante CHIUDI.
 			 */
-			closeButton.addActionListener (new ActionListener (){
-				public void actionPerformed (ActionEvent e){
+			final Action cancelAction = new javax.swing.AbstractAction ("cancel"){
+				public void actionPerformed(ActionEvent e) {
 					ReportsFrame.this.hide ();
 				}
-			});
+			};
+			closeButton.setAction (cancelAction);
 			closeButton.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "close"));
 			
+			closeButton.getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put (KeyStroke.getKeyStroke ("ESCAPE"), "cancel");
+			closeButton.getActionMap().put("cancel", cancelAction);
+		
 			buttonPanel.add (closeButton);
 		}
 		

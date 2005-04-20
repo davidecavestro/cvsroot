@@ -49,9 +49,21 @@ public final class AttributeMap {
 		
 		for (int i = 0;i< attributes.length;i++){
 			final Attribute attribute = (Attribute)attributes[i];
-			retValue[i] = (Attribute)_hashMap.put (attribute.getKey (), attribute);
+			retValue[i] = putAttribute (attribute);
 		}
 		return retValue;
+	}
+	
+	/**
+	 * Inserisce l'attributo specificato in questa mappa. Ritorna il valore precedentemente impostato per la chiave
+	 * del nuovo attributo impostato.
+	 *
+	 * @param attribute l'attributo da inserire.
+	 * @return il valore precedentemente impostato per la chiave
+	 * del nuovo attributo impostato.
+	 */	
+	public Attribute putAttribute (final Attribute attribute){
+		return (Attribute)_hashMap.put (attribute.getKey (), attribute);
 	}
 	
 	/**

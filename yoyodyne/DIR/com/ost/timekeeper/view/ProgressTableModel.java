@@ -15,6 +15,7 @@ import javax.swing.table.*;
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.util.*;
+import javax.swing.ImageIcon;
 
 /**
  * La tabella di visualizzazione degli avanzamenticontenente degli avanzamenti.
@@ -31,6 +32,7 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	private ProgressItem root;
 	private int currentPeriodIdx;
 	
+	
 	/** 
 	 * Costruttore con nodo radice.
 	 *
@@ -40,8 +42,11 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 		Application.getLogger ().debug ("Creating new ProgressTableModel");
 		this.currentPeriodIdx=-1;
 		this.columns = new Object[]{
-			ResourceSupplier.getString(ResourceClass.UI, "components", "progress.running"),
+			/*
+			 ResourceSupplier.getString(ResourceClass.UI, "components", "progress.running"),
+			*/
 			ResourceSupplier.getString(ResourceClass.UI, "components", "progress.duration"),
+			ResourceSupplier.getString(ResourceClass.UI, "controls", "job"),
 			ResourceSupplier.getString(ResourceClass.UI, "controls", "from"),
 			ResourceSupplier.getString(ResourceClass.UI, "controls", "to"),
 			ResourceSupplier.getString(ResourceClass.UI, "controls", "description")
@@ -64,12 +69,6 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 		this.fireTableChanged(new TableModelEvent (this));
 	}
 	
-	private static class DurationNumberFormatter extends DecimalFormat {
-		public DurationNumberFormatter (){
-			this.setMinimumIntegerDigits (2);
-		}
-	}
-	
 	private List progresses;
 	private Object[] columns;
 
@@ -89,7 +88,6 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 		return progresses.size();
 	}
 
-	private final DurationNumberFormatter durationNumberFormatter = new DurationNumberFormatter ();
 
 	/**
 	 * Imposta il valore di una cella.
@@ -108,24 +106,15 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	 * @return il valore associato alla cella di riga <TT>rowIndex</TT> e colonna <TT>columnIndex</TT>.
 	 */	
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Progress period = (Progress)progresses.get(rowIndex);
+		final Progress period = (Progress)progresses.get(rowIndex);
 		switch (columnIndex){
+			case 0: return period;
+			case 1: return period.getProgressItem ();
 			case 2: return period.getFrom();
 			case 3: return period.getTo();
-			case 1: 
-				Duration duration = period.getDuration ();
-				StringBuffer sb = new StringBuffer ();
-				/*
-				sb.append (durationNumberFormatter.format(duration.getDays()))
-				.append (":")
-				 */
-				sb.append (durationNumberFormatter.format(duration.getHours()))
-				.append (":")
-				.append (durationNumberFormatter.format(duration.getMinutes()))
-				.append (":")
-				.append (durationNumberFormatter.format(duration.getSeconds()));
-				return sb.toString ();
-			case 0: return new Boolean(period.getTo()==null);
+//			case 0: return new Boolean(period.getTo()==null);
+/*			case 0: return period.getTo()==null?runningIcon:staticIcon;
+*/
 			case 4: return period.getDescription ();
 			default: return null;
 		}
@@ -145,12 +134,15 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	 * @return la classe che rappresenta il tipo dei valori contenuti nella colonna con indice <TT>c</TT>.
 	 */	
 	public Class getColumnClass(int c) {
-		Object firstRowCell = getValueAt(0, c);
-		if (firstRowCell!=null){
-			return firstRowCell.getClass();
-		} else {
-			return Object.class;
+		switch (c){
+			
+			case 0: return Progress.class;
+			case 1: return ProgressItem.class;
+			case 2: return Date.class;
+			case 3: return Date.class;
+			case 4: return String.class;
 		}
+		return Object.class;
 	}
 	/**
 	 * Ritorna lo stato di modificabilità di una cella.

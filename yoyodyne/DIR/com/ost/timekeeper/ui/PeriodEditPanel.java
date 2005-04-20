@@ -156,7 +156,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 				pushData ();
 			}
 		});
-		confirmButton.setAction (ActionPool.getInstance ().getProgressUpdateAction ());
+//		confirmButton.setAction (ActionPool.getInstance ().getProgressUpdateAction ());
 		confirmButton.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "confirm"));
 		
 		/*

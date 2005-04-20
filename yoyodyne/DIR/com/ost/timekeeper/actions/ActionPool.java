@@ -332,4 +332,20 @@ public final class ActionPool extends Observable{
 		return this.showReportsDialog;
 	}
 	
+	/**
+	 * L'azione visualizzazione finestra di creazione nuovo avanzamento.
+	 */
+	private StartNewProgressCreation _startNewProgressCreation;
+	
+	/**
+	 * Ritorna l'azione visualizzazione finestra di creazione nuovo avanzamento.
+	 * @return l'azione visualizzazione finestra di creazione nuovo avanzamento.
+	 */
+	public StartNewProgressCreation getStartNewProgressCreation (){
+		if (this._startNewProgressCreation==null){
+			//istanziazione lazy
+			this._startNewProgressCreation = new StartNewProgressCreation ();
+		}
+		return this._startNewProgressCreation;
+	}
 }

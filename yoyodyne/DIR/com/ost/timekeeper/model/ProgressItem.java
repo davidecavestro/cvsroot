@@ -219,17 +219,28 @@ public final class ProgressItem extends Observable{
 	 * Questa azione viene notificata ai listener registrati su
 	 * questo nodo.
 	 */
-	public synchronized void startPeriod () {
+	public synchronized Progress startPeriod () {
+		return startPeriod (new Date ());
+	}
+	
+	/**
+	 * Fa partire un avanzamento su questo nodo dal momento specificato.
+	 *
+	 * Questa azione viene notificata ai listener registrati su
+	 * questo nodo.
+	 */
+	public synchronized Progress startPeriod (final Date startDate) {
 		if (this.progressing){
 			//non ferma avanzamento esistente, lo continua
-			return;
+			return null;
 		}
 		this.progressing = true;
-		this.currentProgress = new Progress (new Date (), null, this);
+		this.currentProgress = new Progress (startDate, null, this);
 		this.progresses.add (this.currentProgress);
 		
 		this.setChanged ();
 		this.notifyObservers ();
+		return this.currentProgress;
 	}
 	
 	/**
@@ -259,6 +270,19 @@ public final class ProgressItem extends Observable{
 	 */
 	public boolean isProgressing () {
 		return this.progressing;
+	}
+	
+	/**
+	 * Aggiunge un avanzamento a questo nodo.
+	 *
+	 * Questa azione viene notificata ai listener registrati su
+	 * questo nodo.
+	 */
+	public synchronized void addProgress (final Progress progress) {
+		this.progresses.add (progress);
+		
+		this.setChanged ();
+		this.notifyObservers ();
 	}
 	
 	/**
@@ -518,6 +542,8 @@ public final class ProgressItem extends Observable{
 				break;
 			}
 		}
+		this.setChanged ();
+		this.notifyObservers ();
 	}
 	
 	/**
@@ -529,6 +555,8 @@ public final class ProgressItem extends Observable{
 		progress.setProgressItem (this);
 		final int position = this.progresses.size ();
 		this.progresses.add (progress);
+		this.setChanged ();
+		this.notifyObservers ();
 		return position;
 	}
 	
@@ -539,5 +567,7 @@ public final class ProgressItem extends Observable{
 	public synchronized void insert (final Progress progress, int position){
 		progress.setProgressItem (this);
 		this.progresses.add (position, progress);
+		this.setChanged ();
+		this.notifyObservers ();
 	}
 }

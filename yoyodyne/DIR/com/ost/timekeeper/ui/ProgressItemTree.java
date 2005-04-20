@@ -46,7 +46,10 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 	 */
 	public ProgressItemTree (final ProgressTreeModel progressTreeModel) {
 		super (progressTreeModel);
+		final ProgressItemCellRenderer progressItemCellRenderer = new ProgressItemCellRenderer ();
 		this._progressTreeModel= progressTreeModel;
+		ToolTipManager.sharedInstance().registerComponent(this.tree);
+		this.tree.setCellRenderer (progressItemCellRenderer);
 		init (progressTreeModel);
 	}
 	
@@ -56,7 +59,6 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 	 * @param progressTreeModel il modello.
 	 */
 	private void init (final ProgressTreeModel progressTreeModel){
-		//		final ProgressItemCellRenderer progressItemCellRenderer = new ProgressItemCellRenderer ();
 //		final TableCellEditor treeCellEditor = this.getDefaultEditor (ProgressItem.class);
 //		treeCellEditor.addCellEditorListener (new CellEditorListener (){
 //			public void editingStopped (ChangeEvent e){
@@ -70,7 +72,6 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 //			}
 //		});
 //		this.setCellEditor (treeCellEditor);
-		//		this.setCellRenderer (progressItemCellRenderer);
 		//		this.setModel (progressTreeModel);
 		
 		this.getSelectionModel ().setSelectionMode (ListSelectionModel.SINGLE_SELECTION);
@@ -308,11 +309,17 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 	
 	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && (arg.equals (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || arg.equals (ObserverCodes.ITEMPROGRESSINGCHANGE))){
-				//				this.reloadModel(((Application)o).getSelectedItem());
-				final javax.swing.table.AbstractTableModel tModel = (javax.swing.table.AbstractTableModel)this.getModel ();
-				if (tModel.getRowCount ()>0){
-					tModel.fireTableChanged (new TableModelEvent (tModel, 0, tModel.getRowCount ()-1, 1));
+			if (arg!=null){
+				if (arg.equals (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || 
+					arg.equals (ObserverCodes.ITEMPROGRESSINGCHANGE)){
+					//				this.reloadModel(((Application)o).getSelectedItem());
+					final javax.swing.table.AbstractTableModel tModel = (javax.swing.table.AbstractTableModel)this.getModel ();
+					if (tModel.getRowCount ()>0){
+						tModel.fireTableChanged (new TableModelEvent (tModel, 0, tModel.getRowCount ()-1, 1));
+					}
+				}
+				if (arg.equals (ObserverCodes.CURRENTITEMCHANGE)){
+					repaint ();
 				}
 			}
 		}

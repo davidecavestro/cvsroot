@@ -200,7 +200,7 @@ public class JRingChart  extends JTreeGraph2D {
 	protected void offscreenPaint (Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
 		
-        Stroke s = new BasicStroke(2f);
+        Stroke s = new BasicStroke(1f);
         g2.setColor(this.getBackground ());
         g2.fillRect(0, 0, getWidth(), getHeight());
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -322,7 +322,8 @@ public class JRingChart  extends JTreeGraph2D {
 			 */
 			return;
 		}
-		for (int ix=0;ix<node.childrenLength ();ix++){
+		final int childrenCount = node.childrenLength ();
+		for (int ix=0;ix<childrenCount;ix++){
 			SerieNode child = node.childAt (ix);
 			double childExtension = child.getTotalValue ()*extensionAngle/node.getTotalValue ();
 			childSubtractors[childSubtractorsLength-1] = currentArea;
@@ -330,8 +331,8 @@ public class JRingChart  extends JTreeGraph2D {
 			if (2==childLevel){
 				color = sliceColor[ix];
 			} else {
-				Color oldCOlor = (Color)paint;
-				color = new Color (/*Math.abs (*/oldCOlor.getRed ()/*-colorSeed)*/, /*Math.abs (*/oldCOlor.getGreen ()/*-colorSeed)*/, /*Math.abs (*/oldCOlor.getBlue ()/*-colorSeed)*/, (int)(oldCOlor.getAlpha ()/1.3));
+				Color olcColor = (Color)paint;
+				color = new Color (/*Math.abs (*/olcColor.getRed ()/*-colorSeed)*/, /*Math.abs (*/olcColor.getGreen ()/*-colorSeed)*/, /*Math.abs (*/olcColor.getBlue ()/*-colorSeed)*/, (int)(olcColor.getAlpha ()/(1+(ix/childrenCount))));
 			}
 			
 //			final int colorSeed = 20*level*ix;

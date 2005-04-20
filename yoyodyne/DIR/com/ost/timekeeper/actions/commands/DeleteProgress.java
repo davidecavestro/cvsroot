@@ -45,7 +45,10 @@ public final class DeleteProgress extends AbstractCommand {
 		final javax.jdo.Transaction tx = pm.currentTransaction ();
 		tx.begin ();
 		try {
-			this._deletingProgress.getProgressItem ().deleteProgress (this._deletingProgress);
+			final ProgressItem node = this._deletingProgress.getProgressItem ();
+			if (node!=null){
+				node.deleteProgress (this._deletingProgress);
+			}
 			app.getPersistenceManager ().deletePersistent (this._deletingProgress);
 			
 			tx.commit ();

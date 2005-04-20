@@ -9,9 +9,14 @@ package com.ost.timekeeper.actions;
 import java.util.*;
 
 import com.ost.timekeeper.*;
+import com.ost.timekeeper.actions.commands.AttributeMap;
+import com.ost.timekeeper.actions.commands.attributes.StringAttribute;
 import com.ost.timekeeper.model.*;
+import com.ost.timekeeper.ui.ProgressStartDialog;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.util.*;
+import java.awt.event.ActionEvent;
+import sun.security.krb5.internal.i;
 
 /**
  * Avvia un nuovo avanzamento.
@@ -31,13 +36,33 @@ public final class ProgressStartAction extends javax.swing.AbstractAction implem
 	}
 	
 	public void actionPerformed (java.awt.event.ActionEvent e) {
+		AttributeMap attributes = null;
+		if (0!=(e.getModifiers() & ActionEvent.SHIFT_MASK)){
+			/* pressione tasto SHIFT*/
+			attributes = ProgressStartDialog.getData ();
+			if (attributes == null){
+				return;
+			}
+		}
 		Application app = Application.getInstance ();
 		ProgressItem selectedItem = app.getSelectedItem ();
 		final javax.jdo.PersistenceManager pm = app.getPersistenceManager ();
 		final javax.jdo.Transaction tx = pm.currentTransaction ();
 		tx.begin ();
 		try {
-			selectedItem.startPeriod ();
+			if (attributes!=null){
+				final Progress progress = selectedItem.startPeriod (attributes.getAttribute (ProgressStartDialog.FROM).getValue ());
+				final StringAttribute descr = attributes.getAttribute (ProgressStartDialog.DESCRIPTION);
+				if (descr!=null){
+					progress.setDescription (descr.getValue ());
+				}
+				final StringAttribute notes = attributes.getAttribute (ProgressStartDialog.NOTES);
+				if (notes!=null){
+					progress.setNotes (notes.getValue ());
+				}
+			} else {
+				selectedItem.startPeriod ();
+			}
 			
 			tx.commit ();
 		} catch (final Throwable t){

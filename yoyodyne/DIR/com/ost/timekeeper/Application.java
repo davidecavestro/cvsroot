@@ -80,6 +80,7 @@ public class Application extends Observable{
 		this.addObserver(actionPool.getNodeUpdateAction ());
 		this.addObserver(actionPool.getStartNodeEdit ());
 		this.addObserver(actionPool.getStartProgressEdit ());
+		this.addObserver(actionPool.getStartNewProgressCreation ());
 	}
 	
 	/**
@@ -219,6 +220,7 @@ public class Application extends Observable{
 						}
 					} catch (final Throwable t){
 						a.getLogger ().error ("Cannot load last project", t);
+						a.setProject (null);
 					}
 					
 				} finally {
@@ -243,13 +245,20 @@ public class Application extends Observable{
 	public void setProject(Project project){
 		this.project = project;
 		if (project!=null){
+			for (final Iterator it = project.getRoot().getProgresses ().iterator ();it.hasNext ();){
+				new com.ost.timekeeper.actions.commands.DeleteProgress ((Progress)it.next ()).execute ();
+			}
+		}
+		if (project!=null){
 			this.setSelectedItem (project.getRoot());
 		} else {
 			this.setSelectedItem (null);
 		}
 		//notifica cambiamento di progetto
-		this.setChanged();
-		this.notifyObservers(ObserverCodes.PROJECTCHANGE);
+		synchronized (this){
+			this.setChanged();
+			this.notifyObservers(ObserverCodes.PROJECTCHANGE);
+		}
 	}
 	
 	
@@ -273,9 +282,10 @@ public class Application extends Observable{
 	public void setCurrentItem(ProgressItem current){
 		this.currentItem = current;
 		//notifica cambiamento elemento corrente
-		this.setChanged();
-		this.notifyObservers(ObserverCodes.CURRENTITEMCHANGE);
-		
+		synchronized (this){
+			this.setChanged();
+			this.notifyObservers(ObserverCodes.CURRENTITEMCHANGE);
+		}		
 		/*
 		 * Gestione timer notifica avanzamento.
 		 */
@@ -308,8 +318,11 @@ public class Application extends Observable{
 	public void setSelectedItem(ProgressItem selected){
 		this.selectedItem = selected;
 		//notifica variazione elemento selezionato
-		this.setChanged();
-		this.notifyObservers(ObserverCodes.SELECTEDITEMCHANGE);
+		
+		synchronized (this){
+			this.setChanged();
+			this.notifyObservers(ObserverCodes.SELECTEDITEMCHANGE);
+		}
 	}
 	
 	/**
@@ -332,8 +345,11 @@ public class Application extends Observable{
 	public void setSelectedProgress(Progress selected){
 		this.selectedProgress = selected;
 		//notifica variazione selezione elemento
-		this.setChanged();
-		this.notifyObservers(ObserverCodes.SELECTEDPROGRESSCHANGE);
+		
+		synchronized (this){
+			this.setChanged();
+			this.notifyObservers(ObserverCodes.SELECTEDPROGRESSCHANGE);
+		}
 	}
 	
 	/**
@@ -518,8 +534,11 @@ public class Application extends Observable{
 				}
 			}
 		}
-		this.setChanged ();
-		this.notifyObservers (ObserverCodes.PROCESSINGCHANGE);
+		
+		synchronized (this){
+			this.setChanged ();
+			this.notifyObservers (ObserverCodes.PROCESSINGCHANGE);
+		}
 	}
 	
 	/**
@@ -586,8 +605,10 @@ public class Application extends Observable{
 	 *	</UL>
 	 */
 	public void beforeExit (){
-		setChanged ();
-		notifyObservers (ObserverCodes.APPLICATIONEXITING);
+		synchronized (this){
+			setChanged ();
+			notifyObservers (ObserverCodes.APPLICATIONEXITING);
+		}
 		UserSettings.getInstance ().storeProperties ();
 		final ProgressItem currentItem = this.getCurrentItem ();
 		if (currentItem!=null && currentItem.isProgressing ()){

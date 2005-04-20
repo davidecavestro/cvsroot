@@ -213,9 +213,6 @@ public class RingChartPanel extends JPanel{
 			c.anchor = GridBagConstraints.FIRST_LINE_START;
 			c.insets = new Insets (3, 10, 3, 10);
 			
-		/*
-		 * Inserimento componenti editazione dimensione del buffer per il log.
-		 */
 			c.gridx = 0;
 			c.gridy = 0;
 			thePanel.add (levelEditorLabel, c);

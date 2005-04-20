@@ -22,6 +22,7 @@ import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.ImageObserver;
 
 /**
  * Componente grafica per la gestione della vista delgi avanzamenti relativi ad un sottoalbero.
@@ -35,40 +36,111 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 	 */
 	private TreePath currentPath;
 	
-	/** 
-	 * Costruttore vuoto. 
+	private static class DurationNumberFormatter extends DecimalFormat {
+		public DurationNumberFormatter (){
+			this.setMinimumIntegerDigits (2);
+		}
+	}
+	
+	private final ImageIcon runningIcon = ResourceSupplier.getImageIcon (ResourceClass.UI, "running.gif");
+	private final ImageIcon staticIcon = ResourceSupplier.getImageIcon (ResourceClass.UI, "stopped.gif");
+	private final DurationNumberFormatter durationNumberFormatter = new DurationNumberFormatter ();
+	/**
+	 * Costruttore vuoto.
 	 */
-	public SubtreeProgressesTable() {
-		super();
-		setModel(new ProgressTableModel(null));
+	public SubtreeProgressesTable () {
+		super ();
+		setModel (new ProgressTableModel (null));
 		
 		// Use a scrollbar, in case there are many columns.
-		this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-		setMaximumSize(null);
-		setMinimumSize(null);
-		setAutoCreateColumnsFromModel(true);
+		this.setAutoResizeMode (JTable.AUTO_RESIZE_LAST_COLUMN);
 		
-		DefaultTableCellRenderer dateColumnRenderer = new DefaultTableCellRenderer() {
-			public void setValue(Object value) {
-				setText(com.ost.timekeeper.util.CalendarUtils.toTSString((Date)value));
+		setMaximumSize (null);
+		setMinimumSize (null);
+		setAutoCreateColumnsFromModel (true);
+		
+		final TableCellRenderer durationColumnRenderer = new DefaultTableCellRenderer () {
+			public Component getTableCellRendererComponent (final JTable table, final Object value, boolean isSelected, boolean hasFocus, final int row, final int column) {
+				
+				final Component res = super.getTableCellRendererComponent ( table, value, isSelected, hasFocus, row, column);
+				final Progress progress = (Progress)value;
+				
+				final boolean progressing = progress.getTo ()==null;
+				final ImageIcon icon = progressing?runningIcon:staticIcon;
+				setIcon (icon);
+				
+				if (progressing){
+					icon.setImageObserver (new ImageObserver (){
+						public boolean imageUpdate (Image img, int flags, int x, int y, int w, int h) {
+							if ((flags & (FRAMEBITS | ALLBITS)) != 0) {
+								Rectangle rect = table.getCellRect (row, column, false);
+								table.repaint (rect);
+							}
+							//			table.repaint ();
+							return (flags & (ALLBITS | ABORT)) == 0;
+						}
+					});
+				}
+				
+				return res;
+			}
+			public void setValue (Object value) {
+				
+				final Progress progress = (Progress)value;
+				final StringBuffer sb = new StringBuffer ();
+				try {
+				final Duration duration = progress.getDuration ();
+				/*
+				sb.append (durationNumberFormatter.format(duration.getDays()))
+				.append (":")
+				 */
+				sb.append (durationNumberFormatter.format (duration.getHours ()))
+				.append (":")
+				.append (durationNumberFormatter.format (duration.getMinutes ()))
+				.append (":")
+				.append (durationNumberFormatter.format (duration.getSeconds ()));
+				} catch (javax.jdo.JDOObjectNotFoundException e){Application.getLogger ().error (com.ost.timekeeper.util.ExceptionUtils.getStackTrace (e).toString ());}
+				setText (sb.toString ());
 			}
 		};
-		this.setDefaultRenderer(java.util.Date.class, dateColumnRenderer);
+		this.setDefaultRenderer (Progress.class, durationColumnRenderer);
+		
+		
+		DefaultTableCellRenderer dateColumnRenderer = new DefaultTableCellRenderer () {
+			public void setValue (Object value) {
+				setText (com.ost.timekeeper.util.CalendarUtils.getTimestamp ((Date)value, "MM/dd HH:mm"));
+			}
+		};
+		this.setDefaultRenderer (java.util.Date.class, dateColumnRenderer);
+		
+		TableCellRenderer nodeColumnRenderer = new DefaultTableCellRenderer () {
+			public void setValue (Object value) {
+				final ProgressItem node = (ProgressItem)value;
+				final StringBuffer sb = new StringBuffer ();
+				
+				final String code = node.getCode ();
+				if (code!=null && code.length ()>0){
+					sb.append (code).append (" - ");
+				}
+				sb.append (node.getName ());
+				setText (sb.toString ());
+			}
+		};
+		this.setDefaultRenderer (java.util.Date.class, dateColumnRenderer);
 		
 		this.addMouseListener (new MouseAdapter (){
-			public void mouseClicked(MouseEvent e) {
+			public void mouseClicked (MouseEvent e) {
 				if (e.getClickCount ()>1){
-//					final ProgressStopAction stopAction = ActionPool.getInstance ().getProgressStopAction ();
-//					if (stopAction.isEnabled ()){
-//						stopAction.actionPerformed (new ActionEvent (this, 0, null));
-//					}
+					//					final ProgressStopAction stopAction = ActionPool.getInstance ().getProgressStopAction ();
+					//					if (stopAction.isEnabled ()){
+					//						stopAction.actionPerformed (new ActionEvent (this, 0, null));
+					//					}
 				}
 			}
 		});
 		
 		this.addMouseListener (new MouseAdapter (){
-			public void mouseClicked(MouseEvent e) {
+			public void mouseClicked (MouseEvent e) {
 				if (e.getClickCount ()>1){
 					/*
 					 * Almeno doppio click.
@@ -82,6 +154,7 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 		this.setShowHorizontalLines (false);
 		
 		this.setTransferHandler (new ProgressTableTransferHandler ());
+		this.setImageObserver ();
 	}
 	
 	/**
@@ -97,52 +170,53 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 		
 		public void load (ProgressTableModel progressTableModel){
 			super.setModel (progressTableModel);
-			Application.getInstance().deleteObserver(this.progressTableModel);
+			Application.getInstance ().deleteObserver (this.progressTableModel);
 			this.progressTableModel=progressTableModel;
 		}
 		
 		public void fireCurrentPeriodUpdated (){
-			this.fireTableChanged(new TableModelEvent (this, this.progressTableModel.getCurrentPeriodIndex()));
+			this.fireTableChanged (new TableModelEvent (this, this.progressTableModel.getCurrentPeriodIndex ()));
 		}
 		
 		public final int getCurrentPeriodIndex (){
-			return this.progressTableModel.getCurrentPeriodIndex();
+			return this.progressTableModel.getCurrentPeriodIndex ();
 		}
 		
-		public void sort(Object sender) {
-			super.sort(sender);
+		public void sort (Object sender) {
+			super.sort (sender);
 			//sincronizza indice avanzamento corrente, dopo riordino
-			this.progressTableModel.synchCurrentPeriodIdx();
-			Application.getInstance().setChanged();
-			Application.getInstance().notifyObservers(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
+			this.progressTableModel.synchCurrentPeriodIdx ();
+			Application.getInstance ().setChanged ();
+			Application.getInstance ().notifyObservers (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
 		}
 		
 	}
 	
 	private ProgressTableModel progressTableModel;
-	public void setModel(ProgressTableModel dataModel) {
+	public void setModel (ProgressTableModel dataModel) {
 		if (this.dataModel!=null){
-			this.dataModel.removeTableModelListener(this);
+			this.dataModel.removeTableModelListener (this);
 		}
 		this.progressTableModel=dataModel;
-		this.dataModel = new ProgressTableSorter(dataModel);
+		this.dataModel = new ProgressTableSorter (dataModel);
 		// Install a mouse listener in the TableHeader as the sorter UI.
-		this.dataModel.addMouseListenerToHeaderInTable(this);
-		super.setModel(this.dataModel);
+		this.dataModel.addMouseListenerToHeaderInTable (this);
+		super.setModel (this.dataModel);
+		setImageObserver ();
 	}
 	
 	public ProgressTableModel getProgressTableModel (){
 		return this.progressTableModel;
 	}
 	
-	public void reloadModel(TreePath newPath){
+	public void reloadModel (TreePath newPath){
 		if (this.currentPath!=newPath){
 			this.currentPath = newPath;
 			ProgressItem root = null;
 			if (this.currentPath!=null){
-				root = (ProgressItem)this.currentPath.getLastPathComponent();
+				root = (ProgressItem)this.currentPath.getLastPathComponent ();
 			}
-			reloadModel(root);
+			reloadModel (root);
 		}
 	}
 	
@@ -151,87 +225,129 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 	 *
 	 * @param root la radice del sottoalbero da ricaricare.
 	 */
-	public void reloadModel(ProgressItem root){
+	public void reloadModel (ProgressItem root){
 		/*
 		 * Il tableMOdel effettivo può essere di due tipi:
 		 * il wrapper per l'ordinamento (ProgressTableSorter)
 		 * oppure l'originale ProgressTableModel.
 		 */
-		TableModel actualTableModel = this.getModel();
+		TableModel actualTableModel = this.getModel ();
 		if (actualTableModel instanceof ProgressTableModel){
-			((ProgressTableModel)actualTableModel).load(root);
+			((ProgressTableModel)actualTableModel).load (root);
 		} else if (actualTableModel instanceof ProgressTableSorter){
-			((ProgressTableSorter)actualTableModel).progressTableModel.load(root);
-			((ProgressTableSorter)actualTableModel).load(((ProgressTableSorter)actualTableModel).progressTableModel);
+			((ProgressTableSorter)actualTableModel).progressTableModel.load (root);
+			((ProgressTableSorter)actualTableModel).load (((ProgressTableSorter)actualTableModel).progressTableModel);
+		}
+		setImageObserver ();
+	}
+	
+	public void valueChanged (TreeSelectionEvent e){
+	}
+	
+	
+	
+	private final boolean checkForReloadNeed (TreeModelEvent e){
+		TreePath path = e.getTreePath ();
+		return path.isDescendant (this.currentPath);
+	}
+	private final void reloadIfNeeded (TreeModelEvent e){
+		if (checkForReloadNeed (e)){
+			this.reloadModel (e.getTreePath ());
 		}
 	}
 	
-	public void valueChanged(TreeSelectionEvent e){
+	public void treeNodesChanged (TreeModelEvent e){
+		reloadIfNeeded (e);
+	}
+	public void treeNodesInserted (TreeModelEvent e){
+		reloadIfNeeded (e);
+	}
+	public void treeNodesRemoved (TreeModelEvent e){
+		reloadIfNeeded (e);
+	}
+	public void treeStructureChanged (TreeModelEvent e){
+		reloadIfNeeded (e);
 	}
 	
-	
-	
-	private final boolean checkForReloadNeed(TreeModelEvent e){
-		TreePath path = e.getTreePath();
-		return path.isDescendant(this.currentPath);
-	}
-	private final void reloadIfNeeded(TreeModelEvent e){
-		if (checkForReloadNeed(e)){
-			this.reloadModel(e.getTreePath());
-		}
-	}
-	
-	public void treeNodesChanged(TreeModelEvent e){
-		reloadIfNeeded(e);
-	}
-	public void treeNodesInserted(TreeModelEvent e){
-		reloadIfNeeded(e);
-	}
-	public void treeNodesRemoved(TreeModelEvent e){
-		reloadIfNeeded(e);
-	}
-	public void treeStructureChanged(TreeModelEvent e){
-		reloadIfNeeded(e);
-	}
-	
-	public void update(Observable o, Object arg) {
+	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals(ObserverCodes.SELECTEDITEMCHANGE)){
-				this.reloadModel(((Application)o).getSelectedItem());
-			} else if (arg!=null && (arg.equals(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || arg.equals(ObserverCodes.ITEMPROGRESSINGCHANGE))){
+			if (arg!=null && arg.equals (ObserverCodes.SELECTEDITEMCHANGE)){
+				this.reloadModel (((Application)o).getSelectedItem ());
+			} else if (arg!=null && (arg.equals (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || arg.equals (ObserverCodes.ITEMPROGRESSINGCHANGE))){
 				//				this.reloadModel(((Application)o).getSelectedItem());
-				this.dataModel.fireTableChanged(new TableModelEvent(getModel(), this.dataModel.getCurrentPeriodIndex()));
+				this.dataModel.fireTableChanged (new TableModelEvent (getModel (), this.dataModel.getCurrentPeriodIndex ()));
 			}
 		}
 	}
-
+	
 	private final class ProgressTableTransferHandler extends ProgressTransferHandler{
 		
 		protected void cleanup (JComponent c, boolean remove) {
 		}
 		
 		protected com.ost.timekeeper.model.Progress exportProgress (JComponent c) {
-		if (c!=SubtreeProgressesTable.this){return null;}
-		return Application.getInstance ().getSelectedProgress ();//(Progress)SubtreeProgressesTable.this.getTree ().getSelectionPath ().getLastPathComponent ();
-	}
+			if (c!=SubtreeProgressesTable.this){return null;}
+			return Application.getInstance ().getSelectedProgress ();//(Progress)SubtreeProgressesTable.this.getTree ().getSelectionPath ().getLastPathComponent ();
+		}
 		
 		protected void importProgress (JComponent c, com.ost.timekeeper.model.Progress progress) {
 			if (c!=SubtreeProgressesTable.this){return;}
 			final ProgressItem target = Application.getInstance ().getSelectedItem ();
 			new MoveProgress (progress, target, -1).execute ();
-
-//			final int[] selectedrows = SubtreeProgressesTable.this.getSelectedRows ();
-//			if (selectedrows!=null){
-//				final ProgressItem target = Application.getInstance ().getSelectedItem ();
-//				for (int i=0;i<selectedrows.length;i++){
-//					final Progress selectedPeriod = (Progress)SubtreeProgressesTable.this.getProgressTableModel ().getProgresses ().get (selectedrows[i]);
-//
-//					new MoveProgress (selectedPeriod, target, -1).execute ();
-//				}
-//			}
-		
+			
+			//			final int[] selectedrows = SubtreeProgressesTable.this.getSelectedRows ();
+			//			if (selectedrows!=null){
+			//				final ProgressItem target = Application.getInstance ().getSelectedItem ();
+			//				for (int i=0;i<selectedrows.length;i++){
+			//					final Progress selectedPeriod = (Progress)SubtreeProgressesTable.this.getProgressTableModel ().getProgresses ().get (selectedrows[i]);
+			//
+			//					new MoveProgress (selectedPeriod, target, -1).execute ();
+			//				}
+			//			}
+			
 		}
 		
+	}
+	
+	private void setImageObserver () {
+		TableModel model = getModel ();
+		int colCount = model.getColumnCount ();
+		int rowCount = model.getRowCount ();
+		for (int col = 0; col < colCount; col++) {
+			if (ImageIcon.class == model.getColumnClass (col)) {
+				for (int row = 0; row < rowCount; row++) {
+					ImageIcon icon = (ImageIcon) model.getValueAt (row, col);
+					if (icon != null) {
+						icon.setImageObserver (new CellImageObserver (this, row,
+						col));
+					}
+				}
+			}
+		}
+	}
+	
+	class CellImageObserver implements ImageObserver {
+		JTable table;
+		
+		int row;
+		
+		int col;
+		
+		CellImageObserver (JTable table, int row, int col) {
+			this.table = table;
+			this.row = row;
+			this.col = col;
+		}
+		
+		public boolean imageUpdate (Image img, int flags, int x, int y, int w,
+		int h) {
+			if ((flags & (FRAMEBITS | ALLBITS)) != 0) {
+				Rectangle rect = table.getCellRect (row, col, false);
+				table.repaint (rect);
+			}
+			//			table.repaint ();
+			return (flags & (ALLBITS | ABORT)) == 0;
+		}
 	}
 	
 }

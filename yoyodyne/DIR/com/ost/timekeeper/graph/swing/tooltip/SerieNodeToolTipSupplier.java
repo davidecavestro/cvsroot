@@ -64,8 +64,8 @@ public final class SerieNodeToolTipSupplier {
 			final StringBuffer sb= new StringBuffer ();
 			sb.append (node.getName ())
 			.append (" - ")
-			.append (" local: ").append (formatDuration (new Duration ((long)node.getValue ())))
-			.append (" total: ").append (formatDuration (new Duration ((long)node.getTotalValue ())));
+			.append ("\n local: ").append (formatDuration (new Duration ((long)node.getValue ())))
+			.append ("\n total: ").append (formatDuration (new Duration ((long)node.getTotalValue ())));
 			;
 			return sb.toString ();
 		}
