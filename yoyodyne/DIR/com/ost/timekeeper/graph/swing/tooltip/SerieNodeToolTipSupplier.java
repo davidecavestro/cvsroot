@@ -62,10 +62,34 @@ public final class SerieNodeToolTipSupplier {
 		public String generate (final SerieNode node){
 				
 			final StringBuffer sb= new StringBuffer ();
-			sb.append (node.getName ())
-			.append (" - ")
-			.append ("\n local: ").append (formatDuration (new Duration ((long)node.getValue ())))
-			.append ("\n total: ").append (formatDuration (new Duration ((long)node.getTotalValue ())));
+			sb.append ("<HTML>")
+			.append ("<TABLE>")
+			.append ("<THEAD>")
+			.append ("<TR>")
+			.append ("<TD colspan='2' nowrap>")
+			.append ("<B>").append (node.getName ()).append ("</B>")
+			.append ("</TD>")
+			.append ("</TR>")
+			.append ("</THEAD>")
+			.append ("<TBODY>")
+			.append ("<TR>")
+			.append ("<TD>")
+			.append ("local: ")
+			.append ("</TD>")
+			.append ("<TD>")
+			.append ("<TT>").append (formatDuration (new Duration ((long)node.getValue ()))).append ("<TT>")
+			.append ("</TD>")
+			.append ("</TR>")
+			.append ("<TR>")
+			.append ("<TD>")
+			.append ("total: ")
+			.append ("</TD>")
+			.append ("<TD>")
+			.append ("<TT>").append (formatDuration (new Duration ((long)node.getTotalValue ()))).append ("</TT>")
+			.append ("</TD>")
+			.append ("</TR>")
+			.append ("</TBODY>")
+			.append ("</HTML>");
 			;
 			return sb.toString ();
 		}
