@@ -142,7 +142,7 @@ public class RingChartPanel extends JPanel{
 			i++;
 		}
 		
-		return new DefaultSerieNode (progressItem.getCode () + " - " + progressItem.getName (), totalDuration, childSeries);
+		return new DefaultSerieNode ((progressItem.getCode ()!=null?progressItem.getCode () + " - " :"")+ progressItem.getName (), totalDuration, childSeries);
 	}
 
 	/**
