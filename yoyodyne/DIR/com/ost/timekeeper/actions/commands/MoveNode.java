@@ -10,6 +10,7 @@ import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.commands.attributes.*;
 import com.ost.timekeeper.actions.commands.attributes.keys.*;
 import com.ost.timekeeper.model.*;
+import com.ost.timekeeper.util.IllegalOperationException;
 import java.util.*;
 
 /**
@@ -52,7 +53,7 @@ public final class MoveNode extends AbstractCommand {
 	/**
 	 * Esegue questo comando.
 	 */
-	public void execute (){
+	public void execute () {
 		//		if (_movingNode.isRoot ()){
 		//			//non si sposta la radice;
 		//			throw new IllegalArgumentException("Cannot remove root node.");
@@ -61,6 +62,13 @@ public final class MoveNode extends AbstractCommand {
 		if (_newParent==null){
 			//non si crea una nuova radice;
 			throw new IllegalArgumentException ("Cannot generate a new  root node.");
+		}
+		
+		for (final Iterator it = _movingNode.getDescendants ().iterator ();it.hasNext ();){
+			final ProgressItem descendant = (ProgressItem)it.next ();
+			if (descendant==_newParent){
+				throw new IllegalOperationException ();
+			}
 		}
 		
 		final Application app = Application.getInstance ();
