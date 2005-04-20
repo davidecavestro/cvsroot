@@ -10,6 +10,9 @@ import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.commands.*;
 import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.ui.support.*;
+import com.ost.timekeeper.util.IllegalOperationException;
+import com.ost.timekeeper.util.ResourceClass;
+import com.ost.timekeeper.util.ResourceSupplier;
 import com.ost.timekeeper.view.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -48,7 +51,7 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		super (progressTreeModel);
 		final ProgressItemCellRenderer progressItemCellRenderer = new ProgressItemCellRenderer ();
 		this._progressTreeModel= progressTreeModel;
-		ToolTipManager.sharedInstance().registerComponent(this.tree);
+		ToolTipManager.sharedInstance ().registerComponent (this.tree);
 		this.tree.setCellRenderer (progressItemCellRenderer);
 		init (progressTreeModel);
 	}
@@ -59,65 +62,65 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 	 * @param progressTreeModel il modello.
 	 */
 	private void init (final ProgressTreeModel progressTreeModel){
-//		final TableCellEditor treeCellEditor = this.getDefaultEditor (ProgressItem.class);
-//		treeCellEditor.addCellEditorListener (new CellEditorListener (){
-//			public void editingStopped (ChangeEvent e){
-//				CellEditor source = (CellEditor)e.getSource ();
-//				String newValue = (String)source.getCellEditorValue ();
-//				Application.getInstance ().getSelectedItem ().setName (newValue);
-//			}
-//			
-//			public void editingCanceled (ChangeEvent e){
-//				//				System.out.println (e);
-//			}
-//		});
-//		this.setCellEditor (treeCellEditor);
+		//		final TableCellEditor treeCellEditor = this.getDefaultEditor (ProgressItem.class);
+		//		treeCellEditor.addCellEditorListener (new CellEditorListener (){
+		//			public void editingStopped (ChangeEvent e){
+		//				CellEditor source = (CellEditor)e.getSource ();
+		//				String newValue = (String)source.getCellEditorValue ();
+		//				Application.getInstance ().getSelectedItem ().setName (newValue);
+		//			}
+		//
+		//			public void editingCanceled (ChangeEvent e){
+		//				//				System.out.println (e);
+		//			}
+		//		});
+		//		this.setCellEditor (treeCellEditor);
 		//		this.setModel (progressTreeModel);
 		
 		this.getSelectionModel ().setSelectionMode (ListSelectionModel.SINGLE_SELECTION);
 		//		this.getSelectionModel ().setSelectionMode (TreeSelectionModel.SINGLE_TREE_SELECTION);
-//		this.setDragEnabled (true);
-//		
+		
+		//disable internal dnd functionality, because we need our own implementation
+		this.setDragEnabled (false);
+		
+		//attach transfer handler
 		this.setTransferHandler (new ProgressItemTreeTransferHandler ());
 		
-//		java.awt.event.MouseMotionListener mml = new java.awt.event.MouseMotionAdapter () {
-//			private boolean dragStarted = false;
-//			public void mouseDragged(MouseEvent e) {dragStarted = true;}
-//		};
-//		
-//		this.addMouseMotionListener (mml);
-//		
-//		java.awt.event.MouseListener ml = new java.awt.event.MouseAdapter () {
-//			public void mouseReleased(java.awt.event.MouseEvent e) {
-//				int selRow = tree.getRowForLocation (e.getX (), e.getY ());
-//				TreePath selPath = tree.getPathForLocation (e.getX (), e.getY ());
-//				if(selRow != -1) {
-//					if(e.getClickCount () == 1) {
-////						if (!ProgressItemTree.this.getUI ().isDragPossible(e)){
-////						ProgressItemTree.this.getTree ().getUI ().handleSelection(e);
-////						}
-//					}
-//					else if(e.getClickCount () == 2) {
-////						myDoubleClick (selRow, selPath);
-//					}
-//				}
-//			}
-//		};
-//		this.addMouseListener (ml);
+		//since we have a transfer handler, we just need to attach mouse listeners
+		//to initiate the drag inside of the transfer handler
+		DnDMouseAdapter dndMouseAdapter = new DnDMouseAdapter ();
+		this.addMouseListener (dndMouseAdapter);
+		this.addMouseMotionListener (new DnDMouseMotionAdapter ());
 		
-//		DragSourceMotionListener
-//		DragSourceListener
-//		DropTargetListener
-//		this.setDropTarget (new DropTarget(this, new DragPatch ()));
+		//revert MouseListeners order so that our MouseListener is called first
+		//this is important to give drag n drop first priority and prevent the
+		//internal mouse handler of tableUI changing the selection.
+		java.awt.event.MouseListener[] mls = this.getMouseListeners ();
+		for (int i = 0; i < mls.length; i++) {
+			if (mls[i] != dndMouseAdapter) {
+				this.removeMouseListener (mls[i]);
+				this.addMouseListener (mls[i]);
+			}
+		}
+		
+		//set multiple selection
+		this.getSelectionModel ().setSelectionMode (ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		
+		//set selection mode for tree
+		tree.getSelectionModel ().setSelectionMode (TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+		
+		
+		
+		
 		tree.setEditable (false);
 	}
 	
-//	private class DragPatch extends DragSourceAdapter implements DragSourceMotionListener {
-//		private boolean success = false;
-//	    public void dragDropEnd(DragSourceDropEvent dsde) {
-//			this.success = dsde.getDropSuccess ();
-//		}
-//	}
+	//	private class DragPatch extends DragSourceAdapter implements DragSourceMotionListener {
+	//		private boolean success = false;
+	//	    public void dragDropEnd(DragSourceDropEvent dsde) {
+	//			this.success = dsde.getDropSuccess ();
+	//		}
+	//	}
 	
 	private final class ProgressItemTreeTransferHandler extends ProgressItemTransferHandler{
 		
@@ -208,7 +211,25 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		 */
 		protected com.ost.timekeeper.model.ProgressItem exportProgressItem (JComponent c) {
 			if (c!=ProgressItemTree.this){return null;}
-			return (ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ();
+
+//			TreePath path = ProgressItemTree.this.getTree ().getSelectionPath ();
+//			if (path!=null){
+//				return (ProgressItem)path.getLastPathComponent ();
+//			} else {
+				if (dragPath!=null){
+					System.out.println ("Exporting last drag path "+dragPath.getLastPathComponent ());
+					return (ProgressItem)dragPath.getLastPathComponent ();
+				} else if (ProgressItemTree.this.getTree ().getSelectionPath ()!=null){
+					System.out.println ("Exporting current selection path "+(ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ());
+					return (ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ();
+				} else {
+					int x = firstMouseEvent.getX ();
+					int y = firstMouseEvent.getY ();
+					System.out.println ("Exporting first mouse event path "+(ProgressItem)ProgressItemTree.this.getTree ().getPathForLocation (x, y).getLastPathComponent ());
+					return (ProgressItem)ProgressItemTree.this.getTree ().getPathForLocation (x, y).getLastPathComponent ();
+				}
+
+//			}
 		}
 		
 		/*
@@ -222,7 +243,11 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 				/* Evita drop su se stesso. */
 				return;
 			}
-			new MoveNode (progressItem, target, -1).execute ();
+			try {
+				new MoveNode (progressItem, target, -1).execute ();
+			} catch (final IllegalOperationException iae){
+				JOptionPane.showMessageDialog (ProgressItemTree.this, ResourceSupplier.getString (ResourceClass.UI, "controls", "Illegal.operation"));
+			}
 		}
 		
 		
@@ -310,8 +335,8 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 	public void update (Observable o, Object arg) {
 		if (o instanceof Application){
 			if (arg!=null){
-				if (arg.equals (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || 
-					arg.equals (ObserverCodes.ITEMPROGRESSINGCHANGE)){
+				if (arg.equals (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) ||
+				arg.equals (ObserverCodes.ITEMPROGRESSINGCHANGE)){
 					//				this.reloadModel(((Application)o).getSelectedItem());
 					final javax.swing.table.AbstractTableModel tModel = (javax.swing.table.AbstractTableModel)this.getModel ();
 					if (tModel.getRowCount ()>0){
@@ -320,6 +345,63 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 				}
 				if (arg.equals (ObserverCodes.CURRENTITEMCHANGE)){
 					repaint ();
+				}
+			}
+		}
+	}
+	
+	private MouseEvent firstMouseEvent;
+	class DnDMouseAdapter extends java.awt.event.MouseAdapter {
+		public void mousePressed (MouseEvent e) {
+			firstMouseEvent = e;
+			e.consume ();
+		}
+		
+		public void mouseReleased (MouseEvent e) {
+			firstMouseEvent = null;
+		}
+	}
+	
+	private TreePath dragPath;
+	class DnDMouseMotionAdapter extends java.awt.event.MouseMotionAdapter {
+		
+		//define diplacement of five pixel for as drag
+		private static final int PIXEL_DISPLACEMENT = 5;
+		
+		public void mouseDragged (MouseEvent e) {
+			if (firstMouseEvent != null) {
+				e.consume ();
+				
+				//if the user holds down the control key -> COPY, otherwise MOVE
+				int ctrlMask = java.awt.event.InputEvent.CTRL_DOWN_MASK;
+				int action = ((e.getModifiersEx () & ctrlMask) == ctrlMask) ? TransferHandler.COPY : TransferHandler.MOVE;
+				
+				int dx = Math.abs (e.getX () - firstMouseEvent.getX ());
+				int dy = Math.abs (e.getY () - firstMouseEvent.getY ());
+				
+				//define a displacement of at least some pixel as a drag
+				if (dx > DnDMouseMotionAdapter.PIXEL_DISPLACEMENT || dy > DnDMouseMotionAdapter.PIXEL_DISPLACEMENT) {
+					//starting to drag...
+					JComponent c = (JComponent) e.getSource ();
+					TransferHandler handler = c.getTransferHandler ();
+					
+					//tell transfer handler to start drag
+					handler.exportAsDrag (c, firstMouseEvent, action);
+					
+					int x = e.getX ();
+					int y = e.getY ();
+					
+//					final TreePath path = ProgressItemTree.this.getTree ().getSelectionPath ();
+//					if (path!=null){
+//						/* c'e' una selezione corrente */
+//						dragPath = path;
+//					} else {
+//						/* nessuna selezione */
+						dragPath = ProgressItemTree.this.getTree ().getPathForLocation (x, y);
+//					}
+					System.out.println ("Setting last drag path to "+dragPath);
+					//reset first mouse event for the next time
+					firstMouseEvent = null;
 				}
 			}
 		}
