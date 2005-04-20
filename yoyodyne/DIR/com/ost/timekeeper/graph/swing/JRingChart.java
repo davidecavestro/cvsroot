@@ -204,6 +204,7 @@ public class JRingChart  extends JTreeGraph2D {
         g2.setColor(this.getBackground ());
         g2.fillRect(0, 0, getWidth(), getHeight());
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         g2.setStroke(s);
 		
 		_nodeGraphData.clear ();
@@ -233,28 +234,28 @@ public class JRingChart  extends JTreeGraph2D {
 		/*
 		 * testo radice
 		 */
-		SerieNode root = model.getRoot ();
-		StringBuffer sb= new StringBuffer ();
-		sb.append ("Root: ")
-		.append (SerieNodeToolTipSupplier.getToolTip (root));
-		final String message = sb.toString ();
-		
-		if (this._xAxisLabel!=null){
-			/*
-			 * usa eticheta asse X
-			 */
-			this._xAxisLabel.setText (message);
-		} else {
-			/*
-			 * scrive direttamente sul fondo del componente
-			 */
-			g2.setFont (legendaFont);
-			final FontMetrics metrics = g2.getFontMetrics();
-			int width = metrics.stringWidth( message );
-			int height = metrics.getHeight();
-			g2.setColor (Color.BLACK);
-			g2.drawString( message, 0, this.getHeight () );
-		}
+//		SerieNode root = model.getRoot ();
+//		StringBuffer sb= new StringBuffer ();
+//		sb.append ("Root: ")
+//		.append (SerieNodeToolTipSupplier.getToolTip (root));
+//		final String message = sb.toString ();
+//		
+//		if (this._xAxisLabel!=null){
+//			/*
+//			 * usa eticheta asse X
+//			 */
+//			this._xAxisLabel.setText (message);
+//		} else {
+//			/*
+//			 * scrive direttamente sul fondo del componente
+//			 */
+//			g2.setFont (legendaFont);
+//			final FontMetrics metrics = g2.getFontMetrics();
+//			int width = metrics.stringWidth( message );
+//			int height = metrics.getHeight();
+//			g2.setColor (Color.BLACK);
+//			g2.drawString( message, 0, this.getHeight () );
+//		}
 	}
 	
 	/** Rettangolo ad uso interno per il tracciamento degli archi */
@@ -331,8 +332,8 @@ public class JRingChart  extends JTreeGraph2D {
 			if (2==childLevel){
 				color = sliceColor[ix];
 			} else {
-				Color olcColor = (Color)paint;
-				color = new Color (/*Math.abs (*/olcColor.getRed ()/*-colorSeed)*/, /*Math.abs (*/olcColor.getGreen ()/*-colorSeed)*/, /*Math.abs (*/olcColor.getBlue ()/*-colorSeed)*/, (int)(olcColor.getAlpha ()/(1+(ix/childrenCount))));
+				Color oldColor = (Color)paint;
+				color = new Color (/*Math.abs (*/oldColor.getRed ()/*-colorSeed)*/, /*Math.abs (*/oldColor.getGreen ()/*-colorSeed)*/, /*Math.abs (*/oldColor.getBlue ()/*-colorSeed)*/, (int)(oldColor.getAlpha ()/(1+((1+ix)/childrenCount))));
 			}
 			
 //			final int colorSeed = 20*level*ix;
