@@ -6,7 +6,6 @@
 
 package com.ost.timekeeper.view;
 
-import com.ost.timekeeper.Application;
 import com.ost.timekeeper.model.Progress;
 import com.ost.timekeeper.model.ProgressItem;
 import com.ost.timekeeper.util.ResourceClass;
@@ -73,11 +72,9 @@ public class ProgressItemCellRenderer extends javax.swing.tree.DefaultTreeCellRe
 		}
 		for (final Iterator it = node.getSubtreeProgresses ().iterator ();it.hasNext ();){
 			final Progress progress = (Progress)it.next ();
-			try{
 			if (progress.isEndOpened ()){
 				return true;
 			}
-			} catch (javax.jdo.JDOObjectNotFoundException e){Application.getLogger ().error (com.ost.timekeeper.util.ExceptionUtils.getStackTrace (e).toString ());}
 		}
 		return false;
     }

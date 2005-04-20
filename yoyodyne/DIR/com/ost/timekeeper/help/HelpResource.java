@@ -66,6 +66,10 @@ public final class HelpResource {
 	/** La barra di stato principale. */
 	public final static HelpResource MAINSTATUSBAR = new HelpResource ("html.mainstatusbar");
 	
+	/** Dialogo di esportazione progetto. */
+	public final static HelpResource PROJECTEXPORTDIALOG = new HelpResource ("html.projectexportdialog");
+	
+	
 	/**
 	 * Costruttore con risorsa specificata.
 	 *
@@ -85,14 +89,14 @@ public final class HelpResource {
 	}
 	
 	/**
-	 * Ritorna <TT>true</TT> se questa risorsa è uguale all'oggetto specificato.
+	 * Ritorna <TT>true</TT> se questa risorsa ? uguale all'oggetto specificato.
 	 *
 	 * @param obj l'oggetto da confrontare.
-	 * @return <TT>true</TT> se questa risorsa è uguale all'oggetto specificato.
+	 * @return <TT>true</TT> se questa risorsa ? uguale all'oggetto specificato.
 	 */	
 	public boolean equals (Object obj){
 		if (this==obj){
-			/* identità*/
+			/* identit?*/
 			return true;
 		} else if (obj==null){
 			/* test su NULL*/

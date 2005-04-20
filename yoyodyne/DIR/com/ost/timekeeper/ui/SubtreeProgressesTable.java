@@ -87,9 +87,8 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 			public void setValue (Object value) {
 				
 				final Progress progress = (Progress)value;
-				final StringBuffer sb = new StringBuffer ();
-				try {
 				final Duration duration = progress.getDuration ();
+				final StringBuffer sb = new StringBuffer ();
 				/*
 				sb.append (durationNumberFormatter.format(duration.getDays()))
 				.append (":")
@@ -99,7 +98,7 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 				.append (durationNumberFormatter.format (duration.getMinutes ()))
 				.append (":")
 				.append (durationNumberFormatter.format (duration.getSeconds ()));
-				} catch (javax.jdo.JDOObjectNotFoundException e){Application.getLogger ().error (com.ost.timekeeper.util.ExceptionUtils.getStackTrace (e).toString ());}
+				
 				setText (sb.toString ());
 			}
 		};
