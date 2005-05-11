@@ -137,4 +137,15 @@ public final class CompositeLogger implements Logger{
 		}
 	}
 	
+	public void debug (String message, Throwable t) {
+		debug (this._actualLogger, message, t);
+		debug (this._successor, message, t);
+	}
+	
+	private void debug (final Logger logger, final String message, final Throwable t) {
+		if (logger!=null){
+			logger.debug (message, t);
+		}
+	}
+	
 }

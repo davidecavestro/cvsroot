@@ -79,6 +79,15 @@ public class PlainTextLogger implements Logger{
 	}
 	
 	/**
+	 * Registra un messaggio di DEBUG associato ad un evento specificato.
+	 * @param message il messaggio.
+	 * @param t l'evento.
+	 */
+	public void debug (final String message, final Throwable t) {
+		printMessage (MessageType.DEBUG, message);
+	}
+	
+	/**
 	 * Registra un messaggio di ERRORE.
 	 * @param message il messaggio.
 	 */

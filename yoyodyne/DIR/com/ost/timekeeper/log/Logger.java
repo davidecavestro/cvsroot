@@ -19,6 +19,12 @@ public interface Logger {
 	 */
 	public void debug (final String message);
 	/**
+	 * Registra un messaggio di DEBUG associatoall'eventospecificato.
+	 * @param t l'evento.
+	 * @param message il messaggio.
+	 */
+	public void debug (final String message, Throwable t);
+	/**
 	 * Registra un messaggio di INFORMAZIONE.
 	 * @param message il messaggio.
 	 */
