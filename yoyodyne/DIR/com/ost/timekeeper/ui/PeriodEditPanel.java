@@ -24,6 +24,8 @@ import java.beans.PropertyChangeListener;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
 import javax.swing.event.*;
 
 /**
@@ -375,10 +377,17 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		//                                6, 6,        //initX, initY
 		//                                6, 6);       //xPad, yPad
 		
-		/*
-		 * Inserimento pannello editazione.
-		 */
-		this.add (editPanel, java.awt.BorderLayout.CENTER);
+		
+		{
+			final JPanel controlsPanel = new JPanel (new BorderLayout ());
+			controlsPanel .add (editPanel, BorderLayout.CENTER);
+			controlsPanel.setBorder (new BevelBorder (BevelBorder.RAISED));
+
+			/*
+			 * Inserimento pannello editazione.
+			 */
+			this.add (controlsPanel, java.awt.BorderLayout.CENTER);
+		}
 		
 		/*
 		 * Inserimento pulsantiera.
@@ -423,13 +432,22 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 	//		this.toEditor.setEnabled (validItem);
 			if (validItem){
 				this.fromEditor.setDate (from);
-				this.toEditor.setDate (to);
+				if (to!=null){
+					this.toEditor.setDate (to);
+				}
+				
 
 				final Duration duration = editSubject.getDuration ();
 				synchDurationControls (duration);
 			}
 			this.descriptionEditor.setText (description);
 			this.notesEditor.setText (notes);
+			
+			final boolean periodFinished = editSubject!=null && !editSubject.isEndOpened ();
+			this.toEditor.setEnabled (periodFinished);
+			this.durationHourEditor.setEnabled (periodFinished);
+			this.durationMinEditor.setEnabled (periodFinished);
+			this.durationSecsEditor.setEnabled (periodFinished);
 		} finally {
 			refreshingData = false;
 		}
@@ -471,10 +489,13 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 			 * C'è un avanzamento selezionato.
 			 * Valorizzazione avanzamento da campi editazione.
 			 */
+			
+			final boolean periodFinished = editSubject!=null && !editSubject.isEndOpened ();
+			
 			new UpdateProgress (editSubject, 
 				new Attribute[]{
 					new DateAttribute (UpdateProgress.PROGRESSFROM, this.fromEditor.getDate ()),
-					new DateAttribute (UpdateProgress.PROGRESSTO, this.toEditor.getDate ()),
+					new DateAttribute (UpdateProgress.PROGRESSTO, periodFinished?this.toEditor.getDate ():null),
 					new StringAttribute (UpdateProgress.PROGRESSDESCRIPTION, this.descriptionEditor.getText ()),
 					new StringAttribute (UpdateProgress.PROGRESSNOTES, this.notesEditor.getText ())
 				}).execute ();
@@ -525,7 +546,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 			return;
 		}
 		this._dataChanged = changed;
-		this.confirmButton.setEnabled (this._dataChanged && ActionPool.getInstance ().getProgressUpdateAction ().isEnabled ());
+		this.confirmButton.setEnabled (this._dataChanged/* && ActionPool.getInstance ().getProgressUpdateAction ().isEnabled ()*/);
 		this.resetButton.setEnabled (this._dataChanged);
 	}
 	
@@ -550,4 +571,6 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		 */
 		setDataChanged (true);
 	}
+	
+	
 }

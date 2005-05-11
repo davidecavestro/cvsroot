@@ -348,4 +348,22 @@ public final class ActionPool extends Observable{
 		}
 		return this._startNewProgressCreation;
 	}
+	
+	/**
+	 * L'azione visualizzazione procedura guidata di configurazione del datastore.
+	 */
+	private ShowDataStoreWIzardDialog _showDataStoreWIzardDialog;
+	
+	/**
+	 * Ritorna l'azione visualizzazione procedura guidata di configurazione del datastore.
+	 * @return l'azione visualizzazione procedura guidata di configurazione del datastore.
+	 */
+	public ShowDataStoreWIzardDialog getShowDataStoreWIzardDialog (){
+		if (this._showDataStoreWIzardDialog==null){
+			//istanziazione lazy
+			this._showDataStoreWIzardDialog = new ShowDataStoreWIzardDialog ();
+		}
+		return this._showDataStoreWIzardDialog;
+	}
+	
 }

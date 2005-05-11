@@ -69,6 +69,10 @@ public final class HelpResource {
 	/** Dialogo di esportazione progetto. */
 	public final static HelpResource PROJECTEXPORTDIALOG = new HelpResource ("html.projectexportdialog");
 	
+
+	/** Dialogo di esportazione progetto. */
+	public final static HelpResource DATASTORECONFIGURATIONWIZARD = new HelpResource ("html.datastoreconfigurationwizard");
+	
 	
 	/**
 	 * Costruttore con risorsa specificata.

@@ -15,6 +15,7 @@ import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.util.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -113,8 +114,8 @@ public final class UserDataSettingsEditPanel extends ObservablePanel implements 
 		//		desktopColorChooser.setBorder (new EtchedBorder (EtchedBorder.RAISED));
 		jdoStorageDirPathChoice.addActionListener (new ActionListener (){
 			public void actionPerformed (ActionEvent ae){
-				final int returnVal = jdoStorageDirPathChooser.showDialog (
-					Application.getInstance ().getMainForm(), ResourceSupplier.getString(ResourceClass.UI, "controls", "jdostoragedir.path"));
+				final int returnVal = jdoStorageDirPathChooser.showOpenDialog (
+					Application.getInstance ().getMainForm());
 				if(returnVal == JFileChooser.APPROVE_OPTION) {
 					jdoStorageDirPathEditor.setText (jdoStorageDirPathChooser.getSelectedFile().getPath ());
 					setDataChanged (true);
@@ -226,9 +227,19 @@ public final class UserDataSettingsEditPanel extends ObservablePanel implements 
 		/*
 		 * Inizializzazione.
 		 */
-		this.jdoStorageDirPathEditor.setText (UserSettings.getInstance ().getJDOStorageDirPath ());
+		final String dirPath = UserSettings.getInstance ().getJDOStorageDirPath ();
+		this.jdoStorageDirPathEditor.setText (dirPath);
 		this.jdoStorageNameEditor.setText (UserSettings.getInstance ().getJDOStorageName ());
 		
+		boolean validPath = false;
+		try {
+			validPath = new File (dirPath).isDirectory ();
+		} catch (Exception e){
+			Application.getLogger ().error ("Invalid JDO datastore directory path", e);
+		}
+		if (validPath){
+			this.jdoStorageDirPathChooser.setCurrentDirectory (new File (dirPath));
+		}
 	}
 	
 	/**

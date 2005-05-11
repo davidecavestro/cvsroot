@@ -104,10 +104,10 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		}
 		
 		//set multiple selection
-		this.getSelectionModel ().setSelectionMode (ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		this.getSelectionModel ().setSelectionMode (ListSelectionModel.SINGLE_SELECTION);
 		
 		//set selection mode for tree
-		tree.getSelectionModel ().setSelectionMode (TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+		tree.getSelectionModel ().setSelectionMode (TreeSelectionModel.SINGLE_TREE_SELECTION);
 		
 		
 		
@@ -138,7 +138,7 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		 * @return un oggetto trasferibile.
 		 */
 		protected Transferable createTransferable (JComponent c) {
-			return new ProgressItemSelection (exportProgressItem (c));
+			return new ProgressItemSelection (exportProgressItems (c));
 		}
 		
 		public int getSourceActions (JComponent c) {
@@ -149,13 +149,13 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 			if (canImport (c, t.getTransferDataFlavors ())) {
 				try {
 					if (hasProgressItemFlavor (t.getTransferDataFlavors ())){
-						ProgressItem progressItem = (ProgressItem)t.getTransferData (progressItemFlavor);
-						importProgressItem (c, progressItem);
+						ProgressItem[] progressItems = (ProgressItem[])t.getTransferData (progressItemFlavor);
+						importProgressItems (c, progressItems);
 						return true;
 					} else if (hasProgressFlavor (t.getTransferDataFlavors ())){
 						
-						final Progress progress = (Progress)t.getTransferData (progressFlavor);
-						importProgress (c, progress);
+						final Progress[] progresses = (Progress[])t.getTransferData (progressFlavor);
+						importProgresses (c, progresses);
 						return true;
 					}
 				} catch (UnsupportedFlavorException ufe) {
@@ -209,7 +209,7 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		 * Bundle up the selected items in the list
 		 * as a single string, for export.
 		 */
-		protected com.ost.timekeeper.model.ProgressItem exportProgressItem (JComponent c) {
+		protected com.ost.timekeeper.model.ProgressItem[] exportProgressItems (JComponent c) {
 			if (c!=ProgressItemTree.this){return null;}
 
 //			TreePath path = ProgressItemTree.this.getTree ().getSelectionPath ();
@@ -218,15 +218,15 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 //			} else {
 				if (dragPath!=null){
 					System.out.println ("Exporting last drag path "+dragPath.getLastPathComponent ());
-					return (ProgressItem)dragPath.getLastPathComponent ();
+					return new ProgressItem[] {(ProgressItem)dragPath.getLastPathComponent ()};
 				} else if (ProgressItemTree.this.getTree ().getSelectionPath ()!=null){
 					System.out.println ("Exporting current selection path "+(ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ());
-					return (ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ();
+					return new ProgressItem[] {(ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ()};
 				} else {
 					int x = firstMouseEvent.getX ();
 					int y = firstMouseEvent.getY ();
 					System.out.println ("Exporting first mouse event path "+(ProgressItem)ProgressItemTree.this.getTree ().getPathForLocation (x, y).getLastPathComponent ());
-					return (ProgressItem)ProgressItemTree.this.getTree ().getPathForLocation (x, y).getLastPathComponent ();
+					return new ProgressItem[] {(ProgressItem)ProgressItemTree.this.getTree ().getPathForLocation (x, y).getLastPathComponent ()};
 				}
 
 //			}
@@ -236,15 +236,18 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		 * Take the incoming string and wherever there is a
 		 * newline, break it into a separate item in the list.
 		 */
-		protected void importProgressItem (JComponent c, com.ost.timekeeper.model.ProgressItem progressItem) {
+		protected void importProgressItems (JComponent c, com.ost.timekeeper.model.ProgressItem[] progressItems) {
 			if (c!=ProgressItemTree.this){return;}
 			final ProgressItem target = (ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ();
-			if (progressItem==target){
-				/* Evita drop su se stesso. */
-				return;
-			}
 			try {
-				new MoveNode (progressItem, target, -1).execute ();
+				for (int i=0;i<progressItems.length;i++){
+					final ProgressItem progressItem = progressItems[i];
+					if (progressItem==target){
+						/* Evita drop su se stesso. */
+						continue;
+					}
+					new MoveNode (progressItem, target, -1).execute ();
+				}
 			} catch (final IllegalOperationException iae){
 				JOptionPane.showMessageDialog (ProgressItemTree.this, ResourceSupplier.getString (ResourceClass.UI, "controls", "Illegal.operation"));
 			}
@@ -324,10 +327,12 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 			//		return Application.getInstance ().getSelectedProgress ();//(Progress)SubtreeProgressesTable.this.getTree ().getSelectionPath ().getLastPathComponent ();
 		}
 		
-		protected void importProgress (JComponent c, com.ost.timekeeper.model.Progress progress) {
+		protected void importProgresses (JComponent c, com.ost.timekeeper.model.Progress[] progresses) {
 			if (c!=ProgressItemTree.this){return;}
 			final ProgressItem target = Application.getInstance ().getSelectedItem ();
-			new MoveProgress (progress, target, -1).execute ();
+			for (int i=0;i<progresses.length;i++){
+				new MoveProgress (progresses[i], target, -1).execute ();
+			}
 		}
 		
 	}
@@ -346,6 +351,11 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 				if (arg.equals (ObserverCodes.CURRENTITEMCHANGE)){
 					repaint ();
 				}
+				
+				if (arg.equals (ObserverCodes.LOOKANDFEEL_CHANGING)){
+					this.tree.setCellRenderer (new ProgressItemCellRenderer ());
+				}
+				
 			}
 		}
 	}

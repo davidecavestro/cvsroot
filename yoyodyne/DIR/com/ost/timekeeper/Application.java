@@ -54,13 +54,22 @@ public class Application extends Observable{
 	 */
 	private DataStoreEnvironment _dataStoreEnvironment;
 	
+	/**
+	 * <TT>true</TT> se l'applicazione è in fase di inizializzazione.
+	 */
+	private boolean _onAppInit=false;
 	/** 
 	 * Costruttore privato. 
 	 */
 	private Application(String[] args) {
 		
-		//inizializza il supporto per la persistenza dei dati
-		initPersistence ();
+		this._onAppInit = true;
+		try {
+			//inizializza il supporto per la persistenza dei dati
+			initPersistence ();
+		} finally {
+			this._onAppInit = false;
+		}
 		
 		final ActionPool actionPool = ActionPool.getInstance ();
 		//registra le azioni su Application
@@ -201,9 +210,11 @@ public class Application extends Observable{
 			}
 					/* testa persistenza*/
 			if (!a.testPersistenceManager (a.getPersistenceManager ())){
-				final UserSettingsFrame usf = UserSettingsFrame.getInstance ();
-				usf.showDataSettings ();
-				usf.show ();
+				
+				ActionPool.getInstance ().getShowDataStoreWIzardDialog ().execute ();
+//				final UserSettingsFrame usf = UserSettingsFrame.getInstance ();
+//				usf.showDataSettings ();
+//				usf.show ();
 			} else {
 				
 				a.setProcessing (true, ResourceSupplier.getString (ResourceClass.UI, "controls", "loading.project"));
@@ -230,6 +241,23 @@ public class Application extends Observable{
 		} catch (Exception e){
 			e.printStackTrace();
 			System.exit (1);
+		}
+		
+		try {
+			
+			final JPopupMenu popup = new JPopupMenu ();
+			popup.add (new JMenuItem (ActionPool.getInstance ().getProgressStartAction ()));
+			popup.add (new JMenuItem (ActionPool.getInstance ().getProgressStopAction ()));
+			org.jdesktop.jdic.tray.TrayIcon trayIcon = new org.jdesktop.jdic.tray.TrayIcon(
+			ResourceSupplier.getImageIcon (ResourceClass.UI, "application.png"),
+			ApplicationData.getInstance ().getApplicationExternalName (),
+			popup
+			);
+			org.jdesktop.jdic.tray.SystemTray systemTray = org.jdesktop.jdic.tray.SystemTray.getDefaultSystemTray();
+			systemTray.addTrayIcon(trayIcon);
+
+		} catch (Exception e){
+			System.out.println (com.ost.timekeeper.util.ExceptionUtils.getStackTrace (e));
 		}
 	}
 	
@@ -361,11 +389,11 @@ public class Application extends Observable{
 	}
 
 	/**
-	 * Il gestore della persistenza deidati.
+	 * Il gestore della persistenza dei dati.
 	 */
 	private PersistenceManager pm;
 	
-	private final void setDatastoreProperties (){
+	public final void setDatastoreProperties (){
 		if (this._dataStoreEnvironment==null){
 			this._dataStoreEnvironment = new DataStoreEnvironment (null);
 		}
@@ -388,7 +416,13 @@ public class Application extends Observable{
 	/**
 	 * Inizializza la gestione della persistenza dei dati.
 	 */
-	private void initPersistence (){
+	public void initPersistence (){
+		if (!this._onAppInit){
+			/*
+			 * Evita stackoverflow
+			 */
+			closeActiveStoreData ();
+		}
 		setDatastoreProperties ();
 		final Properties properties = this._dataStoreEnvironment.getDataStoreProperties ();
 		final PersistenceManagerFactory pmf =
@@ -438,11 +472,24 @@ public class Application extends Observable{
 		}
 		return true;
 	}
+
+	/**
+	 * Chiude tutte le eventuali azioni attualmente in corso che utilizzano il datastore.
+	 */
+	private void closeActiveStoreData (){
+		/* assicura chiusura avanzamento incorso */
+		final ProgressItem currentItem = this.getCurrentItem ();
+		if (currentItem!=null && currentItem.isProgressing ()){
+			ActionPool.getInstance ().getProgressStopAction ().execute ();
+		}
+		ActionPool.getInstance ().getProjectCloseAction ().execute ();
+	}
 	
 	/**
 	 * Inizializza il repository dei dati persistenti con le impostazioni correnti.
 	 */
 	public void createDataStore (){
+		closeActiveStoreData ();
 		if (_usablePersistenceManager){
 			closePersistence ();
 		}
@@ -610,10 +657,9 @@ public class Application extends Observable{
 			notifyObservers (ObserverCodes.APPLICATIONEXITING);
 		}
 		UserSettings.getInstance ().storeProperties ();
-		final ProgressItem currentItem = this.getCurrentItem ();
-		if (currentItem!=null && currentItem.isProgressing ()){
-			ActionPool.getInstance ().getProgressStopAction ().execute ();
-		}
+		
+		closeActiveStoreData ();
+		
 		ActionPool.getInstance ().getProjectSaveAction ().execute ();
 		/* Forza chiusura logger. */
 		_logger.close ();

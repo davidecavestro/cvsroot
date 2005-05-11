@@ -189,6 +189,9 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 			Application.getInstance ().notifyObservers (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
 		}
 		
+		public ProgressTableModel getProgressTableModel (){
+			return (ProgressTableModel)this.getModel ();
+		}
 	}
 	
 	private ProgressTableModel progressTableModel;
@@ -284,15 +287,26 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 		protected void cleanup (JComponent c, boolean remove) {
 		}
 		
-		protected com.ost.timekeeper.model.Progress exportProgress (JComponent c) {
-			if (c!=SubtreeProgressesTable.this){return null;}
-			return Application.getInstance ().getSelectedProgress ();//(Progress)SubtreeProgressesTable.this.getTree ().getSelectionPath ().getLastPathComponent ();
+		protected com.ost.timekeeper.model.Progress[] exportProgresses (JComponent c) {
+			if (c!=SubtreeProgressesTable.this){
+				return null;
+			}
+			final int[] selectedRows = SubtreeProgressesTable.this.getSelectedRows ();
+			final int selectedRowsCount = selectedRows.length;
+			final Progress[] exportedProgresses = new Progress[selectedRowsCount];
+			final java.util.List tableProgresses = SubtreeProgressesTable.this.dataModel.getProgressTableModel ().getProgresses ();
+			for (int i=0;i<selectedRowsCount;i++){
+				exportedProgresses[i] = (Progress)tableProgresses.get (SubtreeProgressesTable.this.dataModel.getIndex (selectedRows[i]));
+			}
+			return exportedProgresses;
 		}
 		
-		protected void importProgress (JComponent c, com.ost.timekeeper.model.Progress progress) {
+		protected void importProgresses (JComponent c, com.ost.timekeeper.model.Progress[] progresses) {
 			if (c!=SubtreeProgressesTable.this){return;}
 			final ProgressItem target = Application.getInstance ().getSelectedItem ();
-			new MoveProgress (progress, target, -1).execute ();
+			for (int i=0;i<progresses.length;i++){
+				new MoveProgress (progresses[i], target, -1).execute ();
+			}
 			
 			//			final int[] selectedrows = SubtreeProgressesTable.this.getSelectedRows ();
 			//			if (selectedrows!=null){

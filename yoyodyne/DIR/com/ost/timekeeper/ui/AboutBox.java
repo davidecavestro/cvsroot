@@ -264,7 +264,7 @@ public final class AboutBox extends JDialog {
 		/*
 		 * Impedisce ridimensionamento.
 		 */
-		this.setResizable (false);
+		this.setResizable (true);
 		
 //		this.addWindowListener (new AboutWindowListener());
 	}

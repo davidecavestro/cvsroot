@@ -27,8 +27,8 @@ public abstract class ProgressTransferHandler extends TransferHandler {
 	public ProgressTransferHandler () {
 	}
 	
-	protected abstract Progress exportProgress (JComponent c);
-	protected abstract void importProgress (JComponent c, Progress progress);
+	protected abstract Progress[] exportProgresses (JComponent c);
+	protected abstract void importProgresses (JComponent c, Progress[] progress);
 	protected abstract void cleanup (JComponent c, boolean remove);
 	
 	/**
@@ -38,7 +38,7 @@ public abstract class ProgressTransferHandler extends TransferHandler {
 	 * @return un oggetto trasferibile.
 	 */	
 	protected Transferable createTransferable (JComponent c) {
-		return new ProgressSelection (exportProgress (c));
+		return new ProgressSelection (exportProgresses (c));
 	}
 	
 	public int getSourceActions (JComponent c) {
@@ -49,8 +49,8 @@ public abstract class ProgressTransferHandler extends TransferHandler {
 		System.out.println ("Importing progress data ");
 		if (canImport (c, t.getTransferDataFlavors ())) {
 			try {
-				final Progress progress = (Progress)t.getTransferData (progressFlavor);
-				importProgress (c, progress);
+				final Progress[] progresses = (Progress[])t.getTransferData (progressFlavor);
+				importProgresses (c, progresses);
 				return true;
 			} catch (UnsupportedFlavorException ufe) {
 				Application.getLogger ().warning ("Error transferring UI data.", ufe);

@@ -21,13 +21,13 @@ public class ProgressItemSelection implements Transferable{
 		DataFlavors.progressItemFlavor
 	};
 	
-    private ProgressItem data;
+    private ProgressItem[] data;
 						   
 	/**
 	 * Costruttore con nodo di avanzamento.
 	 * @param data il nodo di avanzamento.
 	 */
-	public ProgressItemSelection (ProgressItem data) {
+	public ProgressItemSelection (ProgressItem[] data) {
         this.data = data;
     }
 	
@@ -41,7 +41,7 @@ public class ProgressItemSelection implements Transferable{
 	 */	
 	public Object getTransferData (DataFlavor flavor) throws UnsupportedFlavorException, java.io.IOException {
 		if (flavor.equals (DataFlavors.progressItemFlavor)) {
-			return (ProgressItem)data;
+			return (ProgressItem[])data;
 		} else {
 			throw new UnsupportedFlavorException (flavor);
 		}

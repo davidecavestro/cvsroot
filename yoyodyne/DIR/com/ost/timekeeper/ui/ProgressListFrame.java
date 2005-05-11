@@ -9,6 +9,7 @@ package com.ost.timekeeper.ui;
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.ActionPool;
 import com.ost.timekeeper.model.*;
+import com.ost.timekeeper.ui.support.JToolButton;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
 import com.tomtessier.scrollabledesktop.*;
@@ -126,11 +127,11 @@ public final class ProgressListFrame extends BaseInternalFrame {
 		
 		progressesToolBar.add (new javax.swing.JSeparator ());
 		
-		final javax.swing.JButton editButton = new javax.swing.JButton (ActionPool.getInstance ().getStartProgressEdit ());
+		final javax.swing.JButton editButton = new JToolButton (ActionPool.getInstance ().getStartProgressEdit ());
 		editButton.setText ("");
 		progressesToolBar.add (editButton);
 		
-		final javax.swing.JButton deleteButton = new javax.swing.JButton (ActionPool.getInstance ().getProgressDeleteAction ());
+		final javax.swing.JButton deleteButton = new JToolButton (ActionPool.getInstance ().getProgressDeleteAction ());
 		deleteButton.setText ("");
 		progressesToolBar.add (deleteButton);
 		

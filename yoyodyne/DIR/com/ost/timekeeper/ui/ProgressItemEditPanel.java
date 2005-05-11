@@ -19,6 +19,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 
 /**
  * Pannello di modifica nodo di avanzamento.
@@ -268,10 +269,16 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		//                                6, 6,        //initX, initY
 		//                                6, 6);       //xPad, yPad
 		
-		/*
-		 * Inserimento pannello editazione.
-		 */
-		this.add (editPanel, java.awt.BorderLayout.CENTER);
+		{
+			final JPanel controlsPanel = new JPanel (new BorderLayout ());
+			controlsPanel .add (editPanel, BorderLayout.CENTER);
+			controlsPanel.setBorder (new BevelBorder (BevelBorder.RAISED));
+
+			/*
+			 * Inserimento pannello editazione.
+			 */
+			this.add (controlsPanel, java.awt.BorderLayout.CENTER);
+		}
 		
 		/*
 		 * Inserimento pulsantiera.

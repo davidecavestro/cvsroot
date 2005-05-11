@@ -372,5 +372,13 @@ space and avoid unnecessary heap allocation.
     }
 
 
-
+	/**
+	 * Ritonrna il valore dell'indice interno alla posizione specificata.
+	 *
+	 * @param i la posizione dell'indice.
+	 * @return il valore dell'indice interno alla posizione specificata.
+	 */	
+	public int getIndex (int i){
+		return indexes[i];
+	}
 }

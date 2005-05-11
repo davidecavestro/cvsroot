@@ -6,6 +6,9 @@
 
 package com.ost.timekeeper.ui;
 
+import com.jgoodies.plaf.Options;
+import com.jgoodies.plaf.plastic.PlasticLookAndFeel;
+import com.jgoodies.plaf.windows.ExtWindowsLookAndFeel;
 import com.jgoodies.uif_lite.panel.*;
 import java.awt.event.*;
 import java.util.*;
@@ -161,6 +164,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuTools = new javax.swing.JMenu ();
 		jMenuItemOptions = new javax.swing.JMenuItem ();
 		jMenuItemReports = new javax.swing.JMenuItem ();
+		jMenuItemDataStoreWizard = new javax.swing.JMenuItem ();
 		jMenuHelp = new javax.swing.JMenu ();
 		jMenuItemAbout = new javax.swing.JMenuItem ();
 		jMenuItemHelp = new javax.swing.JMenuItem ();
@@ -189,6 +193,22 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		//		mainToolbar.setLayout(new BoxLayout(mainToolbar, BoxLayout.Y_AXIS));
 		//		mainToolbar.setAlignmentY(mainToolbar.TOP_ALIGNMENT);
 		mainToolbar.putClientProperty ("jgoodies.headerStyle", "Both");
+		
+        mainToolbar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
+        // Swing
+        mainToolbar.putClientProperty(
+            Options.HEADER_STYLE_KEY,
+            Boolean.TRUE);
+        mainToolbar.putClientProperty(
+            PlasticLookAndFeel.BORDER_STYLE_KEY,
+            null);
+        mainToolbar.putClientProperty(
+            ExtWindowsLookAndFeel.BORDER_STYLE_KEY,
+            null);
+        mainToolbar.putClientProperty(
+            PlasticLookAndFeel.IS_3D_KEY,
+            Boolean.TRUE);
+		
 		
 		mainToolbar.add (nodeCreateButton);
 		
@@ -547,6 +567,9 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		jMenuTools.add (new javax.swing.JSeparator ());
 		
+		jMenuItemDataStoreWizard.setAction (ActionPool.getInstance ().getShowDataStoreWIzardDialog ());
+		jMenuTools.add (jMenuItemDataStoreWizard);
+		
 		jMenuTools.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tool"));
 		jMenuItemOptions.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "configure.png"));
 		jMenuItemOptions.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tools.options"));
@@ -703,6 +726,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JMenuItem jMenuItemStartNodeEdit;
 	private javax.swing.JMenuItem jMenuItemOptions;
 	private javax.swing.JMenuItem jMenuItemReports;
+	private javax.swing.JMenuItem jMenuItemDataStoreWizard;
 	private javax.swing.JMenuItem jMenuItemPaste;
 	private javax.swing.JMenuItem jMenuItemStart;
 	private javax.swing.JMenuItem jMenuItemCreateProgress;
