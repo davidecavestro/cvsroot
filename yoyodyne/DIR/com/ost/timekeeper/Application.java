@@ -55,7 +55,7 @@ public class Application extends Observable{
 	private DataStoreEnvironment _dataStoreEnvironment;
 	
 	/**
-	 * <TT>true</TT> se l'applicazione è in fase di inizializzazione.
+	 * <TT>true</TT> se l'applicazione ? in fase di inizializzazione.
 	 */
 	private boolean _onAppInit=false;
 	/** 
@@ -97,7 +97,7 @@ public class Application extends Observable{
 	 */
 	private static Application instance = null;
 	/**
-	 * Il timer lù per la notifica degli avanzamenti.
+	 * Il timer l? per la notifica degli avanzamenti.
 	 */
 	private javax.swing.Timer timer;
 	
@@ -245,9 +245,27 @@ public class Application extends Observable{
 		
 		try {
 			
-			final JPopupMenu popup = new JPopupMenu ();
+			final JPopupMenu popup = new JPopupMenu (new StringBuffer ()
+				.append (ApplicationData.getInstance ().getApplicationExternalName ())
+				.append (" v.")
+				.append (ApplicationData.getInstance ().getVersionNumber ()).toString ());
+			popup.add (new JSeparator ());
 			popup.add (new JMenuItem (ActionPool.getInstance ().getProgressStartAction ()));
 			popup.add (new JMenuItem (ActionPool.getInstance ().getProgressStopAction ()));
+
+			final JMenuItem jMenuItemAbout = new JMenuItem ();
+			jMenuItemAbout.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_QUOTE, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+			jMenuItemAbout.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help.about"));
+			jMenuItemAbout.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "info.png"));
+			jMenuItemAbout.addActionListener (new ActionListener (){
+				public void actionPerformed (ActionEvent e){
+					AboutBox.getInstance ().show ();
+				}
+			});
+			
+			popup.add (new JSeparator ());
+			popup.add (jMenuItemAbout);
+			
 			org.jdesktop.jdic.tray.TrayIcon trayIcon = new org.jdesktop.jdic.tray.TrayIcon(
 			ResourceSupplier.getImageIcon (ResourceClass.UI, "application.png"),
 			ApplicationData.getInstance ().getApplicationExternalName (),
@@ -454,15 +472,15 @@ public class Application extends Observable{
 	}
 	
 	/**
-	 * specifica se il manager della persistenza è utilizzabile allo stato attuale.
+	 * specifica se il manager della persistenza ? utilizzabile allo stato attuale.
 	 */
 	private boolean _usablePersistenceManager = false;
 	
 	/**
-	 * Ritorna <TT>true</TT> se il persistence manager specificato è utilizzabile.
+	 * Ritorna <TT>true</TT> se il persistence manager specificato ? utilizzabile.
 	 *
 	 * @param pm il manager della persistenza.
-	 *@todo un test decente di validità della connessione allo storage.
+	 *@todo un test decente di validit? della connessione allo storage.
 	 */	
 	private boolean testPersistenceManager (final PersistenceManager pm){
 		try {
@@ -543,7 +561,7 @@ public class Application extends Observable{
 	
     /**
      * Marca questo <tt>Observable</tt> come modificato; il metodo
-     * <tt>hasChanged</tt> ora ritornerà <tt>true</tt>.
+     * <tt>hasChanged</tt> ora ritorner? <tt>true</tt>.
      */
     public final synchronized void setChanged() {
 		super.setChanged ();
