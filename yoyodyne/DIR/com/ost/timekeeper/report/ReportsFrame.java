@@ -13,6 +13,8 @@ import com.ost.timekeeper.report.filter.*;
 import com.ost.timekeeper.report.filter.flavors.date.*;
 import com.ost.timekeeper.report.flavors.*;
 import com.ost.timekeeper.ui.*;
+import com.ost.timekeeper.ui.persistence.PersistenceStorage;
+import com.ost.timekeeper.ui.persistence.PersistenceUtils;
 import com.ost.timekeeper.ui.persistence.PersistentComponent;
 import com.ost.timekeeper.ui.persistence.UIPersister;
 import com.ost.timekeeper.ui.support.GradientPanel;
@@ -769,4 +771,20 @@ public class ReportsFrame extends JFrame implements Observer, FlavorModel, Flavo
 	 */	
 	public String getPersistenceKey (){return "reportsframe";}
 	
+	/**
+	 * Rende persistente lo statodi questo componente.
+	 * @param props lo storage delle impostazioni persistenti.
+	 */
+	public void makePersistent (final PersistenceStorage props){
+		PersistenceUtils.makeBoundsPersistent (props, this.getPersistenceKey (), this);
+	}
+	
+	/**
+	 * Ripristina lo stato persistente, qualora esista.
+	 * @param props lo storage delle impostazioni persistenti.
+	 * @return <TT>true</TT> se sono stati ripristinati i dati persistenti.
+	 */
+	public boolean restorePersistent (final PersistenceStorage props){
+		return PersistenceUtils.restorePersistentBounds (props, this.getPersistenceKey (), this);
+	}
 }
