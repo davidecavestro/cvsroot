@@ -113,7 +113,7 @@ public class ReportsFrame extends JFrame implements Observer, FlavorModel, Flavo
 		_tabbedPanel.addTab (
 		ResourceSupplier.getString (ResourceClass.UI, "controls", "report.flavor"),
 		ResourceSupplier.getImageIcon (ResourceClass.UI, "report-flavor.png"),
-		reportFlavorPanel,
+		new JScrollPane (reportFlavorPanel),
 		ResourceSupplier.getString (ResourceClass.UI, "controls", "report.flavor.hint")
 		);
 		
@@ -129,7 +129,7 @@ public class ReportsFrame extends JFrame implements Observer, FlavorModel, Flavo
 		_tabbedPanel.addTab (
 		ResourceSupplier.getString (ResourceClass.UI, "controls", "output"),
 		ResourceSupplier.getImageIcon (ResourceClass.UI, "mime.png"),
-		reportTypePanel,
+		new JScrollPane (reportTypePanel),
 		ResourceSupplier.getString (ResourceClass.UI, "controls", "report.type.hint")
 		);
 		
@@ -727,11 +727,11 @@ public class ReportsFrame extends JFrame implements Observer, FlavorModel, Flavo
 			ReportsFrame.this._tabbedPanel.insertTab (
 			ResourceSupplier.getString (ResourceClass.UI, "controls", "filters"),
 			ResourceSupplier.getImageIcon (ResourceClass.UI, "reports-filter.png"),
-			ReportsFrame.this._reportManager.getConfigurationPanel (),
+			new JScrollPane (ReportsFrame.this._reportManager.getConfigurationPanel ()),
 			ResourceSupplier.getString (ResourceClass.UI, "controls", "report.filters.hint"),
 			1
 			);
-			ReportsFrame.this.pack ();
+			//ReportsFrame.this.pack ();
 		}
 	}
 	
