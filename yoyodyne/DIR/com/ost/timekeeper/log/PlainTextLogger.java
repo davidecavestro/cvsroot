@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.*;
 
 /**
+ * Registra li eventi su file di testo piano.
  *
  * @author  davide
  */

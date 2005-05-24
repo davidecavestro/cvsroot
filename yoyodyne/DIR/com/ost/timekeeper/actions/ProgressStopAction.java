@@ -50,6 +50,7 @@ public final class ProgressStopAction extends javax.swing.AbstractAction impleme
 		app.notifyObservers (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
 		app.setChanged ();
 		app.notifyObservers (ObserverCodes.SELECTEDITEMCHANGE);
+		Application.getLogger ().debug ("Progress stopped");
 	}
 	
 	public void update (Observable o, Object arg) {

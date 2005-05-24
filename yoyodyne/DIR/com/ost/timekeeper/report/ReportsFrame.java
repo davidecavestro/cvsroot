@@ -13,6 +13,8 @@ import com.ost.timekeeper.report.filter.*;
 import com.ost.timekeeper.report.filter.flavors.date.*;
 import com.ost.timekeeper.report.flavors.*;
 import com.ost.timekeeper.ui.*;
+import com.ost.timekeeper.ui.persistence.PersistentComponent;
+import com.ost.timekeeper.ui.persistence.UIPersister;
 import com.ost.timekeeper.ui.support.GradientPanel;
 import com.ost.timekeeper.util.*;
 import com.toedter.calendar.*;
@@ -29,7 +31,7 @@ import javax.swing.event.EventListenerList;
  *
  * @author  davide
  */
-public class ReportsFrame extends JFrame implements Observer, FlavorModel, FlavorListener{
+public class ReportsFrame extends JFrame implements Observer, FlavorModel, FlavorListener, PersistentComponent{
 	
 	/**
 	 * Il formato di output del report generato.
@@ -49,12 +51,21 @@ public class ReportsFrame extends JFrame implements Observer, FlavorModel, Flavo
 	private final ReportManager _cumulateLocalProgressesReportManager = new CumulateLocalProgressesReportManager ();
 	
 	/** Costruttore. */
-	public ReportsFrame () {
+	private ReportsFrame () {
 		initComponents ();
 		this.addFlavorListener (this);
 		/* inizializza campo interno */
 		this._flavorModelImpl.setFlavor (SIMPLE_PROGRESSES);
-		pack ();
+
+		final boolean inited = UIPersister.getInstance ().register (this, true);
+		
+		if (!inited ){
+			pack ();
+			/*
+			 * centra
+			 */
+			this.setLocationRelativeTo (null);
+		}
 	}
 	
 	/**
@@ -132,10 +143,10 @@ public class ReportsFrame extends JFrame implements Observer, FlavorModel, Flavo
 		
 		this.setIconImage (ResourceSupplier.getImageIcon (ResourceClass.UI, "reports-frame.png").getImage ());
 		
-		/*
-		 * Centra sullo schermo.
-		 */
-		this.setLocationRelativeTo (null);
+//		/*
+//		 * Centra sullo schermo.
+//		 */
+//		this.setLocationRelativeTo (null);
 	}
 	
 	/**
@@ -751,5 +762,11 @@ public class ReportsFrame extends JFrame implements Observer, FlavorModel, Flavo
 		this._flavorModelImpl.flavorChanged (flavorEvent);
 	}
 	
+	/**
+	 * Ritorna la chiave usata per la persistenza degli attributi di questo componente.
+	 *
+	 * @return la chiave usata per la persistenza degli attributi di questo componente.
+	 */	
+	public String getPersistenceKey (){return "reportsframe";}
 	
 }

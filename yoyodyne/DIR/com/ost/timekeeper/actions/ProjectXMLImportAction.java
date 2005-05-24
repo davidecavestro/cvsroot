@@ -102,6 +102,8 @@ public final class ProjectXMLImportAction extends javax.swing.AbstractAction imp
 		} catch (Exception ex) {
 			throw new NestedRuntimeException(ex);
 		}
+		
+		Application.getLogger ().debug ("Project imported");
 	}
 	
 	public void update(Observable o, Object arg) {

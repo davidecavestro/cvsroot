@@ -59,6 +59,8 @@ public final class ProjectOpenAction extends javax.swing.AbstractAction implemen
 		};
 		worker.start();
 					
+		
+		Application.getLogger ().debug ("Project loaded");
 	}
 	
 	public void update(Observable o, Object arg) {

@@ -17,6 +17,10 @@ import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.*;
 import com.ost.timekeeper.actions.commands.MoveProgress;
 import com.ost.timekeeper.model.*;
+import com.ost.timekeeper.ui.persistence.PersistenceStorage;
+import com.ost.timekeeper.ui.persistence.PersistenceUtils;
+import com.ost.timekeeper.ui.persistence.PersistentComponent;
+import com.ost.timekeeper.ui.persistence.UIPersister;
 import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
@@ -29,7 +33,7 @@ import java.awt.image.ImageObserver;
  *
  * @author  davide
  */
-public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSelectionListener, TreeModelListener, Observer{
+public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSelectionListener, TreeModelListener, Observer, PersistentComponent{
 	
 	/**
 	 * Il percorso determinato dalla selezione corrente nell'albero.
@@ -154,6 +158,8 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 		
 		this.setTransferHandler (new ProgressTableTransferHandler ());
 		this.setImageObserver ();
+		
+		final boolean inited = UIPersister.getInstance ().register (this, true);
 	}
 	
 	/**
@@ -362,5 +368,31 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 			return (flags & (ALLBITS | ABORT)) == 0;
 		}
 	}
+	
+	/**
+	 * Ritorna la chiave usata per la persistenza degli attributi di questo componente.
+	 *
+	 * @return la chiave usata per la persistenza degli attributi di questo componente.
+	 */	
+	public String getPersistenceKey (){return "subtreeprogressestable";}
+	
+	/**
+	 * Rende persistente lo statodi questo componente.
+	 * @param props lo storage delle impostazioni persistenti.
+	 */
+	public void makePersistent (final PersistenceStorage props){
+		PersistenceUtils.makeColumnWidthsPersistent (props, this.getPersistenceKey (), this);
+	}
+	
+	/**
+	 * Ripristina lo stato persistente, qualora esista.
+	 * @param props lo storage delle impostazioni persistenti.
+	 * @return <TT>true</TT> se sono stati ripristinati i dati persistenti.
+	 */
+	public boolean restorePersistent (final PersistenceStorage props){
+		PersistenceUtils.restorePersistentColumnWidths (props, this.getPersistenceKey (), this);
+		return true;
+	}
+		
 	
 }

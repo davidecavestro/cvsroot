@@ -21,6 +21,10 @@ import com.ost.timekeeper.persistence.*;
 import com.ost.timekeeper.view.*;
 import com.ost.timekeeper.ui.*;
 import com.ost.timekeeper.util.*;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Document;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.html.HTMLDocument;
 
 /**
  * Il controller centrale dell'applicazione.
@@ -174,22 +178,33 @@ public class Application extends Observable{
 		
 		
 		try {
+			SplashScreen.getInstance ().startSplash ();
+		try {
 			final StringBuffer sb = new StringBuffer ();
 			sb.append (_applicationOptions.getLogDirPath () ).append ("/")
 			.append (CalendarUtils.getTS (Calendar.getInstance ().getTime (), CalendarUtils.FILENAME_TIMESTAMP_FORMAT))
 			.append (".txt");
 			
 			final File plainTextLogFile = new File (sb.toString ());
+			final StyledDocument logDocument = new DefaultStyledDocument();
+			
+//			logDocument.setParser (new javax.swing.text.html.parser.ParserDelegator ());
+			
+			LogFrame.getInstance ().init (logDocument);
+			
 			_logger = 
 				new CompositeLogger (
 					new PlainTextLogger (
-						plainTextLogFile, true), null);
+						plainTextLogFile, true), 
+					new ConsoleLogger (
+						logDocument, true)
+						);
+			
+			
 		} catch (IOException ioe){
 			System.out.println ("Logging disabled. CAUSE: "+ExceptionUtils.getStackTrace (ioe));
 		}
-		Application a = null;
-		try {
-			SplashScreen.getInstance ().startSplash ();
+		Application a;
 			try {
 				a = getInstance(args);
 
@@ -453,6 +468,7 @@ public class Application extends Observable{
 		if (this.pm.currentTransaction().isActive ()){
 			this.pm.currentTransaction().commit();
 		}
+		this.pm.currentTransaction().setOptimistic (false);
 //		this.pm.currentTransaction().begin();
 	}
 	

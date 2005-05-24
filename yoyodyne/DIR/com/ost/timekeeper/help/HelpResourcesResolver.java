@@ -39,7 +39,7 @@ public class HelpResourcesResolver {
 		try {
 			this._properties.load (new FileInputStream (Application.getEnvironment ().getApplicationDirPath ()+PROPERTIES_PATH));
 		} catch (IOException ioe){
-			Application.getLogger ().warning ("Mising help resources mapping file", ioe);
+			System.out.println ("Missing help resources mapping file");
 		}
 	}
 	

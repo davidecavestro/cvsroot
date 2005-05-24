@@ -48,8 +48,9 @@ public final class DeleteProgress extends AbstractCommand {
 			final ProgressItem node = this._deletingProgress.getProgressItem ();
 			if (node!=null){
 				node.deleteProgress (this._deletingProgress);
+//				pm.makePersistent (node);
 			}
-			app.getPersistenceManager ().deletePersistent (this._deletingProgress);
+			pm.deletePersistent (this._deletingProgress);
 			
 			tx.commit ();
 		} catch (final Throwable t){

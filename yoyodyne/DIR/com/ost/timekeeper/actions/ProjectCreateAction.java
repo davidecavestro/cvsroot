@@ -66,6 +66,8 @@ public final class ProjectCreateAction extends javax.swing.AbstractAction implem
 				throw new NestedRuntimeException (t);
 			}
 		}
+		
+		Application.getLogger ().debug ("Created project");
 	}
 	
 	/**

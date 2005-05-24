@@ -41,6 +41,8 @@ public final class ReportDataGenerator {
 	 * @return il report.
 	 */
 	public void generate ( final DataExtractor extractor, final ReportPreferences prefs, final JRBindings jasperBindings){
+		Application.getLogger ().debug ("Starting report generation process");
+		
 		final StringBuffer logBuffer = new StringBuffer ();
 		logBuffer .append ("Generating report data.\n");
 		logBuffer .append ("extractor: ").append (extractor).append ("\n");
@@ -87,6 +89,7 @@ public final class ReportDataGenerator {
 		} catch (final Exception e){
 			throw new NestedRuntimeException (e);
 		}
+		Application.getLogger ().debug ("Report generation process successfully completed");
 	}
 	
 	private void dispatchAction (final String taskName, final JasperPrint print, String fileName) throws JRException {

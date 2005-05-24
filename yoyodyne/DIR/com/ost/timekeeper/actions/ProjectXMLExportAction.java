@@ -135,6 +135,8 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 			Application.getLogger ().error ( "Error exporting project. ", ex);
 			throw new NestedRuntimeException(ex);
 		}
+		
+		Application.getLogger ().debug ("Project exported");
 	}
 	
 	public void update(Observable o, Object arg) {

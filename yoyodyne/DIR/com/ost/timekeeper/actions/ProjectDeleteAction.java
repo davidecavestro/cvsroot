@@ -42,6 +42,8 @@ public final class ProjectDeleteAction extends javax.swing.AbstractAction implem
 		}
 		new DeleteProject (app.getProject ()).execute ();
 		app.setProject (null);
+		
+		Application.getLogger ().debug ("Project erased");
 	}
 	
 	public void update (Observable o, Object arg) {

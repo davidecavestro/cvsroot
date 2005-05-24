@@ -74,6 +74,8 @@ public final class ProgressStartAction extends javax.swing.AbstractAction implem
 		app.notifyObservers (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
 		app.setChanged ();
 		app.notifyObservers (ObserverCodes.SELECTEDITEMCHANGE);
+		
+		Application.getLogger ().debug ("Started progress");
 	}
 	
 	public void update (Observable o, Object arg) {

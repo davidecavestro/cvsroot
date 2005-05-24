@@ -9,6 +9,10 @@ package com.ost.timekeeper.ui;
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.commands.*;
 import com.ost.timekeeper.model.*;
+import com.ost.timekeeper.ui.persistence.PersistenceStorage;
+import com.ost.timekeeper.ui.persistence.PersistenceUtils;
+import com.ost.timekeeper.ui.persistence.PersistentComponent;
+import com.ost.timekeeper.ui.persistence.UIPersister;
 import com.ost.timekeeper.ui.support.*;
 import com.ost.timekeeper.util.IllegalOperationException;
 import com.ost.timekeeper.util.ResourceClass;
@@ -39,7 +43,7 @@ import javax.swing.tree.TreeCellEditor;
  * @todo implementare funzionalit? TreeTable.
  * @todo supporto icone custom.
  */
-public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treetable.JTreeTable implements Observer{
+public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treetable.JTreeTable implements Observer, PersistentComponent{
 	
 	private ProgressTreeModel _progressTreeModel;
 	
@@ -54,6 +58,7 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		ToolTipManager.sharedInstance ().registerComponent (this.tree);
 		this.tree.setCellRenderer (progressItemCellRenderer);
 		init (progressTreeModel);
+		final boolean inited = UIPersister.getInstance ().register (this, true);
 	}
 	
 	/**
@@ -216,18 +221,19 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 //			if (path!=null){
 //				return (ProgressItem)path.getLastPathComponent ();
 //			} else {
-				if (dragPath!=null){
-					System.out.println ("Exporting last drag path "+dragPath.getLastPathComponent ());
-					return new ProgressItem[] {(ProgressItem)dragPath.getLastPathComponent ()};
-				} else if (ProgressItemTree.this.getTree ().getSelectionPath ()!=null){
-					System.out.println ("Exporting current selection path "+(ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ());
-					return new ProgressItem[] {(ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ()};
-				} else {
+//				if (dragPath!=null){
+//					System.out.println ("Exporting last drag path "+dragPath.getLastPathComponent ());
+//					return new ProgressItem[] {(ProgressItem)dragPath.getLastPathComponent ()};
+//				} else 
+//				if (ProgressItemTree.this.getTree ().getSelectionPath ()!=null){
+//					System.out.println ("Exporting current selection path "+(ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ());
+//					return new ProgressItem[] {(ProgressItem)ProgressItemTree.this.getTree ().getSelectionPath ().getLastPathComponent ()};
+//				} else {
 					int x = firstMouseEvent.getX ();
 					int y = firstMouseEvent.getY ();
 					System.out.println ("Exporting first mouse event path "+(ProgressItem)ProgressItemTree.this.getTree ().getPathForLocation (x, y).getLastPathComponent ());
 					return new ProgressItem[] {(ProgressItem)ProgressItemTree.this.getTree ().getPathForLocation (x, y).getLastPathComponent ()};
-				}
+//				}
 
 //			}
 		}
@@ -242,6 +248,7 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 			try {
 				for (int i=0;i<progressItems.length;i++){
 					final ProgressItem progressItem = progressItems[i];
+					System.out.println ("Importing node: "+progressItem);
 					if (progressItem==target){
 						/* Evita drop su se stesso. */
 						continue;
@@ -417,4 +424,28 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		}
 	}
 	
+	/**
+	 * Ritorna la chiave usata per la persistenza degli attributi di questo componente.
+	 *
+	 * @return la chiave usata per la persistenza degli attributi di questo componente.
+	 */	
+	public String getPersistenceKey (){return "progressitemtree";}
+	
+	/**
+	 * Rende persistente lo statodi questo componente.
+	 * @param props lo storage delle impostazioni persistenti.
+	 */
+	public void makePersistent (final PersistenceStorage props){
+		PersistenceUtils.makeColumnWidthsPersistent (props, this.getPersistenceKey (), this);
+	}
+	
+	/**
+	 * Ripristina lo stato persistente, qualora esista.
+	 * @param props lo storage delle impostazioni persistenti.
+	 * @return <TT>true</TT> se sono stati ripristinati i dati persistenti.
+	 */
+	public boolean restorePersistent (final PersistenceStorage props){
+		PersistenceUtils.restorePersistentColumnWidths (props, this.getPersistenceKey (), this);
+		return true;
+	}
 }

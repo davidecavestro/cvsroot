@@ -81,5 +81,6 @@ public final class UpdateNode extends AbstractCommand {
 			tx.rollback ();
 			throw new com.ost.timekeeper.util.NestedRuntimeException (t);
 		}
+		Application.getLogger ().debug ("Node updated");
 	}
 }

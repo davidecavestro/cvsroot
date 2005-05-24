@@ -581,6 +581,20 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		jMenuTools.add (jMenuItemOptions);
 		
+		final JMenuItem logMenuItem = new JMenuItem ();
+		logMenuItem.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_L, 0));
+		logMenuItem.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "log-frame.png"));
+		logMenuItem.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tools.log_console"));
+		logMenuItem.addActionListener (new ActionListener (){
+			public void actionPerformed (ActionEvent e){
+				LogFrame.getInstance ().show ();
+			}
+		});
+		
+		jMenuTools.add (logMenuItem);
+		
+		jMenuHelp.add (jMenuTools);
+		
 		menuBar.add (jMenuTools);
 		
 		
@@ -851,7 +865,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			currentDurationLabel.setText (sb.toString ());
 			
 			currentDurationLabel.revalidate ();
-			Application.getLogger ().debug ("updating duration label");
+//			Application.getLogger ().debug ("updating duration label");
 			
 		} else if (arg!=null && (arg.equals (ObserverCodes.PROCESSINGCHANGE))){
 			Application app = Application.getInstance ();

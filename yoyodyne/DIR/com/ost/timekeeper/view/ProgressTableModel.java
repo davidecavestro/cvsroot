@@ -39,7 +39,7 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	 * @param root il nodo radice.
 	 */
 	public ProgressTableModel(ProgressItem root) {
-		Application.getLogger ().debug ("Creating new ProgressTableModel");
+//		Application.getLogger ().debug ("Creating new ProgressTableModel");
 		this.currentPeriodIdx=-1;
 		this.columns = new Object[]{
 			/*
