@@ -23,20 +23,5 @@ Segue la lista dei file necessari:
  - jsci-core.jar
  - jsci-xtra.jar
  - skeleton.jar (jgoodies)
- - xalan.jar (hack 1.5)
- - scrollabledesktop.jar=======
-   controllare eventuale soluzione in release succesive JDORI}.
- - looks.jar (jgoodies Look&Feel)
- - animation.jar(jgoodies animation framework)
- - jdom.jar (JDOM)
- - jcalendar.jar
- - jasperreports.jar
- - itext.jar
- - commons-beanutils.jar
- - commons-collections.jar
- - commons-digester.jar
- - commons-logging-api.jar
- - commons-logging.jar
- - jsci-core.jar
- - jsci-xtra.jar
- - skeleton.jar (jgoodies)>>>>>>> 1.2
+ - jdic.jar (Java Desktop Integration Components)
+ - poi.jar (hssf per jasperreports)

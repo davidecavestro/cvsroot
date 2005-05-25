@@ -62,7 +62,7 @@
 						isPrintRepeatedValues="true"
 						isRemoveLineWhenBlank="true"
 						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
+						isPrintWhenDetailOverflows="true"/>
 					<textElement textAlignment="Justified" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica" size="6" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
@@ -126,6 +126,24 @@
 						isPrintWhenDetailOverflows="false"/>
 					<graphicElement stretchType="NoStretch" pen="Thin" fill="Solid" />
 				</ellipse>
+				<line direction="TopDown">
+					<reportElement
+						mode="Opaque"
+						x="13"
+						y="14"
+						width="412"
+						height="1"
+						forecolor="#CCCCCC"
+						backcolor="#FFFFFF"
+						key="line-1"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<graphicElement stretchType="NoStretch" pen="Dotted" fill="Solid" />
+				</line>
 			</band>
 		</detail>
 		<columnFooter>
