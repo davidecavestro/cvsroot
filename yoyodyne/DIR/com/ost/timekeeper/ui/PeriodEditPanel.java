@@ -102,12 +102,12 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 	/**
 	 * COmponente editazione DESCRIZIONE.
 	 */
-	private final javax.swing.JTextArea descriptionEditor = new javax.swing.JTextArea (3, 20);
+	private final javax.swing.JTextArea descriptionEditor = new javax.swing.JTextArea (2, 20);
 	
 	/**
 	 * Componente editazione NOTE.
 	 */
-	private final javax.swing.JTextArea notesEditor = new javax.swing.JTextArea (5, 20);
+	private final javax.swing.JTextArea notesEditor = new javax.swing.JTextArea (3, 20);
 	
 	/**
 	 * Pulsantiera.
@@ -350,9 +350,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		c.weighty = 1.0;
 		c.gridx = 1;
 		c.gridy = 5;
-		editPanel.add (new JScrollPane (descriptionEditor,
-		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), c);
+		editPanel.add (new JScrollPane (descriptionEditor), c);
 		
 		/*
 		 * Inserimento editazione NOTE.
@@ -380,7 +378,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		
 		{
 			final JPanel controlsPanel = new JPanel (new BorderLayout ());
-			controlsPanel .add (editPanel, BorderLayout.CENTER);
+			controlsPanel .add (new JScrollPane (editPanel), BorderLayout.CENTER);
 			controlsPanel.setBorder (new BevelBorder (BevelBorder.RAISED));
 
 			/*

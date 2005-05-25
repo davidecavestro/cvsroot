@@ -71,12 +71,12 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 	/**
 	 * COmponente editazione DESCRIZIONE.
 	 */
-	final javax.swing.JTextArea descriptionEditor = new javax.swing.JTextArea (3, 20);
+	final javax.swing.JTextArea descriptionEditor = new javax.swing.JTextArea (2, 20);
 	
 	/**
 	 * Componente editazione NOTE.
 	 */
-	final javax.swing.JTextArea notesEditor = new javax.swing.JTextArea (5, 20);
+	final javax.swing.JTextArea notesEditor = new javax.swing.JTextArea (3, 20);
 	
 	/**
 	 * Pulsantiera.
@@ -271,7 +271,7 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		
 		{
 			final JPanel controlsPanel = new JPanel (new BorderLayout ());
-			controlsPanel .add (editPanel, BorderLayout.CENTER);
+			controlsPanel .add (new JScrollPane (editPanel), BorderLayout.CENTER);
 			controlsPanel.setBorder (new BevelBorder (BevelBorder.RAISED));
 
 			/*
