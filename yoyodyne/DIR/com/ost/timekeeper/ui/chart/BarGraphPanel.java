@@ -98,6 +98,7 @@ public class BarGraphPanel extends JPanel{
 		this._dataModel = createData (this._root, this._date, this._periodLength, this._periodCount);
 		
 		this._graph = new JBarGraph (this._dataModel);
+		this._graph.setBackground (Color.WHITE);
 		
 		final Color localSerieColor = Color.GREEN;
 		final Color subtreeSerieColor = Color.YELLOW;
