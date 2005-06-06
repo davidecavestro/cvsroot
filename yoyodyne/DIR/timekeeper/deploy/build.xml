@@ -38,7 +38,10 @@
 		<property location="${work.dir}/tmp" name="tmp.dir"/>
 		<property location="${work.dir}/log" name="log.dir"/>
 
+<!--
 		<property name="app.dir.name" value="${project.name}-${file.ts.TODAY}" />
+-->
+		<property name="app.dir.name" value="${project.name}" />
 		<property location="${app.dir.name}" name="app.dir"/>
 		<property location="${app.dir}/lib" name="app.lib.dir"/>
 		<property location="${app.dir}/res" name="app.res.dir"/>
@@ -202,6 +205,12 @@
 			<include name="*.jasper"/>
 			</fileset>
 		</copy>
+		<!-- Necessario per eventuali subreports-->
+		<copy todir="${classes.dir}/">
+			<fileset dir="${src.dir}/report/">
+			<include name="*.jasper"/>
+			</fileset>
+		</copy>
 	</target>
 
 	<!-- Genera l'archivio contenente il core dell'applicazione. -->
@@ -214,14 +223,14 @@
 			file="${release.properties}"
 			comment="Release properties">
 			<entry  key="build.number" value="${build.number}"/>
-			<entry  key="build.date" type="date" value="now" pattern="yyyy-MM-DD HH:mm:ss.SSS"/>
+			<entry  key="build.date" type="date" value="now" pattern="yyyy-MM-dd HH:mm:ss.SSS"/>
 		</propertyfile>		
 		
 		<jar basedir="${classes.dir}" compress="true" jarfile="${app.jar}" >
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Main-Class" value="com.ost.timekeeper.Application"/>
-				<attribute name="Class-Path" value=". lib/jdo.jar lib/jdori.jar lib/btree.jar lib/xalan.jar lib/jhall.jar res/i18n.jar lib/xerces.jar res/images.jar res/help.jar lib/looks.jar lib/skeleton.jar lib/animation.jar lib/jdom.jar lib/jcalendar.jar lib/jasperreports.jar lib/commons-beanutils.jar lib/commons-collections.jar lib/commons-digester.jar lib/commons-logging-api.jar lib/commons-logging.jar lib/jsci-xtra.jar lib/jsci-core.jar lib/itext.jar lib/scrollabledesktop.jar"/>
+				<attribute name="Class-Path" value=". lib/jdo.jar lib/jdori.jar lib/btree.jar lib/xalan.jar lib/jhall.jar res/i18n.jar lib/xerces.jar res/images.jar res/help.jar lib/looks.jar lib/skeleton.jar lib/animation.jar lib/jdom.jar lib/jcalendar.jar lib/jasperreports.jar lib/commons-beanutils.jar lib/commons-collections.jar lib/commons-digester.jar lib/commons-logging-api.jar lib/commons-logging.jar lib/jsci-xtra.jar lib/jsci-core.jar lib/itext.jar lib/scrollabledesktop.jar lib/tray.jar lib/jdic.jar lib/jdic-native.jar lib/poi.jar"/>
 				<attribute name="Implementation-Title" value="${project.name}"/>
 				<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
 				<attribute name="Implementation-Vendor" value="Davide Cavestro"/>
