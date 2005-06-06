@@ -189,6 +189,16 @@ public class ProgressTreeModel extends com.ost.timekeeper.ui.support.treetable.A
 		if (o instanceof Application){
 			if (arg!=null && arg.equals(ObserverCodes.PROJECTCHANGE)){
 				this.load (((Application)o).getProject());
+			} else if (arg!=null && arg.equals(ObserverCodes.SELECTEDITEMCHANGE)){
+				/*
+				 * pessimizzazione!!!
+				 */
+				final ProgressItem[] path = this.getPathToRoot(Application.getInstance ().getCurrentItem ());
+				if (path!=null){
+					final TreeModelEvent tme = new TreeModelEvent (this, path);
+					this.fireTreeNodesChanged (this, tme.getPath (), tme.getChildIndices (), tme.getChildren ());
+//					this.fireTableChanged(this, tme.getPath (), tme.getChildIndices (), tme.getChildren ());
+				}
 //			} else if (arg!=null && arg.equals(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE)){
 //				/*
 //				 * pessimizzazione!!!
