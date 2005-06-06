@@ -366,4 +366,38 @@ public final class ActionPool extends Observable{
 		return this._showDataStoreWIzardDialog;
 	}
 	
+	/**
+	 * L'azione visualizzazione dialogo di modifica progetto.
+	 */
+	private StartProjectEdit _startProjectEdit;
+	
+	/**
+	 * Ritorna l'azione visualizzazione dialogo di modifica progetto.
+	 * @return l'azione visualizzazione dialogo di modifica progetto.
+	 */
+	public StartProjectEdit getStartProjectEdit (){
+		if (this._startProjectEdit==null){
+			//istanziazione lazy
+			this._startProjectEdit = new StartProjectEdit ();
+		}
+		return this._startProjectEdit;
+	}
+	
+	/**
+	 * Gestisce l'abilitazione del flusso di aggiornamento dello stato persistente di un progetto.
+	 */
+	private ProjectUpdateAction projectUpdateAction;
+	
+	/**
+	 * Ritorna l'azione che gestisce l'abilitazione del flusso di aggiornamento dello stato persistente di un progetto.
+	 * @return l'azione che gestisce l'abilitazione del flusso di aggiornamento dello stato persistente di un progetto.
+	 */
+	public ProjectUpdateAction getProjectUpdateAction (){
+		if (this.projectUpdateAction==null){
+			//istanziazione lazy
+			this.projectUpdateAction = new ProjectUpdateAction ();
+		}
+		return this.projectUpdateAction;
+	}
+	
 }

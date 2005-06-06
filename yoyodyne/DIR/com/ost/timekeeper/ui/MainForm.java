@@ -142,6 +142,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuItemNewProject = new javax.swing.JMenuItem ();
 		jMenuItemOpen = new javax.swing.JMenuItem ();
 		jMenuItemDeleteProject = new javax.swing.JMenuItem ();
+		jMenuItemUpdateProject = new javax.swing.JMenuItem ();
 		jMenuItemSaveProject = new javax.swing.JMenuItem ();
 		jMenuExportProject = new javax.swing.JMenu ();
 		jMenuItemXMLProjectExport = new javax.swing.JMenuItem ();
@@ -441,6 +442,11 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuItemOpen.setAction (ActionPool.getInstance ().getProjectOpenAction ());
 		jMenuProject.add (jMenuItemOpen);
 		
+		//update project
+		jMenuItemUpdateProject.setAction (ActionPool.getInstance ().getStartProjectEdit ());
+		jMenuProject.add (jMenuItemUpdateProject);
+
+		//close project
 		jMenuItemCloseProject.setAction (ActionPool.getInstance ().getProjectCloseAction ());
 		jMenuProject.add (jMenuItemCloseProject);
 		
@@ -735,6 +741,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	private javax.swing.JMenuItem jMenuItemNewProject;
 	private javax.swing.JMenuItem jMenuItemOpen;
 	private javax.swing.JMenuItem jMenuItemDeleteProject;
+	private javax.swing.JMenuItem jMenuItemUpdateProject;
 	private javax.swing.JMenuItem jMenuItemSaveProject;
 	private javax.swing.JMenuItem jMenuItemCreateNode;
 	private javax.swing.JMenuItem jMenuItemStartNodeEdit;

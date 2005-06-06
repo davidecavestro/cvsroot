@@ -279,7 +279,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		 */
 		descriptionLabel.setLabelFor (descriptionEditor);
 		descriptionLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "description"));
-		descriptionEditor.setMinimumSize (new Dimension (120, 20));
+//		descriptionEditor.setMinimumSize (new Dimension (120, 20));
 		descriptionEditor.addKeyListener (this);
 		
 		/*
@@ -287,7 +287,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		 */
 		notesLabel.setLabelFor (notesEditor);
 		notesLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "notes"));
-		notesEditor.setMinimumSize (new Dimension (120, 20));
+//		notesEditor.setMinimumSize (new Dimension (120, 20));
 		notesEditor.addKeyListener (this);
 		
 		final GridBagConstraints c = new GridBagConstraints ();
@@ -395,7 +395,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		/*
 		 * Imposta dimensione minima.
 		 */
-		this.setMinimumSize (new Dimension (250, 150));
+//		this.setMinimumSize (new Dimension (250, 150));
 	}
 	
 	/**

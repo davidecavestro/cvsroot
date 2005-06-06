@@ -94,6 +94,8 @@ public class Application extends Observable{
 		this.addObserver(actionPool.getStartNodeEdit ());
 		this.addObserver(actionPool.getStartProgressEdit ());
 		this.addObserver(actionPool.getStartNewProgressCreation ());
+		this.addObserver(actionPool.getStartProjectEdit ());
+		this.addObserver(actionPool.getProjectUpdateAction ());
 	}
 	
 	/**
