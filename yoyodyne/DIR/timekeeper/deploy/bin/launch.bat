@@ -9,6 +9,7 @@ IF NOT EXIST "%JAVACMD%" goto JdkError
 set PAR1=%1%
 set PAR2=%2%
 set PAR32=%3%
+set PATH=$PATH;..\lib\
 
 "%JAVACMD%" -Xmx64m -jar ..\timekeeper.jar %PAR1% %PAR2% %PAR3%
 
