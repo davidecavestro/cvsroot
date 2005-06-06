@@ -43,6 +43,12 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 	 * Il tag di nome del nodo.
 	 */
 	public final static String PROGRESSITEM_NAME_ELEMENT = "name";
+	
+	/**
+	 * Il tag della gerarchia del nodo.
+	 */
+	public final static String PROGRESSITEM_HIERARCHY = "hierarchy";
+	
 	/**
 	 * Il tag di durata avanzamenti in millisecondi.
 	 */
@@ -254,6 +260,27 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 				{
 					final Element element = new Element (PROGRESSITEM_NAME_ELEMENT);
 					element.setText (progressItem.getName ());
+					nodeElement.addContent (element);
+				}
+				
+				{
+					/* Gerarchia */
+					final Element element = new Element (PROGRESSITEM_HIERARCHY);
+					final StringBuffer hierarchyData = new StringBuffer ();
+					ProgressItem parent = progressItem.getParent ();
+					while (parent!=null)
+					{
+						final StringBuffer ancestorData = new StringBuffer ();
+						ancestorData.append ("/");
+						final String code = parent.getCode ();
+						if (code!=null && code.length ()>0){
+							ancestorData.append (code).append (" - ");
+						}
+						ancestorData.append (parent.getName ()).append (" ");
+						hierarchyData.insert (0, ancestorData);
+						parent = parent.getParent ();
+					}  
+					element.setText (hierarchyData.toString ());
 					nodeElement.addContent (element);
 				}
 				
