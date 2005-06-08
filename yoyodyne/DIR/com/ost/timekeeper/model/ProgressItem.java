@@ -374,8 +374,8 @@ public final class ProgressItem extends Observable{
 	 * @return gli avanzamenti apparteneneti al sottoalbero.
 	 */
 	public List getSubtreeProgresses (){
-		final List subProgresses = new ArrayList (this.getProgresses ());
-		for (final Iterator it = this.getChildren ().iterator (); it.hasNext ();){
+		final List subProgresses = new ArrayList (this.progresses);
+		for (final Iterator it = this.children.iterator (); it.hasNext ();){
 			subProgresses.addAll (((ProgressItem)it.next ()).getSubtreeProgresses ());
 		}
 		return subProgresses;
