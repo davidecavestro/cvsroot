@@ -12,9 +12,10 @@ import com.ost.timekeeper.model.ProgressItem;
 import com.ost.timekeeper.model.Project;
 import com.ost.timekeeper.util.ResourceClass;
 import com.ost.timekeeper.util.ResourceSupplier;
-import com.tomtessier.scrollabledesktop.BaseInternalFrame;
+//import com.tomtessier.scrollabledesktop.BaseInternalFrame;
 import java.util.Observer;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JTabbedPane;
 
 /**
@@ -22,7 +23,7 @@ import javax.swing.JTabbedPane;
  *
  * @author  davide
  */
-public class ChartFrame extends BaseInternalFrame implements Observer{
+public class ChartFrame extends JInternalFrame implements Observer{
 	
 	private RingChartPanel _ringChartPanel;
 	private BarGraphPanel _barGraphPanel;

@@ -93,11 +93,17 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 				final Progress progress = (Progress)value;
 				final Duration duration = progress.getDuration ();
 				final StringBuffer sb = new StringBuffer ();
-				/*
-				sb.append (durationNumberFormatter.format(duration.getDays()))
-				.append (":")
-				 */
-				sb.append (durationNumberFormatter.format (duration.getHours ()))
+
+//				final long days = duration.getDays();
+//				
+//				if (0==days){
+//					sb.append ("__");
+//				} else {
+//					sb.append (durationNumberFormatter.format(duration.getDays()));
+//				}
+//				sb.append (" - ");
+				
+				sb.append (durationNumberFormatter.format (duration.getTotalHours ()))
 				.append (":")
 				.append (durationNumberFormatter.format (duration.getMinutes ()))
 				.append (":")
@@ -235,7 +241,7 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 	 */
 	public void reloadModel (ProgressItem root){
 		/*
-		 * Il tableMOdel effettivo può essere di due tipi:
+		 * Il tableMOdel effettivo pu? essere di due tipi:
 		 * il wrapper per l'ordinamento (ProgressTableSorter)
 		 * oppure l'originale ProgressTableModel.
 		 */

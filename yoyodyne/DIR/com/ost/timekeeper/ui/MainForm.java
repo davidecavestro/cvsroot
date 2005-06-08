@@ -482,7 +482,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuImportProject.add (jMenuItemXMLProjectImport);
 		
 		//separatore
-		//evitiamo uscite involontarie, almeno finchè non si implementa l'alert
+		//evitiamo uscite involontarie, almeno finche' non si implementa l'alert
 		//@todo implementare alert richiesta uscita applicazione
 		//jMenuItemFinish.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
 		jMenuItemFinish.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "file.exit"));
@@ -860,11 +860,17 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 				duration = emptyDuration;
 			}
 			final StringBuffer sb = new StringBuffer ();
-			/*
-			sb.append (durationNumberFormatter.format(duration.getDays()))
-			.append (":")
-			 */
-			sb.append (durationNumberFormatter.format (duration.getHours ()))
+
+//			final long days = duration.getDays();
+//
+//			if (0==days){
+//				sb.append ("__");
+//			} else {
+//				sb.append (durationNumberFormatter.format(duration.getDays()));
+//			}
+//			sb.append (" - ");
+				
+			sb.append (durationNumberFormatter.format (duration.getTotalHours ()))
 			.append (":")
 			.append (durationNumberFormatter.format (duration.getMinutes ()))
 			.append (":")
@@ -970,7 +976,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 	}
 	
 	/**
-	 * Ritorna l'ampiezza dell'albero.  L'implementazione attuale ritorna in realtà la posizione dello splitter.
+	 * Ritorna l'ampiezza dell'albero.  L'implementazione attuale ritorna in realta' la posizione dello splitter.
 	 *
 	 * @return l'ampiezza dell'albero.
 	 */

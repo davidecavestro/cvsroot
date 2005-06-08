@@ -12,7 +12,7 @@ import com.ost.timekeeper.model.*;
 import com.ost.timekeeper.ui.support.JToolButton;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
-import com.tomtessier.scrollabledesktop.*;
+//import com.tomtessier.scrollabledesktop.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Observable;
@@ -25,7 +25,7 @@ import javax.swing.event.*;
  *
  * @author  davide
  */
-public final class ProgressListFrame extends BaseInternalFrame {
+public final class ProgressListFrame extends JInternalFrame {
 
 	/**
 	 * La tabella.
@@ -101,7 +101,7 @@ public final class ProgressListFrame extends BaseInternalFrame {
 		this.progressesListCombo = new JComboBox (
 		/*
 		 * valori possibili.
-		 * @@@ ATTENZIONE: la posizione è direttamente mappata nel gesore azione.
+		 * @@@ ATTENZIONE: la posizione ? direttamente mappata nel gesore azione.
 		 */
 		new Object[]{ProgressListType.LOCAL, ProgressListType.SUBTREE
 //		ResourceSupplier.getString (ResourceClass.UI, "controls", "local"), 

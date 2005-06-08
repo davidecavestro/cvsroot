@@ -8,15 +8,16 @@ package com.ost.timekeeper.ui;
 
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.util.*;
-import com.tomtessier.scrollabledesktop.*;
+//import com.tomtessier.scrollabledesktop.*;
 import java.awt.*;
+import javax.swing.JInternalFrame;
 
 /**
  * Il frame per la gestione del dettaglio avanzamento.
  *
  * @author  davide
  */
-public final class ProgressInspectorFrame extends BaseInternalFrame {
+public final class ProgressInspectorFrame extends JInternalFrame {
 	
 	/**
 	 * Istanza singleton.

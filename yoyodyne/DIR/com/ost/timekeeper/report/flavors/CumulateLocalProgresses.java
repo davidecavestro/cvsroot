@@ -84,12 +84,12 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 	public final static String PROGRESS_ELEMENT = "progress";
 	
 	/**
-	 * Identificatore dell'attributo <TT>FROM</TT> in qualità di obiettivo di un filtro.
+	 * Identificatore dell'attributo <TT>FROM</TT> in qualita' di obiettivo di un filtro.
 	 */
 	public final static Target PROGRESS_FROM = new Target (){};
 	
 	/**
-	 * Identificatore dell'attributo <TT>TO</TT> in qualità di obiettivo di un filtro.
+	 * Identificatore dell'attributo <TT>TO</TT> in qualita' di obiettivo di un filtro.
 	 */
 	public final static Target PROGRESS_TO = new Target (){};
 	
@@ -329,16 +329,17 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 			duration = Duration.ZERODURATION;
 		}
 		final StringBuffer sb = new StringBuffer ();
-		/*
-		sb.append (durationNumberFormatter.format(duration.getDays()))
-		.append (":")
-		 */
-		final long days = duration.getDays ();
-		if (days>0){
-			sb.append (durationNumberFormatter.format (days))
-			.append (":");
-		}
-		sb.append (durationNumberFormatter.format (duration.getHours ()))
+
+//		final long days = duration.getDays();
+//
+//		if (0==days){
+//			sb.append ("__");
+//		} else {
+//			sb.append (durationNumberFormatter.format(duration.getDays()));
+//		}
+//		sb.append (" - ");
+				
+		sb.append (durationNumberFormatter.format (duration.getTotalHours ()))
 		.append (":")
 		.append (durationNumberFormatter.format (duration.getMinutes ()))
 		.append (":")
@@ -372,7 +373,7 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 			
 			/*
 			 * pessimizzazione!!!
-			 * @todo diminuire complessità algoritmo di ricerca, magari usando la TreeMap come dio comanda (adesso no, ho sonno)
+			 * @todo diminuire complessita' algoritmo di ricerca, magari usando la TreeMap come dio comanda (adesso no, ho sonno)
 			 */
 			//			final Map subMap = _map.subMap (from, to);
 			final Set subSet = _set;

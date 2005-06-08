@@ -102,7 +102,17 @@ public final class SerieNodeToolTipSupplier {
 		 */		
 		private String formatDuration (final Duration duration){
 			final StringBuffer sb = new StringBuffer ();
-			sb.append (durationNumberFormatter.format(duration.getHours()))
+			
+//			final long days = duration.getDays();
+//
+//			if (0==days){
+//				sb.append ("__");
+//			} else {
+//				sb.append (durationNumberFormatter.format(duration.getDays()));
+//			}
+//			sb.append (" - ");
+			
+			sb.append (durationNumberFormatter.format(duration.getTotalHours()))
 			.append (":")
 			.append (durationNumberFormatter.format(duration.getMinutes()))
 			.append (":")

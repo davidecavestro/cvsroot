@@ -77,14 +77,14 @@ public class ProgressTreeModel extends com.ost.timekeeper.ui.support.treetable.A
 			this.root = null;
 		}
 		if (this.root!=null){
-			//c'и una radice
+			//c'e' una radice
 			/*
 			 * pessimizzazione!!!
 			 */
 			final TreeModelEvent tme = new TreeModelEvent (this, this.getPathToRoot(this.root));
 			this.fireTreeStructureChanged(this, tme.getPath (), tme.getChildIndices (), tme.getChildren ());
 		} else if (oldRoot!=null){
-			//la radice non cми, ma ce n'era una prima
+			//la radice non c'e', ma ce n'era una prima
 			/*
 			 * pessimizzazione!!!
 			 */
@@ -241,11 +241,17 @@ public class ProgressTreeModel extends com.ost.timekeeper.ui.support.treetable.A
 				
 				final Duration duration = new Duration (totalDuration);
 				final StringBuffer sb = new StringBuffer ();
-				/*
-				sb.append (durationNumberFormatter.format(duration.getDays()))
-				.append (":")
-				 */
-				sb.append (durationNumberFormatter.format(duration.getHours()))
+				
+//				final long days = duration.getDays();
+//				
+//				if (0==days){
+//					sb.append ("__");
+//				} else {
+//					sb.append (durationNumberFormatter.format(duration.getDays()));
+//				}
+//				sb.append (" - ");
+				 
+				sb.append (durationNumberFormatter.format(duration.getTotalHours ()))
 				.append (":")
 				.append (durationNumberFormatter.format(duration.getMinutes()))
 				.append (":")

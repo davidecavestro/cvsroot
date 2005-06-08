@@ -12,7 +12,7 @@ import com.ost.timekeeper.ui.persistence.PersistenceUtils;
 import com.ost.timekeeper.ui.persistence.PersistentComponent;
 import com.ost.timekeeper.ui.persistence.UIPersister;
 import com.ost.timekeeper.util.*;
-import com.tomtessier.scrollabledesktop.BaseInternalFrame;
+//import com.tomtessier.scrollabledesktop.BaseInternalFrame;
 import java.awt.*;
 import javax.swing.JFrame;
 
