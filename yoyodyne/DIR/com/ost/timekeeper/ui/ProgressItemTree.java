@@ -58,6 +58,11 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 		ToolTipManager.sharedInstance ().registerComponent (this.tree);
 		this.tree.setCellRenderer (progressItemCellRenderer);
 		init (progressTreeModel);
+		this.getColumnModel ().removeColumn (this.getColumnModel ().getColumn (1));
+		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer ();
+		renderer.setHorizontalAlignment (renderer.RIGHT);
+		this.getColumnModel ().addColumn (new TableColumn (1, 100, renderer, null));
+		
 		final boolean inited = UIPersister.getInstance ().register (this, true);
 	}
 	
