@@ -243,9 +243,7 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		c.weighty = 1.0;
 		c.gridx = 1;
 		c.gridy = 4;
-		editPanel.add (new JScrollPane (descriptionEditor,
-		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), c);
+		editPanel.add (new JScrollPane (descriptionEditor), c);
 		
 		/*
 		 * Inserimento editazione NOTE.
@@ -259,9 +257,7 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		c.weighty = 1.0;
 		c.gridx = 1;
 		c.gridy = 5;
-		editPanel.add (new JScrollPane (notesEditor,
-		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), c);
+		editPanel.add (new JScrollPane (notesEditor), c);
 		
 		
 		//		SpringUtilities.makeCompactGrid(editPanel,
@@ -271,7 +267,7 @@ public final class ProgressItemEditPanel extends javax.swing.JPanel implements O
 		
 		{
 			final JPanel controlsPanel = new JPanel (new BorderLayout ());
-			controlsPanel .add (new JScrollPane (editPanel), BorderLayout.CENTER);
+			controlsPanel .add (editPanel, BorderLayout.CENTER);
 			controlsPanel.setBorder (new BevelBorder (BevelBorder.RAISED));
 
 			/*

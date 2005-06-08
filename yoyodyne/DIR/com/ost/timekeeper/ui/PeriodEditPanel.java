@@ -364,9 +364,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		c.weighty = 1.0;
 		c.gridx = 1;
 		c.gridy = 6;
-		editPanel.add (new JScrollPane (notesEditor,
-		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), c);
+		editPanel.add (new JScrollPane (notesEditor), c);
 		
 		
 		
@@ -378,7 +376,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		
 		{
 			final JPanel controlsPanel = new JPanel (new BorderLayout ());
-			controlsPanel .add (new JScrollPane (editPanel), BorderLayout.CENTER);
+			controlsPanel .add (editPanel, BorderLayout.CENTER);
 			controlsPanel.setBorder (new BevelBorder (BevelBorder.RAISED));
 
 			/*
