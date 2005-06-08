@@ -230,7 +230,7 @@
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Main-Class" value="com.ost.timekeeper.Application"/>
-				<attribute name="Class-Path" value=". lib/jdo.jar lib/jdori.jar lib/btree.jar lib/xalan.jar lib/jhall.jar res/i18n.jar lib/xerces.jar res/images.jar res/help.jar lib/looks.jar lib/skeleton.jar lib/animation.jar lib/jdom.jar lib/jcalendar.jar lib/jasperreports.jar lib/commons-beanutils.jar lib/commons-collections.jar lib/commons-digester.jar lib/commons-logging-api.jar lib/commons-logging.jar lib/jsci-xtra.jar lib/jsci-core.jar lib/itext.jar lib/scrollabledesktop.jar lib/tray.jar lib/jdic.jar lib/jdic-native.jar lib/poi.jar"/>
+				<attribute name="Class-Path" value=". lib/jdo.jar lib/jdori.jar lib/btree.jar lib/xalan.jar lib/jhall.jar res/i18n.jar lib/xerces.jar res/images.jar res/help.jar lib/looks.jar lib/skeleton.jar lib/animation.jar lib/jdom.jar lib/jcalendar.jar lib/jasperreports.jar lib/commons-beanutils.jar lib/commons-collections.jar lib/commons-digester.jar lib/commons-logging-api.jar lib/commons-logging.jar lib/jsci-xtra.jar lib/jsci-core.jar lib/itext.jar lib/jscroll.jar lib/tray.jar lib/jdic.jar lib/jdic-native.jar lib/poi.jar"/>
 				<attribute name="Implementation-Title" value="${project.name}"/>
 				<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
 				<attribute name="Implementation-Vendor" value="Davide Cavestro"/>

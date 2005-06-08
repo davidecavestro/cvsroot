@@ -6,3 +6,4 @@ com/ost/timekeeper/ui/ProjectImportConflictsResolver.java
 com/ost/timekeeper/actions/commands/ExportProjectToXML_1.java
 com/ost/timekeeper/graph/swing/JRingChart_1.java
 com/jgoodies/**.*
+com/_tomtesier
