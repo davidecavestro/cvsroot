@@ -75,7 +75,7 @@
 						key="textField-13"
 						stretchType="NoStretch"
 						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="false"
+						isPrintRepeatedValues="true"
 						isRemoveLineWhenBlank="false"
 						isPrintInFirstWholeBand="false"
 						isPrintWhenDetailOverflows="false"/>
@@ -95,7 +95,7 @@
 						key="textField-16"
 						stretchType="NoStretch"
 						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="false"
+						isPrintRepeatedValues="true"
 						isRemoveLineWhenBlank="false"
 						isPrintInFirstWholeBand="false"
 						isPrintWhenDetailOverflows="false"/>

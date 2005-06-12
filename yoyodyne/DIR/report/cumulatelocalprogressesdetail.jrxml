@@ -52,9 +52,9 @@
 						mode="Transparent"
 						x="18"
 						y="0"
-						width="304"
+						width="309"
 						height="13"
-						forecolor="#000000"
+						forecolor="#9A9AD0"
 						backcolor="#FFFFFF"
 						key="textField-1"
 						stretchType="NoStretch"
@@ -64,7 +64,7 @@
 						isPrintInFirstWholeBand="false"
 						isPrintWhenDetailOverflows="true"/>
 					<textElement textAlignment="Justified" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
-						<font fontName="Arial" pdfFontName="Helvetica" size="6" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
 				</textField>
@@ -74,7 +74,7 @@
 						y="0"
 						width="93"
 						height="13"
-						forecolor="#000000"
+						forecolor="#9C9CD4"
 						backcolor="#FFFFFF"
 						key="textField-2"
 						stretchType="NoStretch"
@@ -84,7 +84,7 @@
 						isPrintInFirstWholeBand="false"
 						isPrintWhenDetailOverflows="false"/>
 					<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
-						<font fontName="Arial" pdfFontName="Helvetica" size="6" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PROGRESS_DURATION}]]></textFieldExpression>
 				</textField>
@@ -94,7 +94,7 @@
 						y="15"
 						width="404"
 						height="13"
-						forecolor="#000000"
+						forecolor="#9C9CD6"
 						backcolor="#FFFFFF"
 						key="textField-3"
 						stretchType="NoStretch"
@@ -104,7 +104,7 @@
 						isPrintInFirstWholeBand="false"
 						isPrintWhenDetailOverflows="false"/>
 					<textElement textAlignment="Justified" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="Arial" pdfFontName="Helvetica" size="6" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NOTES}]]></textFieldExpression>
 				</textField>
