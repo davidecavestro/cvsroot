@@ -44,13 +44,14 @@ public final class Desktop extends JScrollDesktopPane{
 	 * @param child il frame interno.
 	 */	
 	public void bringToTop (JInternalFrame child){
-			try {
-				child.setIcon (false);
-			} catch (java.beans.PropertyVetoException pve) {}
-
-//					inspector.getDesktopPane ().getDesktopManager().deiconifyFrame (inspector);
-			child.getDesktopPane ().getDesktopManager().activateFrame (child);
-//					Desktop.getInstance ().setSelectedFrame (inspector);
+//			try {
+//				child.setIcon (false);
+//			} catch (java.beans.PropertyVetoException pve) {}
+//
+////					inspector.getDesktopPane ().getDesktopManager().deiconifyFrame (inspector);
+//			child.getDesktopPane ().getDesktopManager().activateFrame (child);
+////					Desktop.getInstance ().setSelectedFrame (inspector);
+		child.toFront();
 	}
 	
 
