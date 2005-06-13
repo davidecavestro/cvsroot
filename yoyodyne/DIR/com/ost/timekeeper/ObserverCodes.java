@@ -16,12 +16,12 @@ public interface ObserverCodes {
 	/**
 	 * Variazione del periodo di avanzamento corrente.
 	 */
-	public final static String ITEMPROGRESSINGPERIODCHANGE = "itemprogressingperiodchange";
+	public final static String CURRENT_PROGRESS_TIC = "CURRENT_PROGRESS_TIC ";
 	
 	/**
-	 * Variazione del nodo in corso di avanzamento.
+	 * Variazione degli attributi del nodo selezionato.
 	 */
-	public final static String ITEMPROGRESSINGCHANGE = "itemprogressingchange";
+	public final static String SELECTEDNODE_INTERNALCHANGE = "SELECTEDNODE_INTERNALCHANGE";
 	
 	/**
 	 * Variazione progetto.
@@ -29,37 +29,40 @@ public interface ObserverCodes {
 	public final static String PROJECTCHANGE = "projectchange";
 	
 	/**
-	 * Variazione nodo di avanzamento corrente.
+	 * Variazione nodo corrente del sistema.
+	 * Per nodo corrente di sistema si intende il nodo attualmente in avanzamento.
+	 * Esso coincide con il valore restituito dalla chiamata a 
+	 * {@link com.ost.timekeeper.Application#getCurrentItem()}.
 	 */
 	public final static String CURRENTITEMCHANGE = "currentitemchange";
 	
 	/**
-	 * Modifica selezione nodo di avanzamento.
+	 * Variazione del nodo selezionato.
 	 */
 	public final static String SELECTEDITEMCHANGE = "selecteditemchange";
 
 	/**
-	 * Modifica selezione avanzamento.
+	 * Variazione dell'avanzamento selezionato.
 	 */
 	public final static String SELECTEDPROGRESSCHANGE = "selectedprogresschange";
 	
 	/**
-	 * Variazione stato "elaborazione in corso".
+	 * Variazione dello stato di "elaborazione in corso".
 	 */
 	public final static String PROCESSINGCHANGE = "processingchange";
 	
 	/**
-	 * Modifica impostazioni utente.
+	 * Modifica delle impostazioni utente.
 	 */
 	public final static String USERSETTINGSCHANGE = "usersettingschange";
 
 	/**
-	 * Modifica impostazioni sistema.
+	 * Modifica delle impostazioni di sistema.
 	 */
 	public final static String SYSTEMSETTINGSCHANGE = "systemsettingschange";
 
 	/**
-	 * Modifica opzioni applicazione.
+	 * Modifica delle opzioni dell'applicazione.
 	 */
 	public final static String APPLICATIONOPTIONSCHANGE = "applicationoptionsschange";
 

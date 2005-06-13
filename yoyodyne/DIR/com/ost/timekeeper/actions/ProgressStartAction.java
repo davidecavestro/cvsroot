@@ -71,7 +71,7 @@ public final class ProgressStartAction extends javax.swing.AbstractAction implem
 		}
 		app.setCurrentItem (selectedItem);
 		app.setChanged ();
-		app.notifyObservers (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
+		app.notifyObservers (ObserverCodes.CURRENT_PROGRESS_TIC);
 		app.setChanged ();
 		app.notifyObservers (ObserverCodes.SELECTEDITEMCHANGE);
 		

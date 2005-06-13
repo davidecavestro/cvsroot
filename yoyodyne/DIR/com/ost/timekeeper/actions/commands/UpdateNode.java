@@ -82,7 +82,7 @@ public final class UpdateNode extends AbstractCommand {
 			throw new com.ost.timekeeper.util.NestedRuntimeException (t);
 		}
 		Application.getInstance ().setChanged ();
-		Application.getInstance ().notifyObservers (ObserverCodes.ITEMPROGRESSINGCHANGE);
+		Application.getInstance ().notifyObservers (ObserverCodes.SELECTEDNODE_INTERNALCHANGE);
 		Application.getLogger ().debug ("Node updated");
 	}
 }

@@ -219,7 +219,7 @@ public final class ProgressTableModel extends AbstractTableModel implements Obse
 	 */	
 	public void update(Observable o, Object arg) {
 		if (o instanceof Application){
-			if (arg!=null && arg.equals(ObserverCodes.ITEMPROGRESSINGPERIODCHANGE)){
+			if (arg!=null && arg.equals(ObserverCodes.CURRENT_PROGRESS_TIC)){
 //				reloadProgresses ();
 				synchCurrentPeriodIdx ();
 				Application.getLogger ().debug ("Updating progress period list. Current perdio IDX = "+this.currentPeriodIdx);

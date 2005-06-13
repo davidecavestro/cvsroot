@@ -60,7 +60,7 @@ public final class DeleteProgress extends AbstractCommand {
 		Application.getInstance ().setChanged ();
 		Application.getInstance ().notifyObservers (ObserverCodes.SELECTEDITEMCHANGE);
 		Application.getInstance ().setChanged ();
-		Application.getInstance ().notifyObservers (ObserverCodes.ITEMPROGRESSINGCHANGE);
+		Application.getInstance ().notifyObservers (ObserverCodes.SELECTEDNODE_INTERNALCHANGE);
 	}
 	
 }

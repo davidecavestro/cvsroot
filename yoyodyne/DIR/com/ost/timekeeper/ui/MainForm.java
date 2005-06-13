@@ -843,7 +843,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 				.append (currentProject.getName ());
 			}
 			setTitle (title.toString ());
-		} else if (arg!=null && ( arg.equals (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE) || arg.equals (ObserverCodes.CURRENTITEMCHANGE))){
+		} else if (arg!=null && ( arg.equals (ObserverCodes.CURRENT_PROGRESS_TIC) || arg.equals (ObserverCodes.CURRENTITEMCHANGE))){
 			final Application app = Application.getInstance ();
 			statusLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "statusbar", app.getCurrentItem ()!=null?"statuslabel.working_UC":"statuslabel.idle_UC"));
 			

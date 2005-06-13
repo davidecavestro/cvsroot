@@ -140,7 +140,7 @@ public class Application extends Observable{
 				public void actionPerformed (ActionEvent ae){
 					instance.setChanged ();
 					//notifica l'avanzamento
-					instance.notifyObservers (ObserverCodes.ITEMPROGRESSINGPERIODCHANGE);
+					instance.notifyObservers (ObserverCodes.CURRENT_PROGRESS_TIC);
 				}
 			};
 			instance.timer = new javax.swing.Timer (1000, timerActionPerformer);
@@ -339,7 +339,7 @@ public class Application extends Observable{
 	private ProgressItem currentItem;
 	
 	/**
-	 * Imposta l'elemento corrente.
+	 * Imposta l'elemento corrente. L'elemento corrente è il nodo in corso di avanzamento.
 	 * @param current l'elemento corrente.
 	 */	
 	public void setCurrentItem(ProgressItem current){
@@ -362,7 +362,7 @@ public class Application extends Observable{
 	}
 	
 	/**
-	 * Ritorna l'elemento corrente.
+	 * Ritorna l'elemento corrente.  L'elemento corrente è il nodo in corso di avanzamento.
 	 * @return l'elemento corrente.
 	 */	
 	public ProgressItem getCurrentItem(){
