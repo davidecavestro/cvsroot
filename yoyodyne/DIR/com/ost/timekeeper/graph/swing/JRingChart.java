@@ -13,6 +13,7 @@ import com.ost.timekeeper.graph.swing.tooltip.SerieNodeToolTipSupplier;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
 import javax.swing.JLabel;
@@ -32,8 +33,32 @@ public class JRingChart  extends JTreeGraph2D {
 	/**
 	 * Slice colors.
 	 */
-	protected Color sliceColor[]={Color.blue,Color.green,Color.red,Color.yellow,Color.cyan,Color.lightGray,Color.magenta,Color.orange,Color.pink};
+	final static int baseAlpha = 220;
+	protected Color sliceColor[]={
+		getColorWithAlpha (Color.blue, baseAlpha),
+		getColorWithAlpha (Color.green, baseAlpha),
+		getColorWithAlpha (Color.red, baseAlpha),
+		getColorWithAlpha (Color.yellow, baseAlpha),
+		getColorWithAlpha (Color.cyan, baseAlpha),
+		getColorWithAlpha (Color.lightGray, baseAlpha),
+		getColorWithAlpha (Color.magenta, baseAlpha),
+		getColorWithAlpha (Color.orange, baseAlpha),
+		getColorWithAlpha (Color.pink, baseAlpha),
+/*		Color.green,
+		Color.red,
+		Color.yellow,
+		Color.cyan,
+		Color.lightGray,
+		Color.magenta,
+		Color.orange,
+		Color.pink
+ */
+		};
 	
+		private final static Color getColorWithAlpha (final Color color, final int alpha){
+			return new Color (color.getRed (), color.getGreen (), color.getBlue (), alpha);
+		}
+		
 	private JLabel _xAxisLabel;
 	
 	private double padX;
@@ -172,7 +197,7 @@ public class JRingChart  extends JTreeGraph2D {
 		redraw ();
 	}
 	
-	private final java.util.Collection _nodeGraphData = new java.util.ArrayList ();
+	private final java.util.List _nodeGraphData = new java.util.ArrayList ();
 	
 	double _levelWidthSeed;
 	double _levelHeightSeed;
@@ -200,11 +225,17 @@ public class JRingChart  extends JTreeGraph2D {
 	protected void offscreenPaint (Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
 		
-        Stroke s = new BasicStroke(1f);
+        Stroke s = new BasicStroke(1.5f);
         g2.setColor(this.getBackground ());
         g2.fillRect(0, 0, getWidth(), getHeight());
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+        g2.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
         g2.setStroke(s);
 		
 		_nodeGraphData.clear ();
@@ -223,13 +254,19 @@ public class JRingChart  extends JTreeGraph2D {
 		new TexturePaint(bi, textureRectangle)),
 		null,
 		1, 0.0d, 360.0d);
-		for (final java.util.Iterator it=_nodeGraphData.iterator ();it.hasNext ();){
-			JRingChart.NodeGraphData data = (JRingChart.NodeGraphData )it.next ();
+		for (final java.util.ListIterator it=_nodeGraphData.listIterator (_nodeGraphData.size ());it.hasPrevious ();){
+			JRingChart.NodeGraphData data = (JRingChart.NodeGraphData )it.previous ();
 			
+			final Area area = data.getArea ();
 			g2.setColor (Color.BLACK);
-			g2.draw (data.getArea ());
+			g2.draw (area);
+			final Rectangle areaBounds = area.getBounds ();
+			final double x = areaBounds.getX ();
+			final double y = areaBounds.getY ();
+			g2.setPaint (new GradientPaint ((float)x, (float)y, Color.BLACK, (float)(x+areaBounds.getWidth ()), (float)(y+areaBounds.getHeight ()), Color.WHITE));
+			g2.fill (area);
 			g2.setPaint (data.getPaint ());
-			g2.fill (data.getArea ());
+			g2.fill (area);
 		}
 		
 		/*
@@ -334,7 +371,8 @@ public class JRingChart  extends JTreeGraph2D {
 				color = sliceColor[ix];
 			} else {
 				Color oldColor = (Color)paint;
-				color = new Color (/*Math.abs (*/oldColor.getRed ()/*-colorSeed)*/, /*Math.abs (*/oldColor.getGreen ()/*-colorSeed)*/, /*Math.abs (*/oldColor.getBlue ()/*-colorSeed)*/, (int)(oldColor.getAlpha ()/(1+((1+ix)/childrenCount))));
+//				color = oldColor;
+				color = new Color (/*Math.abs (*/oldColor.getRed ()/*-colorSeed)*/, /*Math.abs (*/oldColor.getGreen ()/*-colorSeed)*/, /*Math.abs (*/oldColor.getBlue ()/*-colorSeed)*/, (int)(oldColor.getAlpha ()/(1+((1+ix)/(1+childrenCount))+level*0.1)));
 			}
 			
 //			final int colorSeed = 20*level*ix;
