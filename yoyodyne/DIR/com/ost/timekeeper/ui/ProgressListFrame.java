@@ -58,7 +58,7 @@ public final class ProgressListFrame extends BaseInternalPanel {
 	public final void init (final Desktop desktop, final int x, final int y){
 		super.init (
 			desktop,
-			ResourceSupplier.getString (ResourceClass.UI, "controls", "progress.listr"), 
+			ResourceSupplier.getString (ResourceClass.UI, "controls", "progress.list"), 
 			ResourceSupplier.getImageIcon (ResourceClass.UI, "progress-list-frame.png"),
 			false, 
 			x, 

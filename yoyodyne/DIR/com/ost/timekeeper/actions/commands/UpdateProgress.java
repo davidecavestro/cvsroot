@@ -82,5 +82,8 @@ public final class UpdateProgress extends AbstractCommand {
 			tx.rollback ();
 			throw new com.ost.timekeeper.util.NestedRuntimeException (t);
 		}
+		Application.getInstance ().setChanged ();
+		Application.getInstance ().notifyObservers (ObserverCodes.SELECTEDPROGRESSCHANGE);
+		Application.getLogger ().debug ("Progress updated");
 	}
 }
