@@ -27,7 +27,7 @@ public final class StartNewProgressCreation extends javax.swing.AbstractAction i
 	public StartNewProgressCreation () {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.new.progress.terminated"), ResourceSupplier.getImageIcon (ResourceClass.UI, "ok.png"));
 		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.new.progress.terminated.tooltip"));
-		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled (false);
 	}
 	
