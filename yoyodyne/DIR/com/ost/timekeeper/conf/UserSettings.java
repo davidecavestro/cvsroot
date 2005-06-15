@@ -93,10 +93,10 @@ public final class UserSettings extends AbstractSettings implements Observer{
 			/* Salva ultima posizione finestra principale. */
 			this.setMainFormBounds (Application.getInstance ().getMainForm ().getBounds ());
 			/* Salva ultima posizione finestre desktop. */
-			this.setProgressItemInspectorBounds (ProgressItemInspectorFrame.getInstance ().getBounds ());
-			this.setProgressPeriodInspectorBounds (ProgressInspectorFrame.getInstance ().getBounds ());
-			this.setProgressListFrameBounds (ProgressListFrame.getInstance ().getBounds ());
-			this.setChartFrameBounds (ChartFrame.getInstance ().getBounds ());
+			this.setProgressItemInspectorBounds (ProgressItemInspectorFrame.getInstance ().getFrame ().getBounds ());
+			this.setProgressPeriodInspectorBounds (ProgressInspectorFrame.getInstance ().getFrame ().getBounds ());
+			this.setProgressListFrameBounds (ProgressListFrame.getInstance ().getFrame ().getBounds ());
+			this.setChartFrameBounds (ChartFrame.getInstance ().getFrame ().getBounds ());
 			/* Salva larghezza albero */
 			this.setProgressItemTreeWidth (new Integer (Application.getInstance ().getMainForm ().getProgressItemTreeWidth ()));
 			/* Salva tipo lista avanzamenti. */

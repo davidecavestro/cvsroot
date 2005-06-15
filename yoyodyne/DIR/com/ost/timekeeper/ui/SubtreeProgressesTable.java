@@ -154,7 +154,7 @@ public class SubtreeProgressesTable extends javax.swing.JTable implements TreeSe
 					/*
 					 * Almeno doppio click.
 					 */
-					Desktop.getInstance ().bringToTop (ProgressInspectorFrame.getInstance ());
+					Desktop.getInstance ().bringToTop (ProgressInspectorFrame.getInstance ().getFrame ());
 				}
 			}
 		});

@@ -10,8 +10,13 @@ import com.ost.timekeeper.Application;
 import com.ost.timekeeper.ObserverCodes;
 import com.ost.timekeeper.model.ProgressItem;
 import com.ost.timekeeper.model.Project;
+import com.ost.timekeeper.ui.BaseInternalPanel;
+import com.ost.timekeeper.ui.Desktop;
 import com.ost.timekeeper.util.ResourceClass;
 import com.ost.timekeeper.util.ResourceSupplier;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 //import com.tomtessier.scrollabledesktop.BaseInternalFrame;
 import java.util.Observer;
 import javax.swing.JFrame;
@@ -23,7 +28,7 @@ import javax.swing.JTabbedPane;
  *
  * @author  davide
  */
-public class ChartFrame extends JInternalFrame implements Observer{
+public class ChartFrame extends BaseInternalPanel implements Observer{
 	
 	private RingChartPanel _ringChartPanel;
 	private BarGraphPanel _barGraphPanel;
@@ -45,19 +50,25 @@ public class ChartFrame extends JInternalFrame implements Observer{
 	
 	/** Costruttore. */
 	private ChartFrame () {
-		super (ResourceSupplier.getString (ResourceClass.UI, "controls", "chart.frame"),
-			true, //resizable
-			false, //closable
-			true, //maximizable
-			true);//iconifiable
 		
 		initComponents ();
-		this.setFrameIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "charts-frame.png"));
 		
-		pack ();
 		Application.getInstance ().addObserver (this);
 	}
 	
+	/** Inizializza il frame con la posizione.
+	 * 
+	 */
+	public final void init (final Desktop desktop, final int x, final int y){
+		super.init (
+			desktop,
+			ResourceSupplier.getString (ResourceClass.UI, "controls", "chart.frame"), 
+			ResourceSupplier.getImageIcon (ResourceClass.UI, "charts-frame.png"),
+			false, 
+			x, 
+			y);
+
+	}
 	/**
 	 * Inizializza i componentidi questo frame.
 	 */
@@ -70,7 +81,16 @@ public class ChartFrame extends JInternalFrame implements Observer{
 		this._barGraphPanel = new BarGraphPanel (ResourceSupplier.getString (ResourceClass.UI, "controls", "subtree.work.bar.graph"));
 		tabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "bar.graph"), this._barGraphPanel);
 		
-		this.getContentPane ().add (tabbedPane);
+		this.setLayout (new GridBagLayout ());
+		final GridBagConstraints c = new GridBagConstraints ();
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.insets = new Insets (3, 3, 3, 3);
+		c.weightx=1.0;
+		c.weighty=1.0;
+		c.gridx=0;
+		c.gridy=0;
+		this.add (tabbedPane, c);
 	}
 	
 	public void update (java.util.Observable o, Object arg) {

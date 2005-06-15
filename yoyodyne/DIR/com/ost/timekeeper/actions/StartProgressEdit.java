@@ -32,7 +32,7 @@ public final class StartProgressEdit extends javax.swing.AbstractAction implemen
 	}
 	
 	public void actionPerformed (java.awt.event.ActionEvent e) {
-		Desktop.getInstance ().bringToTop (ProgressInspectorFrame.getInstance ());
+		Desktop.getInstance ().bringToTop (ProgressInspectorFrame.getInstance ().getFrame ());
 	}
 	
 	public void update (Observable o, Object arg) {

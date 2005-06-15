@@ -9,6 +9,7 @@ package com.ost.timekeeper.ui;
 import com.ost.timekeeper.*;
 import com.ost.timekeeper.actions.ActionPool;
 import com.ost.timekeeper.model.*;
+import com.ost.timekeeper.ui.BaseInternalPanel;
 import com.ost.timekeeper.ui.support.JToolButton;
 import com.ost.timekeeper.util.*;
 import com.ost.timekeeper.view.*;
@@ -25,7 +26,7 @@ import javax.swing.event.*;
  *
  * @author  davide
  */
-public final class ProgressListFrame extends JInternalFrame {
+public final class ProgressListFrame extends BaseInternalPanel {
 
 	/**
 	 * La tabella.
@@ -46,14 +47,23 @@ public final class ProgressListFrame extends JInternalFrame {
 	 * Costruttore. 
 	 */
 	private ProgressListFrame () {
-		super (ResourceSupplier.getString (ResourceClass.UI, "controls", "progress.list"),
-			true, //resizable
-			false, //closable
-			true, //maximizable
-			true);//iconifiable
 		initComponents ();
 		
 				
+	}
+	
+	/** Inizializza il frame con la posizione.
+	 * 
+	 */
+	public final void init (final Desktop desktop, final int x, final int y){
+		super.init (
+			desktop,
+			ResourceSupplier.getString (ResourceClass.UI, "controls", "progress.listr"), 
+			ResourceSupplier.getImageIcon (ResourceClass.UI, "progress-list-frame.png"),
+			false, 
+			x, 
+			y);
+
 	}
 	
 	/**
@@ -162,7 +172,16 @@ public final class ProgressListFrame extends JInternalFrame {
 		
 		progressesPane.add (progressesBottomPane, BorderLayout.CENTER);
 		
-		this.setContentPane (progressesPane);
+		this.setLayout (new GridBagLayout ());
+		final GridBagConstraints c = new GridBagConstraints ();
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.insets = new Insets (3, 3, 3, 3);
+		c.weightx=1.0;
+		c.weighty=1.0;
+		c.gridx=0;
+		c.gridy=0;
+		this.add (progressesPane, c);
 		
 		
 		/*
@@ -173,9 +192,9 @@ public final class ProgressListFrame extends JInternalFrame {
 		/* Imposta selezione lista avanzamenti. */
 		setListType (Application.getOptions ().getProgressListType ());
 
-		this.setFrameIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "progress-list-frame.png"));
+//		this.setFrameIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "progress-list-frame.png"));
 		
-		pack ();
+//		pack ();
 	}
 
 	/**

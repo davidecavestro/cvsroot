@@ -32,7 +32,7 @@ public final class StartNodeEdit extends javax.swing.AbstractAction implements j
 	}
 	
 	public void actionPerformed (java.awt.event.ActionEvent e) {
-		Desktop.getInstance ().bringToTop (ProgressItemInspectorFrame.getInstance ());
+		Desktop.getInstance ().bringToTop (ProgressItemInspectorFrame.getInstance ().getFrame ());
 	}
 	
 	public void update (Observable o, Object arg) {

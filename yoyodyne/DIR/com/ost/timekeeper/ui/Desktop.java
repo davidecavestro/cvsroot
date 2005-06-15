@@ -51,7 +51,7 @@ public final class Desktop extends JScrollDesktopPane{
 ////					inspector.getDesktopPane ().getDesktopManager().deiconifyFrame (inspector);
 //			child.getDesktopPane ().getDesktopManager().activateFrame (child);
 ////					Desktop.getInstance ().setSelectedFrame (inspector);
-		child.toFront();
+		this.setSelectedFrame (child);
 	}
 	
 

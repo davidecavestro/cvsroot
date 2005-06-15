@@ -320,7 +320,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 					/*
 					 * Almeno doppio click.
 					 */
-					Desktop.getInstance ().bringToTop (ProgressItemInspectorFrame.getInstance ());
+					Desktop.getInstance ().bringToTop (ProgressItemInspectorFrame.getInstance ().getFrame ());
 				}
 			}
 		});
@@ -333,86 +333,60 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		final ProgressListFrame progressListFrame = ProgressListFrame.getInstance (); {
 			//Set the window's location.
 			final Rectangle bounds = options.getProgressListFrameBounds ();
-			progressListFrame.setBounds (bounds);
-			progressListFrame.setVisible (true); //necessary as of 1.3
-			desktop.add (progressListFrame, (int)bounds.getX (), (int)bounds.getY ());
+			progressListFrame.init (desktop, (int)bounds.getX (), (int)bounds.getY ());
+			progressListFrame.getFrame ().setBounds (bounds);
+			
+			desktop.setSelectedFrame (progressListFrame.getFrame ());
+			javax.help.CSH.setHelpIDString (progressListFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PROGRESSLIST ));
 		}
-		try {
-			progressListFrame.setSelected (true);
-		} catch (java.beans.PropertyVetoException e) {}
-		javax.help.CSH.setHelpIDString (progressListFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PROGRESSLIST ));
 		
 		/*
 		 * Dettaglio nodo di avanzamento.
 		 */
-		final ProgressItemInspectorFrame progressItemInspectorFrame = ProgressItemInspectorFrame.getInstance (); {
-			//Set the window's location.
+		{
+			final ProgressItemInspectorFrame progressItemInspectorFrame = ProgressItemInspectorFrame.getInstance (); 
 			final Rectangle bounds = options.getProgressItemInspectorBounds ();
-			progressItemInspectorFrame.setBounds (bounds);
+			progressItemInspectorFrame.init (desktop, (int)bounds.getX (), (int)bounds.getY ());
+			//Set the window's location.
+			progressItemInspectorFrame.getFrame ().setBounds (bounds);
 			progressItemInspectorFrame.setVisible (true); //necessary as of 1.3
-			desktop.add (progressItemInspectorFrame, (int)bounds.getX (), (int)bounds.getY ());
+			desktop.setSelectedFrame (progressItemInspectorFrame.getFrame ());
+			javax.help.CSH.setHelpIDString (progressItemInspectorFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PROGRESSITEMINSPECTORFRAME ));
 		}
-		try {
-			progressItemInspectorFrame.setSelected (true);
-		} catch (java.beans.PropertyVetoException e) {}
-		javax.help.CSH.setHelpIDString (progressItemInspectorFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PROGRESSITEMINSPECTORFRAME ));
 		
-		//		dataTabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "detail")
-		//		, new JScrollPane (progressItemEditPanel));
 		
 		/*
 		 * Dettaglio avanzamento.
 		 */
-		final ProgressInspectorFrame periodInspectorFrame = ProgressInspectorFrame.getInstance ();
 		//Set the window's location.
 		{
+			final ProgressInspectorFrame periodInspectorFrame = ProgressInspectorFrame.getInstance ();
 			final Rectangle bounds = options.getProgressPeriodInspectorBounds ();
-			periodInspectorFrame.setBounds (bounds);
-			periodInspectorFrame.setVisible (true); //necessary as of 1.3
-			desktop.add (periodInspectorFrame, (int)bounds.getX (), (int)bounds.getY ());
+			periodInspectorFrame.init (desktop, (int)bounds.getX (), (int)bounds.getY ());
+			periodInspectorFrame.getFrame ().setBounds (bounds);
+			
+			desktop.setSelectedFrame (periodInspectorFrame.getFrame ());
+			javax.help.CSH.setHelpIDString (periodInspectorFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PERIODINSPECTORFRAME ));
 		}
-		try {
-			periodInspectorFrame.setSelected (true);
-		} catch (java.beans.PropertyVetoException e) {}
-		javax.help.CSH.setHelpIDString (periodInspectorFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PERIODINSPECTORFRAME ));
 		
 		/*
 		 * Dettaglio avanzamento.
 		 */
-		final ChartFrame chartFrame = ChartFrame.getInstance ();
 		//Set the window's location.
 		{
+			final ChartFrame chartFrame = ChartFrame.getInstance ();
 			final Rectangle bounds = options.getChartFrameBounds ();
-			chartFrame.setBounds (bounds);
-			chartFrame.setVisible (true); //necessary as of 1.3
-			desktop.add (chartFrame, (int)bounds.getX (), (int)bounds.getY ());
+			chartFrame.init (desktop, (int)bounds.getX (), (int)bounds.getY ());
+			chartFrame.getFrame ().setBounds (bounds);
+			
+			desktop.setSelectedFrame (chartFrame.getFrame ());
+			javax.help.CSH.setHelpIDString (chartFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.CHARTFRAME ));
 		}
-		try {
-			chartFrame.setSelected (true);
-		} catch (java.beans.PropertyVetoException e) {}
-		javax.help.CSH.setHelpIDString (chartFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.CHARTFRAME ));
 		
 		//		dataTabbedPane.addTab (ResourceSupplier.getString (ResourceClass.UI, "controls", "detail")
 		//		, new JScrollPane (progressItemEditPanel));
 		
 		
-		//		final JPanel rightPanel = new JPanel (new BorderLayout ());
-		
-		//		jSplit_Tree_Data.setRightComponent (rightPanel);
-		
-		//		rightPanel.add (desktop, BorderLayout.CENTER);
-		
-		//		final JScrollPane scrollPane = new JScrollPane();
-		//
-		//		final JViewport viewport = new JViewport();
-		
-		//		viewport.setView(desktop);
-		
-		//		scrollPane.setViewport(viewport);
-		
-		//		desktop.setPreferredSize(new Dimension(1600,1200)); //very important
-		
-		//		rightPanel.add (scrollPane, BorderLayout.CENTER);
 		
 		jSplit_Tree_Data.setRightComponent (desktop);
 		
@@ -689,6 +663,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		progressTreePopup.add (ActionPool.getInstance ().getProgressStartAction ());
 		progressTreePopup.add (ActionPool.getInstance ().getProgressStopAction ());
 		progressTreePopup.addSeparator ();
+		progressTreePopup.add (ActionPool.getInstance ().getStartNewProgressCreation ());
 		
 		progressItemTree.add (progressTreePopup);
 		progressItemTree.addMouseListener (new PopupTrigger ());
