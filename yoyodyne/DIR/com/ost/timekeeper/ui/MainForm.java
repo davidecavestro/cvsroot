@@ -658,6 +658,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		progressTreePopup.add (treeExpandCollapseAction);
 		progressTreePopup.addSeparator ();
 		progressTreePopup.add (ActionPool.getInstance ().getNodeCreateAction ());
+		progressTreePopup.add (ActionPool.getInstance ().getStartNodeEdit ());
 		progressTreePopup.add (ActionPool.getInstance ().getNodeDeleteAction ());
 		progressTreePopup.addSeparator ();
 		progressTreePopup.add (ActionPool.getInstance ().getProgressStartAction ());
