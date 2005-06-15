@@ -27,7 +27,7 @@ public final class ProjectSaveAction extends javax.swing.AbstractAction implemen
 	public ProjectSaveAction() {
 		super(ResourceSupplier.getString(ResourceClass.UI, "menu", "project.save"), ResourceSupplier.getImageIcon(ResourceClass.UI, "saveproject.gif"));
 		this.putValue(SHORT_DESCRIPTION, ResourceSupplier.getString(ResourceClass.UI, "menu", "project.save.tooltip"));
-		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+//		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}
 	

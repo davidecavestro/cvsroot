@@ -28,7 +28,7 @@ public final class ProjectCloseAction extends javax.swing.AbstractAction impleme
 	public ProjectCloseAction () {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "project.close"), ResourceSupplier.getImageIcon (ResourceClass.UI, "closeproject.png"));
 		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "project.close.tooltip"));
-		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+//		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled (false);
 	}
 	

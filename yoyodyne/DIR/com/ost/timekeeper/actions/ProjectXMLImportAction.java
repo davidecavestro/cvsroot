@@ -38,7 +38,7 @@ public final class ProjectXMLImportAction extends javax.swing.AbstractAction imp
 	public ProjectXMLImportAction() {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "project.xmlimportproject"), ResourceSupplier.getImageIcon (ResourceClass.UI, "import.png"));
 		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "project.xmlimportproject.tooltip"));
-		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
+//		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 		final CustomFileFilter filter = new CustomFileFilter (
 			new String []{FileUtils.xml},

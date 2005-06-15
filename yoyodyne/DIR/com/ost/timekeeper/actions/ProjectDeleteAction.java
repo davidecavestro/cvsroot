@@ -29,7 +29,7 @@ public final class ProjectDeleteAction extends javax.swing.AbstractAction implem
 	public ProjectDeleteAction () {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "project.delete")/*, ResourceSupplier.getImageIcon (ResourceClass.UI, "deleteproject.gif")*/);
 		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "project.delete.tooltip"));
-		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
+//		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled (false);
 	}
 	

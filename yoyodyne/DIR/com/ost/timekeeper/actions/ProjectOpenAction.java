@@ -29,7 +29,7 @@ public final class ProjectOpenAction extends javax.swing.AbstractAction implemen
 	public ProjectOpenAction() {
 		super(ResourceSupplier.getString(ResourceClass.UI, "menu", "project.open"), ResourceSupplier.getImageIcon(ResourceClass.UI, "openproject.png"));
 		this.putValue(SHORT_DESCRIPTION, ResourceSupplier.getString(ResourceClass.UI, "menu", "project.open.tooltip"));
-		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+//		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 	}
 	

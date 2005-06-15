@@ -45,7 +45,7 @@ public final class ProjectXMLExportAction extends javax.swing.AbstractAction imp
 	public ProjectXMLExportAction() {
 		super(ResourceSupplier.getString(ResourceClass.UI, "menu", "project.xmlexportproject"), ResourceSupplier.getImageIcon(ResourceClass.UI, "export.png"));
 		this.putValue(SHORT_DESCRIPTION, ResourceSupplier.getString(ResourceClass.UI, "menu", "project.xmlexportproject.tooltip"));
-		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+//		this.putValue(ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled(false);
 		final CustomFileFilter filter = new CustomFileFilter (
 			new String []{FileUtils.xml},
