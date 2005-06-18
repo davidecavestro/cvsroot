@@ -236,21 +236,33 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 
 			c1.gridx = 0;
 			c1.gridy = 0;
-			durationEditorPanel.add (durationHourEditor, c1);
+			durationEditorPanel.add (new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "hours"), JLabel.RIGHT), c1);
 
 			c1.gridx = 1;
 			c1.gridy = 0;
+			durationEditorPanel.add (durationHourEditor, c1);
+
+			c1.gridx = 2;
+			c1.gridy = 0;
+			durationEditorPanel.add (new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "mins"), JLabel.RIGHT), c1);
+
+			c1.gridx = 3;
+			c1.gridy = 0;
 			durationEditorPanel.add (durationMinEditor, c1);
 			
-			c1.gridx = 2;
+			c1.gridx = 4;
+			c1.gridy = 0;
+			durationEditorPanel.add (new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "secs"), JLabel.RIGHT), c1);
+
+			c1.gridx = 5;
 			c1.gridy = 0;
 			durationEditorPanel.add (durationSecsEditor, c1);
 			
 			/* filler */
-			c1.gridx = 3;
-			c1.gridy = 0;
-			c1.weightx=1.0;
-			durationEditorPanel.add (new JLabel (), c1);
+//			c1.gridx = 3;
+//			c1.gridy = 0;
+//			c1.weightx=1;
+//			durationEditorPanel.add (new JLabel (), c1);
 		}
 		
 		
@@ -326,12 +338,18 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 		c.gridx = 1;
 		c.gridy = 3;
 		editPanel.add (durationEditorPanel, c);
+//		c.gridx = 2;
+//		c.gridy = 3;
+//		c.weightx=1;
+//		editPanel.add (new JLabel (), c);
 		
 		c.gridx = 0;
 		c.gridy = 4;
 		c.gridwidth = 2;
+		c.weightx=1;
 		editPanel.add (new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "secondary")), c);
 		
+		c.weightx=0;
 		c.gridwidth = 1;
 		
 		/*
@@ -391,7 +409,7 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 	
 	
 	/**
-	 * Specifica se la sincronizzazionedei controlli per l'editazionedella durata è in corso.
+	 * Specifica se la sincronizzazionedei controlli per l'editazionedella durata ? in corso.
 	 */
 	private boolean synchronizingDurationControls = false;
 	/**
@@ -417,7 +435,7 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 		final ProgressItem node = app.getSelectedItem ();
 		if (node!=null){
 			/*
-			 * C'è un avanzamento selezionato.
+			 * C'? un avanzamento selezionato.
 			 * Valorizzazione avanzamento da campi editazione.
 			 */
 			new CreateProgress (node, 
@@ -435,7 +453,7 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 	
 	/**
 	 * Aggiorna questo pannello a seguito di una notifica da parte di un oggetto sosservato.
-	 * Nello specifico la notifica di interesse è quella relativa al cambiamento del nodo
+	 * Nello specifico la notifica di interesse ? quella relativa al cambiamento del nodo
 	 * di avanzamento correntemente selezionata.
 	 * A seguito di tale notifica i campi di editaszione cvengono aggiornati.
 	 *

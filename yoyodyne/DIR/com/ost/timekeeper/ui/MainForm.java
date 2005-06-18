@@ -71,7 +71,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		postInitComponents ();
 		
 		setBounds (Application.getInstance ().getOptions ().getMainFormBounds ());
-		JFrame.setDefaultLookAndFeelDecorated (true);
+//		JFrame.setDefaultLookAndFeelDecorated (true);
 		
 		updateLookAndFeel (Application.getOptions ().getLookAndFeel ());
 
@@ -349,7 +349,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 			progressItemInspectorFrame.init (desktop, (int)bounds.getX (), (int)bounds.getY ());
 			//Set the window's location.
 			progressItemInspectorFrame.getFrame ().setBounds (bounds);
-			progressItemInspectorFrame.setVisible (true); //necessary as of 1.3
+//			progressItemInspectorFrame.setVisible (true); //necessary as of 1.3
 			desktop.setSelectedFrame (progressItemInspectorFrame.getFrame ());
 			javax.help.CSH.setHelpIDString (progressItemInspectorFrame, HelpResourcesResolver.getInstance ().resolveHelpID (HelpResource.PROGRESSITEMINSPECTORFRAME ));
 		}
@@ -562,7 +562,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		jMenuTools.add (jMenuItemOptions);
 		
 		final JMenuItem logMenuItem = new JMenuItem ();
-		logMenuItem.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_L, 0));
+//		logMenuItem.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_L, 0));
 		logMenuItem.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "log-frame.png"));
 		logMenuItem.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "tools.log_console"));
 		logMenuItem.addActionListener (new ActionListener (){
@@ -624,7 +624,7 @@ public final class MainForm extends javax.swing.JFrame implements Observer {
 		
 		
 		jMenuHelp.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help"));
-		jMenuItemAbout.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_QUOTE, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+//		jMenuItemAbout.setAccelerator (javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_QUOTE, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
 		jMenuItemAbout.setText (ResourceSupplier.getString (ResourceClass.UI, "menu", "help.about"));
 		jMenuItemAbout.setIcon (ResourceSupplier.getImageIcon (ResourceClass.UI, "info.png"));
 		jMenuItemAbout.addActionListener (new ActionListener (){
