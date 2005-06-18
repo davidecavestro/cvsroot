@@ -27,7 +27,7 @@ public final class StartProjectEdit extends javax.swing.AbstractAction implement
 	public StartProjectEdit () {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.editproject"), ResourceSupplier.getImageIcon (ResourceClass.UI, "editproject.png"));
 		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.editproject.tooltip"));
-		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+//		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled (false);
 	}
 	

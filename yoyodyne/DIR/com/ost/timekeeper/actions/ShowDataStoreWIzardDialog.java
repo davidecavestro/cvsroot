@@ -29,7 +29,7 @@ public final class ShowDataStoreWIzardDialog extends javax.swing.AbstractAction 
 	public ShowDataStoreWIzardDialog () {
 		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "tools.datastore.wizard"), ResourceSupplier.getImageIcon (ResourceClass.UI, "wizard.png"));
 		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "tools.datastore.wizard.tooltip"));
-		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
+//		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled (true);
 	}
 	
