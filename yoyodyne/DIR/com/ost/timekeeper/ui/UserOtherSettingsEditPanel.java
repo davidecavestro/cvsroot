@@ -139,7 +139,7 @@ public final class UserOtherSettingsEditPanel extends ObservablePanel implements
 	 * Aggiorna il nodo di avanzamento selezionato con i dati delle componenti di editazione.
 	 */
 	protected final void pushData (){
-		Application.getLogger ().debug ("Pushing user data preferences.");
+		Application.getLogger ().debug ("Pushing other user preferences.");
 		UserSettings.getInstance ().setPlainTextLogBufferSize ((Integer)this.plainTextLogBufferSizeEditor.getValue ());
 		
 		this.setDataChanged (false);
