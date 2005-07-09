@@ -32,7 +32,7 @@ import javax.swing.event.*;
  * Pannello di modifica periodo di avanzamento.
  *
  * @author  davide
- * @todo fix abilitazione pulsante conferma (ora è abilitato di default, si riabilita solo alla pressione dei tasti sui campi).
+ * @todo fix abilitazione pulsante conferma (ora ? abilitato di default, si riabilita solo alla pressione dei tasti sui campi).
  */
 public final class PeriodEditPanel extends javax.swing.JPanel implements Observer, KeyListener {
 	
@@ -228,51 +228,27 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		durationHourEditor.adjustWidthToMaximumValue ();
 		durationMinEditor.adjustWidthToMaximumValue ();
 		durationSecsEditor.adjustWidthToMaximumValue ();
-		final JPanel durationEditorPanel = new JPanel (new GridBagLayout ());
-		{
-			final GridBagConstraints c1 = new GridBagConstraints ();
-			c1.fill = GridBagConstraints.BOTH;
-			c1.anchor = GridBagConstraints.FIRST_LINE_START;
-			c1.insets = new Insets (0, 0, 0, 10);
-
-			durationLabel.setLabelFor (durationEditorPanel);
-			durationLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "duration"));
-
-			c1.gridx = 0;
-			c1.gridy = 0;
-			durationEditorPanel.add (durationHourEditor, c1);
-
-			c1.gridx = 1;
-			c1.gridy = 0;
-			durationEditorPanel.add (durationMinEditor, c1);
-			
-			c1.gridx = 2;
-			c1.gridy = 0;
-			durationEditorPanel.add (durationSecsEditor, c1);
-			
-			/* filler */
-			c1.gridx = 3;
-			c1.gridy = 0;
-			c1.weightx=1.0;
-			durationEditorPanel.add (new JLabel (), c1);
-		}
 		
-		
-			final PropertyChangeListener durationChangeListener = new PropertyChangeListener (){
-				public void propertyChange (PropertyChangeEvent evt){
-					if (synchronizingDurationControls){
-						/* evita chiamata spuria */
-						return;
-					}
-					PeriodEditPanel.this.toEditor.setDate (
-					new Date (
-					PeriodEditPanel.this.fromEditor.getDate ().getTime ()
-					+new Duration (durationHourEditor.getValue (), durationMinEditor.getValue (), durationSecsEditor.getValue (), 0).getTime ()));
+		durationLabel.setLabelFor (durationHourEditor);
+		durationLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "duration"));
+
+
+
+		final PropertyChangeListener durationChangeListener = new PropertyChangeListener (){
+			public void propertyChange (PropertyChangeEvent evt){
+				if (synchronizingDurationControls){
+					/* evita chiamata spuria */
+					return;
 				}
-			};	
-			durationHourEditor.addPropertyChangeListener ("value", durationChangeListener);
-			durationMinEditor.addPropertyChangeListener ("value", durationChangeListener);
-			durationSecsEditor.addPropertyChangeListener ("value", durationChangeListener);
+				PeriodEditPanel.this.toEditor.setDate (
+				new Date (
+				PeriodEditPanel.this.fromEditor.getDate ().getTime ()
+				+new Duration (durationHourEditor.getValue (), durationMinEditor.getValue (), durationSecsEditor.getValue (), 0).getTime ()));
+			}
+		};	
+		durationHourEditor.addPropertyChangeListener ("value", durationChangeListener);
+		durationMinEditor.addPropertyChangeListener ("value", durationChangeListener);
+		durationSecsEditor.addPropertyChangeListener ("value", durationChangeListener);
 		
 		/*
 		 * Configurazione editazione DESCRIZIONE.
@@ -294,10 +270,11 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
 		c.insets = new Insets (3, 3, 3, 3);
+		c.weightx=0;
 		
 		c.gridx = 0;
 		c.gridy = 0;
-		c.gridwidth = 2;
+		c.gridwidth = 6;
 		editPanel.add (new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "main")), c);
 		
 		c.gridwidth = 1;
@@ -309,7 +286,18 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		editPanel.add (fromLabel, c);
 		c.gridx = 1;
 		c.gridy = 1;
+		c.gridwidth=3;
 		editPanel.add (fromEditor, c);
+		/*
+		 *filler
+		 */
+		c.gridx = 4;
+		c.gridy = 1;
+		c.weightx=1;
+		c.gridwidth=2;
+		editPanel.add (new JLabel (), c);
+		c.weightx=0;
+		c.gridwidth=1;
 		
 		/*
 		 * Inserimento editazione FINE.
@@ -319,7 +307,19 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		editPanel.add (toLabel, c);
 		c.gridx = 1;
 		c.gridy = 2;
+		c.gridwidth=3;
 		editPanel.add (toEditor, c);
+		c.gridwidth=1;
+		/*
+		 *filler
+		 */
+		c.gridx = 4;
+		c.gridy = 2;
+		c.weightx=1;
+		c.gridwidth=2;
+		editPanel.add (new JLabel (), c);
+		c.gridwidth=1;
+		c.weightx=0;
 
 		/*
 		 * Editazione DURATA
@@ -329,49 +329,65 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		editPanel.add (durationLabel, c);
 		c.gridx = 1;
 		c.gridy = 3;
-		editPanel.add (durationEditorPanel, c);
+		editPanel.add (durationHourEditor, c);
+		c.gridx = 2;
+		c.gridy = 3;
+		editPanel.add (durationMinEditor, c);
+		c.gridx = 3;
+		c.gridy = 3;
+		editPanel.add (durationSecsEditor, c);
+
+		c.gridx = 4;
+		c.gridy = 3;
+		c.weightx=1;
+		editPanel.add (new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "hhmmss")), c);
+		/*filler*/
+		c.gridx = 5;
+		c.gridy = 3;
+		c.weightx=1;
+		editPanel.add (new JLabel (), c);
+		c.weightx=0;
 		
 		c.gridx = 0;
 		c.gridy = 4;
-		c.gridwidth = 2;
+		c.gridwidth = 6;
+		c.weightx=1;
 		editPanel.add (new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "secondary")), c);
 		
+		c.weightx=0;
 		c.gridwidth = 1;
 		
 		/*
 		 * Inserimento editazione DESCRIZIONE.
 		 */
-		c.weightx = 0.0;
-		c.weighty = 0.0;
 		c.gridx = 0;
 		c.gridy = 5;
 		editPanel.add (descriptionLabel, c);
-		c.weightx = 1.0;
-		c.weighty = 1.0;
 		c.gridx = 1;
 		c.gridy = 5;
+		c.gridwidth = 5;
+		c.weighty = 1;
+		c.weightx = 1;
 		editPanel.add (new JScrollPane (descriptionEditor), c);
+		c.gridwidth = 1;
+		c.weighty = 0;
+		c.weightx = 0;
 		
 		/*
 		 * Inserimento editazione NOTE.
 		 */
-		c.weightx = 0.0;
-		c.weighty = 0.0;
 		c.gridx = 0;
 		c.gridy = 6;
 		editPanel.add (notesLabel, c);
-		c.weightx = 1.0;
-		c.weighty = 1.0;
 		c.gridx = 1;
 		c.gridy = 6;
+		c.gridwidth = 5;
+		c.weighty = 1;
+		c.weightx = 1;
 		editPanel.add (new JScrollPane (notesEditor), c);
-		
-		
-		
-		//		SpringUtilities.makeCompactGrid(editPanel,
-		//                                4, 2, //rows, cols
-		//                                6, 6,        //initX, initY
-		//                                6, 6);       //xPad, yPad
+		c.gridwidth = 1;
+		c.weighty = 0;
+		c.weightx = 0;
 		
 		
 		{
@@ -416,7 +432,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 			String notes = "";
 			if (validItem){
 				/*
-				 * C'è un avanzamento selezionato.
+				 * C'? un avanzamento selezionato.
 				 * Inizializzazione campi editazione a valori avanzamento selezionato.
 				 */
 				from = editSubject.getFrom ();
@@ -456,7 +472,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 	}
 	
 	/**
-	 * Specifica se la sincronizzazionedei controlli per l'editazionedella durata è in corso.
+	 * Specifica se la sincronizzazionedei controlli per l'editazionedella durata ? in corso.
 	 */
 	private boolean synchronizingDurationControls = false;
 	/**
@@ -482,7 +498,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 		final Progress editSubject = app.getSelectedProgress ();
 		if (editSubject!=null){
 			/*
-			 * C'è un avanzamento selezionato.
+			 * C'? un avanzamento selezionato.
 			 * Valorizzazione avanzamento da campi editazione.
 			 */
 			
@@ -516,7 +532,7 @@ public final class PeriodEditPanel extends javax.swing.JPanel implements Observe
 	
 	/**
 	 * Aggiorna questo pannello a seguito di una notifica da parte di un oggetto sosservato.
-	 * Nello specifico la notifica di interesse è quella relativa al cambiamento del nodo
+	 * Nello specifico la notifica di interesse ? quella relativa al cambiamento del nodo
 	 * di avanzamento correntemente selezionata.
 	 * A seguito di tale notifica i campi di editaszione cvengono aggiornati.
 	 *

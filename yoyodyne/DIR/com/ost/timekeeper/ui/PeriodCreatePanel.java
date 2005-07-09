@@ -197,7 +197,7 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 		fromLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "from"));
 		//		fromEditor.setMinimumSize (new Dimension (120, 20));
 		fromEditor.addKeyListener (this);
-		
+
 		final PropertyChangeListener fromOrToChangeListener = new PropertyChangeListener (){
 			public void propertyChange (PropertyChangeEvent evt){
 				final Date fromDate = PeriodCreatePanel.this.fromEditor.getDate ();
@@ -209,8 +209,8 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 			}
 		};
 		fromEditor.addPropertyChangeListener ("date", fromOrToChangeListener);
-		
-		
+
+
 		/*
 		 * Configurazione editazione campo FINE.
 		 */
@@ -218,76 +218,39 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 		toLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "to"));
 		//		toEditor.setMinimumSize (new Dimension (120, 20));
 		toEditor.addKeyListener (this);
-		
+
 		toEditor.addPropertyChangeListener ("date", fromOrToChangeListener);
-		
+
 		durationHourEditor.adjustWidthToMaximumValue ();
 		durationMinEditor.adjustWidthToMaximumValue ();
 		durationSecsEditor.adjustWidthToMaximumValue ();
-		final JPanel durationEditorPanel = new JPanel (new GridBagLayout ());
-		{
-			final GridBagConstraints c1 = new GridBagConstraints ();
-			c1.fill = GridBagConstraints.BOTH;
-			c1.anchor = GridBagConstraints.FIRST_LINE_START;
-			c1.insets = new Insets (0, 0, 0, 10);
 
-			durationLabel.setLabelFor (durationEditorPanel);
-			durationLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "duration"));
+		durationLabel.setLabelFor (durationHourEditor);
+		durationLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "duration"));
 
-			c1.gridx = 0;
-			c1.gridy = 0;
-			durationEditorPanel.add (new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "hours"), JLabel.RIGHT), c1);
-
-			c1.gridx = 1;
-			c1.gridy = 0;
-			durationEditorPanel.add (durationHourEditor, c1);
-
-			c1.gridx = 2;
-			c1.gridy = 0;
-			durationEditorPanel.add (new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "mins"), JLabel.RIGHT), c1);
-
-			c1.gridx = 3;
-			c1.gridy = 0;
-			durationEditorPanel.add (durationMinEditor, c1);
-			
-			c1.gridx = 4;
-			c1.gridy = 0;
-			durationEditorPanel.add (new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "secs"), JLabel.RIGHT), c1);
-
-			c1.gridx = 5;
-			c1.gridy = 0;
-			durationEditorPanel.add (durationSecsEditor, c1);
-			
-			/* filler */
-//			c1.gridx = 3;
-//			c1.gridy = 0;
-//			c1.weightx=1;
-//			durationEditorPanel.add (new JLabel (), c1);
-		}
 		
-		
-			final PropertyChangeListener durationChangeListener = new PropertyChangeListener (){
-				public void propertyChange (PropertyChangeEvent evt){
-					if (synchronizingDurationControls){
-						/* evita chiamata spuria */
-						return;
-					}
-					PeriodCreatePanel.this.toEditor.setDate (
-					new Date (
-					PeriodCreatePanel.this.fromEditor.getDate ().getTime ()
-					+new Duration (durationHourEditor.getValue (), durationMinEditor.getValue (), durationSecsEditor.getValue (), 0).getTime ()));
+		final PropertyChangeListener durationChangeListener = new PropertyChangeListener (){
+			public void propertyChange (PropertyChangeEvent evt){
+				if (synchronizingDurationControls){
+					/* evita chiamata spuria */
+					return;
 				}
-			};	
-			durationHourEditor.addPropertyChangeListener ("value", durationChangeListener);
-			durationMinEditor.addPropertyChangeListener ("value", durationChangeListener);
-			durationSecsEditor.addPropertyChangeListener ("value", durationChangeListener);
+				PeriodCreatePanel.this.toEditor.setDate (
+				new Date (
+				PeriodCreatePanel.this.fromEditor.getDate ().getTime ()
+				+new Duration (durationHourEditor.getValue (), durationMinEditor.getValue (), durationSecsEditor.getValue (), 0).getTime ()));
+			}
+		};	
+		durationHourEditor.addPropertyChangeListener ("value", durationChangeListener);
+		durationMinEditor.addPropertyChangeListener ("value", durationChangeListener);
+		durationSecsEditor.addPropertyChangeListener ("value", durationChangeListener);
 		
 		/*
 		 * Configurazione editazione DESCRIZIONE.
 		 */
 		descriptionLabel.setLabelFor (descriptionEditor);
 		descriptionLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "description"));
-		descriptionEditor.setMinimumSize (new Dimension (120, 20));
+//		descriptionEditor.setMinimumSize (new Dimension (120, 20));
 		descriptionEditor.addKeyListener (this);
 		
 		/*
@@ -295,17 +258,18 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 		 */
 		notesLabel.setLabelFor (notesEditor);
 		notesLabel.setText (ResourceSupplier.getString (ResourceClass.UI, "controls", "notes"));
-		notesEditor.setMinimumSize (new Dimension (120, 20));
+//		notesEditor.setMinimumSize (new Dimension (120, 20));
 		notesEditor.addKeyListener (this);
 		
 		final GridBagConstraints c = new GridBagConstraints ();
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
 		c.insets = new Insets (3, 3, 3, 3);
+		c.weightx=0;
 		
 		c.gridx = 0;
 		c.gridy = 0;
-		c.gridwidth = 2;
+		c.gridwidth = 6;
 		editPanel.add (new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "main")), c);
 		
 		c.gridwidth = 1;
@@ -317,7 +281,18 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 		editPanel.add (fromLabel, c);
 		c.gridx = 1;
 		c.gridy = 1;
+		c.gridwidth=3;
 		editPanel.add (fromEditor, c);
+		/*
+		 *filler
+		 */
+		c.gridx = 4;
+		c.gridy = 1;
+		c.weightx=1;
+		c.gridwidth=2;
+		editPanel.add (new JLabel (), c);
+		c.weightx=0;
+		c.gridwidth=1;
 		
 		/*
 		 * Inserimento editazione FINE.
@@ -327,7 +302,19 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 		editPanel.add (toLabel, c);
 		c.gridx = 1;
 		c.gridy = 2;
+		c.gridwidth=3;
 		editPanel.add (toEditor, c);
+		c.gridwidth=1;
+		/*
+		 *filler
+		 */
+		c.gridx = 4;
+		c.gridy = 2;
+		c.weightx=1;
+		c.gridwidth=2;
+		editPanel.add (new JLabel (), c);
+		c.gridwidth=1;
+		c.weightx=0;
 
 		/*
 		 * Editazione DURATA
@@ -337,15 +324,28 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 		editPanel.add (durationLabel, c);
 		c.gridx = 1;
 		c.gridy = 3;
-		editPanel.add (durationEditorPanel, c);
-//		c.gridx = 2;
-//		c.gridy = 3;
-//		c.weightx=1;
-//		editPanel.add (new JLabel (), c);
+		editPanel.add (durationHourEditor, c);
+		c.gridx = 2;
+		c.gridy = 3;
+		editPanel.add (durationMinEditor, c);
+		c.gridx = 3;
+		c.gridy = 3;
+		editPanel.add (durationSecsEditor, c);
+
+		c.gridx = 4;
+		c.gridy = 3;
+		c.weightx=1;
+		editPanel.add (new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "hhmmss")), c);
+		/*filler*/
+		c.gridx = 5;
+		c.gridy = 3;
+		c.weightx=1;
+		editPanel.add (new JLabel (), c);
+		c.weightx=0;
 		
 		c.gridx = 0;
 		c.gridy = 4;
-		c.gridwidth = 2;
+		c.gridwidth = 6;
 		c.weightx=1;
 		editPanel.add (new TopBorderPane (ResourceSupplier.getString (ResourceClass.UI, "controls", "secondary")), c);
 		
@@ -355,41 +355,36 @@ public final class PeriodCreatePanel extends javax.swing.JPanel implements Obser
 		/*
 		 * Inserimento editazione DESCRIZIONE.
 		 */
-		c.weightx = 0.0;
-		c.weighty = 0.0;
 		c.gridx = 0;
 		c.gridy = 5;
 		editPanel.add (descriptionLabel, c);
-		c.weightx = 1.0;
-		c.weighty = 1.0;
 		c.gridx = 1;
 		c.gridy = 5;
-		editPanel.add (new JScrollPane (descriptionEditor,
-		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), c);
+		c.gridwidth = 5;
+		c.weighty = 1;
+		c.weightx = 1;
+		editPanel.add (new JScrollPane (descriptionEditor), c);
+		c.gridwidth = 1;
+		c.weighty = 0;
+		c.weightx = 0;
 		
 		/*
 		 * Inserimento editazione NOTE.
 		 */
-		c.weightx = 0.0;
-		c.weighty = 0.0;
 		c.gridx = 0;
 		c.gridy = 6;
 		editPanel.add (notesLabel, c);
-		c.weightx = 1.0;
-		c.weighty = 1.0;
 		c.gridx = 1;
 		c.gridy = 6;
-		editPanel.add (new JScrollPane (notesEditor,
-		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), c);
+		c.gridwidth = 5;
+		c.weighty = 1;
+		c.weightx = 1;
+		editPanel.add (new JScrollPane (notesEditor), c);
+		c.gridwidth = 1;
+		c.weighty = 0;
+		c.weightx = 0;
 		
 		
-		
-		//		SpringUtilities.makeCompactGrid(editPanel,
-		//                                4, 2, //rows, cols
-		//                                6, 6,        //initX, initY
-		//                                6, 6);       //xPad, yPad
 		
 		/*
 		 * Inserimento pannello editazione.

@@ -82,46 +82,38 @@ public class ProgressStartDialog extends JDialog{
 		durationSecsEditor.adjustWidthToMaximumValue ();
 		
 		final JPanel editPanel = new JPanel (new GridBagLayout ());
-		final JPanel durationEditorPanel = new JPanel (new GridBagLayout ());
-		{
-			final GridBagConstraints c1 = new GridBagConstraints ();
-			c1.fill = GridBagConstraints.BOTH;
-			c1.anchor = GridBagConstraints.FIRST_LINE_START;
-			c1.insets = new Insets (0, 0, 0, 10);
-
-
-			c1.gridx = 0;
-			c1.gridy = 0;
-			durationEditorPanel.add (durationHourEditor, c1);
-
-			c1.gridx = 1;
-			c1.gridy = 0;
-			durationEditorPanel.add (durationMinEditor, c1);
-			
-			c1.gridx = 2;
-			c1.gridy = 0;
-			durationEditorPanel.add (durationSecsEditor, c1);
-			
-			/* filler */
-			c1.gridx = 3;
-			c1.gridy = 0;
-			c1.weightx=1.0;
-			durationEditorPanel.add (new JLabel (), c1);
-		}
 		
 		final JLabel durationLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "duration"));
-		durationLabel.setLabelFor (durationEditorPanel);
+		durationLabel.setLabelFor (durationHourEditor);
 			
-		c.weightx = 0.0;
-		c.weighty = 0.0;
+		c.weightx = 0;
+		c.weighty = 0;
+		
 		c.gridx = 0;
 		c.gridy = 0;
 		editPanel.add (durationLabel, c);
-		c.weightx = 1.0;
-		c.weighty = 0.0;
+		
 		c.gridx = 1;
 		c.gridy = 0;
-		editPanel.add (durationEditorPanel, c);
+		editPanel.add (durationHourEditor, c);
+
+		c.gridx = 2;
+		c.gridy = 0;
+		editPanel.add (durationMinEditor, c);
+
+		c.gridx = 3;
+		c.gridy = 0;
+		editPanel.add (durationSecsEditor, c);
+
+		c.gridx = 4;
+		c.gridy = 0;
+		editPanel.add (new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "hhmmss")), c);
+		/*filler*/
+		c.gridx = 5;
+		c.gridy = 0;
+		c.weightx = 1;
+		editPanel.add (new JLabel (), c);
+		c.weightx = 0;
 		
 		final JLabel descriptionLabel = new JLabel (ResourceSupplier.getString (ResourceClass.UI, "controls", "description"));
 		descriptionLabel.setLabelFor (descriptionEditor);
@@ -132,27 +124,31 @@ public class ProgressStartDialog extends JDialog{
 		notesEditor.setMinimumSize (new Dimension (120, 20));
 		
 		
-		c.weightx = 0.0;
-		c.weighty = 0.0;
+		c.weightx = 0;
+		c.weighty = 0;
 		c.gridx = 0;
 		c.gridy = 1;
 		editPanel.add (descriptionLabel, c);
-		c.weightx = 1.0;
-		c.weighty = 1.0;
+		c.weightx = 1;
+		c.weighty = 1;
 		c.gridx = 1;
 		c.gridy = 1;
+		c.gridwidth = 5;
 		editPanel.add (new JScrollPane (descriptionEditor), c);
+		c.gridwidth = 1;
 		
-		c.weightx = 0.0;
-		c.weighty = 0.0;
+		c.weightx = 0;
+		c.weighty = 0;
 		c.gridx = 0;
 		c.gridy = 2;
 		editPanel.add (notesLabel, c);
-		c.weightx = 1.0;
-		c.weighty = 1.0;
+		c.weightx = 1;
+		c.weighty = 1;
 		c.gridx = 1;
 		c.gridy = 2;
+		c.gridwidth = 5;
 		editPanel.add (new JScrollPane (notesEditor), c);
+		c.gridwidth = 1;
 		
 		final JPanel buttonPanel = new JPanel ();
 		
