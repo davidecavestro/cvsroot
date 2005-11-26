@@ -357,7 +357,9 @@ public final class ProgressItemTree extends com.ost.timekeeper.ui.support.treeta
 					//				this.reloadModel(((Application)o).getSelectedItem());
 					final javax.swing.table.AbstractTableModel tModel = (javax.swing.table.AbstractTableModel)this.getModel ();
 					if (tModel.getRowCount ()>0){
+						//tModel.fireTableChanged (new TableModelEvent (tModel));
 						tModel.fireTableChanged (new TableModelEvent (tModel, 0, tModel.getRowCount ()-1, 1));
+						tModel.fireTableChanged (new TableModelEvent (tModel, 0, tModel.getRowCount ()-1, 2));
 					}
 				} else if (arg.equals (ObserverCodes.SELECTEDNODE_INTERNALCHANGE)){
 					//				this.reloadModel(((Application)o).getSelectedItem());

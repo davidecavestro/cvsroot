@@ -188,6 +188,7 @@
 			<fileset dir="${src.dir}">
 			<include name="com/ost/timekeeper/actions/dataiomap.xml"/>
 			<include name="com/ost/timekeeper/model/package.jdo"/>
+			<include name="com/ost/timekeeper/ui/info.html"/>
 			<include name="com/ost/timekeeper/ui/license.html"/>
 			<include name="com/ost/timekeeper/ui/LGPL.html"/>
 			<include name="com/ost/timekeeper/release.properties"/>
@@ -318,8 +319,11 @@
 		<tar tarfile="${app.tar}" >
 			<tarfileset dir="." preserveLeadingSlashes="true">
 			<include name="${app.dir.name}/**"/>
-			<exclude name="${app.dir.name}/bin/launch.sh"/>
-			</tarfileset>
+				<exclude name="${app.dir.name}/bin/launch.sh"/>
+				<exclude name="**/cvs/**"/>
+				<exclude name="**/CVS/**"/>
+				<exclude name="**/.nbattrs"/>
+    			</tarfileset>
 			<tarfileset dir="." mode="755" preserveLeadingSlashes="true">
 			<include name="${app.dir.name}/bin/launch.sh"/>
 			</tarfileset>

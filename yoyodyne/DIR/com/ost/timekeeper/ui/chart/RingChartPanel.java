@@ -197,7 +197,7 @@ public class RingChartPanel extends JPanel{
 		}
 		visibleLevelsEditor.setModel (
 			new SpinnerNumberModel(this._pieChart.getDepth (), //initial value
-				1, //min
+				2, //min
 				100, //max
 				1)); //step
 		

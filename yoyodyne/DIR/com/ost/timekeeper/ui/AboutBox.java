@@ -49,11 +49,7 @@ public final class AboutBox extends JDialog {
 	 */
 	private JPanel infoPane;
 	
-	/**
-	 * Le informazioni.
-	 */
-	private JEditorPane infoEditor;
-	
+
 	/**
 	 * Etichetta logo aziendale.
 	 */
@@ -90,7 +86,7 @@ public final class AboutBox extends JDialog {
     private IntroPage introPage;
 	
 	/**
-	 * La velocità dell'intro.
+	 * La velocit? dell'intro.
 	 */
     private static final int DEFAULT_FRAME_RATE = 30;
 	
@@ -114,7 +110,7 @@ public final class AboutBox extends JDialog {
 	/**
 	 * Implementa il singleton.
 	 *
-	 * @return lìistanza di questo singleton.
+	 * @return l?istanza di questo singleton.
 	 */	
 	public static AboutBox getInstance (){
 		if (_instance==null){
@@ -139,17 +135,22 @@ public final class AboutBox extends JDialog {
 		
 		
 		this.infoPane = new JPanel (new BorderLayout ());
-		this.infoEditor = new JEditorPane ("text/html", ResourceSupplier.getString (ResourceClass.UI, "about", "applicationinfo"));
-		this.infoEditor.setEditable (false);
-        final JScrollPane infoScrollPane = new JScrollPane(this.infoEditor);
-        infoScrollPane.setVerticalScrollBarPolicy(
-                        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        infoScrollPane.setPreferredSize (new Dimension (this.productNameImage.getIconWidth (), this.productNameImage.getIconHeight ()));
-        infoScrollPane.setMinimumSize(new Dimension(10, 10));
+		try {
+			final JEditorPane infoEditor = new JEditorPane (this.getClass ().getResource ("info.html"));
+			infoEditor.setEditable (false);
+			
+			JScrollPane editorScrollPane = new JScrollPane(infoEditor);
+			editorScrollPane.setVerticalScrollBarPolicy(
+			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			editorScrollPane.setPreferredSize(new Dimension(250, 145));
+			editorScrollPane.setMinimumSize(new Dimension(10, 10));
+			
+			this.logoPanel.add (infoScrollPane, BorderLayout.CENTER);
 		
-//		this.infoPane.add (new JScrollPane (this.infoEditor), BorderLayout.NORTH);
-//		this.infoPane.setPreferredSize (new Dimension (this.productNameImage.getIconWidth (), this.productNameImage.getIconHeight ()));
-		this.logoPanel.add (infoScrollPane, BorderLayout.CENTER);
+		} catch (final IOException ioe){
+			throw new NestedRuntimeException (ioe);
+		}
+		
 		
 		aboutPanel = new JPanel (new BorderLayout ());
 		
@@ -169,9 +170,15 @@ public final class AboutBox extends JDialog {
 		this.licensePanel = new JPanel (new BorderLayout ());
 		
 		try {
-			final JEditorPane licenseEditor = new JEditorPane (this.getClass ().getResource ("license.html"));
-			this.infoEditor.setEditable (false);
-			this.licensePanel.add (new JScrollPane (licenseEditor), BorderLayout.CENTER);
+			final JEditorPane licensePane = new JEditorPane (this.getClass ().getResource ("license.html"));
+			JScrollPane editorScrollPane = new JScrollPane(licensePane);
+			editorScrollPane.setVerticalScrollBarPolicy(
+			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			editorScrollPane.setPreferredSize(new Dimension(250, 145));
+			editorScrollPane.setMinimumSize(new Dimension(10, 10));
+			licensePane.setEditable (false);
+			
+			this.licensePanel.add (editorScrollPane, BorderLayout.CENTER);
 		} catch (final IOException ioe){
 			throw new NestedRuntimeException (ioe);
 		}

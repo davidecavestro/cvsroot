@@ -26,6 +26,8 @@
 
 <mapID target="html.reportgenerationdialog" url="html/reportgenerationdialog.html"/>
 
+<mapID target="html.release_notes" url="html/release_notes.html"/>
+
 <mapID target="html.datastoreconfigurationwizard" url="html/datastoreconfigurationwizard.html"/>
 
 <mapID target="html.newprojectdialog" url="html/newprojectdialog.html"/>

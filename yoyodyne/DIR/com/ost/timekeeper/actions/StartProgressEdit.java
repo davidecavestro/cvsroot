@@ -25,7 +25,7 @@ public final class StartProgressEdit extends javax.swing.AbstractAction implemen
 	 * Costruttore vuoto.
 	 */
 	public StartProgressEdit () {
-		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.editprogress"), ResourceSupplier.getImageIcon (ResourceClass.UI, "editprogress.gif"));
+		super (ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.editprogress"), ResourceSupplier.getImageIcon (ResourceClass.UI, "editprogress.png"));
 		this.putValue (SHORT_DESCRIPTION, ResourceSupplier.getString (ResourceClass.UI, "menu", "actions.editprogress.tooltip"));
 		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
 		this.setEnabled (false);

@@ -6,6 +6,10 @@
 
 package com.ost.timekeeper.view;
 
+import java.lang.Comparable;
+
+import com.ost.timekeeper.util.LocalizedPeriodImpl;
+
 import java.util.*;
 
 import javax.swing.event.*;
@@ -28,7 +32,7 @@ public class ProgressTreeModel extends com.ost.timekeeper.ui.support.treetable.A
 	
  // Types of the columns.
     static protected Class[]  cTypes = { TreeTableModel.class,
-					 String.class};		
+					 String.class, String.class};
 					 
 	/**
 	 * Costruttore con nodo radice.
@@ -55,7 +59,8 @@ public class ProgressTreeModel extends com.ost.timekeeper.ui.support.treetable.A
 	private void initColumnsStructure (){
 		this.columns = new Object[]{
 			ResourceSupplier.getString(ResourceClass.UI, "controls", "node"),
-			ResourceSupplier.getString(ResourceClass.UI, "controls", "duration")
+			ResourceSupplier.getString(ResourceClass.UI, "controls", "duration"),
+			ResourceSupplier.getString(ResourceClass.UI, "controls", "Today")
 		};		
 	}
 	
@@ -217,18 +222,98 @@ public class ProgressTreeModel extends com.ost.timekeeper.ui.support.treetable.A
 	private Object[] columns;
 	
 	public int getColumnCount () {
-		return 2;
+		return cTypes.length;
 	}
 	
 	public String getColumnName (int column) {
 		return (String)columns[column];
 	}
 	
+	private LocalizedPeriod _today = null;
+	
+	private final LocalizedPeriod getToday (){
+		if (this._today==null){
+			final Calendar now = new GregorianCalendar ();
+
+			now.set (Calendar.HOUR_OF_DAY, 0);
+			now.set (Calendar.MINUTE, 0);
+			now.set (Calendar.SECOND, 0);
+			now.set (Calendar.MILLISECOND, 0);
+			//		now.roll (Calendar.DATE, 1);
+			final Date periodStartDate = new Date (now.getTime ().getTime ());
+
+			now.add (Calendar.DAY_OF_YEAR, 1);
+			final Date periodFinishDate = new Date (now.getTime ().getTime ());
+			this._today = new LocalizedPeriodImpl (periodStartDate, periodFinishDate);
+		}
+		
+		return this._today;
+		
+	}
+	
+	
+	/**
+	 * Un periodo.
+	 */
+	private final class TodayPeriod extends LocalizedPeriodImpl implements Comparable {
+		/*
+		 * durata calcolata in millisecondi
+		 */
+		private long _millisecs = 0;
+		
+		public TodayPeriod (){
+			super (getToday ());
+			
+		}
+		
+		public void reset (){
+			setFrom (getToday ().getFrom ());
+			setTo (getToday ().getTo ());
+			this._millisecs = 0;
+		}
+		
+		public int compareTo (Object o) {
+			return compareToStart ((LocalizedPeriod)o);
+		}
+		
+		/**
+		 * Calcola la quota di lavoro appartenente al giorno odierno per l'avanzamento specificato.
+		 */
+		public void computeProgress ( Progress progress ){
+			LocalizedPeriod toIntersect = null;
+			if (!progress.isEndOpened ()){
+				if (!this.intersects (progress)){
+					return;
+				}
+				toIntersect = progress;
+			} else {
+				 //avanzamento in corso
+				toIntersect = new LocalizedPeriodImpl (progress.getFrom (), new Date ());
+			}
+			
+			final LocalizedPeriod intersection = this.intersection (toIntersect);
+			this._millisecs += intersection.getDuration ().getTime ();
+			
+		}
+		
+		/**
+		 * Ritorna la durata risultante del lavoro giornaliero
+		 *@returns la durata risultante del lavoro giornaliero
+		 */
+		public Duration getTodayAmount (){
+			return new Duration (this._millisecs);
+		}
+	}
+	
+	private final TodayPeriod _todayPeriod = new TodayPeriod ();
+	
+	
 	public Object getValueAt (Object node, int column) {
 		final ProgressItem progressItem = (ProgressItem)node;
 		switch (column){
 			case 0: return progressItem.getName ();
 			case 1: 
+			{
 				long totalDuration = 0;
 				for (final Iterator it = progressItem.getSubtreeProgresses ().iterator ();it.hasNext ();){
 					final Progress period = (Progress)it.next ();
@@ -257,7 +342,29 @@ public class ProgressTreeModel extends com.ost.timekeeper.ui.support.treetable.A
 				.append (":")
 				.append (durationNumberFormatter.format(duration.getSeconds()));
 				return sb.toString ();
+			}	
+			case 2: /*@todo ottimizzare!*/
+			{
+				_todayPeriod.reset ();
+
+				for (final Iterator it = progressItem.getSubtreeProgresses ().iterator ();it.hasNext ();){
+					_todayPeriod.computeProgress ((Progress)it.next ());
+				}
+
+				final Duration duration = _todayPeriod.getTodayAmount ();
+				if (duration.getTime ()==0){
+					return "";
+				}
 				
+				final StringBuffer sb = new StringBuffer ();
+				
+				sb.append (durationNumberFormatter.format(duration.getTotalHours ()))
+				.append (":")
+				.append (durationNumberFormatter.format(duration.getMinutes()))
+				.append (":")
+				.append (durationNumberFormatter.format(duration.getSeconds()));
+				return sb.toString ();
+			}	
 			default: return null;
 		}
 	}

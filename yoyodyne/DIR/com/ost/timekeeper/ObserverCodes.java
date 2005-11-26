@@ -16,7 +16,7 @@ public interface ObserverCodes {
 	/**
 	 * Variazione del periodo di avanzamento corrente.
 	 */
-	public final static String CURRENT_PROGRESS_TIC = "CURRENT_PROGRESS_TIC ";
+	public final static String CURRENT_PROGRESS_TIC = "CURRENT_PROGRESS_TIC";
 	
 	/**
 	 * Variazione degli attributi del nodo selezionato.
