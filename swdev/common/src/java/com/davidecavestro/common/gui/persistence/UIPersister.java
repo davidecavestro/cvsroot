@@ -31,6 +31,15 @@ public class UIPersister {
 	}
 	
 	/**
+	 * Registra il componente specificato per la persistenza e lo inizializza.
+	 *
+	 * @param component il componente.
+	 * @return <TT>true</TT> se il <TT>component</TT> è stato inizializzato con i dati persistenti.
+	 */	
+	public boolean register (final PersistentComponent component) {
+		return this.register (component, true);
+	}
+	/**
 	 * Registra il componente specificato per la persistenza.
 	 *
 	 * @param component il componente.
@@ -42,11 +51,7 @@ public class UIPersister {
 			this._register.add (component);
 		}
 		if (init){
-//			final Rectangle savedData = this.getPersistentData (component);
-//			if (savedData!=null){
-				return component.restorePersistent (this._uiStorage);
-//				return true;
-//			}
+			return component.restorePersistent (this._uiStorage);
 		}
 		return false;
 	}

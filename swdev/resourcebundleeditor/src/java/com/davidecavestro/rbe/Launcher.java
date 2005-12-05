@@ -6,23 +6,26 @@
 
 package com.davidecavestro.rbe;
 
-import com.davidecavestro.rbe.gui.MainWIndow;
+import com.davidecavestro.rbe.conf.CommandLineApplicationEnvironment;
+import com.davidecavestro.rbe.gui.MainWindow;
 
 /**
+ * lancia l'applicazione.
  *
  * @author  davide
  */
 public class Launcher {
 	
-	/** Creates a new instance of Launcher */
+	/** Costruttore. */
 	public Launcher () {
 	}
 	
 	/**
-	 * @param args the command line arguments
+	 * Metodo di lancio dell'applicazione.
+	 * @param args gli argomenti della inea di comando.
 	 */
 	public static void main (String[] args) {
-		new MainWIndow ().show ();
+		new Application (new CommandLineApplicationEnvironment (args)).start ();
 	}
 	
 }
