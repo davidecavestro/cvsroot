@@ -9,6 +9,9 @@ package com.davidecavestro.rbe.gui;
 import com.davidecavestro.common.gui.persistence.PersistenceUtils;
 import com.davidecavestro.common.gui.persistence.PersistentComponent;
 import com.davidecavestro.rbe.model.ResourceBundleModel;
+import com.davidecavestro.rbe.model.event.ResourceBundleModelEvent;
+import com.davidecavestro.rbe.model.event.ResourceBundleModelListener;
+import java.util.Locale;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -102,23 +105,13 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         tree_table_splitPane.setOneTouchExpandable(true);
         treeScrollPanejScrollPane1.setMaximumSize(null);
         treeScrollPanejScrollPane1.setMinimumSize(new java.awt.Dimension(50, 50));
-        bundleTree.setMaximumSize(null);
         bundleTree.setMinimumSize(new java.awt.Dimension(50, 50));
         treeScrollPanejScrollPane1.setViewportView(bundleTree);
 
         tree_table_splitPane.setLeftComponent(treeScrollPanejScrollPane1);
 
-        valuesTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+        tableScrollPane.setBackground(new java.awt.Color(255, 255, 255));
+        valuesTable.setModel(new LocalizationTableModel (this._resourceBundleModel));
         tableScrollPane.setViewportView(valuesTable);
 
         tree_table_splitPane.setRightComponent(tableScrollPane);
@@ -227,15 +220,23 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     // End of variables declaration//GEN-END:variables
 
 
-	private class LocalizationTableModel extends AbstractTableModel {
+	private static class LocalizationTableModel extends AbstractTableModel implements ResourceBundleModelListener {
 		
 		private final ResourceBundleModel _resources;
+		
+		private Locale[] _locales;
+		private String[] _keys;
+		
+		private final static String[] voidStringArray = new String[0];
+		
 		public LocalizationTableModel (ResourceBundleModel resources){
 			this._resources = resources;
+			reindex ();
+			resources.addResourceBundleModelListener (this);
 		}
 		
 		public int getColumnCount () {
-			return this._resources.getLocales ().length;
+			return this._resources.getLocales ().length+1;
 		}
 		
 		public int getRowCount () {
@@ -243,11 +244,28 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 		
 		public Object getValueAt (int rowIndex, int columnIndex) {
-			return this._resources.getValue (locale
+			if (columnIndex == 0){
+				return this._keys[rowIndex];
+			} else {
+				return this._resources.getValue (this._locales[columnIndex-1],this._keys[rowIndex]);
+			}
 		}
 		
 		private void reindex (){
-			
+			this._locales = this._resources.getLocales ();
+			this._keys = (String[])this._resources.getKeySet ().toArray (voidStringArray);
+		}
+		
+	    public void resourceBundleChanged (ResourceBundleModelEvent e){
+			reindex ();
+		}
+		
+		public String getColumnName (int columnIndex) {
+			if (columnIndex==0){
+				return "keys";
+			} else {
+				return this._locales[columnIndex-1].toString ();
+			}
 		}
 		
 	}
