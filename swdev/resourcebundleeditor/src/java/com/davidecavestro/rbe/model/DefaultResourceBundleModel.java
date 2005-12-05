@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * Il modello di ResourceBundle.
@@ -22,12 +23,14 @@ import java.util.ResourceBundle;
  */
 public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	
-	private Map _resources;
+	private final Map _resources = new HashMap ();
 	private Locale[] _locales;
+	private final Set _keys = new HashSet ();
 	
 	private final static LocalizationProperties[] voidResourceArray = new LocalizationProperties[0];
 	/** Costruttore. */
 	public DefaultResourceBundleModel (LocalizationProperties[] resources) {
+		setBundles (resources);
 	}
 
 	public void setBundles (LocalizationProperties[] resources){
@@ -40,8 +43,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	}
 	
 	public java.util.Set getKeySet () {
-//		for (final Enumeration en = 
-		return new HashSet ();
+		return this._keys;
 	}
 	
 	public java.util.Locale[] getLocales () {
@@ -51,16 +53,16 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	private void cacheResources (LocalizationProperties[] resources){
 		mapResources (resources);
 		cacheLocales (resources);
+		cacheKeys (resources);
 	}
 	
 	private void mapResources (LocalizationProperties[] resources){
-		final Map map = new HashMap (resources.length);
+		final Map map = this._resources;
 		for (int i = 0; i < resources.length;i++){
 			final LocalizationProperties properties = resources[i];
 			map.put (properties.getLocale (), properties);
 		}
 		
-		this._resources = map;
 	}
 	
 	private void cacheLocales (LocalizationProperties[] resources) {
@@ -73,14 +75,12 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 		this._locales = locales;
 	}
 	
-	private void cacheValues (LocalizationProperties[] resources) {
-		final Locale[] locales  = new Locale [resources.length];
+	private void cacheKeys (LocalizationProperties[] resources) {
+		this._keys.clear ();
 		for (int i = 0 ; i <resources.length;i++){
 			final LocalizationProperties properties = resources[i];
-			locales[i] = properties.getLocale ();
+			this._keys.addAll (properties.getProperties ().keySet ());
 		}
-		
-		this._locales = locales;
 	}
 	
 	private LocalizationProperties getLocalizationProperties (Locale locale){

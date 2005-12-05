@@ -18,7 +18,12 @@ import com.davidecavestro.rbe.conf.UserResources;
 import com.davidecavestro.rbe.conf.UserSettings;
 import com.davidecavestro.rbe.gui.WindowManager;
 import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
+import com.davidecavestro.rbe.model.LocalizationProperties;
 import com.davidecavestro.rbe.model.ResourceBundleModel;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -45,7 +50,29 @@ public class Application {
 		this._userSettings = new UserSettings (this, new UserResources (this._applicationData));
 		this._uiPersister = new UIPersister (new UserUIStorage (this._userSettings));
 
-		this._resourceBundleModel = new DefaultResourceBundleModel ();
+		final Locale fooLocale = Locale.ITALIAN;
+		final Properties fooProperties = new Properties ();
+		
+		try {
+			fooProperties.load (new FileInputStream ("/tmp/foo_it.properties"));
+		} catch (FileNotFoundException fnfe){
+			fnfe.printStackTrace (System.err);
+		}catch (IOException ioe){
+			ioe.printStackTrace (System.err);
+		}
+		
+		final Locale fooLocale1 = new Locale ("");
+		final Properties fooProperties1 = new Properties ();
+		
+		try {
+			fooProperties1.load (new FileInputStream ("/tmp/foo.properties"));
+		} catch (FileNotFoundException fnfe){
+			fnfe.printStackTrace (System.err);
+		}catch (IOException ioe){
+			ioe.printStackTrace (System.err);
+		}
+		
+		this._resourceBundleModel = new DefaultResourceBundleModel (new LocalizationProperties [] {new LocalizationProperties (fooLocale, fooProperties), new LocalizationProperties (fooLocale1, fooProperties1)});
 		
 		this._logger = new CompositeLogger (new LoggerAdapter (), new LoggerAdapter ());
 	}
