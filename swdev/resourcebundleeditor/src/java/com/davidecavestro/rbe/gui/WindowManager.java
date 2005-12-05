@@ -40,7 +40,7 @@ public class WindowManager {
 	 */
 	public MainWindow getMainWindow (){
 		if (this._mainWindow==null){
-			this._mainWindow = new MainWindow (this._resourceBundleModel);
+			this._mainWindow = new MainWindow (this._resourceBundleModel, this._uiPersister);
 			this._uiPersister.register (this._mainWindow);
 		}
 		return this._mainWindow;

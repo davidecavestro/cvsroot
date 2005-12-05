@@ -61,7 +61,7 @@ public class Application {
 			ioe.printStackTrace (System.err);
 		}
 		
-		final Locale fooLocale1 = new Locale ("");
+		final Locale fooLocale1 = new Locale ("Default");
 		final Properties fooProperties1 = new Properties ();
 		
 		try {
@@ -72,7 +72,7 @@ public class Application {
 			ioe.printStackTrace (System.err);
 		}
 		
-		this._resourceBundleModel = new DefaultResourceBundleModel (new LocalizationProperties [] {new LocalizationProperties (fooLocale, fooProperties), new LocalizationProperties (fooLocale1, fooProperties1)});
+		this._resourceBundleModel = new DefaultResourceBundleModel ("foo", new LocalizationProperties [] {new LocalizationProperties (fooLocale, fooProperties), new LocalizationProperties (fooLocale1, fooProperties1)});
 		
 		this._logger = new CompositeLogger (new LoggerAdapter (), new LoggerAdapter ());
 	}

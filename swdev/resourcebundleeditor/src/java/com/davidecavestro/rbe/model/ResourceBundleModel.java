@@ -48,4 +48,11 @@ public interface ResourceBundleModel extends ResourceBundleModelNotifier {
 	 */	
 	void setValue (Locale locale, String key, String value );
 	
+	/**
+	 * Ritorna il nome del ResourceBundle.
+	 *
+	 * @return il nome del ResourceBundle.
+	 */	
+	String getName ();
+	
 }

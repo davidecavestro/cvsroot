@@ -8,11 +8,22 @@ package com.davidecavestro.rbe.gui;
 
 import com.davidecavestro.common.gui.persistence.PersistenceUtils;
 import com.davidecavestro.common.gui.persistence.PersistentComponent;
+import com.davidecavestro.common.gui.persistence.UIPersister;
+import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
+import com.davidecavestro.rbe.model.LocalizationProperties;
 import com.davidecavestro.rbe.model.ResourceBundleModel;
 import com.davidecavestro.rbe.model.event.ResourceBundleModelEvent;
 import com.davidecavestro.rbe.model.event.ResourceBundleModelListener;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.Properties;
+import javax.swing.JComponent;
+import javax.swing.JTree;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TreeModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 
 /**
  * La finestra principale dell'applicazione.
@@ -22,13 +33,16 @@ import javax.swing.table.AbstractTableModel;
 public class MainWindow extends javax.swing.JFrame implements PersistentComponent{
 	
 	private final ResourceBundleModel _resourceBundleModel;
+	private final UIPersister _uiPersister;
 	
 	/** 
 	 * Costruttore.
 	 */
-	public MainWindow (final ResourceBundleModel resourceBundleModel) {
+	public MainWindow (final ResourceBundleModel resourceBundleModel, final UIPersister uiPersister){
+		this._uiPersister = uiPersister;
 		this._resourceBundleModel = resourceBundleModel;
 		initComponents ();
+		this._uiPersister.register (new PersistenceTreeAdapter (this.treeScrollPane));
 	}
 	
 	/** This method is called from within the constructor to
@@ -49,7 +63,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         tree_table_splitPane = new javax.swing.JSplitPane();
-        treeScrollPanejScrollPane1 = new javax.swing.JScrollPane();
+        treeScrollPane = new javax.swing.JScrollPane();
         bundleTree = new javax.swing.JTree();
         tableScrollPane = new javax.swing.JScrollPane();
         valuesTable = new javax.swing.JTable();
@@ -103,12 +117,13 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         tree_table_splitPane.setMaximumSize(null);
         tree_table_splitPane.setOneTouchExpandable(true);
-        treeScrollPanejScrollPane1.setMaximumSize(null);
-        treeScrollPanejScrollPane1.setMinimumSize(new java.awt.Dimension(50, 50));
+        treeScrollPane.setMaximumSize(null);
+        treeScrollPane.setMinimumSize(new java.awt.Dimension(50, 50));
         bundleTree.setMinimumSize(new java.awt.Dimension(50, 50));
-        treeScrollPanejScrollPane1.setViewportView(bundleTree);
+        bundleTree.setModel(new LocalizationTreeModel (this._resourceBundleModel));
+        treeScrollPane.setViewportView(bundleTree);
 
-        tree_table_splitPane.setLeftComponent(treeScrollPanejScrollPane1);
+        tree_table_splitPane.setLeftComponent(treeScrollPane);
 
         tableScrollPane.setBackground(new java.awt.Color(255, 255, 255));
         valuesTable.setModel(new LocalizationTableModel (this._resourceBundleModel));
@@ -214,12 +229,32 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JPanel statusPanel;
     private javax.swing.JScrollPane tableScrollPane;
-    private javax.swing.JScrollPane treeScrollPanejScrollPane1;
+    private javax.swing.JScrollPane treeScrollPane;
     private javax.swing.JSplitPane tree_table_splitPane;
     private javax.swing.JTable valuesTable;
     // End of variables declaration//GEN-END:variables
 
 
+	private class PersistenceTreeAdapter implements PersistentComponent	{
+	
+		private final JComponent _tree;
+		public PersistenceTreeAdapter (JComponent tree){
+			this._tree = tree;
+		}
+		public String getPersistenceKey () {
+			return "localizationtree";
+		}	
+
+		public void makePersistent (com.davidecavestro.common.gui.persistence.PersistenceStorage props) {
+			PersistenceUtils.makeBoundsPersistent (props, this.getPersistenceKey (), this._tree);
+		}
+
+		public boolean restorePersistent (com.davidecavestro.common.gui.persistence.PersistenceStorage props) {
+			return PersistenceUtils.restorePersistentBounds (props, this.getPersistenceKey (), this._tree);
+		}
+	
+	}
+	
 	private static class LocalizationTableModel extends AbstractTableModel implements ResourceBundleModelListener {
 		
 		private final ResourceBundleModel _resources;
@@ -269,4 +304,87 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 		
 	}
+	
+	
+	private static class LocalizationTreeModel implements TreeModel, ResourceBundleModelListener {
+		
+		private final ResourceBundleModel _model;
+		private String[] _keys;
+		
+		private final static String[] voidStringArray = new String[0];
+		
+		private final EventListenerList listenerList = new EventListenerList ();
+		
+		public LocalizationTreeModel (ResourceBundleModel model) {
+			this._model = model;
+			model.addResourceBundleModelListener (this);
+			cacheKeys ();
+		}
+		
+		private void cacheKeys (){
+			this._keys = (String[])this._model.getKeySet ().toArray (voidStringArray);
+		}
+		
+	    public void resourceBundleChanged (ResourceBundleModelEvent e){
+			cacheKeys ();
+		}
+
+		public Object getChild (Object parent, int index) {
+			if (parent instanceof ResourceBundleModel){
+				return ((ResourceBundleModel)parent).getLocales ()[index];
+			} else if (parent instanceof Locale){
+				return this._model.getKeySet ().toArray ()[index];
+			}
+			throw new Error ("Unsupported type for "+parent);
+		}
+		
+		public int getChildCount (Object parent) {
+			if (parent instanceof ResourceBundleModel){
+				return ((ResourceBundleModel)parent).getLocales ().length;
+			} else if (parent instanceof Locale){
+				return this._model.getKeySet ().size ();
+			}
+			return 0;
+		}
+	
+		public void addTreeModelListener (javax.swing.event.TreeModelListener l) {
+		listenerList.add (TreeModelListener.class, l);
+		}
+		
+		public int getIndexOfChild (Object parent, Object child) {
+			if (parent instanceof ResourceBundleModel){
+				final ResourceBundleModel model = (ResourceBundleModel)parent;
+				final Locale[] locales = model.getLocales ();
+				for (int i=0;i<locales.length;i++){
+					if (locales[i]==child){
+						return i;
+					}
+				}
+				return -1;
+			} else if (parent instanceof Locale){
+//				final Locale locale = (Locale)parent;
+				return Arrays.binarySearch (this._keys, child);
+				//return this._model.getKeySet ().toArray ()[i]size ();
+			}
+			throw new Error ("Unsupported type for "+parent);
+		}
+		
+		public Object getRoot () {
+			return this._model;
+		}
+		
+		public boolean isLeaf (Object node) {
+			return node instanceof String;
+		}
+		
+		public void removeTreeModelListener (javax.swing.event.TreeModelListener l) {
+		listenerList.remove (TreeModelListener.class, l);
+		}
+		
+		public void valueForPathChanged (javax.swing.tree.TreePath path, Object newValue) {
+		}
+		
+	}
+		
+	
 }

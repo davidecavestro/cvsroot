@@ -68,4 +68,30 @@ public class ResourceBundleModelEvent extends java.util.EventObject {
 		this.type=type;
 	}
 	
+	/**
+	 * Ritorna il tipo di evento.  Puo' valere: INSERT, UPDATE o DELETE.
+	 *
+	 * @return il tipo di evento.
+	 */	
+	public int getType (){
+		return this.type;
+	}
+	
+	/**
+	 * Ritorna il Locale interessato da questo evento.
+	 *
+	 * @return il Locale interessato da questo evento.
+	 */	
+	public Locale getLocale (){
+		return this.locale;
+	}
+	
+	/**
+	 * Ritorna le chiavi interessate da questo evento.
+	 *
+	 * @return le chiavi interessate da questo evento.
+	 */	
+	public String[] getKeys (){
+		return this.keys;
+	}
 }

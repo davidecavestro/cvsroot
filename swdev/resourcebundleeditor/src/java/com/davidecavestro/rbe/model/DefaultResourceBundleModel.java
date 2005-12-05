@@ -27,9 +27,16 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	private Locale[] _locales;
 	private final Set _keys = new HashSet ();
 	
+	private String _name;
+	
 	private final static LocalizationProperties[] voidResourceArray = new LocalizationProperties[0];
-	/** Costruttore. */
-	public DefaultResourceBundleModel (LocalizationProperties[] resources) {
+	/**
+	 * Costruttore.
+	 * @param name il nome.
+	 * @param resources le risorse di localizzazione.
+	 */
+	public DefaultResourceBundleModel (String name, LocalizationProperties[] resources) {
+		this._name = name;
 		setBundles (resources);
 	}
 
@@ -111,4 +118,13 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 		}
 		fireKeysDeleted (new String[]{key});
 	}
+	
+	public String getName () {
+		return this._name;
+	}
+	
+	public String toString (){
+		return getName ();
+	}
+	
 }
