@@ -7,8 +7,8 @@
 package com.davidecavestro.rbe.conf;
 
 import com.davidecavestro.common.util.ExceptionUtils;
-import com.davidecavestro.common.util.FileUtils;
 import com.davidecavestro.common.util.NestedRuntimeException;
+import com.davidecavestro.common.util.file.FileUtils;
 import com.davidecavestro.common.util.settings.SettingsSupport;
 import com.davidecavestro.rbe.Application;
 import java.awt.*;

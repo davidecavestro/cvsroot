@@ -55,4 +55,14 @@ public interface ResourceBundleModel extends ResourceBundleModelNotifier {
 	 */	
 	String getName ();
 	
+	/**
+	 * Imposta il nome del ResourceBundle.
+	 */	
+	void setName (String name);
+	
+//	/**
+//	 * Rende persistente lo stato del modello.
+//	 */
+//	void store ();
+	
 }

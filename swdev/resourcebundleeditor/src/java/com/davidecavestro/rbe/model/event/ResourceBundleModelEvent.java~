@@ -33,7 +33,7 @@ public class ResourceBundleModelEvent extends java.util.EventObject {
 	/**
 	 * Specifica tutti i locale.
 	 */
-	public final static Locale ALL_LOCALES = new Locale ("ALL_LOCALES");
+	public final static Locale ALL_LOCALES = null;
 	
 	/**
 	 * Specifica tutte le chiavi.

@@ -6,6 +6,10 @@
 
 package com.davidecavestro.rbe.model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -15,6 +19,8 @@ import java.util.Properties;
  * @author  davide
  */
 public class LocalizationProperties {
+	
+	public final static Locale DEFAULT = new Locale ("");
 	
 	private final Locale locale;
 	private final Properties properties;
@@ -45,6 +51,28 @@ public class LocalizationProperties {
 	 */	
 	public Properties getProperties (){
 		return this.properties;
+	}
+	
+	/**
+	 * Salva il contenuto di queste risorse nel file specificato.
+	 *
+	 * @param file il file di salvataggio.
+	 * @param header commento.
+	 * @throws FileNotFoundException nel caso di problemi di accesso al file.
+	 * @throws IOException nel caso qualcosa vada male durante il salvataggio.
+	 */	
+	public void store (File file, String header) throws FileNotFoundException, IOException{
+		this.properties.store (new FileOutputStream (file), header);
+	}
+	
+	
+	/**
+	 * Ritorna <TT>true</TT> se queste LocalizationProperties sono le predefinite.
+	 *
+	 * @return <TT>true</TT> se queste LocalizationProperties sono le predefinite.
+	 */	
+	public boolean isDefault (){
+		return this.locale.equals (DEFAULT);
 	}
 	
 	/**
