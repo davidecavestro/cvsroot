@@ -9,6 +9,7 @@ package com.davidecavestro.common.util.settings;
 import com.davidecavestro.common.util.CalendarUtils;
 import com.davidecavestro.common.util.NestedRuntimeException;
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 
 /**
@@ -260,4 +261,46 @@ public final class SettingsSupport {
 		setDoubleProperty (properties, widthName, new Double (r.getWidth ()));
 		setDoubleProperty (properties, heightName, new Double (r.getHeight ()));
 	}
+	
+	/**
+	 * Ritorna l'array di valori di una proprietà di tipo stringa vettoriale.
+	 *
+	 * @return i valori di una proprietà di tipo stringa vettoriale.
+	 * @param delimiter il delimitatore dei valori.
+	 * @param properties la risorsa di configurazione.
+	 * @param propertyName il nome della proprietà.
+	 */	
+	public static String[] getPaths (Properties properties, String propertyName, String delimiter){
+		
+		String value = properties.getProperty (propertyName);
+		final StringTokenizer st = new StringTokenizer (value, delimiter, false);
+		final String[] retValue = new String[st.countTokens ()];
+		int i = 0;
+		while (st.hasMoreTokens ()){
+			retValue[i] = st.nextToken ();
+			i++;
+		}
+		return retValue;
+	}
+	
+	/**
+	 * Imposta i valori di una proprietà di tipo stringa vettoriale.
+	 *
+	 * @param values i valori.
+	 * @param delimiter il delimitatore dei valori.
+	 * @param properties la risorsa di configurazione.
+	 * @param propertyName il nome della proprietà.
+	 */	
+	public static void setPaths (Properties properties, String propertyName, String[] values, String delimiter){
+		final StringBuffer value = new StringBuffer ();
+		for (int i =0;i<values.length;i++){
+			if (0!=i){
+				value.append (File.pathSeparator);
+			}
+			value.append (values[i]);
+		}
+		properties.setProperty (propertyName, value.toString ());
+	}
+	
+	
 }

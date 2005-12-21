@@ -32,23 +32,15 @@ import java.util.Properties;
  * @author  davide
  */
 public class Application {
-	private final WindowManager _windowManager;
-	private final UIPersister _uiPersister;
 	private final Logger _logger;
-	private final UserSettings _userSettings;
-	private final ApplicationData _applicationData;
 	private final ApplicationEnvironment _env;
-	private final DefaultResourceBundleModel _resourceBundleModel;
+	private final ApplicationContext _context;
 	
 	/** 
 	 * Costruttore.
 	 */
 	public Application (final CommandLineApplicationEnvironment args) {
 		this._env = args;
-		this._applicationData = new ApplicationData ();
-		this._windowManager = new WindowManager ();
-		this._userSettings = new UserSettings (this, new UserResources (this._applicationData));
-		this._uiPersister = new UIPersister (new UserUIStorage (this._userSettings));
 
 //		final Locale fooLocale = Locale.ITALIAN;
 //		final Properties fooProperties = new Properties ();
@@ -72,8 +64,15 @@ public class Application {
 //			ioe.printStackTrace (System.err);
 //		}
 		
-		this._resourceBundleModel = new DefaultResourceBundleModel ("blank", new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new Properties ())});
-		
+		final ApplicationData applicationData = new ApplicationData ();
+		final UserSettings userSettings = new UserSettings (this, new UserResources (applicationData));
+		this._context = new ApplicationContext (
+		new WindowManager (),
+		new UIPersister (new UserUIStorage (userSettings)),
+		userSettings,
+		applicationData,
+		new DefaultResourceBundleModel ("blank", new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new Properties ())})
+		);
 		this._logger = new CompositeLogger (new LoggerAdapter (), new LoggerAdapter ());
 	}
 	
@@ -82,16 +81,17 @@ public class Application {
 	 * Fa partire l'applicazione.
 	 */
 	public void start (){
-		this._windowManager.init (this._resourceBundleModel, this._uiPersister);
+		final WindowManager wm = this._context.getWindowManager ();
+		wm.init (this._context);
 		{
-			this._windowManager.getMainWindow ().addWindowListener (
+			wm.getMainWindow ().addWindowListener (
 			new java.awt.event.WindowAdapter () {
 				public void windowClosing (java.awt.event.WindowEvent evt) {
 					Application.this.exit ();
 				}
 			});
 		}
-		this._windowManager.getMainWindow ().show ();
+		wm.getMainWindow ().show ();
 	}
 	
 	public Logger getLogger (){
@@ -109,13 +109,13 @@ public class Application {
 //			setChanged ();
 //			notifyObservers (ObserverCodes.APPLICATIONEXITING);
 //		}
-		this._uiPersister.makePersistentAll ();
+		this._context.getUIPersisteer ().makePersistentAll ();
 		
 //		closeActiveStoreData ();
 		
 		/* Forza chiusura logger. */
 		this._logger.close ();
-		this._userSettings.storeProperties ();
+		this._context.getUserSettings ().storeProperties ();
 	}
 
 	/**
