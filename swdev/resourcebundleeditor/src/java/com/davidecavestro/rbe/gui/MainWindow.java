@@ -14,6 +14,8 @@ import com.davidecavestro.common.util.action.ActionNotifier;
 import com.davidecavestro.common.util.action.ActionNotifierImpl;
 import com.davidecavestro.common.util.file.CustomFileFilter;
 import com.davidecavestro.common.util.file.FileUtils;
+import com.davidecavestro.rbe.gui.actions.NewBundleAction;
+import com.davidecavestro.rbe.gui.actions.SaveAction;
 import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
 import com.davidecavestro.rbe.model.LocalizationProperties;
 import com.davidecavestro.rbe.model.ResourceBundleModel;
@@ -27,10 +29,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.StringTokenizer;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -58,22 +66,19 @@ import javax.swing.tree.TreePath;
  */
 public class MainWindow extends javax.swing.JFrame implements PersistentComponent, ActionNotifier {
 	
-	private final DefaultResourceBundleModel _resourceBundleModel;
-	private final UIPersister _uiPersister;
-
 	private final ActionNotifierImpl _actionNotifier;
 	private final LocalizationTableModel _localizationTableModel;
 	
+	private final WindowManager _wm;
 	/** 
 	 * Costruttore.
 	 */
-	public MainWindow (final DefaultResourceBundleModel resourceBundleModel, final UIPersister uiPersister){
+	public MainWindow (final WindowManager wm){
 		this._actionNotifier = new ActionNotifierImpl ();
-		this._uiPersister = uiPersister;
-		this._resourceBundleModel = resourceBundleModel;
-		this._localizationTableModel = new LocalizationTableModel (this._resourceBundleModel);
+		this._wm = wm;
+		this._localizationTableModel = new LocalizationTableModel (this._wm.getApplicationContext ().getModel ());
 		initComponents ();
-		this._uiPersister.register (new PersistenceTreeAdapter (this.treeScrollPane));
+		this._wm.getApplicationContext ().getUIPersisteer ().register (new PersistenceTreeAdapter (this.treeScrollPane));
 	}
 	
 	/** This method is called from within the constructor to
@@ -244,7 +249,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         }
     );
     bundleTree.setMinimumSize(new java.awt.Dimension(50, 50));
-    bundleTree.setModel(new LocalizationTreeModel (this._resourceBundleModel));
+    bundleTree.setModel(new LocalizationTreeModel (this._wm.getApplicationContext ().getModel ()));
     bundleTree.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mousePressed(java.awt.event.MouseEvent evt) {
             bundleTreeMousePressed(evt);
@@ -404,6 +409,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
         org.openide.awt.Mnemonics.setLocalizedText(fileMenu, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&File"));
+        newMenuItem.setAction(new NewBundleAction (this._wm.getApplicationContext ().getModel (), this._wm));
         newMenuItem.setText("New");
         newMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -422,13 +428,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         fileMenu.add(openMenuItem);
 
+        saveMenuItem.setAction(new SaveAction (this._wm.getApplicationContext ().getModel ()));
         org.openide.awt.Mnemonics.setLocalizedText(saveMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Save"));
-        saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveMenuItemActionPerformed(evt);
-            }
-        });
-
         fileMenu.add(saveMenuItem);
 
         org.openide.awt.Mnemonics.setLocalizedText(saveAsMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Save_&As_..."));
@@ -497,28 +498,50 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	private void saveAsMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsMenuItemActionPerformed
 		if (saveFileChooser.showSaveDialog (this)==JFileChooser.APPROVE_OPTION){
 			try {
-				this._resourceBundleModel.saveAs (saveFileChooser.getSelectedFile (), "Created by URBE");
+				this._wm.getApplicationContext ().getModel ().saveAs (saveFileChooser.getSelectedFile (), "Created by URBE");
 			} catch (Exception e){
 				e.printStackTrace (System.err);
 			}
 		}
 	}//GEN-LAST:event_saveAsMenuItemActionPerformed
 
-	private void saveMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
-		try {
-			this._resourceBundleModel.store ("Created by URBE");
-		} catch (Exception e){
-			e.printStackTrace (System.err);
-		}
-	}//GEN-LAST:event_saveMenuItemActionPerformed
-
 	private void saveFileChooserActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileChooserActionPerformed
 		// TODO add your handling code here:
 	}//GEN-LAST:event_saveFileChooserActionPerformed
 
 	private void openMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
+		if (this._wm.getApplicationContext ().getModel ().isModified ()){
+			if (
+			JOptionPane.showConfirmDialog (
+			this, 
+			java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Continue_discarding_all_changes?"))!=JOptionPane.OK_OPTION){
+				return;
+			}
+		}
+		
 		if (openFileChooser.showOpenDialog(this)==JFileChooser.APPROVE_OPTION){
-			this._resourceBundleModel.load (openFileChooser.getSelectedFile ());
+			final File file = openFileChooser.getSelectedFile ();
+			final StringTokenizer st = new StringTokenizer (file.getName (), "_", false);
+			if (st.countTokens ()>1){
+				//non si tratta del file Default
+				String baseName;
+				do {
+					baseName = this._wm.specifyBundleName (file);
+					if (baseName!=null){
+						File baseFile = new File (file.getParentFile (), baseName+".properties");
+//						if (!baseFile.exists ()){
+//							JOptionPane.showMessageDialog (this, 
+//							java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Cannot_find_bundle_base_file")
+//							);
+//						} else {
+							this._wm.getApplicationContext ().getModel ().load (baseFile);
+							return;
+//						}
+					}
+				} while (baseName==null);
+			}
+			this._wm.getApplicationContext ().getModel ().load (file);
+			this._wm.getApplicationContext ().getUserSettings ().setLastPath (file.getPath ());
 		}
 	}//GEN-LAST:event_openMenuItemActionPerformed
 
@@ -550,7 +573,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}//GEN-LAST:event_bundleTreeMousePressed
 
 	private void newMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newMenuItemActionPerformed
-		// TODO add your handling code here:
+
 	}//GEN-LAST:event_newMenuItemActionPerformed
 
 	private void addEntryMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addEntryMenuItemActionPerformed
@@ -744,7 +767,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	
 	
 		
-	private class LocalizationTreeModel /*extends DefaultTreeModel */ implements TreeModel, ResourceBundleModelListener {
+	private class LocalizationTreeModel /*extends DefaultTreeModel */ implements TreeModel, ResourceBundleModelListener, PropertyChangeListener {
 		
 		private final DefaultResourceBundleModel _model;
 		private String[] _keys;
@@ -848,7 +871,14 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 					((TreeModelListener)listeners[i+1]).treeStructureChanged(e);
 				}
 			}
-		}		
+		}
+		
+		public void propertyChange(PropertyChangeEvent evt){
+			if (evt.getPropertyName ().equals ("name")){
+				this.fireTreeStructureChanged (this, new TreePath (new Object[]{this.getRoot ()}));
+			}
+		}
+		
 	}
 		
 	
@@ -871,11 +901,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}
 	
 	private void deleteEntry (String key){
-		this._resourceBundleModel.removeKey (key);
+		this._wm.getApplicationContext ().getModel ().removeKey (key);
 	}
 	
 	private void deleteLocale (Locale locale){
-		this._resourceBundleModel.removeLocale (locale);
+		this._wm.getApplicationContext ().getModel ().removeLocale (locale);
 	}
 	
 	public void addActionListener (ActionListener l) {

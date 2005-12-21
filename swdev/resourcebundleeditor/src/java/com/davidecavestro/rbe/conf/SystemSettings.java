@@ -42,5 +42,8 @@ public final class SystemSettings extends AbstractSettings {
 		return PROPERTIES_HEADER;
 	}
 	
+	public String[] getRecentPaths () {
+		return null;
+	}	
 
 }

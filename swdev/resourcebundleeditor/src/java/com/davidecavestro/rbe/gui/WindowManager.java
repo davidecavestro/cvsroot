@@ -8,10 +8,12 @@ package com.davidecavestro.rbe.gui;
 
 import com.davidecavestro.common.gui.dialog.DialogListener;
 import com.davidecavestro.common.gui.persistence.UIPersister;
+import com.davidecavestro.rbe.ApplicationContext;
 import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
 import com.davidecavestro.rbe.model.LocalizationProperties;
 import com.davidecavestro.rbe.model.ResourceBundleModel;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Locale;
 import java.util.Properties;
 import javax.swing.JOptionPane;
@@ -23,8 +25,7 @@ import javax.swing.JOptionPane;
  */
 public class WindowManager implements ActionListener, DialogListener {
 
-	private UIPersister _uiPersister;
-	private DefaultResourceBundleModel _resourceBundleModel;
+	private ApplicationContext _context;
 	
 	
 	/** Costruttore. */
@@ -35,9 +36,8 @@ public class WindowManager implements ActionListener, DialogListener {
 	 * Inizializza le risorse necessarie.
 	 *
 	 */
-	public void init (final DefaultResourceBundleModel resourceBundleModel, final UIPersister uiPersister){
-		this._uiPersister = uiPersister;
-		this._resourceBundleModel = resourceBundleModel;
+	public void init (final ApplicationContext context){
+		this._context= context;
 	}
 
 	private MainWindow _mainWindow;	
@@ -47,8 +47,8 @@ public class WindowManager implements ActionListener, DialogListener {
 	 */
 	public MainWindow getMainWindow (){
 		if (this._mainWindow==null){
-			this._mainWindow = new MainWindow (this._resourceBundleModel, this._uiPersister);
-			this._uiPersister.register (this._mainWindow);
+			this._mainWindow = new MainWindow (this);
+			this._context.getUIPersisteer ().register (this._mainWindow);
 			this._mainWindow.addActionListener (this);
 		}
 		return this._mainWindow;
@@ -62,7 +62,7 @@ public class WindowManager implements ActionListener, DialogListener {
 	private AddEntryDialog getAddEntryDialog (){
 		if (this._addEntryDialog==null){
 			this._addEntryDialog = new AddEntryDialog (getMainWindow (), true);
-			this._uiPersister.register (this._addEntryDialog);
+			this._context.getUIPersisteer ().register (this._addEntryDialog);
 			this._addEntryDialog.addDialogListener (this);
 		}
 		return this._addEntryDialog;
@@ -70,6 +70,55 @@ public class WindowManager implements ActionListener, DialogListener {
 	
 	public void showEntryDialog (Locale l) {
 		getAddEntryDialog ().showForLocale (l);		
+	}
+	
+	private SpecifyBundleNameDialog _specifyBundleNameDialog;
+	/**
+	 * Ritorna la dialog di inserimento nuova entry.
+	 * @return la dialog di inserimento nuova entry.
+	 */
+	private SpecifyBundleNameDialog getSpecifyBundleNameDialog (){
+		if (this._specifyBundleNameDialog==null){
+			this._specifyBundleNameDialog = new SpecifyBundleNameDialog (getMainWindow (), true);
+			this._specifyBundleNameDialog.addDialogListener (this);
+		}
+		return this._specifyBundleNameDialog;
+	}
+	
+	public String specifyBundleName (File f) {
+		return getSpecifyBundleNameDialog ().showForFile (f);
+	}
+	
+	private AddLocaleDialog _addLocaleDialog;	
+	/**
+	 * Ritorna la dialog di inserimento nuova entry.
+	 * @return la dialog di inserimento nuova entry.
+	 */
+	private AddLocaleDialog getAddLocaleDialog (){
+		if (this._addLocaleDialog==null){
+			this._addLocaleDialog = new AddLocaleDialog (getMainWindow (), true);
+			this._context.getUIPersisteer ().register (this._addLocaleDialog);
+			this._addLocaleDialog.addDialogListener (this);
+		}
+		return this._addLocaleDialog;
+	}
+	
+	public void dialogChanged (com.davidecavestro.common.gui.dialog.DialogEvent e) {
+		if (e.getSource ()==this._addLocaleDialog){
+			if (e.getType ()==JOptionPane.OK_OPTION){
+				final Locale l = this._addLocaleDialog.getSelectedLocale ();
+				if (this._context.getModel ().containsLocale (l)){
+					JOptionPane.showMessageDialog (this._mainWindow, "Duplicate locale");
+				} else {
+					this._context.getModel ().addLocale (new LocalizationProperties (l, new Properties ()));
+				}
+			}
+		} else if (e.getSource ()==this._addEntryDialog){
+			if (e.getType ()==JOptionPane.OK_OPTION){
+				this._context.getModel ().addKey (this._addEntryDialog.getLocale (), this._addEntryDialog.getKeyText (), this._addEntryDialog.getValueText ());
+			}
+		}
+		
 	}
 	
 	public void actionPerformed (java.awt.event.ActionEvent e) {
@@ -87,36 +136,7 @@ public class WindowManager implements ActionListener, DialogListener {
 		}
 	}
 	
-	private AddLocaleDialog _addLocaleDialog;	
-	/**
-	 * Ritorna la dialog di inserimento nuova entry.
-	 * @return la dialog di inserimento nuova entry.
-	 */
-	private AddLocaleDialog getAddLocaleDialog (){
-		if (this._addLocaleDialog==null){
-			this._addLocaleDialog = new AddLocaleDialog (getMainWindow (), true);
-			this._uiPersister.register (this._addLocaleDialog);
-			this._addLocaleDialog.addDialogListener (this);
-		}
-		return this._addLocaleDialog;
+	public ApplicationContext getApplicationContext (){
+		return this._context;
 	}
-	
-	public void dialogChanged (com.davidecavestro.common.gui.dialog.DialogEvent e) {
-		if (e.getSource ()==this._addLocaleDialog){
-			if (e.getType ()==JOptionPane.OK_OPTION){
-				final Locale l = this._addLocaleDialog.getSelectedLocale ();
-				if (this._resourceBundleModel.containsLocale (l)){
-					JOptionPane.showMessageDialog (this._mainWindow, "Duplicate locale");
-				} else {
-					this._resourceBundleModel.addLocale (new LocalizationProperties (l, new Properties ()));
-				}
-			}
-		} else if (e.getSource ()==this._addEntryDialog){
-			if (e.getType ()==JOptionPane.OK_OPTION){
-				this._resourceBundleModel.addKey (this._addEntryDialog.getLocale (), this._addEntryDialog.getKeyText (), this._addEntryDialog.getValueText ());
-			}
-		}
-		
-	}
-	
 }

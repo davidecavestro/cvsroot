@@ -72,4 +72,12 @@ public final class DefaultSettings implements ApplicationSettings {
 		return DEFAULT_PLAINTEXTLOG_BUFFERSIZE;
 	}
 	
+	public String[] getRecentPaths () {
+		return new String[0];
+	}
+	
+	public String getLastPath () {
+		return null;
+	}
+	
 }

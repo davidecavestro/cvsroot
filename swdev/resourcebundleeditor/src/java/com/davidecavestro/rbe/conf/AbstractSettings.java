@@ -153,4 +153,20 @@ public abstract class AbstractSettings implements CustomizableSettings {
 		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_LOOKANDFEEL, lookAndFeel);
 	}
 
+	public String[] getRecentPaths () {
+		return SettingsSupport.getPaths (this.getProperties (), PROPNAME_RECENTPATHS, File.pathSeparator);
+	}
+	
+	public void setRecentPaths (String[] paths) {
+		SettingsSupport.setPaths (this.getProperties (), PROPNAME_RECENTPATHS, paths, File.pathSeparator);
+	}
+	
+	public String getLastPath () {
+		return SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_LASTPATH);
+	}
+	
+	public void setLastPath (String value) {
+		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_LASTPATH, value);
+	}
+	
 }

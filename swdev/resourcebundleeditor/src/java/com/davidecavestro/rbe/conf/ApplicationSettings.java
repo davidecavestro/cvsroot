@@ -35,4 +35,17 @@ public interface ApplicationSettings {
 	 */	
 	String getLookAndFeel ();
 	
+	/**
+	 * Ritorna la lista dei percorsi degli ultimi bundle aperti.
+	 *
+	 * @return un aray contenente i percorsi degli ultimi bundle aperti.
+	 */	
+	String[] getRecentPaths ();
+	
+	/**
+	 * Ritorna il percorso dell'ultima directory utilizzata.
+	 * @return il percorso dell'ultima directory utilizzata.
+	 */
+	String getLastPath ();
+	
 }

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * Il modello di ResourceBundle.
@@ -138,6 +139,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	
 	public void setValue (Locale locale, String key, String value) {
 		Properties props = getLocalizationProperties (locale).getProperties ();
+		setModified (true);
 		if (null==value){
 			props.remove (key);
 			if (getLocales (key).isEmpty ()){
@@ -156,6 +158,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 			getLocalizationProperties (locale).getProperties ().remove (key);
 		}
 		this._keys.remove (key);
+		setModified (true);
 		fireKeysDeleted (new String[]{key});
 	}
 	
@@ -172,6 +175,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	public void addKey (Locale locale, String key, String value){
 		getLocalizationProperties (locale).getProperties ().setProperty (key, value);
 		this._keys.add (key);
+		setModified (true);
 		fireKeysInserted (new String[]{key});
 	}
 	
@@ -181,6 +185,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 			getLocalizationProperties (locale).getProperties ().setProperty (key, values[i]);
 		}
 		this._keys.add (key);
+		setModified (true);
 		fireKeysInserted (new String[]{key});
 	}
 	
@@ -200,6 +205,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 		final LocalizationProperties[] newResources = new LocalizationProperties [newLength];
 		System.arraycopy (backup, 0, newResources, 0, oldLength);
 		newResources [newLength-1] = resource;
+		setModified (true);
 		setBundles (newResources);
 	}
 	
@@ -229,6 +235,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 				newResources[i] = lp;
 			}
 		}
+		setModified (true);
 		setBundles (newResources);
 	}
 	
@@ -241,13 +248,19 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	}
 	
 	public void load (File file){
-		setName (file.getName ());
+		final String fileName = file.getName ();		
+		setName (fileName.substring (0, fileName.lastIndexOf (".properties")));
 		setPath (file.getParentFile ());
 		setBundles (buildResources (file));
 	}
 
 	private File _path;
-	private void setPath (File path){
+	/**
+	 * Imposta la directory di salvataggio dei file di properties.
+	 *
+	 * @param path la directory che contiene i file di properties.
+	 */	
+	public void setPath (File path){
 		if (this._path!=path){
 			final File old = this._path;
 			this._path = path;
@@ -258,7 +271,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	/**
 	 * Ritorna la directory di salvataggio delle properties.
 	 */
-	private File getPath (){
+	public File getPath (){
 		return this._path;
 	}
 
@@ -282,12 +295,16 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 				return name.startsWith (baseName) && name.endsWith (".properties");
 			}
 		});
+		boolean defaultFound = false;
 		final List retValue = new ArrayList ();
 		for (int i=0; i<properties.length;i++){
 			final File f = properties[i];
 			try {
-				int idx = fileName.indexOf (".properties");
+				int idx = f.getName ().indexOf (".properties");
 				Locale l = getBundleLocale (baseName, f.getName ().substring (0, idx));
+				if (!defaultFound && l == LocalizationProperties.DEFAULT){
+					defaultFound = true;
+				}
 				final Properties p = new Properties ();
 				p.load (new FileInputStream (f));
 				retValue.add (new LocalizationProperties (l, p));
@@ -298,6 +315,12 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 			} catch (IOException ioe){
 				throw new NestedRuntimeException (ioe);
 			}
+		}
+		if (!defaultFound){
+			/*
+			 * Aggiunge Locale di default
+			 */
+			retValue.add (0, new LocalizationProperties (LocalizationProperties.DEFAULT, new Properties ()));
 		}
 		return (LocalizationProperties[])retValue.toArray (voidResourceArray);
 		
@@ -312,7 +335,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	 */
     private Locale getBundleLocale (String baseName, String bundleName) {
 		if (baseName.length () == bundleName.length ()) {
-			return new Locale ("", "");
+			return LocalizationProperties.DEFAULT;
 		} else if (baseName.length () < bundleName.length ()) {
 			int pos = baseName.length ();
 			String temp = bundleName.substring (pos + 1);
@@ -377,6 +400,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 			fileName.append (".properties");
 			lp.store (new File (_path.getPath (), fileName.toString ()), comment);
 		}
+		setModified (false);
 	}	
 	
 	/**
@@ -605,6 +629,30 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 			}
 		}
 		return s;
+	}
+	
+	private boolean _isModified = false;
+	/**
+	 * Imposta lo stato di "modificato" al valore specificato..
+	 * Se lo stato viene variato, notifica i PropertyChangeListener della modifica alla property "isModified".
+	 *
+	 * @param modified lo stato di "modificato".
+
+	 */	
+	private void setModified (boolean modified){
+		if (this._isModified!=modified){
+			this._isModified = modified;
+			firePropertyChange ("isModified", !modified, modified);
+		}
+	}
+	
+	/**
+	 * Ritorna <TT>true</TT> se ci sono modifiche pendenti non salvate.
+	 *
+	 * @return <TT>true</TT> se ci sono modifiche pendenti non salvate.
+	 */	
+	public boolean isModified (){
+		return this._isModified;
 	}
 	
 }

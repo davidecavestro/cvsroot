@@ -32,6 +32,16 @@ public interface CustomizableSettings extends ApplicationSettings{
 	public final static String PROPNAME_LOOKANDFEEL = "lookandfeel";
 	
 	/**
+	 * I percorsi degli ultimi file aperti.
+	 */
+	public final static String PROPNAME_RECENTPATHS = "recentpaths";
+	
+	/**
+	 * Il percorso dell'ultima directory utilizzata.
+	 */
+	public final static String PROPNAME_LASTPATH = "lastpath";
+	
+	/**
 	 * Ritorna il nome del file di preferenze associato a queste impostazioni.
 	 * @return il nome del file di preferenze associato a queste impostazioni.
 	 */	
@@ -75,5 +85,15 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 * Imposta il LookAndFeel.
 	 */
 	void setLookAndFeel (final String lookAndFeel);
+	
+	/**
+	 * Imposta il percorso dell'ultima directory usata.
+	 */
+	void setLastPath (String value);
+	
+	/**
+	 * Imposta i percorsi dei file recenti.
+	 */
+	void setRecentPaths (String[] paths);
 	
 }
