@@ -27,6 +27,7 @@ public class SaveAction extends AbstractAction implements PropertyChangeListener
 	/** Costruttore. */
 	public SaveAction (DefaultResourceBundleModel rbm) {
 		this._rbm = rbm;
+		this.setEnabled (false);
 	}
 	
 	public void actionPerformed (java.awt.event.ActionEvent e) {

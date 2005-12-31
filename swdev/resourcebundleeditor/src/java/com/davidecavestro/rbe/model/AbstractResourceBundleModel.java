@@ -18,7 +18,7 @@ import javax.swing.event.EventListenerList;
  */
 public abstract class AbstractResourceBundleModel implements ResourceBundleModel {
 	
-	private final EventListenerList listenerList = new EventListenerList ();
+	protected final EventListenerList listenerList = new EventListenerList ();
 	
 	/** Costruttore. */
 	public AbstractResourceBundleModel () {

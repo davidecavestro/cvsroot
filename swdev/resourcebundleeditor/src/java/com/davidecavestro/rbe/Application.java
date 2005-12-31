@@ -17,9 +17,11 @@ import com.davidecavestro.rbe.conf.CommandLineApplicationEnvironment;
 import com.davidecavestro.rbe.conf.UserResources;
 import com.davidecavestro.rbe.conf.UserSettings;
 import com.davidecavestro.rbe.gui.WindowManager;
+import com.davidecavestro.rbe.gui.actions.ActionManager;
 import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
 import com.davidecavestro.rbe.model.LocalizationProperties;
 import com.davidecavestro.rbe.model.ResourceBundleModel;
+import com.davidecavestro.rbe.model.undo.RBUndoManager;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -64,6 +66,9 @@ public class Application {
 //			ioe.printStackTrace (System.err);
 //		}
 		
+		DefaultResourceBundleModel model = new DefaultResourceBundleModel ("blank", new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new Properties ())});
+		RBUndoManager undoManager = new RBUndoManager ();
+
 		final ApplicationData applicationData = new ApplicationData ();
 		final UserSettings userSettings = new UserSettings (this, new UserResources (applicationData));
 		this._context = new ApplicationContext (
@@ -71,8 +76,12 @@ public class Application {
 		new UIPersister (new UserUIStorage (userSettings)),
 		userSettings,
 		applicationData,
-		new DefaultResourceBundleModel ("blank", new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new Properties ())})
+		model,
+		undoManager,
+		new ActionManager ()
 		);
+		model.addUndoableEditListener(undoManager);
+		
 		this._logger = new CompositeLogger (new LoggerAdapter (), new LoggerAdapter ());
 	}
 	

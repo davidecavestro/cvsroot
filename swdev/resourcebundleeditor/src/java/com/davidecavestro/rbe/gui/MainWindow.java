@@ -14,9 +14,13 @@ import com.davidecavestro.common.util.action.ActionNotifier;
 import com.davidecavestro.common.util.action.ActionNotifierImpl;
 import com.davidecavestro.common.util.file.CustomFileFilter;
 import com.davidecavestro.common.util.file.FileUtils;
+import com.davidecavestro.rbe.ApplicationContext;
+import com.davidecavestro.rbe.gui.actions.FindAction;
 import com.davidecavestro.rbe.gui.actions.NewBundleAction;
 import com.davidecavestro.rbe.gui.actions.SaveAction;
+import com.davidecavestro.rbe.gui.search.*;
 import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
+import com.davidecavestro.rbe.model.LocaleComparator;
 import com.davidecavestro.rbe.model.LocalizationProperties;
 import com.davidecavestro.rbe.model.ResourceBundleModel;
 import com.davidecavestro.rbe.model.event.ResourceBundleModelEvent;
@@ -24,6 +28,8 @@ import com.davidecavestro.rbe.model.event.ResourceBundleModelListener;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -31,6 +37,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -39,14 +46,19 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import javax.swing.*;
+import javax.swing.Action;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.*;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -58,6 +70,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import org.jdesktop.swingx.*;
+import org.jdesktop.swingx.decorator.*;
 
 /**
  * La finestra principale dell'applicazione.
@@ -69,16 +83,133 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	private final ActionNotifierImpl _actionNotifier;
 	private final LocalizationTableModel _localizationTableModel;
 	
+	private final ApplicationContext _context;
 	private final WindowManager _wm;
+	private final PatternFinder _matcher;
+	
+	
 	/** 
 	 * Costruttore.
 	 */
-	public MainWindow (final WindowManager wm){
+	public MainWindow (final ApplicationContext context){
 		this._actionNotifier = new ActionNotifierImpl ();
-		this._wm = wm;
-		this._localizationTableModel = new LocalizationTableModel (this._wm.getApplicationContext ().getModel ());
+		this._context = context;
+		this._wm = context.getWindowManager ();
+		this._localizationTableModel = new LocalizationTableModel (this._context.getModel ());
+		this._matcher = new PatternFinder ();
+		this._matcher.addPropertyChangeListener (_context.getActionManager ().getFindNextAction ());
+		
+		this._context.getActionManager ().getFindNextAction ().addActionListener (new ActionListener (){
+			public void actionPerformed(ActionEvent e){
+				
+			}
+		});
+		
 		initComponents ();
-		this._wm.getApplicationContext ().getUIPersisteer ().register (new PersistenceTreeAdapter (this.treeScrollPane));
+		updateRecentPathMenu ();
+		this._context.getUIPersisteer ().register (new PersistenceTreeAdapter (this.treeScrollPane));
+		final Point p = new Point ();
+		
+		/*
+		 * notifica la textarea del cambio di selezione, aggiornandola
+		 */
+		final ListSelectionListener l = new ListSelectionListener (){
+			public void valueChanged (ListSelectionEvent e) {
+				int col = valuesTable.getColumnModel ().getSelectionModel ().getLeadSelectionIndex ();
+				int row = valuesTable.getSelectionModel ().getLeadSelectionIndex ();
+				if (col>=0 && row>=0){
+					if (!valueTextArea.hasFocus ()){
+						valueTextArea.setEnabled (false);
+						valueTextArea.setText ((String)valuesTable.getValueAt (row, col));
+						valueTextArea.setEnabled (col!=0);
+						p.setLocation (valuesTable.convertColumnIndexToModel (col), 
+						((/*@todo rimuovere il cast alla fine (NEtbeans non supporta l'editing di JXTable) */JXTable)valuesTable).convertRowIndexToModel (row));
+					}
+				} else {
+					valueTextArea.setEnabled (false);
+					valueTextArea.setText (null);
+				}
+				
+			}
+		};
+		valuesTable.getSelectionModel ().addListSelectionListener (l);
+		valuesTable.getColumnModel ().getSelectionModel ().addListSelectionListener (l);
+		
+
+		/*
+		 * propaga le modifiche dalla textarea al modello
+		 */
+		valueTextArea.getDocument ().addDocumentListener (new DocumentListener (){
+			public void insertUpdate(DocumentEvent e){apply (e);}
+			public void removeUpdate(DocumentEvent e){apply (e);}
+			public void changedUpdate(DocumentEvent e){apply (e);}
+			
+			public void apply (DocumentEvent e){
+				if (valueTextArea.isEnabled () && valueTextArea.hasFocus ()) {
+					/* propaga modifiche alla tabella modifica solo se textarea abilitata, altrimenti sarebbe un evento spurio */
+					valuesTable.getModel ().setValueAt (valueTextArea.getText (), (int)p.getY (), (int)p.getX ());
+				}
+			}
+		});
+		
+		this._context.getModel ().addPropertyChangeListener ("isModified", new PropertyChangeListener (){
+			public void propertyChange(PropertyChangeEvent evt){
+				modifiedLabel.setText (_context.getModel ().isModified ()?
+				java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("EDT"):
+				"");
+			}
+		});
+		
+		this._context.getModel ().addPropertyChangeListener (new PropertyChangeListener (){
+				public void propertyChange (PropertyChangeEvent e){
+					String pName = e.getPropertyName ();
+					if (pName.equals ("name") || pName.equalsIgnoreCase ("isModified")){
+						setTitle (prepareTitle (_context.getModel ()));
+					}
+				}
+			}
+		);
+		
+		
+		
+		
+		/*test componente ricerca*/
+//		SearchHighlighter sh = new SearchHighlighter (null, Color.yellow);
+//		sh.setEnabled (true);
+//		Highlighter[]   highlighters = new Highlighter[] {
+///*
+//			new AlternateRowHighlighter (Color.white,
+//			new Color (0xF0, 0xF0, 0xE0), null),
+// */
+////			new PatternHighlighter (null, Color.red, "^s", 0, 0)
+//			sh
+//			
+//		};
+//		HighlighterPipeline highlighterPipeline = new HighlighterPipeline(highlighters);
+//		valuesTable.setHighlighters (highlighterPipeline);
+		
+//		mainToolbar.add (new JXSearchPanel ());		
+		
+//        KeyStroke findStroke = KeyStroke.getKeyStroke("control F");
+//        valuesTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(findStroke, "find");
+		
+		
+		this._matcher.setPattern ("aba");
+		valuesTable.setCellSelectionEnabled (true);
+
+	}
+	
+	
+	private String prepareTitle (DefaultResourceBundleModel model){
+		final StringBuffer sb = new StringBuffer ();
+		sb.append ("URBE").append (" - Bundle ").append (model.getName ());
+		if (model.isModified ()){
+			sb.append (" [")
+			.append (java.util.ResourceBundle.getBundle ("com.davidecavestro.rbe.gui.res").getString ("Modified"))
+			.append ("]");
+			
+		}
+		return sb.toString ();
 	}
 	
 	/** This method is called from within the constructor to
@@ -98,11 +229,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         addEntryMenuItem = new javax.swing.JMenuItem();
         entryPopupMenu = new javax.swing.JPopupMenu();
         deleteEntryMenuItem = new javax.swing.JMenuItem();
+        tablePopupMenu = new javax.swing.JPopupMenu();
         openFileChooser = new javax.swing.JFileChooser();
         saveFileChooser = new javax.swing.JFileChooser();
         mainPanel = new javax.swing.JPanel();
         statusPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        modifiedLabel = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         progressBar = new javax.swing.JProgressBar();
         jLabel3 = new javax.swing.JLabel();
@@ -123,28 +255,34 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        valueTextArea = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
-        TableSorter  sorter = new TableSorter(this._localizationTableModel);
-        valuesTable = new JTable (sorter);
-        sorter.addMouseListenerToHeaderInTable(valuesTable);
-
+        valuesTable = new JXTable (this._localizationTableModel);
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newMenuItem = new javax.swing.JMenuItem();
         openMenuItem = new javax.swing.JMenuItem();
+        recentMenu = new javax.swing.JMenu();
+        jSeparator2 = new javax.swing.JSeparator();
         saveMenuItem = new javax.swing.JMenuItem();
         saveAsMenuItem = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JSeparator();
         exitMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
+        undoMenuItem = new javax.swing.JMenuItem();
+        redoMenuItem = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JSeparator();
         cutMenuItem = new javax.swing.JMenuItem();
         copyMenuItem = new javax.swing.JMenuItem();
         pasteMenuItem = new javax.swing.JMenuItem();
         deleteMenuItem = new javax.swing.JMenuItem();
+        jSeparator5 = new javax.swing.JSeparator();
+        findMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentsMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
 
+        bundlePopupMenu.setFont(new java.awt.Font("Dialog", 0, 12));
         addLocaleMenuItem.setText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Add_Locale"));
         addLocaleMenuItem.setActionCommand("addlocale");
         addLocaleMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -155,6 +293,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         bundlePopupMenu.add(addLocaleMenuItem);
 
+        localePopupMenu.setFont(new java.awt.Font("Dialog", 0, 12));
         deleteLocaleMenuItem.setText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Delete_Locale"));
         deleteLocaleMenuItem.setActionCommand("deleteLocale");
         deleteLocaleMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -177,20 +316,24 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         localePopupMenu.add(addEntryMenuItem);
 
+        entryPopupMenu.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(deleteEntryMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Delete_Entry"));
         entryPopupMenu.add(deleteEntryMenuItem);
 
+        tablePopupMenu.setFont(new java.awt.Font("Dialog", 0, 12));
         openFileChooser.setCurrentDirectory(null);
         openFileChooser.setFileFilter(new CustomFileFilter (
             new String []{FileUtils.properties},
             new String []{"Properties files"}
         ));
+        openFileChooser.setFont(new java.awt.Font("Dialog", 0, 12));
         saveFileChooser.setCurrentDirectory(null);
         saveFileChooser.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         saveFileChooser.setFileFilter(new CustomFileFilter (
             new String []{FileUtils.properties},
             new String []{"Properties files"}
         ));
+        saveFileChooser.setFont(new java.awt.Font("Dialog", 0, 12));
         saveFileChooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveFileChooserActionPerformed(evt);
@@ -202,9 +345,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         statusPanel.setLayout(new javax.swing.BoxLayout(statusPanel, javax.swing.BoxLayout.X_AXIS));
 
-        jLabel1.setText("jLabel1");
-        jLabel1.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        statusPanel.add(jLabel1);
+        org.openide.awt.Mnemonics.setLocalizedText(modifiedLabel, "   ");
+        modifiedLabel.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        statusPanel.add(modifiedLabel);
 
         jLabel2.setText("jLabel2");
         jLabel2.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -264,7 +407,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
     jPanel1.setLayout(new java.awt.GridBagLayout());
 
-    org.openide.awt.Mnemonics.setLocalizedText(jLabel4, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Comment:"));
+    jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
+    org.openide.awt.Mnemonics.setLocalizedText(jLabel4, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Comment:"));
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 0;
@@ -273,7 +417,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
     jPanel1.add(jLabel4, gridBagConstraints);
 
-    org.openide.awt.Mnemonics.setLocalizedText(jLabel5, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Value:"));
+    jLabel5.setFont(new java.awt.Font("Dialog", 0, 12));
+    org.openide.awt.Mnemonics.setLocalizedText(jLabel5, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Value:"));
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 1;
@@ -284,7 +429,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
     jPanel2.setLayout(new java.awt.GridBagLayout());
 
-    org.openide.awt.Mnemonics.setLocalizedText(jButton4, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Add_Entry"));
+    jButton4.setFont(new java.awt.Font("Dialog", 0, 12));
+    org.openide.awt.Mnemonics.setLocalizedText(jButton4, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Add_Entry"));
     jButton4.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Add_a_new_entry"));
     jButton4.setActionCommand("addentry");
     jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -298,7 +444,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
     jPanel2.add(jButton4, gridBagConstraints);
 
-    org.openide.awt.Mnemonics.setLocalizedText(deleteEntryButton, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Delete_Entry"));
+    deleteEntryButton.setFont(new java.awt.Font("Dialog", 0, 12));
+    org.openide.awt.Mnemonics.setLocalizedText(deleteEntryButton, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Delete_Entry"));
     deleteEntryButton.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Delete_an_entry"));
     deleteEntryButton.setActionCommand("deleteentry");
     deleteEntryButton.setEnabled(false);
@@ -329,7 +476,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
     jPanel1.add(jPanel2, gridBagConstraints);
 
-    jScrollPane1.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     jTextArea2.setRows(2);
     jTextArea2.setWrapStyleWord(true);
     jTextArea2.setBorder(new javax.swing.border.EtchedBorder());
@@ -343,11 +489,16 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
     jPanel1.add(jScrollPane1, gridBagConstraints);
 
-    jScrollPane2.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-    jTextArea1.setRows(2);
-    jTextArea1.setWrapStyleWord(true);
-    jTextArea1.setBorder(new javax.swing.border.EtchedBorder());
-    jScrollPane2.setViewportView(jTextArea1);
+    valueTextArea.setRows(2);
+    valueTextArea.setWrapStyleWord(true);
+    valueTextArea.setBorder(new javax.swing.border.EtchedBorder());
+    valueTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyPressed(java.awt.event.KeyEvent evt) {
+            valueTextAreaKeyPressed(evt);
+        }
+    });
+
+    jScrollPane2.setViewportView(valueTextArea);
 
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 1;
@@ -361,25 +512,36 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
     jScrollPane3.setBackground(javax.swing.UIManager.getDefaults().getColor("Table.background"));
     jScrollPane3.getViewport ().setBackground (javax.swing.UIManager.getDefaults().getColor("Table.background"));
+    valuesTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_NEXT_COLUMN);
     valuesTable.setCellEditor(new ValueCellEditor ());
+    valuesTable.setFocusCycleRoot(true);
     valuesTable.setGridColor(new java.awt.Color(204, 204, 204));
     valuesTable.setMinimumSize(new java.awt.Dimension(10, 10));
     valuesTable.setDefaultRenderer (Object.class, new DefaultTableCellRenderer () {
+        private final Color inactiveCaptionColor = javax.swing.UIManager.getDefaults().getColor("inactiveCaption");
+        private final Color tableBackgroundColor = javax.swing.UIManager.getDefaults().getColor("Table.background");
+        //	private final Color keyBackgroundColor = javax.swing.UIManager.getDefaults().getColor("control");
+        private final Color keyBackgroundColor = javax.swing.UIManager.getDefaults().getColor("Table.background");
+        //	private final Color keyForegroundColor = javax.swing.UIManager.getDefaults().getColor("textInactiveText");
+        private final Color keyForegroundColor = javax.swing.UIManager.getDefaults().getColor("Menu.acceleratorForeground");
+        private final Color valueForegroundColor = javax.swing.UIManager.getDefaults().getColor("Table.foreground");
         public Component getTableCellRendererComponent(JTable table, Object value,
             boolean isSelected, boolean hasFocus, int row, int column) {
 
             final JLabel label = (JLabel)super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);
             if (0 == column) {
+                /* colonna chiavi */
                 label.setFont (label.getFont ().deriveFont (Font.BOLD));
-                //label.setForeground (Color.red);
+                label.setBackground (keyBackgroundColor);
+                label.setForeground (keyForegroundColor);
             } else {
                 label.setFont (label.getFont ().deriveFont (Font.PLAIN));
-                //label.setForeground (Color.black);
-            }
-            if (null==value) {
-                label.setBackground (Color.lightGray);
-            } else {
-                label.setBackground (Color.white);
+                if (null==value) {
+                    label.setBackground (inactiveCaptionColor);
+                } else {
+                    label.setBackground (tableBackgroundColor);
+                }
+                label.setForeground (valueForegroundColor);
             }
             return label;
         }
@@ -393,11 +555,35 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         */
         valuesTable.addKeyListener (new KeyAdapter (){
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode ()==KeyEvent.VK_DELETE && e.isControlDown ()){
-                    valuesTable.setValueAt (null, valuesTable.getSelectedRow (), valuesTable.getSelectedColumn ());
+                if (e.isControlDown ()){
+                    if (e.getKeyCode ()==KeyEvent.VK_DELETE){
+                        int rowIdx = valuesTable.getSelectedRow ();
+                        int colIdx = valuesTable.getSelectedColumn ();
+                        if (colIdx>=0 && rowIdx>=0){
+                            //barbatrucco per evitare editazione spuria
+                            //valuesTable.editCellAt(rowIdx, colIdx);
+                            valuesTable.setValueAt (null, rowIdx, colIdx);
+                            e.consume ();
+                        }
+                    } else if (e.getKeyCode ()==KeyEvent.VK_SPACE){
+                        int rowIdx = valuesTable.getSelectedRow ();
+                        int colIdx = valuesTable.getSelectedColumn ();
+                        if (colIdx>=0 && rowIdx>=0){
+                            //barbatrucco per evitare editazione spuria
+                            //valuesTable.editCellAt(rowIdx, colIdx);
+                            valuesTable.setValueAt ("", rowIdx, colIdx);
+                            e.consume ();
+                        }
+                    }
                 }
             }
         });
+        valuesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                valuesTableMousePressed(evt);
+            }
+        });
+
         jScrollPane3.setViewportView(valuesTable);
 
         jPanel3.add(jScrollPane3, java.awt.BorderLayout.CENTER);
@@ -408,7 +594,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
+        menuBar.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(fileMenu, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&File"));
+        fileMenu.setFont(new java.awt.Font("Dialog", 0, 12));
         newMenuItem.setAction(new NewBundleAction (this._wm.getApplicationContext ().getModel (), this._wm));
         newMenuItem.setText("New");
         newMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -428,8 +616,15 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         fileMenu.add(openMenuItem);
 
-        saveMenuItem.setAction(new SaveAction (this._wm.getApplicationContext ().getModel ()));
+        org.openide.awt.Mnemonics.setLocalizedText(recentMenu, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Recent"));
+        fileMenu.add(recentMenu);
+
+        fileMenu.add(jSeparator2);
+
+        final SaveAction saveAction = new SaveAction (this._wm.getApplicationContext ().getModel ());
+        saveMenuItem.setAction(saveAction);
         org.openide.awt.Mnemonics.setLocalizedText(saveMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Save"));
+        _context.getModel ().addPropertyChangeListener (saveAction);
         fileMenu.add(saveMenuItem);
 
         org.openide.awt.Mnemonics.setLocalizedText(saveAsMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Save_&As_..."));
@@ -440,6 +635,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         });
 
         fileMenu.add(saveAsMenuItem);
+
+        fileMenu.add(jSeparator3);
 
         org.openide.awt.Mnemonics.setLocalizedText(exitMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("E&xit"));
         exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -453,6 +650,15 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         menuBar.add(fileMenu);
 
         org.openide.awt.Mnemonics.setLocalizedText(editMenu, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Edit"));
+        editMenu.setFont(new java.awt.Font("Dialog", 0, 12));
+        undoMenuItem.setAction(_context.getUndoManager ().getUndoAction());
+        editMenu.add(undoMenuItem);
+
+        redoMenuItem.setAction(_context.getUndoManager ().getRedoAction());
+        editMenu.add(redoMenuItem);
+
+        editMenu.add(jSeparator4);
+
         cutMenuItem.setText("Cut");
         editMenu.add(cutMenuItem);
 
@@ -463,11 +669,20 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         editMenu.add(pasteMenuItem);
 
         deleteMenuItem.setText("Delete");
+        deleteMenuItem.setActionCommand("delete");
         editMenu.add(deleteMenuItem);
+
+        editMenu.add(jSeparator5);
+
+        findMenuItem.setAction(new FindAction (this._context));
+        org.openide.awt.Mnemonics.setLocalizedText(findMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Find"));
+        findMenuItem.setActionCommand("find");
+        editMenu.add(findMenuItem);
 
         menuBar.add(editMenu);
 
         org.openide.awt.Mnemonics.setLocalizedText(helpMenu, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Help"));
+        helpMenu.setFont(new java.awt.Font("Dialog", 0, 12));
         contentsMenuItem.setText("Contents");
         helpMenu.add(contentsMenuItem);
 
@@ -480,6 +695,30 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         pack();
     }//GEN-END:initComponents
+
+	private void valueTextAreaKeyPressed (java.awt.event.KeyEvent evt) {//GEN-FIRST:event_valueTextAreaKeyPressed
+		if (evt.isControlDown ()){
+			/* SHORTCUTS */
+			if (evt.getKeyCode ()==KeyEvent.VK_DELETE){
+				/* imposta a null */
+				valueTextArea.setText (null);
+			} else if (evt.getKeyCode ()==KeyEvent.VK_SPACE){
+				/* imposta a stringa vuota */
+				valueTextArea.setText ("");
+			}
+		}
+	}//GEN-LAST:event_valueTextAreaKeyPressed
+
+	private void valuesTableMousePressed (java.awt.event.MouseEvent evt) {//GEN-FIRST:event_valuesTableMousePressed
+		if (evt.getButton ()==MouseEvent.BUTTON3){
+			if (evt.getSource ()==this.valuesTable){
+				final int x = evt.getX ();
+				final int y = evt.getY ();
+				
+				tablePopupMenu.show ((Component)evt.getSource (), x, y);
+			}
+		}
+	}//GEN-LAST:event_valuesTableMousePressed
 
 	private void deleteLocaleMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteLocaleMenuItemActionPerformed
 		if (treePopupNode instanceof Locale){
@@ -496,9 +735,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}//GEN-LAST:event_jButton4ActionPerformed
 
 	private void saveAsMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsMenuItemActionPerformed
+		saveFileChooser.setSelectedFile (new File (this._context.getModel ().getName ()+".properties"));
 		if (saveFileChooser.showSaveDialog (this)==JFileChooser.APPROVE_OPTION){
 			try {
-				this._wm.getApplicationContext ().getModel ().saveAs (saveFileChooser.getSelectedFile (), "Created by URBE");
+				this._context.getModel ().saveAs (saveFileChooser.getSelectedFile (), "Created by URBE");
 			} catch (Exception e){
 				e.printStackTrace (System.err);
 			}
@@ -510,38 +750,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}//GEN-LAST:event_saveFileChooserActionPerformed
 
 	private void openMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
-		if (this._wm.getApplicationContext ().getModel ().isModified ()){
-			if (
-			JOptionPane.showConfirmDialog (
-			this, 
-			java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Continue_discarding_all_changes?"))!=JOptionPane.OK_OPTION){
-				return;
-			}
+		if (!checkForDataLoss ()){
+			return;
 		}
-		
 		if (openFileChooser.showOpenDialog(this)==JFileChooser.APPROVE_OPTION){
 			final File file = openFileChooser.getSelectedFile ();
-			final StringTokenizer st = new StringTokenizer (file.getName (), "_", false);
-			if (st.countTokens ()>1){
-				//non si tratta del file Default
-				String baseName;
-				do {
-					baseName = this._wm.specifyBundleName (file);
-					if (baseName!=null){
-						File baseFile = new File (file.getParentFile (), baseName+".properties");
-//						if (!baseFile.exists ()){
-//							JOptionPane.showMessageDialog (this, 
-//							java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Cannot_find_bundle_base_file")
-//							);
-//						} else {
-							this._wm.getApplicationContext ().getModel ().load (baseFile);
-							return;
-//						}
-					}
-				} while (baseName==null);
-			}
-			this._wm.getApplicationContext ().getModel ().load (file);
-			this._wm.getApplicationContext ().getUserSettings ().setLastPath (file.getPath ());
+			openFile (file);
 		}
 	}//GEN-LAST:event_openMenuItemActionPerformed
 
@@ -618,12 +832,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JPopupMenu entryPopupMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenuItem findMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -635,23 +849,32 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JSeparator jSeparator5;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JPopupMenu localePopupMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JToolBar mainToolbar;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JLabel modifiedLabel;
     private javax.swing.JMenuItem newMenuItem;
     private javax.swing.JFileChooser openFileChooser;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem pasteMenuItem;
     private javax.swing.JProgressBar progressBar;
+    private javax.swing.JMenu recentMenu;
+    private javax.swing.JMenuItem redoMenuItem;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JFileChooser saveFileChooser;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JPanel statusPanel;
+    private javax.swing.JPopupMenu tablePopupMenu;
     private javax.swing.JScrollPane treeScrollPane;
     private javax.swing.JSplitPane tree_table_splitPane;
+    private javax.swing.JMenuItem undoMenuItem;
+    private javax.swing.JTextArea valueTextArea;
     private javax.swing.JTable valuesTable;
     // End of variables declaration//GEN-END:variables
 
@@ -671,7 +894,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 
 		public boolean restorePersistent (com.davidecavestro.common.gui.persistence.PersistenceStorage props) {
-			return PersistenceUtils.restorePersistentBounds (props, this.getPersistenceKey (), this._tree);
+			return PersistenceUtils.restorePersistentBoundsToPreferredSize (props, this.getPersistenceKey (), this._tree);
 		}
 	
 	}
@@ -710,7 +933,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 		
 		private void reindex (){
-			this._locales = this._resources.getLocales ();
+			this._locales = (Locale[])this._resources.getLocales ().clone ();
 			this._keys = (String[])this._resources.getKeySet ().toArray (voidStringArray);
 		}
 		
@@ -787,18 +1010,70 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		
 	    public void resourceBundleChanged (ResourceBundleModelEvent e){
 			cacheKeys ();
+			
 			if (e.getLocale ()==ResourceBundleModelEvent.ALL_LOCALES){
 				this.fireTreeStructureChanged (this, new TreePath (new Object[]{this.getRoot ()}));
-			} else {				
+				return;
+			} else if (e.getKeys ()==ResourceBundleModelEvent.ALL_KEYS){
 				this.fireTreeStructureChanged (this, new TreePath (new Object[]{this.getRoot (), e.getLocale ()}));
+//				this.fireTreeStructureChanged (this, new TreePath (new Object[]{e.getLocale (), this.getRoot ()}));
+				return;
 			}
+//			this.fireTreeStructureChanged (this, new TreePath (new Object[]{this.getRoot (), e.getLocale (), e.getKeys ()[0]}));
+//			this.fireTreeStructureChanged (this, new TreePath (new Object[]{e.getKeys ()[0], e.getLocale (), this.getRoot ()}));
+
+			Locale l = e.getLocale ();
+			String[] keys = e.getKeys ();
+			if (e.getType ()==ResourceBundleModelEvent.INSERT){
+				String[] localeKeys = (String[])this._model.getLocaleKeys (l).toArray (voidStringArray);
+				Arrays.sort (localeKeys);
+				
+				this.fireTreeNodesInserted (e.getLocale (), new Object[]{this.getRoot (), e.getLocale ()}, getIndexes (localeKeys, keys), keys);
+//			} else if (e.getType ()==ResourceBundleModelEvent.UPDATE){
+//				
+			} else if (e.getType ()==ResourceBundleModelEvent.DELETE){
+				String[] localeKeys = (String[])this._model.getLocaleKeys (l).toArray (voidStringArray);
+				String[] oldLocaleKeys = new String[localeKeys.length+keys.length];
+				System.arraycopy (localeKeys, 0, oldLocaleKeys, 0, localeKeys.length);
+				System.arraycopy (keys, 0, oldLocaleKeys, localeKeys.length, keys.length);
+				Arrays.sort (oldLocaleKeys);
+				
+				this.fireTreeNodesRemoved (e.getLocale (), new Object[]{this.getRoot (), e.getLocale ()}, getIndexes (oldLocaleKeys, keys), keys);
+				
+			}
+			
+//			
+//			if (e.getLocale ()==ResourceBundleModelEvent.ALL_LOCALES){
+//				this.fireTreeStructureChanged (this, new TreePath (new Object[]{this.getRoot ()}));
+//			} else {
+//				if (e.getKeys ()==ResourceBundleModelEvent.ALL_KEYS){
+//					this.fireTreeStructureChanged (this, new TreePath (new Object[]{this.getRoot (), e.getLocale ()}));
+//				} else {
+//					this.fireTreeStructureChanged (this, new TreePath (new Object[]{this.getRoot (), e.getLocale (), e.getKeys ()[0]}));
+//				}
+//			}
 		}
+
+		private int[] getIndexes (String[] orderedContainer, String[] wanted){
+			final int[] retValue = new int [wanted.length];
+
+
+			for (int i=0;i<wanted.length;i++){
+				retValue[i] = Arrays.binarySearch (orderedContainer, wanted[i]);
+			}
+			return retValue;
+		}
+			
 
 		public Object getChild (Object parent, int index) {
 			if (parent instanceof ResourceBundleModel){
-				return ((ResourceBundleModel)parent).getLocales ()[index];
+				Locale[] locales = ((ResourceBundleModel)parent).getLocales ();
+				Arrays.sort (locales, _lc);
+				return locales[index];
 			} else if (parent instanceof Locale){
-				return this._model.getLocaleKeys ((Locale)parent).toArray ()[index];
+				Object[] keys = this._model.getLocaleKeys ((Locale)parent).toArray ();
+				Arrays.sort (keys);
+				return keys[index];
 			}
 			throw new Error ("Unsupported type for "+parent);
 		}
@@ -813,19 +1088,22 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 	
 		public void addTreeModelListener (javax.swing.event.TreeModelListener l) {
-		listenerList.add (TreeModelListener.class, l);
+			listenerList.add (TreeModelListener.class, l);
 		}
 		
+		private final LocaleComparator _lc = new LocaleComparator ();
 		public int getIndexOfChild (Object parent, Object child) {
 			if (parent instanceof ResourceBundleModel){
 				final ResourceBundleModel model = (ResourceBundleModel)parent;
 				final Locale[] locales = model.getLocales ();
-				for (int i=0;i<locales.length;i++){
-					if (locales[i]==child){
-						return i;
-					}
-				}
-				return -1;
+				Arrays.sort (locales, _lc);
+				return Arrays.binarySearch (locales, child, _lc);
+//				for (int i=0;i<locales.length;i++){
+//					if (locales[i]==child){
+//						return i;
+//					}
+//				}
+//				return -1;
 			} else if (parent instanceof Locale){
 //				final Locale locale = (Locale)parent;
 				int i=0;
@@ -851,7 +1129,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 		
 		public void removeTreeModelListener (javax.swing.event.TreeModelListener l) {
-		listenerList.remove (TreeModelListener.class, l);
+			listenerList.remove (TreeModelListener.class, l);
 		}
 		
 		public void valueForPathChanged (javax.swing.tree.TreePath path, Object newValue) {
@@ -872,6 +1150,104 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				}
 			}
 		}
+		
+		
+		
+/**
+     * Notifies all listeners that have registered interest for
+     * notification on this event type.  The event instance 
+     * is lazily created using the parameters passed into 
+     * the fire method.
+     *
+     * @param source the node being changed
+     * @param path the path to the root node
+     * @param childIndices the indices of the changed elements
+     * @param children the changed elements
+     * @see EventListenerList
+     */
+    protected void fireTreeNodesChanged(Object source, Object[] path, 
+                                        int[] childIndices, 
+                                        Object[] children) {
+        // Guaranteed to return a non-null array
+        Object[] listeners = listenerList.getListenerList();
+        TreeModelEvent e = null;
+        // Process the listeners last to first, notifying
+        // those that are interested in this event
+        for (int i = listeners.length-2; i>=0; i-=2) {
+            if (listeners[i]==TreeModelListener.class) {
+                // Lazily create the event:
+                if (e == null)
+                    e = new TreeModelEvent(source, path, 
+                                           childIndices, children);
+                ((TreeModelListener)listeners[i+1]).treeNodesChanged(e);
+            }          
+        }
+    }
+
+    /**
+     * Notifies all listeners that have registered interest for
+     * notification on this event type.  The event instance 
+     * is lazily created using the parameters passed into 
+     * the fire method.
+     *
+     * @param source the node where new elements are being inserted
+     * @param path the path to the root node
+     * @param childIndices the indices of the new elements
+     * @param children the new elements
+     * @see EventListenerList
+     */
+    protected void fireTreeNodesInserted(Object source, Object[] path, 
+                                        int[] childIndices, 
+                                        Object[] children) {
+        // Guaranteed to return a non-null array
+        Object[] listeners = listenerList.getListenerList();
+        TreeModelEvent e = null;
+        // Process the listeners last to first, notifying
+        // those that are interested in this event
+        for (int i = listeners.length-2; i>=0; i-=2) {
+            if (listeners[i]==TreeModelListener.class) {
+                // Lazily create the event:
+                if (e == null)
+                    e = new TreeModelEvent(source, path, 
+                                           childIndices, children);
+                ((TreeModelListener)listeners[i+1]).treeNodesInserted(e);
+            }          
+        }
+    }
+
+    /**
+     * Notifies all listeners that have registered interest for
+     * notification on this event type.  The event instance 
+     * is lazily created using the parameters passed into 
+     * the fire method.
+     *
+     * @param source the node where elements are being removed
+     * @param path the path to the root node
+     * @param childIndices the indices of the removed elements
+     * @param children the removed elements
+     * @see EventListenerList
+     */
+    protected void fireTreeNodesRemoved(Object source, Object[] path, 
+                                        int[] childIndices, 
+                                        Object[] children) {
+        // Guaranteed to return a non-null array
+        Object[] listeners = listenerList.getListenerList();
+        TreeModelEvent e = null;
+        // Process the listeners last to first, notifying
+        // those that are interested in this event
+        for (int i = listeners.length-2; i>=0; i-=2) {
+            if (listeners[i]==TreeModelListener.class) {
+                // Lazily create the event:
+                if (e == null)
+                    e = new TreeModelEvent(source, path, 
+                                           childIndices, children);
+                ((TreeModelListener)listeners[i+1]).treeNodesRemoved(e);
+            }          
+        }
+    }		
+		
+		
+		
 		
 		public void propertyChange(PropertyChangeEvent evt){
 			if (evt.getPropertyName ().equals ("name")){
@@ -901,11 +1277,16 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}
 	
 	private void deleteEntry (String key){
-		this._wm.getApplicationContext ().getModel ().removeKey (key);
+		this._context.getModel ().removeKey (key);
 	}
 	
 	private void deleteLocale (Locale locale){
-		this._wm.getApplicationContext ().getModel ().removeLocale (locale);
+		if (JOptionPane.showConfirmDialog (
+		this, 
+		java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Continue_deleting_locale?"))!=JOptionPane.OK_OPTION){
+			return;
+		}
+		this._context.getModel ().removeLocale (locale);
 	}
 	
 	public void addActionListener (ActionListener l) {
@@ -925,12 +1306,38 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		public ValueCellEditor (){
 			super ( new JTextField ());
 			final JTextField field = (JTextField)this.getComponent ();
+			
+			/* condivide il modello con la textarea così una modifica da tabella viene subito riflessa nella textarea*/
+			valueTextArea.setDocument (field.getDocument ());
+//			field.setDocument (valueTextArea.getDocument ());
+//			field.getDocument ().addDocumentListener (new DocumentListener (){
+//				public void insertUpdate(DocumentEvent e){apply (e);}
+//				public void removeUpdate(DocumentEvent e){apply (e);}
+//				public void changedUpdate(DocumentEvent e){apply (e);}
+//
+//				public void apply (DocumentEvent e){
+//					if (field.isEnabled () && field.hasFocus ()) {
+//						/* propaga modifica solo se editor abilitato, altrimenti sarebbe un evento spurio */
+//						valueTextArea.setText (field.getText ());
+//					}
+//				}
+//			});
+			
 			field.addKeyListener (new KeyAdapter (){
 				 public void keyPressed(KeyEvent e) {
-					 if (e.getKeyCode ()==KeyEvent.VK_DELETE && e.isControlDown ()){
-						 field.setText (null);
-						 _nullCalled = true;
-						 ValueCellEditor.this.stopCellEditing ();
+					 if (e.isControlDown ()){
+						 /* SHORTCUTS */
+						 if (e.getKeyCode ()==KeyEvent.VK_DELETE){
+							 /* imposta a null */
+							 field.setText (null);
+							 _nullCalled = true;
+							 ValueCellEditor.this.stopCellEditing ();
+						 } else if (e.getKeyCode ()==KeyEvent.VK_SPACE){
+							 /* imposta a stringa vuota */
+							 field.setText ("");
+//							 _nullCalled = true;
+							 ValueCellEditor.this.stopCellEditing ();
+						 }
 					 }
 				 }
 			});
@@ -949,5 +1356,165 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			}
 		}
 		
+	}
+	
+	private void openFile (File file){
+		final StringTokenizer st = new StringTokenizer (file.getName (), "_", false);
+		if (st.countTokens ()>1){
+			//non si tratta del file Default
+			String baseName;
+			do {
+				baseName = this._wm.specifyBundleName (file);
+				if (baseName!=null){
+					File baseFile = new File (file.getParentFile (), baseName+".properties");
+						this._context.getModel ().load (baseFile);
+						return;
+				}
+			} while (baseName==null);
+		}
+		this._context.getModel ().load (file);
+		this._context.getUserSettings ().setLastPath (file.getPath ());
+		final String[] recentPaths = this._context.getUserSettings ().getRecentPaths ();
+		String newRecentPath = file.getPath ();;
+		boolean saveNewPath = true;
+		if (recentPaths!=null && recentPaths.length>0){
+			if (newRecentPath.equals (recentPaths[0])){
+				/*
+				 * il file aperto e' gia' l'ultimo aperto
+				 */
+				saveNewPath = false;
+			}
+		}
+
+		if (saveNewPath){
+			final String[] newRecentPaths = new String[Math.min (recentPaths.length+1, 10)];
+			newRecentPaths[0] = newRecentPath;
+			System.arraycopy (recentPaths, 0, newRecentPaths, 1, newRecentPaths.length-1);
+			this._context.getUserSettings ().setRecentPaths (newRecentPaths);
+		}
+		
+		updateRecentPathMenu ();
+	}
+	
+	
+	private boolean checkForDataLoss (){
+		if (this._context.getModel ().isModified ()){
+			if (
+			JOptionPane.showConfirmDialog (
+			this, 
+			java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Continue_discarding_all_changes?"))!=JOptionPane.OK_OPTION){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private void updateRecentPathMenu (){
+		final String[] recentPaths = this._context.getUserSettings ().getRecentPaths ();
+		recentMenu.removeAll ();
+		for (int i=0;i<recentPaths.length;i++){
+			final int ix = i;
+			final JMenuItem item = new JMenuItem ();
+			item.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent evt) {
+					if (!checkForDataLoss ()){
+						return;
+					}
+					
+					openFile (new File (recentPaths[ix]));
+				}
+			});
+			item.setText (recentPaths[ix]);
+			recentMenu.add (item);
+		}
+		if (recentMenu.getItemCount ()==0){
+			JMenuItem disabled = new JMenuItem ();
+			disabled.setEnabled (false);
+			disabled.setText ("No files");
+			recentMenu.add (disabled);
+		}
+	}
+	
+	public Matcher getMatcher (){
+		return this._matcher;
+	}
+	
+	private class PatternFinder implements Matcher {
+
+		private String p;
+		private boolean h = true;
+		private PropertyChangeSupport changeSupport;
+
+		public void setPattern (String pattern){
+			if (this.p==pattern || (this.p!=null && this.p.equals (pattern))){
+				return;
+			}
+			String old = this.p;
+			this.p = pattern;
+			changeSupport.firePropertyChange ("pattern", old, pattern);
+			forceTableRepaint ();
+		}
+
+		public void setHighlight (boolean h){			
+			if (this.h == h){
+				return;
+			}
+			this.h = h;
+			forceTableRepaint ();
+		}
+
+		private void forceTableRepaint (){
+			valuesTable.tableChanged (new TableModelEvent(
+				valuesTable.getModel(),
+				0,
+				valuesTable.getModel().getRowCount ()-1,
+				TableModelEvent.ALL_COLUMNS,
+				TableModelEvent.UPDATE)
+			);
+		}
+
+		public boolean match (String s){
+			if (null==p){
+				return false;
+			}
+			return -1 != s.indexOf (p);
+		}
+
+		public String getPattern (){
+			return this.p;
+		}
+
+		public boolean getHighlight (){
+			return this.h;
+		}
+		
+		
+		
+
+	public synchronized void addPropertyChangeListener (
+	PropertyChangeListener listener) {
+		if (listener == null) {
+			return;
+		}
+		if (changeSupport == null) {
+			changeSupport = new java.beans.PropertyChangeSupport (this);
+		}
+		changeSupport.addPropertyChangeListener (listener);
+	}
+	
+	public synchronized void removePropertyChangeListener (
+	PropertyChangeListener listener) {
+		if (listener == null || changeSupport == null) {
+			return;
+		}
+		changeSupport.removePropertyChangeListener (listener);
+	}		
+				
+	public void nextMatch () {
+	}
+	
+	public void previousMatch () {
+	}
+	
 	}
 }

@@ -15,6 +15,7 @@ import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
 import com.davidecavestro.rbe.model.LocalizationProperties;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,9 +26,11 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
@@ -69,6 +72,16 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
 		actualLocaleText.setText (_locale.toString ());
 		
 		this._dialogNotifier = new DialogNotifierImpl ();
+		
+		
+		this.getRootPane ().setDefaultButton (okButton);
+		
+		cancelButton.getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put (KeyStroke.getKeyStroke ("ESCAPE"), "cancel");
+		cancelButton.getActionMap().put("cancel", new javax.swing.AbstractAction ("cancel"){
+			public void actionPerformed (ActionEvent ae){
+				cancel ();
+			}
+		});
 	
 	}
 	
@@ -99,8 +112,8 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Add_locale"));
-        setLocationRelativeTo(null);
         setModal(true);
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
         jLabel2.setLabelFor(languageCombo);
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Language_Code:"));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -110,6 +123,7 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
         gridBagConstraints.insets = new java.awt.Insets(4, 5, 4, 5);
         getContentPane().add(jLabel2, gridBagConstraints);
 
+        jLabel3.setFont(new java.awt.Font("Dialog", 0, 12));
         jLabel3.setLabelFor(countryCombo);
         org.openide.awt.Mnemonics.setLocalizedText(jLabel3, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Country_Code:"));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -119,6 +133,7 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
         gridBagConstraints.insets = new java.awt.Insets(4, 5, 4, 5);
         getContentPane().add(jLabel3, gridBagConstraints);
 
+        jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
         jLabel4.setLabelFor(variantCombo);
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Variant:"));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -217,6 +232,7 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
         gridBagConstraints.insets = new java.awt.Insets(4, 5, 4, 5);
         getContentPane().add(variantCombo, gridBagConstraints);
 
+        okButton.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(okButton, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Ok"));
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -231,6 +247,7 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
         gridBagConstraints.insets = new java.awt.Insets(8, 5, 8, 5);
         getContentPane().add(okButton, gridBagConstraints);
 
+        cancelButton.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(cancelButton, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Cancel"));
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -245,6 +262,7 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
         gridBagConstraints.insets = new java.awt.Insets(8, 5, 8, 5);
         getContentPane().add(cancelButton, gridBagConstraints);
 
+        helpButton.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(helpButton, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Help"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
@@ -253,6 +271,7 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
         gridBagConstraints.insets = new java.awt.Insets(8, 5, 8, 5);
         getContentPane().add(helpButton, gridBagConstraints);
 
+        jLabel5.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel5, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("New_resulting_locale:"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -264,7 +283,6 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
         getContentPane().add(jLabel5, gridBagConstraints);
 
         actualLocaleText.setEditable(false);
-        actualLocaleText.setText("jTextField1");
         actualLocaleText.setOpaque(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -275,6 +293,7 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
         gridBagConstraints.insets = new java.awt.Insets(4, 5, 4, 5);
         getContentPane().add(actualLocaleText, gridBagConstraints);
 
+        jLabel6.setFont(new java.awt.Font("Dialog", 0, 12));
         jLabel6.setLabelFor(variantCombo);
         org.openide.awt.Mnemonics.setLocalizedText(jLabel6, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Predefined_Locales:"));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -295,9 +314,19 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
             }
         });
         predefinedList.setVisibleRowCount(4);
+        predefinedList.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                predefinedListKeyTyped(evt);
+            }
+        });
         predefinedList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 predefinedListValueChanged(evt);
+            }
+        });
+        predefinedList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                predefinedListMouseClicked(evt);
             }
         });
 
@@ -316,13 +345,24 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
         pack();
     }//GEN-END:initComponents
 
+	private void predefinedListKeyTyped (java.awt.event.KeyEvent evt) {//GEN-FIRST:event_predefinedListKeyTyped
+		if (evt.getKeyCode ()==KeyEvent.VK_ENTER){
+			confirm ();
+		}
+	}//GEN-LAST:event_predefinedListKeyTyped
+
+	private void predefinedListMouseClicked (java.awt.event.MouseEvent evt) {//GEN-FIRST:event_predefinedListMouseClicked
+		if (evt.getClickCount ()>1){
+			confirm ();
+		}
+	}//GEN-LAST:event_predefinedListMouseClicked
+
 	private void cancelButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-		this.hide ();
+		cancel ();
 	}//GEN-LAST:event_cancelButtonActionPerformed
 
 	private void okButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-		this._dialogNotifier.fireDialogPerformed (new DialogEvent (this, JOptionPane.OK_OPTION));
-		this.hide ();
+		confirm ();
 	}//GEN-LAST:event_okButtonActionPerformed
 
 	private void predefinedListValueChanged (javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_predefinedListValueChanged
@@ -540,5 +580,15 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
 	
 	public Locale getSelectedLocale (){
 		return this._locale;
+	}
+	
+	
+	private void confirm (){
+		this._dialogNotifier.fireDialogPerformed (new DialogEvent (this, JOptionPane.OK_OPTION));
+		this.hide ();		
+	}
+	
+	private void cancel (){
+		this.hide ();
 	}
 }

@@ -47,7 +47,7 @@ public class WindowManager implements ActionListener, DialogListener {
 	 */
 	public MainWindow getMainWindow (){
 		if (this._mainWindow==null){
-			this._mainWindow = new MainWindow (this);
+			this._mainWindow = new MainWindow (this._context);
 			this._context.getUIPersisteer ().register (this._mainWindow);
 			this._mainWindow.addActionListener (this);
 		}
@@ -103,6 +103,19 @@ public class WindowManager implements ActionListener, DialogListener {
 		return this._addLocaleDialog;
 	}
 	
+	private FindDialog _findDialog;	
+	/**
+	 * Ritorna la dialog di inserimento nuova entry.
+	 * @return la dialog di inserimento nuova entry.
+	 */
+	public FindDialog getFindDialog (){
+		if (this._findDialog==null){
+			this._findDialog = new FindDialog (getMainWindow (), true, _context.getActionManager ().getFindNextAction ());
+			this._findDialog.setLocationRelativeTo (null);
+		}
+		return this._findDialog;
+	}
+	
 	public void dialogChanged (com.davidecavestro.common.gui.dialog.DialogEvent e) {
 		if (e.getSource ()==this._addLocaleDialog){
 			if (e.getType ()==JOptionPane.OK_OPTION){
@@ -132,6 +145,8 @@ public class WindowManager implements ActionListener, DialogListener {
 				}
 			} else if (e.getActionCommand ().equals ("showAddLocaleDialog")){
 				getAddLocaleDialog ().show ();
+			} else if (e.getActionCommand ().equals ("showFindDialog")){
+				getFindDialog ().show ();
 			}
 		}
 	}

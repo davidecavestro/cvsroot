@@ -13,8 +13,11 @@ import com.davidecavestro.common.gui.persistence.PersistenceUtils;
 import com.davidecavestro.common.gui.persistence.PersistentComponent;
 import com.davidecavestro.common.gui.persistence.UIPersister;
 import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
+import java.awt.event.ActionEvent;
 import java.util.Locale;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 /**
  *
@@ -29,6 +32,14 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
 		super (parent, modal);
 		initComponents ();
 		this._dialogNotifier = new DialogNotifierImpl ();
+		this.getRootPane ().setDefaultButton (okButton);
+		
+		cancelButton.getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put (KeyStroke.getKeyStroke ("ESCAPE"), "cancel");
+		cancelButton.getActionMap().put("cancel", new javax.swing.AbstractAction ("cancel"){
+			public void actionPerformed (ActionEvent ae){
+				close();
+			}
+		});
 	}
 	
 	/** This method is called from within the constructor to
@@ -46,21 +57,22 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         valueField = new javax.swing.JTextField();
         commentField = new javax.swing.JTextField();
         okButton = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("New_entry"));
-        setLocationRelativeTo(null);
         setModal(true);
+        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Key"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(jLabel1, gridBagConstraints);
 
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Value"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -69,6 +81,7 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(jLabel2, gridBagConstraints);
 
+        jLabel3.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel3, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Comment"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -116,6 +129,7 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(commentField, gridBagConstraints);
 
+        okButton.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(okButton, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Ok"));
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -129,10 +143,11 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(okButton, gridBagConstraints);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton2, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Cancel"));
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        cancelButton.setFont(new java.awt.Font("Dialog", 0, 12));
+        org.openide.awt.Mnemonics.setLocalizedText(cancelButton, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Cancel"));
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                cancelButtonActionPerformed(evt);
             }
         });
 
@@ -140,8 +155,9 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
-        getContentPane().add(jButton2, gridBagConstraints);
+        getContentPane().add(cancelButton, gridBagConstraints);
 
+        jButton3.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jButton3, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Help"));
         jButton3.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Help"));
         jButton3.setActionCommand("help");
@@ -162,9 +178,9 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
 		check ();
 	}//GEN-LAST:event_keyFieldKeyTyped
 
-	private void jButton2ActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-		this.hide ();
-	}//GEN-LAST:event_jButton2ActionPerformed
+	private void cancelButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+		close ();
+	}//GEN-LAST:event_cancelButtonActionPerformed
 
 	private void okButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 		confirm ();
@@ -176,8 +192,8 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelButton;
     private javax.swing.JTextField commentField;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -248,4 +264,7 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
 		this._dialogNotifier.removeDialogListener (l);
 	}
 	
+	private void close (){
+		hide ();
+	}
 }
