@@ -8,6 +8,7 @@ package com.davidecavestro.rbe.gui;
 
 import com.davidecavestro.common.gui.dialog.DialogListener;
 import com.davidecavestro.common.gui.persistence.UIPersister;
+import com.davidecavestro.common.util.*;
 import com.davidecavestro.rbe.ApplicationContext;
 import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
 import com.davidecavestro.rbe.model.LocalizationProperties;
@@ -15,7 +16,6 @@ import com.davidecavestro.rbe.model.ResourceBundleModel;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Locale;
-import java.util.Properties;
 import javax.swing.JOptionPane;
 
 /**
@@ -123,12 +123,17 @@ public class WindowManager implements ActionListener, DialogListener {
 				if (this._context.getModel ().containsLocale (l)){
 					JOptionPane.showMessageDialog (this._mainWindow, "Duplicate locale");
 				} else {
-					this._context.getModel ().addLocale (new LocalizationProperties (l, new Properties ()));
+					this._context.getModel ().addLocale (new LocalizationProperties (l, new CommentedProperties ()));
 				}
 			}
 		} else if (e.getSource ()==this._addEntryDialog){
 			if (e.getType ()==JOptionPane.OK_OPTION){
-				this._context.getModel ().addKey (this._addEntryDialog.getLocale (), this._addEntryDialog.getKeyText (), this._addEntryDialog.getValueText ());
+				this._context.getModel ().addKey (
+					this._addEntryDialog.getLocale (), 
+					this._addEntryDialog.getKeyText (), 
+					this._addEntryDialog.getValueText (),
+					this._addEntryDialog.getCommentText ()
+					);
 			}
 		}
 		

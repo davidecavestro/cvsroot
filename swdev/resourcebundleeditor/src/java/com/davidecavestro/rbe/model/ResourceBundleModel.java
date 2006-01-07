@@ -49,6 +49,24 @@ public interface ResourceBundleModel extends ResourceBundleModelNotifier {
 	void setValue (Locale locale, String key, String value );
 	
 	/**
+	 * Ritorna il commento per la chiave ed il locale specificati.
+	 *
+	 * @return il commento per la chiave ed il locale specificati.
+	 * @param locale il locale.
+	 * @param key la chiave.
+	 */	
+	String getComment (Locale locale, String key );
+	
+	/**
+	 * Imposta il commento per la chiave ed il locale specificati.
+	 *
+	 * @param comnet il commento.
+	 * @param locale il locale.
+	 * @param key la chiave.
+	 */	
+	void setComment (Locale locale, String key, String comment );
+	
+	/**
 	 * Ritorna il nome del ResourceBundle.
 	 *
 	 * @return il nome del ResourceBundle.

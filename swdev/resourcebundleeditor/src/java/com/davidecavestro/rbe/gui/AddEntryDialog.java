@@ -256,6 +256,10 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
 		return this.valueField.getText ();
 	}
 	
+	public String getCommentText (){
+		return this.commentField.getText ();
+	}
+	
 	public void addDialogListener (com.davidecavestro.common.gui.dialog.DialogListener l) {
 		this._dialogNotifier.addDialogListener (l);
 	}	

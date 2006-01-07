@@ -6,12 +6,12 @@
 
 package com.davidecavestro.rbe.model;
 
+import com.davidecavestro.common.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Properties;
 
 /**
  * Risorse di localizzazione.
@@ -23,14 +23,14 @@ public class LocalizationProperties {
 	public final static Locale DEFAULT = new Locale ("");
 	
 	private final Locale locale;
-	private final Properties properties;
+	private final CommentedProperties properties;
 	
 	/**
 	 * Costruttore.
 	 * @param locale il locale.
 	 * @param props le proeprties;
 	 */
-	public LocalizationProperties (Locale locale, Properties props) {
+	public LocalizationProperties (Locale locale, CommentedProperties props) {
 		this.locale = locale;
 		this.properties = props;
 	}
@@ -49,7 +49,7 @@ public class LocalizationProperties {
 	 *
 	 * @return la amppa delle risorse.
 	 */	
-	public Properties getProperties (){
+	public CommentedProperties getProperties (){
 		return this.properties;
 	}
 	

@@ -6,6 +6,7 @@
 
 package com.davidecavestro.rbe.model;
 
+import com.davidecavestro.common.util.*;
 import com.davidecavestro.common.util.NestedRuntimeException;
 import com.davidecavestro.rbe.model.event.ResourceBundleModelEvent;
 import java.awt.event.ActionEvent;
@@ -23,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -34,7 +34,6 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
-import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 
 /**
@@ -156,6 +155,10 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 		return getLocalizationProperties (locale).getProperties ().getProperty (key);
 	}
 	
+	public String getComment (Locale locale, String key) {
+		return getLocalizationProperties (locale).getProperties ().getComment (key);
+	}
+	
 	public void setValue (Locale locale, String key, String value) {
 		setValue (locale, key, value, true);
 	}
@@ -179,7 +182,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	}
 
 	private void internalSetValue (Locale locale, String key, String value/*, boolean fireInsertionEvent*/) {
-		Properties props = getLocalizationProperties (locale).getProperties ();
+		CommentedProperties props = getLocalizationProperties (locale).getProperties ();
 		setModified (true);
 		if (null==value){
 			props.remove (key);
@@ -203,6 +206,37 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 
 	
 		
+	public void setComment (Locale locale, String key, String comment) {
+		setComment (locale, key, comment, true);
+	}
+	
+	public void setComment (Locale locale, String key, String comment, boolean undoable) {
+		final UndoableEditListener[] listeners = (UndoableEditListener[])getListeners (UndoableEditListener.class);
+		if (undoable == false || listeners == null) {
+			internalSetComment (locale, key, comment);
+			return;
+		}
+
+
+		final String oldComment = getComment (locale, key);
+		internalSetComment (locale, key, comment);
+		final CommentEdit commentEdit = new CommentEdit (this, oldComment, comment, locale, key);
+		UndoableEditEvent editEvent = new UndoableEditEvent (this, commentEdit);
+		for (int i=0; i< listeners.length;i++){
+			listeners[i].undoableEditHappened (editEvent);
+		}
+
+	}
+	
+	private void internalSetComment (Locale locale, String key, String comment) {
+		CommentedProperties props = getLocalizationProperties (locale).getProperties ();
+		setModified (true);
+		props.setComment (key, comment);
+		
+		fireResourceBundleModelChanged (new ResourceBundleModelEvent (this, locale, new String[]{key}, ResourceBundleModelEvent.UPDATE));
+	}
+	
+	
 	public void removeKey (String key){
 		removeKey (key, true);
 	}
@@ -238,15 +272,15 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	 * @param key la chiave.
 	 * @param value il valore.
 	 */	
-	public void addKey (String key, String value){
-		addKey (LocalizationProperties.DEFAULT, key, value);
+	public void addKey (String key, String value, String comment ){
+		addKey (LocalizationProperties.DEFAULT, key, value, comment);
 	}
 	
-	public void addKey (Locale locale, String key, String value){
-		addKey (locale, key, value, true, true);
+	public void addKey (Locale locale, String key, String comment, String value){
+		addKey (locale, key, value, comment, true, true);
 	}
 	
-	public void addKey (Locale locale, String key, String value,  boolean undoable, boolean fireInsertionEvent){
+	public void addKey (Locale locale, String key, String value, String comment, boolean undoable, boolean fireInsertionEvent){
 		if (value==null){
 			return;
 		}
@@ -258,14 +292,14 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 //		}
 		
 //		internalSetValue (locale, key, value);
-		ValueEdit valueEdit = new ValueEdit (this, null, value, locale, key);
+		final ValueCommentInsertion valueEdit = new ValueCommentInsertion (this, value, comment, locale, key);
 		UndoableEditEvent editEvent = new UndoableEditEvent (this, valueEdit);
 		for (int i=0; i< listeners.length;i++){
 			listeners[i].undoableEditHappened (editEvent);
 		}
 		
 		
-		getLocalizationProperties (locale).getProperties ().setProperty (key, value);
+		getLocalizationProperties (locale).getProperties ().setProperty (key, value, comment);
 		this._keys.add (key);
 		setModified (true);
 		
@@ -281,7 +315,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	public void addKey (String key, String[] values, boolean undoable){
 		for (int i = 0;i<values.length;i++){
 			final Locale locale = this._locales[i];
-			addKey (locale, key, values[i], undoable, false);
+			addKey (locale, key, values[i], null, undoable, false);
 		}
 		fireKeysInserted (new String[]{key});
 	}
@@ -402,7 +436,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 				if (!defaultFound && l == LocalizationProperties.DEFAULT){
 					defaultFound = true;
 				}
-				final Properties p = new Properties ();
+				final CommentedProperties p = new CommentedProperties ();
 				p.load (new FileInputStream (f));
 				retValue.add (new LocalizationProperties (l, p));
 			} catch (IllegalArgumentException iae){
@@ -417,7 +451,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 			/*
 			 * Aggiunge Locale di default
 			 */
-			retValue.add (0, new LocalizationProperties (LocalizationProperties.DEFAULT, new Properties ()));
+			retValue.add (0, new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties ()));
 		}
 		return (LocalizationProperties[])retValue.toArray (voidResourceArray);
 		
@@ -478,7 +512,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	public void store (String comment) throws FileNotFoundException, IOException{
 		for (int i =0;i<this._resources.length;i++){
 			final LocalizationProperties lp = this._resources[i];
-			final Properties p = lp.getProperties ();
+			final CommentedProperties p = lp.getProperties ();
 			final Locale l = lp.getLocale ();
 			final String language = l.getLanguage ();
 			final String country = l.getCountry ();
@@ -829,6 +863,84 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 		}
 	}
 	
+	class ValueCommentEdit extends AbstractUndoableEdit {
+		protected DefaultResourceBundleModel model;
+		protected String oldValue;
+		protected String newValue;
+		protected String oldComment;
+		protected String newComment;
+		protected Locale locale;
+		protected String key;
+		
+		
+		public ValueCommentEdit (DefaultResourceBundleModel model, String oldValue, String newValue, String oldComment, String newComment, Locale locale, String key) {
+			this.model = model;
+			this.oldValue = oldValue;
+			this.newValue = newValue;
+			this.oldComment = oldComment;
+			this.newComment = newComment;
+			this.locale = locale;
+			this.key = key;
+		}
+		
+		
+		public String getPresentationName () {
+			return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("value_change");
+		}
+		
+		
+		public void undo () throws CannotUndoException {
+			super.undo ();
+			
+			model.setValue (locale, key, oldValue, false);
+			model.setComment (locale, key, oldComment, false);
+		}
+		
+		
+		public void redo () throws CannotUndoException {
+			super.redo ();
+			
+			model.setValue (locale, key, newValue, false);
+			model.setComment (locale, key, newComment, false);
+		}
+	}
+	
+	class ValueCommentInsertion extends AbstractUndoableEdit {
+		protected DefaultResourceBundleModel model;
+		protected String newValue;
+		protected String newComment;
+		protected Locale locale;
+		protected String key;
+		
+		
+		public ValueCommentInsertion (DefaultResourceBundleModel model, String newValue, String newComment, Locale locale, String key) {
+			this.model = model;
+			this.newValue = newValue;
+			this.newComment = newComment;
+			this.locale = locale;
+			this.key = key;
+		}
+		
+		
+		public String getPresentationName () {
+			return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("value_change");
+		}
+		
+		
+		public void undo () throws CannotUndoException {
+			super.undo ();
+			
+			model.removeKey (key, false);
+		}
+		
+		
+		public void redo () throws CannotUndoException {
+			super.redo ();
+			
+			model.addKey (locale, key, newValue, newComment, false, true);
+		}
+	}
+	
 	class KeyRemoval extends AbstractUndoableEdit {
 		protected DefaultResourceBundleModel model;
 //		protected Locale[] locales;
@@ -860,6 +972,43 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 			super.redo ();
 			
 			model.removeKey (key, false);
+		}
+	}
+	
+	
+	class CommentEdit extends AbstractUndoableEdit {
+		protected DefaultResourceBundleModel model;
+		protected String oldValue;
+		protected String newValue;
+		protected Locale locale;
+		protected String key;
+		
+		
+		public CommentEdit (DefaultResourceBundleModel model, String oldValue, String newValue, Locale locale, String key) {
+			this.model = model;
+			this.oldValue = oldValue;
+			this.newValue = newValue;
+			this.locale = locale;
+			this.key = key;
+		}
+		
+		
+		public String getPresentationName () {
+			return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("comment_change");
+		}
+		
+		
+		public void undo () throws CannotUndoException {
+			super.undo ();
+			
+			model.setComment (locale, key, oldValue, false);
+		}
+		
+		
+		public void redo () throws CannotUndoException {
+			super.redo ();
+			
+			model.setComment (locale, key, newValue, false);
 		}
 	}
 	

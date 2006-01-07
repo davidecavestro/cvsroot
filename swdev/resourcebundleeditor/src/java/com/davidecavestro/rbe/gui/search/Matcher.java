@@ -16,6 +16,4 @@ public interface Matcher {
 	String getPattern ();
 	void setHighlight (boolean v);
 	boolean getHighlight ();
-	void nextMatch ();
-	void previousMatch ();
 }

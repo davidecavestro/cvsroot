@@ -11,7 +11,7 @@ import com.davidecavestro.common.gui.persistence.UIPersister;
 import com.davidecavestro.rbe.conf.UserResources;
 import com.davidecavestro.rbe.conf.UserSettings;
 import com.davidecavestro.rbe.gui.WindowManager;
-import com.davidecavestro.rbe.gui.actions.ActionManager;
+import com.davidecavestro.rbe.actions.ActionManager;
 import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
 import com.davidecavestro.rbe.model.undo.RBUndoManager;
 import javax.swing.undo.UndoManager;

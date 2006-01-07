@@ -12,12 +12,13 @@ import com.davidecavestro.common.gui.persistence.UIPersister;
 import com.davidecavestro.common.log.CompositeLogger;
 import com.davidecavestro.common.log.Logger;
 import com.davidecavestro.common.log.LoggerAdapter;
+import com.davidecavestro.common.util.*;
 import com.davidecavestro.rbe.conf.ApplicationEnvironment;
 import com.davidecavestro.rbe.conf.CommandLineApplicationEnvironment;
 import com.davidecavestro.rbe.conf.UserResources;
 import com.davidecavestro.rbe.conf.UserSettings;
 import com.davidecavestro.rbe.gui.WindowManager;
-import com.davidecavestro.rbe.gui.actions.ActionManager;
+import com.davidecavestro.rbe.actions.ActionManager;
 import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
 import com.davidecavestro.rbe.model.LocalizationProperties;
 import com.davidecavestro.rbe.model.ResourceBundleModel;
@@ -66,7 +67,7 @@ public class Application {
 //			ioe.printStackTrace (System.err);
 //		}
 		
-		DefaultResourceBundleModel model = new DefaultResourceBundleModel ("blank", new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new Properties ())});
+		DefaultResourceBundleModel model = new DefaultResourceBundleModel ("blank", new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties ())});
 		RBUndoManager undoManager = new RBUndoManager ();
 
 		final ApplicationData applicationData = new ApplicationData ();

@@ -6,10 +6,14 @@
 
 package com.davidecavestro.rbe.gui;
 
-import com.davidecavestro.rbe.gui.actions.FindNextAction;
+import com.davidecavestro.common.util.action.ActionNotifier;
+import com.davidecavestro.common.util.action.ActionNotifierImpl;
+import com.davidecavestro.rbe.actions.FindNextAction;
 import com.davidecavestro.rbe.gui.search.Matcher;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
@@ -22,6 +26,8 @@ public class FindDialog extends javax.swing.JDialog {
 
 	private final FindNextAction _findNextAction;
 	
+    private java.beans.PropertyChangeSupport changeSupport;
+	
 	/** Costruttore. */
 	public FindDialog (java.awt.Frame parent, boolean modal, FindNextAction findNextAction){
 		super (parent, modal);
@@ -33,7 +39,7 @@ public class FindDialog extends javax.swing.JDialog {
 				close();
 			}
 		});
-
+		changeSupport = new java.beans.PropertyChangeSupport (this);
 	}
 	
 	/** This method is called from within the constructor to
@@ -44,16 +50,16 @@ public class FindDialog extends javax.swing.JDialog {
     private void initComponents() {//GEN-BEGIN:initComponents
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jComboBox1 = new javax.swing.JComboBox();
+        patternComboBox = new javax.swing.JComboBox();
         jButton1 = new javax.swing.JButton();
         closeButton = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        matchCaseCheckBox = new javax.swing.JCheckBox();
         jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
+        highlightCheckBox = new javax.swing.JCheckBox();
+        backwardCheckBox = new javax.swing.JCheckBox();
 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -65,15 +71,31 @@ public class FindDialog extends javax.swing.JDialog {
             }
         });
 
-        jComboBox1.setEditable(true);
-        jComboBox1.setMinimumSize(new java.awt.Dimension(80, 24));
-        jComboBox1.setPreferredSize(new java.awt.Dimension(200, 24));
+        patternComboBox.setEditable(true);
+        patternComboBox.setMinimumSize(new java.awt.Dimension(80, 24));
+        patternComboBox.setPreferredSize(new java.awt.Dimension(200, 24));
+        patternComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                patternComboBoxActionPerformed(evt);
+            }
+        });
+        patternComboBox.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                patternComboBoxPropertyChange(evt);
+            }
+        });
+        patternComboBox.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                patternComboBoxKeyTyped(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 8, 5, 8);
-        getContentPane().add(jComboBox1, gridBagConstraints);
+        getContentPane().add(patternComboBox, gridBagConstraints);
 
         jButton1.setAction(_findNextAction);
         jButton1.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -119,7 +141,7 @@ public class FindDialog extends javax.swing.JDialog {
         getContentPane().add(jButton3, gridBagConstraints);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel1.setLabelFor(jComboBox1);
+        jLabel1.setLabelFor(patternComboBox);
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Find_text:"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -130,15 +152,15 @@ public class FindDialog extends javax.swing.JDialog {
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        jCheckBox1.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Match_case"));
+        matchCaseCheckBox.setFont(new java.awt.Font("Dialog", 0, 12));
+        org.openide.awt.Mnemonics.setLocalizedText(matchCaseCheckBox, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Match_case"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 4, 2, 4);
-        jPanel1.add(jCheckBox1, gridBagConstraints);
+        jPanel1.add(matchCaseCheckBox, gridBagConstraints);
 
         jCheckBox2.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jCheckBox2, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Match_Whole_words_only"));
@@ -150,21 +172,33 @@ public class FindDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(2, 4, 2, 4);
         jPanel1.add(jCheckBox2, gridBagConstraints);
 
-        jCheckBox4.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox4, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Highlight"));
+        highlightCheckBox.setFont(new java.awt.Font("Dialog", 0, 12));
+        org.openide.awt.Mnemonics.setLocalizedText(highlightCheckBox, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Highlight"));
+        highlightCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                highlightCheckBoxActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 4, 2, 4);
-        jPanel1.add(jCheckBox4, gridBagConstraints);
+        jPanel1.add(highlightCheckBox, gridBagConstraints);
 
-        jCheckBox3.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox3, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Backward"));
+        backwardCheckBox.setFont(new java.awt.Font("Dialog", 0, 12));
+        org.openide.awt.Mnemonics.setLocalizedText(backwardCheckBox, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Backward"));
+        backwardCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backwardCheckBoxActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 4, 2, 4);
-        jPanel1.add(jCheckBox3, gridBagConstraints);
+        jPanel1.add(backwardCheckBox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -177,8 +211,28 @@ public class FindDialog extends javax.swing.JDialog {
         pack();
     }//GEN-END:initComponents
 
-	private void jButton1ActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+	private void backwardCheckBoxActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backwardCheckBoxActionPerformed
+		backwardChanged ();
+	}//GEN-LAST:event_backwardCheckBoxActionPerformed
+
+	private void patternComboBoxPropertyChange (java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_patternComboBoxPropertyChange
 		// TODO add your handling code here:
+	}//GEN-LAST:event_patternComboBoxPropertyChange
+
+	private void patternComboBoxKeyTyped (java.awt.event.KeyEvent evt) {//GEN-FIRST:event_patternComboBoxKeyTyped
+		patternChanged ();
+	}//GEN-LAST:event_patternComboBoxKeyTyped
+
+	private void highlightCheckBoxActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_highlightCheckBoxActionPerformed
+		highlightChanged ();
+	}//GEN-LAST:event_highlightCheckBoxActionPerformed
+
+	private void patternComboBoxActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_patternComboBoxActionPerformed
+		patternChanged ();
+	}//GEN-LAST:event_patternComboBoxActionPerformed
+
+	private void jButton1ActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+		close ();
 	}//GEN-LAST:event_jButton1ActionPerformed
 
 	private void closeButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
@@ -191,19 +245,65 @@ public class FindDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_exitForm
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox backwardCheckBox;
     private javax.swing.JButton closeButton;
+    private javax.swing.JCheckBox highlightCheckBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JCheckBox matchCaseCheckBox;
+    private javax.swing.JComboBox patternComboBox;
     // End of variables declaration//GEN-END:variables
 	
 	private void close (){
 		this.hide ();
 	}
+	
+	private String oldPattern = "";
+	private void patternChanged (){
+		String newValue = (String)this.patternComboBox.getModel ().getSelectedItem ();
+		this.changeSupport.firePropertyChange ("pattern", oldPattern, newValue);
+		oldPattern = newValue;
+	}
+	
+	private boolean oldHighlight;
+	private void highlightChanged (){
+		boolean newHighlight = this.highlightCheckBox.getModel ().isSelected ();
+		this.changeSupport.firePropertyChange ("highlight", oldHighlight, newHighlight);
+		oldHighlight = newHighlight;
+	}
+
+	private boolean oldBackward;
+	private void backwardChanged (){
+		boolean newBackward = this.backwardCheckBox.getModel ().isSelected ();
+		this.changeSupport.firePropertyChange ("backward", oldBackward, newBackward);
+		oldBackward = newBackward;
+	}
+
+	private boolean oldMatchCase;
+	private void matchCaseChanged (){
+		boolean newMatchCase = this.matchCaseCheckBox.getModel ().isSelected ();
+		this.changeSupport.firePropertyChange ("matchcase", oldMatchCase, newMatchCase);
+		oldMatchCase = newMatchCase;
+	}
+
+	public synchronized void addPropertyChangeListener (
+	PropertyChangeListener listener) {
+		if (listener == null) {
+			return;
+		}
+		changeSupport.addPropertyChangeListener (listener);
+	}
+	
+
+	public synchronized void removePropertyChangeListener (
+	PropertyChangeListener listener) {
+		if (listener == null || changeSupport == null) {
+			return;
+		}
+		changeSupport.removePropertyChangeListener (listener);
+	}
+
 }
