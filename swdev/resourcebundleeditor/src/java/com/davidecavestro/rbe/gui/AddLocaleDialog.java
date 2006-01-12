@@ -408,9 +408,9 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
 	}
 	
 	private void reset (){
-		this.languageCombo.setSelectedIndex (-1);
-		this.countryCombo.setSelectedIndex (-1);
-		this.variantCombo.setSelectedIndex (-1);
+		this.languageCombo.setSelectedItem ("");
+		this.countryCombo.setSelectedItem ("");
+		this.variantCombo.setSelectedItem ("");
 		check ();
 	}
 	

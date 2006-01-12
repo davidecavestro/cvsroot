@@ -121,19 +121,39 @@ public class WindowManager implements ActionListener, DialogListener {
 			if (e.getType ()==JOptionPane.OK_OPTION){
 				final Locale l = this._addLocaleDialog.getSelectedLocale ();
 				if (this._context.getModel ().containsLocale (l)){
-					JOptionPane.showMessageDialog (this._mainWindow, "Duplicate locale");
+					JOptionPane.showMessageDialog (this._mainWindow, 
+					java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Duplicate_locale"));
 				} else {
 					this._context.getModel ().addLocale (new LocalizationProperties (l, new CommentedProperties ()));
 				}
 			}
 		} else if (e.getSource ()==this._addEntryDialog){
 			if (e.getType ()==JOptionPane.OK_OPTION){
-				this._context.getModel ().addKey (
-					this._addEntryDialog.getLocale (), 
-					this._addEntryDialog.getKeyText (), 
-					this._addEntryDialog.getValueText (),
-					this._addEntryDialog.getCommentText ()
-					);
+				Locale l = this._addEntryDialog.getLocale ();
+				String key = this._addEntryDialog.getKeyText ();
+				if (this._context.getModel ().getLocaleKeys (l).contains (key)){
+					if (JOptionPane.showConfirmDialog (this._mainWindow, 
+					java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Existing_key._Overwrite?")
+					) == JOptionPane.OK_OPTION){
+						this._context.getModel ().setValue (
+							l, 
+							key, 
+							this._addEntryDialog.getValueText ()
+							);
+						this._context.getModel ().setComment (
+							l, 
+							key, 
+							this._addEntryDialog.getCommentText ()
+							);
+					}
+				} else {
+					this._context.getModel ().addKey (
+						l, 
+						key, 
+						this._addEntryDialog.getValueText (),
+						this._addEntryDialog.getCommentText ()
+						);
+				}
 			}
 		}
 		

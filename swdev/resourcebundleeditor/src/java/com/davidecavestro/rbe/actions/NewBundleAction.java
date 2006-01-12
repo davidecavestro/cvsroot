@@ -31,6 +31,7 @@ public class NewBundleAction extends AbstractAction {
 	 */
 	public NewBundleAction (ApplicationContext context) {
 		this._context = context;
+		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
 	}
 	
 	public void actionPerformed (java.awt.event.ActionEvent e) {

@@ -74,10 +74,12 @@ public final class ApplicationData {
 			 */
 			this._releaseProperties.load(ApplicationData.class.getResourceAsStream("release.properties"));
 		} catch (final Exception e) {
-			e.printStackTrace (System.err);
+			System.err.println ("Cannot load release properties");
+			/*@todo mostrare stacktrace finito lo sviluppo*/
+//			e.printStackTrace (System.err);
 		}
 	}
-	
+	JTree
 //	public static ApplicationData getInstance (){
 //		if (_instance==null){
 //			_instance = new ApplicationData ();

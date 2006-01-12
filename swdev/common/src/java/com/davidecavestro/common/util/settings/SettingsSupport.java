@@ -273,6 +273,9 @@ public final class SettingsSupport {
 	public static String[] getPaths (Properties properties, String propertyName, String delimiter){
 		
 		String value = properties.getProperty (propertyName);
+		if (null==value){
+			return new String[0];
+		}
 		final StringTokenizer st = new StringTokenizer (value, delimiter, false);
 		final String[] retValue = new String[st.countTokens ()];
 		int i = 0;

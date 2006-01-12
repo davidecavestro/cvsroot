@@ -140,13 +140,22 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="com/davidecavestro/rbe/gui/res.properties" key="&amp;New" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameDots}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newMenuItemActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="openMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="new OpenAction ()" type="code"/>
+                </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
@@ -267,36 +276,83 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="cutMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="getActionByName(DefaultEditorKit.cutAction)" type="code"/>
+                </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Cut"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="com/davidecavestro/rbe/gui/res.properties" key="Cu&amp;t" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameDots}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="com/davidecavestro/rbe/gui/res.properties" key="Cut" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameDots}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="getActionByName(DefaultEditorKit.cutAction).putValue (Action.ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));&#xa;"/>
+                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="copyMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="getActionByName(DefaultEditorKit.copyAction)" type="code"/>
+                </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Copy"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="com/davidecavestro/rbe/gui/res.properties" key="&amp;Copy" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameDots}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="com/davidecavestro/rbe/gui/res.properties" key="Copy" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameDots}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="getActionByName(DefaultEditorKit.copyAction).putValue (Action.ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));&#xa;"/>
+                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="pasteMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="getActionByName(DefaultEditorKit.pasteAction)" type="code"/>
+                </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Paste"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="com/davidecavestro/rbe/gui/res.properties" key="&amp;Paste" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameDots}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="com/davidecavestro/rbe/gui/res.properties" key="Paste" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameDots}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="getActionByName(DefaultEditorKit.pasteAction).putValue (Action.ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));&#xa;"/>
+                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="deleteMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="getActionByName(DefaultEditorKit.deleteNextCharAction)" type="code"/>
+                </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Delete"/>
-                <Property name="actionCommand" type="java.lang.String" value="delete"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="com/davidecavestro/rbe/gui/res.properties" key="&amp;Delete" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameDots}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="com/davidecavestro/rbe/gui/res.properties" key="Delete" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameDots}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="getActionByName(DefaultEditorKit.deleteNextCharAction).putValue (Action.ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_DELETE, 0));"/>
+                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator5">
             </MenuItem>
@@ -553,7 +609,7 @@
                             <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="valuesTableMousePressed"/>
                           </Events>
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="valuesTable.setDefaultRenderer (Object.class, new SearchRenderer (this._matcher, new DefaultTableCellRenderer () {&#xa;&#x9;private final Color inactiveCaptionColor = javax.swing.UIManager.getDefaults().getColor(&quot;inactiveCaption&quot;);&#xa;&#x9;private final Color tableBackgroundColor = javax.swing.UIManager.getDefaults().getColor(&quot;Table.background&quot;);&#xa;//&#x9;private final Color keyBackgroundColor = javax.swing.UIManager.getDefaults().getColor(&quot;control&quot;);&#xa;&#x9;private final Color keyBackgroundColor = javax.swing.UIManager.getDefaults().getColor(&quot;Table.background&quot;);&#xa;//&#x9;private final Color keyForegroundColor = javax.swing.UIManager.getDefaults().getColor(&quot;textInactiveText&quot;);&#xa;&#x9;private final Color keyForegroundColor = javax.swing.UIManager.getDefaults().getColor(&quot;Menu.acceleratorForeground&quot;);&#xa;&#x9;private final Color valueForegroundColor = javax.swing.UIManager.getDefaults().getColor(&quot;Table.foreground&quot;);&#xa;&#x9;public Component getTableCellRendererComponent(JTable table, Object value,&#xa;&#x9;&#x9;boolean isSelected, boolean hasFocus, int row, int column) {&#xa;&#xa;&#x9;&#x9;final JLabel label = (JLabel)super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);&#xa;&#x9;&#x9;if (0 == column) {&#xa;&#x9;&#x9;&#x9;/* colonna chiavi */&#xa;&#x9;&#x9;&#x9;label.setFont (label.getFont ().deriveFont (Font.BOLD));&#xa;&#x9;&#x9;&#x9;label.setBackground (keyBackgroundColor);&#xa;&#x9;&#x9;&#x9;label.setForeground (keyForegroundColor);&#xa;&#x9;&#x9;} else {&#xa;&#x9;&#x9;&#x9;label.setFont (label.getFont ().deriveFont (Font.PLAIN));&#xa;&#x9;&#x9;&#x9;if (null==value) {&#xa;&#x9;&#x9;&#x9;&#x9;label.setBackground (inactiveCaptionColor);&#xa;&#x9;&#x9;&#x9;} else {&#xa;&#x9;&#x9;&#x9;&#x9;label.setBackground (tableBackgroundColor);&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;label.setForeground (valueForegroundColor);&#xa;&#x9;&#x9;}&#xa;&#x9;&#x9;return label;&#xa;&#x9;}&#xa;&#x9;&#xa;}));&#xa;&#xa;valuesTable.setDefaultEditor (String.class, new ValueCellEditor ());&#xa;&#xa;/*&#xa; * editor (shortcut per cancellazione&#xa; */&#xa;valuesTable.addKeyListener (new KeyAdapter (){&#xa;&#x9; public void keyPressed(KeyEvent e) {&#xa;&#x9;&#x9; if (e.isControlDown ()){&#xa;&#x9;&#x9;&#x9; if (e.getKeyCode ()==KeyEvent.VK_DELETE){&#xa;&#x9;&#x9;&#x9;&#x9; int rowIdx = valuesTable.getSelectedRow ();&#xa;&#x9;&#x9;&#x9;&#x9; int colIdx = valuesTable.getSelectedColumn ();&#xa;&#x9;&#x9;&#x9;&#x9; if (colIdx&gt;=0 &amp;&amp; rowIdx&gt;=0){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9; //barbatrucco per evitare editazione spuria&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;//valuesTable.editCellAt(rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;valuesTable.setValueAt (null, rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;e.consume ();&#xa;&#x9;&#x9;&#x9;&#x9; }&#xa;&#x9;&#x9;&#x9; } else if (e.getKeyCode ()==KeyEvent.VK_SPACE){&#xa;&#x9;&#x9;&#x9;&#x9; int rowIdx = valuesTable.getSelectedRow ();&#xa;&#x9;&#x9;&#x9;&#x9; int colIdx = valuesTable.getSelectedColumn ();&#xa;&#x9;&#x9;&#x9;&#x9; if (colIdx&gt;=0 &amp;&amp; rowIdx&gt;=0){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9; //barbatrucco per evitare editazione spuria&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;//valuesTable.editCellAt(rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;valuesTable.setValueAt (&quot;&quot;, rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;e.consume ();&#xa;&#x9;&#x9;&#x9;&#x9; }&#xa;&#x9;&#x9;&#x9; }&#xa;&#x9;&#x9; }&#xa;&#x9; }&#xa;});&#x9;"/>
+                            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="valuesTable.setDefaultRenderer (Object.class, new SearchRenderer (this._matcher, new DefaultTableCellRenderer () {&#xa;&#x9;private final Color inactiveCaptionColor = javax.swing.UIManager.getDefaults().getColor(&quot;inactiveCaption&quot;);&#xa;&#x9;private final Color tableBackgroundColor = javax.swing.UIManager.getDefaults().getColor(&quot;Table.background&quot;);&#xa;//&#x9;private final Color keyBackgroundColor = javax.swing.UIManager.getDefaults().getColor(&quot;control&quot;);&#xa;&#x9;private final Color keyBackgroundColor = javax.swing.UIManager.getDefaults().getColor(&quot;Table.background&quot;);&#xa;//&#x9;private final Color keyForegroundColor = javax.swing.UIManager.getDefaults().getColor(&quot;textInactiveText&quot;);&#xa;&#x9;private final Color keyForegroundColor = javax.swing.UIManager.getDefaults().getColor(&quot;Menu.acceleratorForeground&quot;);&#xa;&#x9;private final Color valueForegroundColor = javax.swing.UIManager.getDefaults().getColor(&quot;Table.foreground&quot;);&#xa;&#x9;public Component getTableCellRendererComponent(JTable table, Object value,&#xa;&#x9;&#x9;boolean isSelected, boolean hasFocus, int row, int column) {&#xa;&#xa;&#x9;&#x9;final JLabel label = (JLabel)super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);&#xa;&#x9;&#x9;if (0 == column) {&#xa;&#x9;&#x9;&#x9;/* colonna chiavi */&#xa;&#x9;&#x9;&#x9;label.setFont (label.getFont ().deriveFont (Font.BOLD));&#xa;&#x9;&#x9;&#x9;label.setBackground (keyBackgroundColor);&#xa;&#x9;&#x9;&#x9;label.setForeground (keyForegroundColor);&#xa;&#x9;&#x9;} else {&#xa;&#x9;&#x9;&#x9;label.setFont (label.getFont ().deriveFont (Font.PLAIN));&#xa;&#x9;&#x9;&#x9;if (null==value) {&#xa;&#x9;&#x9;&#x9;&#x9;label.setBackground (inactiveCaptionColor);&#xa;&#x9;&#x9;&#x9;} else {&#xa;&#x9;&#x9;&#x9;&#x9;label.setBackground (tableBackgroundColor);&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;label.setForeground (valueForegroundColor);&#xa;&#x9;&#x9;}&#xa;&#x9;&#x9;return label;&#xa;&#x9;}&#xa;&#x9;&#xa;}));&#xa;&#xa;valuesTable.setDefaultEditor (String.class, new ValueCellEditor ());&#xa;&#xa;/*&#xa; * editor (shortcut per cancellazione&#xa; */&#xa;valuesTable.addKeyListener (new KeyAdapter (){&#xa;&#x9; public void keyPressed(KeyEvent e) {&#xa;&#x9;&#x9; if (e.isControlDown ()){&#xa;&#x9;&#x9;&#x9; if (e.getKeyCode ()==KeyEvent.VK_DELETE){&#xa;&#x9;&#x9;&#x9;&#x9; int rowIdx = valuesTable.getSelectedRow ();&#xa;&#x9;&#x9;&#x9;&#x9; int colIdx = valuesTable.getSelectedColumn ();&#xa;&#x9;&#x9;&#x9;&#x9; if (colIdx&gt;0 &amp;&amp; rowIdx&gt;0){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9; //barbatrucco per evitare editazione spuria&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;//valuesTable.editCellAt(rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;valuesTable.setValueAt (null, rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;e.consume ();&#xa;&#x9;&#x9;&#x9;&#x9; }&#xa;&#x9;&#x9;&#x9; } else if (e.getKeyCode ()==KeyEvent.VK_SPACE){&#xa;&#x9;&#x9;&#x9;&#x9; int rowIdx = valuesTable.getSelectedRow ();&#xa;&#x9;&#x9;&#x9;&#x9; int colIdx = valuesTable.getSelectedColumn ();&#xa;&#x9;&#x9;&#x9;&#x9; if (colIdx&gt;0 &amp;&amp; rowIdx&gt;0){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9; //barbatrucco per evitare editazione spuria&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;//valuesTable.editCellAt(rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;valuesTable.setValueAt (&quot;&quot;, rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;e.consume ();&#xa;&#x9;&#x9;&#x9;&#x9; }&#xa;&#x9;&#x9;&#x9; }&#xa;&#x9;&#x9; }&#xa;&#x9; }&#xa;});&#x9;"/>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JXTable (this._localizationTableModel);"/>
                           </AuxValues>
                         </Component>
@@ -582,7 +638,7 @@
                           </AuxValues>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-                              <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="3" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="2" insetsBottom="5" insetsRight="2" anchor="18" weightX="0.0" weightY="0.0"/>
+                              <GridBagConstraints gridX="0" gridY="2" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="2" insetsBottom="5" insetsRight="2" anchor="18" weightX="0.0" weightY="0.0"/>
                             </Constraint>
                           </Constraints>
                         </Component>
@@ -600,14 +656,14 @@
                           </AuxValues>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-                              <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="3" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="2" insetsBottom="5" insetsRight="2" anchor="18" weightX="0.0" weightY="0.0"/>
+                              <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="2" insetsBottom="5" insetsRight="2" anchor="18" weightX="0.0" weightY="0.0"/>
                             </Constraint>
                           </Constraints>
                         </Component>
                         <Container class="javax.swing.JPanel" name="jPanel2">
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-                              <GridBagConstraints gridX="2" gridY="0" gridWidth="1" gridHeight="2" fill="3" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="2" insetsBottom="5" insetsRight="2" anchor="14" weightX="0.0" weightY="0.0"/>
+                              <GridBagConstraints gridX="2" gridY="0" gridWidth="1" gridHeight="3" fill="3" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="2" insetsBottom="5" insetsRight="2" anchor="12" weightX="0.0" weightY="0.0"/>
                             </Constraint>
                           </Constraints>
 
@@ -665,12 +721,21 @@
                                 </Constraint>
                               </Constraints>
                             </Component>
+                            <Container class="javax.swing.JPanel" name="jPanel4">
+                              <Constraints>
+                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                                  <GridBagConstraints gridX="0" gridY="2" gridWidth="1" gridHeight="1" fill="3" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="0.0" weightY="1.0"/>
+                                </Constraint>
+                              </Constraints>
+
+                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+                            </Container>
                           </SubComponents>
                         </Container>
                         <Container class="javax.swing.JScrollPane" name="jScrollPane1">
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-                              <GridBagConstraints gridX="1" gridY="0" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="2" insetsBottom="5" insetsRight="2" anchor="10" weightX="1.0" weightY="1.0"/>
+                              <GridBagConstraints gridX="1" gridY="2" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="2" insetsBottom="5" insetsRight="2" anchor="10" weightX="1.0" weightY="1.0"/>
                             </Constraint>
                           </Constraints>
 
@@ -718,6 +783,38 @@
                             </Component>
                           </SubComponents>
                         </Container>
+                        <Component class="javax.swing.JLabel" name="jLabel6">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Dialog" size="12" style="0"/>
+                            </Property>
+                            <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                              <ComponentRef name="keyTextField"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="com/davidecavestro/rbe/gui/res.properties" key="Key:" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameDots}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
+                          </Properties>
+                          <AuxValues>
+                            <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+                          </AuxValues>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                              <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="2" insetsBottom="5" insetsRight="2" anchor="18" weightX="0.0" weightY="0.0"/>
+                            </Constraint>
+                          </Constraints>
+                        </Component>
+                        <Component class="javax.swing.JTextField" name="keyTextField">
+                          <Properties>
+                            <Property name="editable" type="boolean" value="false"/>
+                            <Property name="opaque" type="boolean" value="false"/>
+                          </Properties>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                              <GridBagConstraints gridX="1" gridY="0" gridWidth="1" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="2" insetsBottom="5" insetsRight="2" anchor="10" weightX="0.0" weightY="0.0"/>
+                            </Constraint>
+                          </Constraints>
+                        </Component>
                       </SubComponents>
                     </Container>
                   </SubComponents>

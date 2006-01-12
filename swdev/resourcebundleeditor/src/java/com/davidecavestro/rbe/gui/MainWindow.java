@@ -42,8 +42,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.StringTokenizer;
 import javax.swing.*;
 import javax.swing.Action;
@@ -65,6 +67,10 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.PlainDocument;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -86,6 +92,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	private final WindowManager _wm;
 	private final PatternFinder _matcher;
 	
+	private boolean commentTextAreaUpdating;
+	private boolean commentTextAreaFiring;
+	private boolean valueTextAreaUpdating;
+	private boolean valueTextAreaFiring;
 	
 	/** 
 	 * Costruttore.
@@ -104,6 +114,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			}
 		});
 		
+		createActionTable (new JTextArea ());
+		
 		initComponents ();
 		updateRecentPathMenu ();
 		this._context.getUIPersisteer ().register (new PersistenceTreeAdapter (this.treeScrollPane));
@@ -113,28 +125,62 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		 * notifica la textarea del cambio di selezione, aggiornandola
 		 */
 		final ListSelectionListener l = new ListSelectionListener (){
+			Document d = new PlainDocument ();
 			public void valueChanged (ListSelectionEvent e) {
 				int col = valuesTable.getColumnModel ().getSelectionModel ().getLeadSelectionIndex ();
 				int row = valuesTable.getSelectionModel ().getLeadSelectionIndex ();
-				if (col>=0 && row>=0){
+				if (
+					col >= 0 
+					&& row >= 0
+					&& col < valuesTable.getColumnCount ()
+					&& row < valuesTable.getRowCount ()
+					){
 					currentCellPos.setLocation (valuesTable.convertColumnIndexToModel (col), 
 					((/*@todo rimuovere il cast alla fine (NEtbeans non supporta l'editing di JXTable) */JXTable)valuesTable).convertRowIndexToModel (row));
 					
-					if (!valueTextArea.hasFocus ()){
-						valueTextArea.setEnabled (false);
-						valueTextArea.setText ((String)valuesTable.getValueAt (row, col));
-						valueTextArea.setEnabled (col!=0);
+//					if (!valueTextArea.hasFocus ()){
+					if (!valueTextAreaUpdating && !valueTextAreaFiring){
+						valueTextAreaUpdating = true;
+//						valueTextArea.setEditable (false);
+//						valueTextArea.setEnabled (false);
+//						valueTextArea.setFocusable (false);
+						if (valuesTable.convertColumnIndexToModel (col)!=0){
+							valueTextArea.setText ((String)valuesTable.getValueAt (row, col));
+//							valueTextArea.setEditable (true);
+//							valueTextArea.setEnabled (true);
+//							valueTextArea.setFocusable (true);
+//							final JTextField editorComponent = (JTextField)valuesTable.getEditorComponent ();
+//							
+//							if (editorComponent!=null){ 
+//								valueTextArea.setDocument (editorComponent.getDocument ());
+//							}
+						} else {
+//							valueTextArea.setDocument (d);
+							valueTextArea.setText (null);
+						}
+						valueTextAreaUpdating = false;
+					}
+					
+					if (!keyTextField.hasFocus ()){
+//						keyTextField.setEnabled (false);
+						keyTextField.setText ((String)valuesTable.getValueAt (row, valuesTable.convertColumnIndexToView (0)));
+//						keyTextField.setEnabled (col!=0);
 						
 					}
 					
-					if (!commentTextArea.hasFocus ()){
-						commentTextArea.setEnabled (false);
+					if (!commentTextAreaFiring && !commentTextAreaUpdating){
+					commentTextAreaUpdating = true;
+//						commentTextArea.setEnabled (false);
 						commentTextArea.setText ((String)_localizationTableModel.getCommentAt (row, col));
-						commentTextArea.setEnabled (col!=0);
+						commentTextArea.setEnabled (valuesTable.convertColumnIndexToModel (col)!=0);
+					commentTextAreaUpdating = false;
 					}
 				} else {
 					valueTextArea.setEnabled (false);
 					valueTextArea.setText (null);
+					
+					keyTextField.setEnabled (false);
+					keyTextField.setText (null);
 					
 					commentTextArea.setEnabled (false);
 					commentTextArea.setText (null);
@@ -155,9 +201,13 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			public void changedUpdate(DocumentEvent e){apply (e);}
 			
 			public void apply (DocumentEvent e){
-				if (valueTextArea.isEnabled () && valueTextArea.hasFocus ()) {
+//				if (valueTextArea.isEnabled () && valueTextArea.hasFocus ()) {
+				if (!valueTextAreaUpdating && !valueTextAreaFiring) {
+					valueTextAreaFiring = true;
+
 					/* propaga modifiche alla tabella modifica solo se textarea abilitata, altrimenti sarebbe un evento spurio */
 					valuesTable.getModel ().setValueAt (valueTextArea.getText (), (int)currentCellPos.getY (), (int)currentCellPos.getX ());
+					valueTextAreaFiring = false;
 				}
 			}
 		});
@@ -171,9 +221,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			public void changedUpdate(DocumentEvent e){apply (e);}
 			
 			public void apply (DocumentEvent e){
-				if (commentTextArea.isEnabled () && commentTextArea.hasFocus ()) {
+				if (!commentTextAreaUpdating && !commentTextAreaFiring/*commentTextArea.isEnabled () && commentTextArea.isFocusOwner ()*/) {
+					commentTextAreaFiring = true;
 					/* propaga modifiche alla tabella modifica solo se textarea abilitata, altrimenti sarebbe un evento spurio */
 					_localizationTableModel.setCommentAt (commentTextArea.getText (), (int)currentCellPos.getY (), (int)currentCellPos.getX ());
+					commentTextAreaFiring = false;
 				}
 			}
 		});
@@ -260,10 +312,13 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jPanel2 = new javax.swing.JPanel();
         jButton4 = new javax.swing.JButton();
         deleteEntryButton = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         commentTextArea = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         valueTextArea = new javax.swing.JTextArea();
+        jLabel6 = new javax.swing.JLabel();
+        keyTextField = new javax.swing.JTextField();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newMenuItem = new javax.swing.JMenuItem();
@@ -278,9 +333,16 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         undoMenuItem = new javax.swing.JMenuItem();
         redoMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JSeparator();
+        getActionByName(DefaultEditorKit.cutAction).putValue (Action.ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
+
         cutMenuItem = new javax.swing.JMenuItem();
+        getActionByName(DefaultEditorKit.copyAction).putValue (Action.ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+
         copyMenuItem = new javax.swing.JMenuItem();
+        getActionByName(DefaultEditorKit.pasteAction).putValue (Action.ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+
         pasteMenuItem = new javax.swing.JMenuItem();
+        getActionByName(DefaultEditorKit.deleteNextCharAction).putValue (Action.ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_DELETE, 0));
         deleteMenuItem = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JSeparator();
         findMenuItem = new javax.swing.JMenuItem();
@@ -461,7 +523,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
                     if (e.getKeyCode ()==KeyEvent.VK_DELETE){
                         int rowIdx = valuesTable.getSelectedRow ();
                         int colIdx = valuesTable.getSelectedColumn ();
-                        if (colIdx>=0 && rowIdx>=0){
+                        if (colIdx>0 && rowIdx>0){
                             //barbatrucco per evitare editazione spuria
                             //valuesTable.editCellAt(rowIdx, colIdx);
                             valuesTable.setValueAt (null, rowIdx, colIdx);
@@ -470,7 +532,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
                     } else if (e.getKeyCode ()==KeyEvent.VK_SPACE){
                         int rowIdx = valuesTable.getSelectedRow ();
                         int colIdx = valuesTable.getSelectedColumn ();
-                        if (colIdx>=0 && rowIdx>=0){
+                        if (colIdx>0 && rowIdx>0){
                             //barbatrucco per evitare editazione spuria
                             //valuesTable.editCellAt(rowIdx, colIdx);
                             valuesTable.setValueAt ("", rowIdx, colIdx);
@@ -496,8 +558,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Comment:"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
         jPanel1.add(jLabel4, gridBagConstraints);
@@ -507,7 +569,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
         jPanel1.add(jLabel5, gridBagConstraints);
@@ -555,11 +617,18 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jPanel2.add(deleteEntryButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.weighty = 1.0;
+        jPanel2.add(jPanel4, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.gridheight = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
         jPanel1.add(jPanel2, gridBagConstraints);
 
@@ -581,7 +650,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -608,6 +677,26 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
         jPanel1.add(jScrollPane2, gridBagConstraints);
 
+        jLabel6.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel6.setLabelFor(keyTextField);
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel6, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Key:"));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
+        jPanel1.add(jLabel6, gridBagConstraints);
+
+        keyTextField.setEditable(false);
+        keyTextField.setOpaque(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
+        jPanel1.add(keyTextField, gridBagConstraints);
+
         jSplitPane1.setBottomComponent(jPanel1);
 
         jPanel3.add(jSplitPane1, java.awt.BorderLayout.CENTER);
@@ -623,6 +712,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         fileMenu.setFont(new java.awt.Font("Dialog", 0, 12));
         newMenuItem.setAction(new NewBundleAction (this._context));
         newMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        org.openide.awt.Mnemonics.setLocalizedText(newMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&New"));
         newMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newMenuItemActionPerformed(evt);
@@ -631,6 +721,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         fileMenu.add(newMenuItem);
 
+        openMenuItem.setAction(new OpenAction ());
         openMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(openMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Open"));
         openMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -690,21 +781,28 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         editMenu.add(jSeparator4);
 
+        cutMenuItem.setAction(getActionByName(DefaultEditorKit.cutAction));
         cutMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-        cutMenuItem.setText("Cut");
+        org.openide.awt.Mnemonics.setLocalizedText(cutMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Cu&t"));
+        cutMenuItem.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Cut"));
         editMenu.add(cutMenuItem);
 
+        copyMenuItem.setAction(getActionByName(DefaultEditorKit.copyAction));
         copyMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-        copyMenuItem.setText("Copy");
+        org.openide.awt.Mnemonics.setLocalizedText(copyMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Copy"));
+        copyMenuItem.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Copy"));
         editMenu.add(copyMenuItem);
 
+        pasteMenuItem.setAction(getActionByName(DefaultEditorKit.pasteAction));
         pasteMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-        pasteMenuItem.setText("Paste");
+        org.openide.awt.Mnemonics.setLocalizedText(pasteMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Paste"));
+        pasteMenuItem.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Paste"));
         editMenu.add(pasteMenuItem);
 
+        deleteMenuItem.setAction(getActionByName(DefaultEditorKit.deleteNextCharAction));
         deleteMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-        deleteMenuItem.setText("Delete");
-        deleteMenuItem.setActionCommand("delete");
+        org.openide.awt.Mnemonics.setLocalizedText(deleteMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Delete"));
+        deleteMenuItem.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Delete"));
         editMenu.add(deleteMenuItem);
 
         editMenu.add(jSeparator5);
@@ -758,7 +856,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			}
 		}
 	}
-	
+
 	private void valuesTableMousePressed (java.awt.event.MouseEvent evt) {//GEN-FIRST:event_valuesTableMousePressed
 		if (evt.getButton ()==MouseEvent.BUTTON3){
 			if (evt.getSource ()==this.valuesTable){
@@ -800,13 +898,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}//GEN-LAST:event_saveFileChooserActionPerformed
 
 	private void openMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
-		if (!checkForDataLoss ()){
-			return;
-		}
-		if (openFileChooser.showOpenDialog(this)==JFileChooser.APPROVE_OPTION){
-			final File file = openFileChooser.getSelectedFile ();
-			openFile (file);
-		}
+
 	}//GEN-LAST:event_openMenuItemActionPerformed
 
 	private void addLocaleMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addLocaleMenuItemActionPerformed
@@ -893,9 +985,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -905,6 +999,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JTextField keyTextField;
     private javax.swing.JPopupMenu localePopupMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JToolBar mainToolbar;
@@ -1008,11 +1103,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		
 		public String getColumnName (int columnIndex) {
 			if (columnIndex==0){
-				return "keys";
+				return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Keys");
 			} else {
 				final Locale locale = this._locales[columnIndex-1];
 				if (locale==LocalizationProperties.DEFAULT) {
-					return "Default";
+					return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Default");
 				} else {
 					return locale.toString ();
 				}
@@ -1020,7 +1115,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 		
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex!=0;
+			return true; //columnIndex!=0;
 		}
 		
 		public Class getColumnClass(int col) {
@@ -1029,19 +1124,23 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			
 		public void setValueAt (Object aValue, int rowIndex, int columnIndex) {
 			String key = this._keys[rowIndex];
-			Locale l = this._locales[columnIndex-1];
-			if (null==aValue){
-				if (this._resources.getLocales (key).size ()==1){
-					if (
-					JOptionPane.showConfirmDialog (
-					MainWindow.this, 
-					java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("This_will_cause_key_removal._Continue?"))!=JOptionPane.OK_OPTION){
-						return;
+			if (columnIndex > 0){
+				Locale l = this._locales[columnIndex-1];
+				if (null==aValue){
+					if (this._resources.getLocales (key).size ()==1){
+						if (
+						JOptionPane.showConfirmDialog (
+						MainWindow.this, 
+						java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("This_will_cause_key_removal._Continue?"))!=JOptionPane.OK_OPTION){
+							return;
+						}
 					}
 				}
+
+				this._resources.setValue (l, key, (String)aValue);
+			} else {
+				this._resources.changeKey ((String)getValueAt (rowIndex, columnIndex), (String)aValue);
 			}
-			
-			this._resources.setValue (l, key, (String)aValue);
 			
 		}
 		
@@ -1392,6 +1491,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			
 			field.addKeyListener (new KeyAdapter (){
 				 public void keyPressed(KeyEvent e) {
+					 if (valuesTable.getSelectedColumn ()==0){
+						 return;
+					 }
 					 if (e.isControlDown ()){
 						 /* SHORTCUTS */
 						 if (e.getKeyCode ()==KeyEvent.VK_DELETE){
@@ -1732,5 +1834,39 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			}
 		}
 		
+	}
+	
+	
+	private final Map actions = new HashMap ();
+	
+	private void createActionTable (JTextComponent textComponent) {
+		Action[] actionsArray = textComponent.getActions ();
+		for (int i = 0; i < actionsArray.length; i++) {
+			Action a = actionsArray[i];
+			actions.put (a.getValue (Action.NAME), a);
+		}
+	}
+	
+	private Action getActionByName (String name) {
+		return (Action)(actions.get (name));
+	}
+	
+	
+	
+	private class OpenAction extends AbstractAction {
+
+		public OpenAction (){
+			this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+		}
+		
+		public void actionPerformed (ActionEvent ae){
+			if (!checkForDataLoss ()){
+				return;
+			}
+			if (openFileChooser.showOpenDialog (MainWindow.this)==JFileChooser.APPROVE_OPTION){
+				final File file = openFileChooser.getSelectedFile ();
+				openFile (file);
+			}		
+		}
 	}
 }

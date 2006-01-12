@@ -27,6 +27,7 @@ public class SaveAction extends AbstractAction implements PropertyChangeListener
 	public SaveAction (DefaultResourceBundleModel rbm) {
 		this._rbm = rbm;
 		this.setEnabled (false);
+		this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
 	}
 	
 	public void actionPerformed (java.awt.event.ActionEvent e) {

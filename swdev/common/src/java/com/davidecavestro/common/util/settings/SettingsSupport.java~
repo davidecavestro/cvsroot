@@ -270,7 +270,7 @@ public final class SettingsSupport {
 	 * @param properties la risorsa di configurazione.
 	 * @param propertyName il nome della proprietà.
 	 */	
-	public static String[] getStringProperties (Properties properties, String propertyName, String delimiter){
+	public static String[] getPaths (Properties properties, String propertyName, String delimiter){
 		
 		String value = properties.getProperty (propertyName);
 		final StringTokenizer st = new StringTokenizer (value, delimiter, false);
@@ -291,7 +291,7 @@ public final class SettingsSupport {
 	 * @param properties la risorsa di configurazione.
 	 * @param propertyName il nome della proprietà.
 	 */	
-	public static void setStringProperties (Properties properties, String propertyName, String[] values, String delimiter){
+	public static void setPaths (Properties properties, String propertyName, String[] values, String delimiter){
 		final StringBuffer value = new StringBuffer ();
 		for (int i =0;i<values.length;i++){
 			if (0!=i){

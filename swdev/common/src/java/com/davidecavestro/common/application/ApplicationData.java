@@ -75,7 +75,8 @@ public final class ApplicationData {
 			this._releaseProperties.load(ApplicationData.class.getResourceAsStream("release.properties"));
 		} catch (final Exception e) {
 			System.err.println ("Cannot load release properties");
-			e.printStackTrace (System.err);
+			/*@todo mostrare stacktrace finito lo sviluppo*/
+//			e.printStackTrace (System.err);
 		}
 	}
 	
