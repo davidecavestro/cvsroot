@@ -10,6 +10,7 @@ import com.davidecavestro.common.gui.persistence.PersistenceUtils;
 import com.davidecavestro.common.gui.persistence.PersistentComponent;
 import com.davidecavestro.common.gui.persistence.UIPersister;
 import com.davidecavestro.common.gui.table.TableSorter;
+import com.davidecavestro.common.util.StringUtils;
 import com.davidecavestro.common.util.action.ActionNotifier;
 import com.davidecavestro.common.util.action.ActionNotifierImpl;
 import com.davidecavestro.common.util.file.CustomFileFilter;
@@ -46,6 +47,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import javax.swing.*;
 import javax.swing.Action;
@@ -129,6 +131,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			public void valueChanged (ListSelectionEvent e) {
 				int col = valuesTable.getColumnModel ().getSelectionModel ().getLeadSelectionIndex ();
 				int row = valuesTable.getSelectionModel ().getLeadSelectionIndex ();
+				if (e.getValueIsAdjusting ()){
+					return;
+				}
 				if (
 					col >= 0 
 					&& row >= 0
@@ -141,13 +146,15 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 //					if (!valueTextArea.hasFocus ()){
 					if (!valueTextAreaUpdating && !valueTextAreaFiring){
 						valueTextAreaUpdating = true;
+						try {
 //						valueTextArea.setEditable (false);
 //						valueTextArea.setEnabled (false);
 //						valueTextArea.setFocusable (false);
-						if (valuesTable.convertColumnIndexToModel (col)!=0){
+						if (valuesTable.convertColumnIndexToModel (col)>0){
 							valueTextArea.setText ((String)valuesTable.getValueAt (row, col));
-//							valueTextArea.setEditable (true);
-//							valueTextArea.setEnabled (true);
+							valueTextArea.setEditable (true);
+							valueTextArea.setEnabled (true);
+//							valueTextArea.setFocusable (true);
 //							valueTextArea.setFocusable (true);
 //							final JTextField editorComponent = (JTextField)valuesTable.getEditorComponent ();
 //							
@@ -156,16 +163,24 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 //							}
 						} else {
 //							valueTextArea.setDocument (d);
+							valueTextArea.setEnabled (false);
+							valueTextArea.setEditable (false);
 							valueTextArea.setText (null);
+//							valueTextArea.setFocusable (false);
 						}
-						valueTextAreaUpdating = false;
+						} finally {
+							valueTextAreaUpdating = false;
+						}
 					}
-					
-					if (!keyTextField.hasFocus ()){
+
+					{
+						final int viewColumnIndex = valuesTable.convertColumnIndexToView (0);
+						if (viewColumnIndex>=0 && !keyTextField.hasFocus ()){
 //						keyTextField.setEnabled (false);
-						keyTextField.setText ((String)valuesTable.getValueAt (row, valuesTable.convertColumnIndexToView (0)));
+							keyTextField.setText ((String)valuesTable.getValueAt (row, viewColumnIndex));
 //						keyTextField.setEnabled (col!=0);
-						
+
+						}
 					}
 					
 					if (!commentTextAreaFiring && !commentTextAreaUpdating){
@@ -202,12 +217,20 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			
 			public void apply (DocumentEvent e){
 //				if (valueTextArea.isEnabled () && valueTextArea.hasFocus ()) {
-				if (!valueTextAreaUpdating && !valueTextAreaFiring) {
+				if (valueTextArea.isEnabled () && 
+					valueTextArea.isEditable () && 
+					valueTextArea.hasFocus () && 
+					!valueTextAreaUpdating && 
+					!valueTextAreaFiring) {
+						
 					valueTextAreaFiring = true;
+					try {
 
 					/* propaga modifiche alla tabella modifica solo se textarea abilitata, altrimenti sarebbe un evento spurio */
 					valuesTable.getModel ().setValueAt (valueTextArea.getText (), (int)currentCellPos.getY (), (int)currentCellPos.getX ());
-					valueTextAreaFiring = false;
+					} finally {
+						valueTextAreaFiring = false;
+					}
 				}
 			}
 		});
@@ -233,7 +256,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		this._context.getModel ().addPropertyChangeListener ("isModified", new PropertyChangeListener (){
 			public void propertyChange(PropertyChangeEvent evt){
 				modifiedLabel.setText (_context.getModel ().isModified ()?
-				java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("EDT"):
+				ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("EDT"):
 				"");
 			}
 		});
@@ -249,11 +272,17 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		);
 		
 		
-		valuesTable.setCellSelectionEnabled (true);
+//		valuesTable.setCellSelectionEnabled (true);
 
 		valuesTable.getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put (KeyStroke.getKeyStroke ("F3"), "findNext");
 		valuesTable.getActionMap().put("findNext", _context.getActionManager ().getFindNextAction ());
 		
+		addWindowListener (
+			new java.awt.event.WindowAdapter () {
+				public void windowClosing (java.awt.event.WindowEvent evt) {
+					checkForDataLossOnExit ();
+				}
+			});
 	}
 	
 	
@@ -262,7 +291,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		sb.append ("URBE").append (" - Bundle ").append (model.getName ());
 		if (model.isModified ()){
 			sb.append (" [")
-			.append (java.util.ResourceBundle.getBundle ("com.davidecavestro.rbe.gui.res").getString ("Modified"))
+			.append (ResourceBundle.getBundle ("com.davidecavestro.rbe.gui.res").getString ("Modified"))
 			.append ("]");
 			
 		}
@@ -478,9 +507,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     jScrollPane3.getViewport ().setBackground (javax.swing.UIManager.getDefaults().getColor("Table.background"));
     valuesTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_NEXT_COLUMN);
     valuesTable.setCellEditor(new ValueCellEditor ());
+    valuesTable.setCellSelectionEnabled(true);
     valuesTable.setFocusCycleRoot(true);
     valuesTable.setGridColor(new java.awt.Color(204, 204, 204));
-    valuesTable.setMinimumSize(new java.awt.Dimension(10, 10));
+    valuesTable.setMinimumSize(new java.awt.Dimension(100, 100));
     valuesTable.setDefaultRenderer (Object.class, new SearchRenderer (this._matcher, new DefaultTableCellRenderer () {
         private final Color inactiveCaptionColor = javax.swing.UIManager.getDefaults().getColor("inactiveCaption");
         private final Color tableBackgroundColor = javax.swing.UIManager.getDefaults().getColor("Table.background");
@@ -523,7 +553,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
                     if (e.getKeyCode ()==KeyEvent.VK_DELETE){
                         int rowIdx = valuesTable.getSelectedRow ();
                         int colIdx = valuesTable.getSelectedColumn ();
-                        if (colIdx>0 && rowIdx>0){
+                        if (colIdx>0 && rowIdx>=0){
                             //barbatrucco per evitare editazione spuria
                             //valuesTable.editCellAt(rowIdx, colIdx);
                             valuesTable.setValueAt (null, rowIdx, colIdx);
@@ -532,7 +562,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
                     } else if (e.getKeyCode ()==KeyEvent.VK_SPACE){
                         int rowIdx = valuesTable.getSelectedRow ();
                         int colIdx = valuesTable.getSelectedColumn ();
-                        if (colIdx>0 && rowIdx>0){
+                        if (colIdx>0 && rowIdx>=0){
                             //barbatrucco per evitare editazione spuria
                             //valuesTable.editCellAt(rowIdx, colIdx);
                             valuesTable.setValueAt ("", rowIdx, colIdx);
@@ -883,14 +913,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}//GEN-LAST:event_jButton4ActionPerformed
 
 	private void saveAsMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsMenuItemActionPerformed
-		saveFileChooser.setSelectedFile (new File (this._context.getModel ().getName ()+".properties"));
-		if (saveFileChooser.showSaveDialog (this)==JFileChooser.APPROVE_OPTION){
-			try {
-				this._context.getModel ().saveAs (saveFileChooser.getSelectedFile (), "Created by URBE");
-			} catch (Exception e){
-				e.printStackTrace (System.err);
-			}
-		}
+		saveAs ();
 	}//GEN-LAST:event_saveAsMenuItemActionPerformed
 
 	private void saveFileChooserActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileChooserActionPerformed
@@ -1089,25 +1112,26 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		private void reindex (){
 			this._locales = (Locale[])this._resources.getLocales ().clone ();
 			this._keys = (String[])this._resources.getKeySet ().toArray (voidStringArray);
+			Arrays.sort (this._keys);
 		}
 		
 	    public void resourceBundleChanged (ResourceBundleModelEvent e){
 			reindex ();
-			if (e.getLocale ()==ResourceBundleModelEvent.ALL_LOCALES){
-				this.fireTableStructureChanged ();
-			} else {
+			if (e.getType () == ResourceBundleModelEvent.UPDATE && e.getLocale ()!=ResourceBundleModelEvent.ALL_LOCALES){
 				this.fireTableDataChanged ();
+			} else {
+				this.fireTableStructureChanged ();
 			}
 			
 		}
 		
 		public String getColumnName (int columnIndex) {
 			if (columnIndex==0){
-				return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Keys");
+				return ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Keys");
 			} else {
 				final Locale locale = this._locales[columnIndex-1];
 				if (locale==LocalizationProperties.DEFAULT) {
-					return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Default");
+					return ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Default");
 				} else {
 					return locale.toString ();
 				}
@@ -1131,7 +1155,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 						if (
 						JOptionPane.showConfirmDialog (
 						MainWindow.this, 
-						java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("This_will_cause_key_removal._Continue?"))!=JOptionPane.OK_OPTION){
+						StringUtils.toStringArray (
+							ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("This_will_cause_key_removal._Continue?")
+							),
+						ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Confirm"),
+						JOptionPane.OK_CANCEL_OPTION
+						)!=JOptionPane.OK_OPTION){
 							return;
 						}
 					}
@@ -1449,7 +1478,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	private void deleteLocale (Locale locale){
 		if (JOptionPane.showConfirmDialog (
 		this, 
-		java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Continue_deleting_locale?"))!=JOptionPane.OK_OPTION){
+		StringUtils.toStringArray (
+			ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Continue_deleting_locale?")
+		)
+		)!=JOptionPane.OK_OPTION){
 			return;
 		}
 		this._context.getModel ().removeLocale (locale);
@@ -1574,11 +1606,45 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	
 	private boolean checkForDataLoss (){
 		if (this._context.getModel ().isModified ()){
+			final int choice = JOptionPane.showConfirmDialog (
+				this, 
+				StringUtils.toStringArray (
+					ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("There_are_unsaved_changes._Would_you_like_to_save_them?")
+				),
+				ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Confirm"),
+				JOptionPane.YES_NO_CANCEL_OPTION);
+			
+			if (choice == JOptionPane.YES_OPTION){
+				/* l'utente ha deciso di salvare */
+				if (this._context.getModel ().getPath ()!=null){
+					return save ();
+				} else {
+					return saveAs ();
+				}
+			} else if (choice == JOptionPane.CANCEL_OPTION){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private boolean checkForDataLossOnExit (){
+		if (this._context.getModel ().isModified ()){
 			if (
 			JOptionPane.showConfirmDialog (
 			this, 
-			java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Continue_discarding_all_changes?"))!=JOptionPane.OK_OPTION){
+			StringUtils.toStringArray (
+				ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("There_are_unsaved_changes._Would_you_like_to_save_them?")
+			),
+			ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Confirm"),
+			JOptionPane.YES_NO_OPTION)!=JOptionPane.YES_OPTION
+			){
 				return false;
+			}
+			if (this._context.getModel ().getPath ()!=null){
+				return save ();
+			} else {
+				return saveAs ();
 			}
 		}
 		return true;
@@ -1621,6 +1687,32 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	private void postInit (){
 		postInitialized = true;
 		this._wm.getFindDialog ().addPropertyChangeListener (this._matcher);
+	}
+	
+	
+	private boolean saveAs (){
+		saveFileChooser.setSelectedFile (new File (this._context.getModel ().getName ()));
+		if (saveFileChooser.showSaveDialog (this)==JFileChooser.APPROVE_OPTION){
+			try {
+				this._context.getModel ().saveAs (saveFileChooser.getSelectedFile (), null);
+				return true;
+			} catch (Exception e){
+				e.printStackTrace (System.err);
+			}
+		}
+		return false;
+	}
+	
+	private boolean save (){
+		try {
+			this._context.getModel ().store (null);
+			return true;
+		} catch (FileNotFoundException fnfe){
+			fnfe.printStackTrace (System.err);
+		} catch (IOException ioe){
+			ioe.printStackTrace (System.err);
+		}
+		return false;
 	}
 	
 //	public Matcher getMatcher (){

@@ -6,6 +6,10 @@
 
 package com.davidecavestro.common.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 /**
  * Utilità per la manipolazione di stringhe.
  *
@@ -47,6 +51,39 @@ public final class StringUtils {
 			}
 		}
 		return false;
+	}
+	
+	
+	private final static String[] voidStringArray = new String[0];
+	/**
+	 * Converte una stringa in un array di stringhe. I caratteri di "a capo", ovvero \n
+	 *vengono usati come token per la generazione delle stringhe dell'array.
+	 *
+	 * @param s la stringa.
+	 * @return un array di stringhe.
+	 */	
+	public static String[] toStringArray (final String s){
+		final List l = new ArrayList ();
+		int from = 0;
+		final String delimiter = "\\n";
+		final int delimiterLength = delimiter.length ();
+		final int length = s.length ();
+		while (from <= length) {
+			int to = s.indexOf (delimiter, from);
+			if (to != -1){
+				l.add (s.substring (from, to));
+				from = to + delimiterLength;
+			} else {
+				l.add (s.substring (from, length));
+				break;
+			}
+		}
+		
+//		String s1 = new String (new char[] {'\n'});
+//		for (final StringTokenizer st = new StringTokenizer (s, "\\n", false);st.hasMoreTokens ();){
+//			l.add (st.nextToken ());
+//		}
+		return (String[])l.toArray (voidStringArray);
 	}
 	
 }

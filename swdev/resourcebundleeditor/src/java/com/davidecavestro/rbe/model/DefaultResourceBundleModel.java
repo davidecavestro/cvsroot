@@ -167,8 +167,20 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	}
 	
 	public void setValue (Locale locale, String key, String value, boolean undoable, boolean undoing) {
+		{
+			/* 
+			 * ottimizzazione 
+			 * evita modifica invariante
+			 */
+			final String oldValue = getLocalizationProperties (locale).getProperties ().getProperty (key);
+			if (oldValue == value || (oldValue != null && oldValue.equals (value))){
+				return;
+			}
+		}
 		final UndoableEditListener[] listeners = (UndoableEditListener[])getListeners (UndoableEditListener.class);
-		if (undoable == false || listeners == null) {
+
+		
+		if (!undoable || listeners == null) {
 			internalSetValue (locale, key, value, undoing);
 			return;
 		}
@@ -193,6 +205,8 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 		CommentedProperties props = getLocalizationProperties (locale).getProperties ();
 		if (null==value){
 			props.remove (key);
+			/* e' possibile che la chiave vada rimossa */
+			cacheKeys (this._resources);
 			fireResourceBundleModelChanged (
 				new ResourceBundleModelEvent (
 					this, getLocales (key).isEmpty ()?ResourceBundleModelEvent.ALL_LOCALES:locale, 
@@ -206,6 +220,8 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 				return;
 			}
 			props.setProperty (key, value);
+			/* potrebbe essere una nuova chiave */
+			this._keys.add (key);
 			if (null==oldValue){
 				fireResourceBundleModelChanged (new ResourceBundleModelEvent (this, locale, new String[]{key}, ResourceBundleModelEvent.INSERT));
 			} else {
@@ -515,6 +531,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 		setName (fileName.substring (0, fileName.lastIndexOf (".properties")));
 		setPath (file.getParentFile ());
 		setBundles (buildResources (file));
+		resetModified ();
 	}
 
 	private File _path;
@@ -642,6 +659,9 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	 * @param comment un commento.
 	 */
 	public void store (String comment) throws FileNotFoundException, IOException{
+		if (null==comment){
+			comment="Created by URBE";
+		}
 		for (int i =0;i<this._resources.length;i++){
 			final LocalizationProperties lp = this._resources[i];
 			final CommentedProperties p = lp.getProperties ();
@@ -913,6 +933,11 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	private void pushModified (){
 		_modifiedCounter++;
 		setModified (true);
+	}
+	
+	private void resetModified (){
+		_modifiedCounter=0;
+		setModified (false);
 	}
 	
 	private void popModified (){
