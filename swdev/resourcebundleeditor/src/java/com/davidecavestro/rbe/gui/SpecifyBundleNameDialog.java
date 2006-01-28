@@ -9,9 +9,12 @@ package com.davidecavestro.rbe.gui;
 import com.davidecavestro.common.gui.dialog.DialogEvent;
 import com.davidecavestro.common.gui.dialog.DialogNotifier;
 import com.davidecavestro.common.gui.dialog.DialogNotifierImpl;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.StringTokenizer;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -28,6 +31,17 @@ public class SpecifyBundleNameDialog extends javax.swing.JDialog implements Dial
 		super (parent, modal);
 		initComponents ();
 		this._dialogNotifier = new DialogNotifierImpl ();
+		
+		cancelButton.getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put (KeyStroke.getKeyStroke ("ESCAPE"), "cancel");
+		cancelButton.getActionMap().put("cancel", new javax.swing.AbstractAction ("cancel"){
+			public void actionPerformed (ActionEvent ae){
+				cancel ();
+			}
+		});
+		
+		
+		pack ();
+		setLocationRelativeTo (null);
 	}
 	
 	/** This method is called from within the constructor to
@@ -41,22 +55,24 @@ public class SpecifyBundleNameDialog extends javax.swing.JDialog implements Dial
         baseNameField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         okButton = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Specify_bundle:_base_name"));
         setResizable(false);
+        baseNameField.setFocusCycleRoot(true);
         this.baseNameField.getDocument ().addDocumentListener (new BaseNameListener ());
-        baseNameField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                baseNameFieldKeyTyped(evt);
-            }
-        });
         baseNameField.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 baseNameFieldPropertyChange(evt);
+            }
+        });
+        baseNameField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                baseNameFieldKeyTyped(evt);
             }
         });
 
@@ -65,10 +81,10 @@ public class SpecifyBundleNameDialog extends javax.swing.JDialog implements Dial
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(baseNameField, gridBagConstraints);
 
         jLabel1.setLabelFor(baseNameField);
@@ -78,8 +94,8 @@ public class SpecifyBundleNameDialog extends javax.swing.JDialog implements Dial
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(jLabel1, gridBagConstraints);
 
         org.openide.awt.Mnemonics.setLocalizedText(okButton, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Ok"));
@@ -93,24 +109,24 @@ public class SpecifyBundleNameDialog extends javax.swing.JDialog implements Dial
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(okButton, gridBagConstraints);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton2, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Cancel"));
-        jButton2.setMargin(null);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        org.openide.awt.Mnemonics.setLocalizedText(cancelButton, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Cancel"));
+        cancelButton.setMargin(null);
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                cancelButtonActionPerformed(evt);
             }
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
-        getContentPane().add(jButton2, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
+        getContentPane().add(cancelButton, gridBagConstraints);
 
         org.openide.awt.Mnemonics.setLocalizedText(jButton3, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Help"));
         jButton3.setActionCommand("help");
@@ -118,8 +134,8 @@ public class SpecifyBundleNameDialog extends javax.swing.JDialog implements Dial
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(jButton3, gridBagConstraints);
 
         pack();
@@ -133,24 +149,18 @@ public class SpecifyBundleNameDialog extends javax.swing.JDialog implements Dial
 		
 	}//GEN-LAST:event_baseNameFieldKeyTyped
 
-	private void jButton2ActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+	private void cancelButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
 		cancel ();
-	}//GEN-LAST:event_jButton2ActionPerformed
+	}//GEN-LAST:event_cancelButtonActionPerformed
 
 	private void okButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 		confirm ();
 	}//GEN-LAST:event_okButtonActionPerformed
 	
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main (String args[]) {
-		new SpecifyBundleNameDialog (new javax.swing.JFrame (), true).show ();
-	}
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField baseNameField;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton okButton;

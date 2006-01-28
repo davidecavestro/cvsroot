@@ -6,6 +6,7 @@
 
 package com.davidecavestro.rbe.gui;
 
+import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.common.gui.dialog.DialogListener;
 import com.davidecavestro.common.gui.persistence.UIPersister;
 import com.davidecavestro.common.util.*;
@@ -40,6 +41,21 @@ public class WindowManager implements ActionListener, DialogListener {
 		this._context= context;
 	}
 
+	private Splash _splash;	
+	/**
+	 * Ritorna la finestra principale.
+	 * @return la finestra principale.
+	 * @param appData i dati dell'applicazione.
+	 * Sono necessari dato che tipicamente lo Splash viene usato prima
+	 * diinizializzare il contesto applicativo.
+	 */
+	public Splash getSplashWindow (ApplicationData appData){
+		if (this._splash==null){
+			this._splash = new Splash (appData);
+		}
+		return this._splash;
+	}
+	
 	private MainWindow _mainWindow;	
 	/**
 	 * Ritorna la finestra principale.
@@ -111,7 +127,6 @@ public class WindowManager implements ActionListener, DialogListener {
 	public FindDialog getFindDialog (){
 		if (this._findDialog==null){
 			this._findDialog = new FindDialog (getMainWindow (), true, _context.getActionManager ().getFindNextAction ());
-			this._findDialog.setLocationRelativeTo (null);
 		}
 		return this._findDialog;
 	}
@@ -133,7 +148,11 @@ public class WindowManager implements ActionListener, DialogListener {
 				String key = this._addEntryDialog.getKeyText ();
 				if (this._context.getModel ().getLocaleKeys (l).contains (key)){
 					if (JOptionPane.showConfirmDialog (this._mainWindow, 
-					java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Existing_key._Overwrite?")
+					StringUtils.toStringArray (
+						java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Existing_key._Overwrite?")
+					),
+					java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Confirm"),
+					JOptionPane.OK_CANCEL_OPTION
 					) == JOptionPane.OK_OPTION){
 						this._context.getModel ().setValue (
 							l, 
@@ -179,4 +198,18 @@ public class WindowManager implements ActionListener, DialogListener {
 	public ApplicationContext getApplicationContext (){
 		return this._context;
 	}
+	
+	private About _about;	
+	/**
+	 * Ritorna la dialog di inserimento nuova entry.
+	 * @return la dialog di inserimento nuova entry.
+	 */
+	public About getAbout (){
+		if (this._about==null){
+			this._about = new About (getMainWindow (), true, _context);
+		}
+		return this._about;
+	}
+	
+	
 }

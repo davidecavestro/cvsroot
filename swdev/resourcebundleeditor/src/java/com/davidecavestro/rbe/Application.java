@@ -70,7 +70,19 @@ public class Application {
 		DefaultResourceBundleModel model = new DefaultResourceBundleModel ("blank", new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties ())});
 		RBUndoManager undoManager = new RBUndoManager ();
 
-		final ApplicationData applicationData = new ApplicationData ();
+		final Properties releaseProps = new Properties ();
+		try {
+			/*
+			 * carica dati di configurazione.
+			 */
+			releaseProps.load(getClass().getResourceAsStream ("release.properties"));
+		} catch (final Exception e) {
+			System.err.println ("Cannot load release properties");
+			/*@todo mostrare stacktrace finito lo sviluppo*/
+//			e.printStackTrace (System.err);
+		}
+
+		final ApplicationData applicationData = new ApplicationData (releaseProps);
 		final UserSettings userSettings = new UserSettings (this, new UserResources (applicationData));
 		this._context = new ApplicationContext (
 		new WindowManager (),
@@ -92,14 +104,29 @@ public class Application {
 	 */
 	public void start (){
 		final WindowManager wm = this._context.getWindowManager ();
-		wm.init (this._context);
-		{
+		wm.getSplashWindow (this._context.getApplicationData ()).show ();
+		try {
+			wm.getSplashWindow (this._context.getApplicationData ()).showInfo ("Initializing context...");
+			wm.init (this._context);
+	//		{
+	//			wm.getMainWindow ().addWindowListener (
+	//			new java.awt.event.WindowAdapter () {
+	//				public void windowClosing (java.awt.event.WindowEvent evt) {
+	//					Application.this.exit ();
+	//				}
+	//			});
+	//		}
+			wm.getSplashWindow (this._context.getApplicationData ()).showInfo ("Preparing main window...");
 			wm.getMainWindow ().addWindowListener (
-			new java.awt.event.WindowAdapter () {
-				public void windowClosing (java.awt.event.WindowEvent evt) {
-					Application.this.exit ();
-				}
-			});
+				new java.awt.event.WindowAdapter () {
+					public void windowClosing (java.awt.event.WindowEvent evt) {
+						if (wm.getMainWindow ().checkForDataLoss ()){
+							exit ();
+						}
+					}
+				});
+		} finally {
+			wm.getSplashWindow (this._context.getApplicationData ()).hide ();
 		}
 		wm.getMainWindow ().show ();
 	}

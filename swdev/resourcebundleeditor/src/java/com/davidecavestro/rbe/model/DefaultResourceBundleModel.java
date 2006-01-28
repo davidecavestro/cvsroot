@@ -364,7 +364,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 		addKey (LocalizationProperties.DEFAULT, key, value, comment);
 	}
 	
-	public void addKey (Locale locale, String key, String comment, String value){
+	public void addKey (Locale locale, String key, String value, String comment ){
 		addKey (locale, key, value, comment, true, true, false);
 	}
 	

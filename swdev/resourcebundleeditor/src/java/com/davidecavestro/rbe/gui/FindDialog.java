@@ -10,13 +10,16 @@ import com.davidecavestro.common.util.action.ActionNotifier;
 import com.davidecavestro.common.util.action.ActionNotifierImpl;
 import com.davidecavestro.rbe.actions.FindNextAction;
 import com.davidecavestro.rbe.gui.search.Matcher;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.text.JTextComponent;
 
 /**
  *
@@ -40,6 +43,17 @@ public class FindDialog extends javax.swing.JDialog {
 			}
 		});
 		changeSupport = new java.beans.PropertyChangeSupport (this);
+		
+		final Component comboEditor = patternComboBox.getEditor ().getEditorComponent ();
+		comboEditor.addKeyListener (new java.awt.event.KeyAdapter() {
+			public void keyPressed(java.awt.event.KeyEvent evt) {
+				patternComboBoxKeyTyped(evt);
+			}
+        });
+		
+		pack ();
+		setLocationRelativeTo (null);
+		
 	}
 	
 	/** This method is called from within the constructor to
@@ -72,8 +86,14 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         patternComboBox.setEditable(true);
+        patternComboBox.setFocusCycleRoot(true);
         patternComboBox.setMinimumSize(new java.awt.Dimension(80, 24));
         patternComboBox.setPreferredSize(new java.awt.Dimension(200, 24));
+        patternComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                patternComboBoxItemStateChanged(evt);
+            }
+        });
         patternComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 patternComboBoxActionPerformed(evt);
@@ -154,6 +174,7 @@ public class FindDialog extends javax.swing.JDialog {
 
         matchCaseCheckBox.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(matchCaseCheckBox, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Match_case"));
+        matchCaseCheckBox.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -164,6 +185,7 @@ public class FindDialog extends javax.swing.JDialog {
 
         jCheckBox2.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jCheckBox2, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Match_Whole_words_only"));
+        jCheckBox2.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -173,6 +195,7 @@ public class FindDialog extends javax.swing.JDialog {
         jPanel1.add(jCheckBox2, gridBagConstraints);
 
         highlightCheckBox.setFont(new java.awt.Font("Dialog", 0, 12));
+        highlightCheckBox.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(highlightCheckBox, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Highlight"));
         highlightCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -211,6 +234,10 @@ public class FindDialog extends javax.swing.JDialog {
         pack();
     }//GEN-END:initComponents
 
+	private void patternComboBoxItemStateChanged (java.awt.event.ItemEvent evt) {//GEN-FIRST:event_patternComboBoxItemStateChanged
+		patternChanged ();
+	}//GEN-LAST:event_patternComboBoxItemStateChanged
+
 	private void backwardCheckBoxActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backwardCheckBoxActionPerformed
 		backwardChanged ();
 	}//GEN-LAST:event_backwardCheckBoxActionPerformed
@@ -229,6 +256,16 @@ public class FindDialog extends javax.swing.JDialog {
 
 	private void patternComboBoxActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_patternComboBoxActionPerformed
 		patternChanged ();
+
+		for (int i = 0; i< patternComboBox.getModel ().getSize (); i++){
+			final Object o = patternComboBox.getModel ().getElementAt (i);
+			if (o!=null && o.equals (patternComboBox.getModel ().getSelectedItem ())){
+				/* elemento gia' presente in lista*/
+				return;
+			}
+		}
+		patternComboBox.insertItemAt (patternComboBox.getModel ().getSelectedItem (), 0);
+
 	}//GEN-LAST:event_patternComboBoxActionPerformed
 
 	private void jButton1ActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -264,6 +301,12 @@ public class FindDialog extends javax.swing.JDialog {
 	private String oldPattern = "";
 	private void patternChanged (){
 		String newValue = (String)this.patternComboBox.getModel ().getSelectedItem ();
+		if (newValue == null || newValue.length ()==0){
+			final Component c = this.patternComboBox.getEditor ().getEditorComponent ();
+			if (c instanceof JTextField) {
+				newValue = (String)((JTextField)c).getText ();
+			}
+		}
 		this.changeSupport.firePropertyChange ("pattern", oldPattern, newValue);
 		oldPattern = newValue;
 	}

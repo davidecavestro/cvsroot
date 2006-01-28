@@ -65,19 +65,6 @@ public class SearchRenderer implements TableCellRenderer {
 					} while (fromIdx > matchIdx);
 					sb.append ("</HTML>");
 
-	//				final StringTokenizer st = new StringTokenizer (sValue, p, true);
-	//				while (st.hasMoreTokens ()){
-	//					String token = st.nextToken ();
-	//					if (token.equals (p)){
-	//						sb.append ("<SPAN STYLE=\"background: #")
-	//						.append (highlightRGB)
-	//						.append ("\">")
-	//						.append (token)
-	//						.append ("</SPAN>");
-	//					} else {
-	//						sb.append (token);
-	//					}
-	//				}
 					rubberStamp.setText (sb.toString ());
 				}
 			}

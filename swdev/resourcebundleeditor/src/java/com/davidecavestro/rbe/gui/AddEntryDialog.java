@@ -40,6 +40,10 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
 				close();
 			}
 		});
+		
+		pack ();
+		setLocationRelativeTo (null);
+		
 	}
 	
 	/** This method is called from within the constructor to
@@ -90,6 +94,7 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(jLabel3, gridBagConstraints);
 
+        keyField.setFocusCycleRoot(true);
         keyField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 keyFieldActionPerformed(evt);
