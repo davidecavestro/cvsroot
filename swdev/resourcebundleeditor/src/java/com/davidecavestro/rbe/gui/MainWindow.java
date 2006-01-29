@@ -49,6 +49,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.TimerTask;
 import javax.swing.*;
 import javax.swing.Action;
 import javax.swing.DefaultCellEditor;
@@ -304,12 +305,14 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			}
 		});
 		
+		setTitle (prepareTitle (this._context.getModel ()));
+		
 	}
 	
 	
 	private String prepareTitle (DefaultResourceBundleModel model){
 		final StringBuffer sb = new StringBuffer ();
-		sb.append ("URBE").append (" - Bundle ").append (model.getName ());
+		sb.append (_context.getApplicationData ().getApplicationExternalName ()).append (" - Bundle ").append (model.getName ());
 		if (model.isModified ()){
 			sb.append (" [")
 			.append (ResourceBundle.getBundle ("com.davidecavestro.rbe.gui.res").getString ("Modified"))
@@ -470,6 +473,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         statusPanel.setLayout(new java.awt.GridBagLayout());
 
+        modifiedLabel.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(modifiedLabel, "   ");
         modifiedLabel.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Editing_status"));
         modifiedLabel.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -490,6 +494,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         gridBagConstraints.weightx = 1.0;
         statusPanel.add(progressBar, gridBagConstraints);
 
+        tableDataLabel.setFont(new java.awt.Font("Dialog", 0, 12));
         tableDataLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         org.openide.awt.Mnemonics.setLocalizedText(tableDataLabel, "   ");
         tableDataLabel.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Rows_and_columns_count"));
@@ -995,6 +1000,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         aboutMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
         aboutMenuItem.setText("About");
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
+
         helpMenu.add(aboutMenuItem);
 
         menuBar.add(helpMenu);
@@ -1003,6 +1014,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         pack();
     }//GEN-END:initComponents
+
+	private void aboutMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+		_wm.getAbout ().show ();
+	}//GEN-LAST:event_aboutMenuItemActionPerformed
 
 	private void commentTextAreaFocusGained (java.awt.event.FocusEvent evt) {//GEN-FIRST:event_commentTextAreaFocusGained
 		// TODO add your handling code here:
@@ -1754,23 +1769,25 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		updateRecentPathMenu ();
 	}
 	
+	private class Processing {
+		private boolean p;
+		
+		public void setValue (boolean processing){
+			p = processing;
+		}
+		public boolean booleanValue (){
+			return p;
+		}
+	}
+	
 	private void load (final File f){
-		final SwingWorker worker = new SwingWorker() {
-			public Object construct() {
-				progressBar.setString ("loading");
-				_context.setProcessing (true);
-				try{
-					try {
-						_context.getModel ().load (f);
-					} catch (Throwable t){
-						throw new RuntimeException (t);
-					}
-				} finally {
-					_context.setProcessing (false);
-					progressBar.setString ("");
+		final SwingWorker worker = new VisibleWorker("loading") {
+			public void work() {
+				try {
+					_context.getModel ().load (f);
+				} catch (Throwable t){
+					throw new RuntimeException (t);
 				}
-
-				return null;
 			}
 		};
 		worker.start ();
@@ -1871,22 +1888,14 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	private boolean saveAs (){
 		saveFileChooser.setSelectedFile (new File (this._context.getModel ().getName ()));
 		if (saveFileChooser.showSaveDialog (this)==JFileChooser.APPROVE_OPTION){
-			final SwingWorker worker = new SwingWorker() {
-				public Object construct() {
-					progressBar.setString ("saving");
-					_context.setProcessing (true);
-					try{
-						try {
-							_context.getModel ().saveAs (saveFileChooser.getSelectedFile (), null);
-						} catch (Throwable t){
-							throw new RuntimeException (t);
-						}
-					} finally {
-						_context.setProcessing (false);
-						progressBar.setString ("");
+			final SwingWorker worker = new VisibleWorker ("saving"){
+			
+				public void work (){
+					try {
+						_context.getModel ().saveAs (saveFileChooser.getSelectedFile (), null);
+					} catch (Throwable t){
+						throw new RuntimeException (t);
 					}
-
-					return null;
 				}
 			};
 
@@ -1905,22 +1914,13 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}
 	
 	private boolean save (){
-		final SwingWorker worker = new SwingWorker() {
-			public Object construct() {
-				progressBar.setString ("saving");
-				_context.setProcessing (true);
-				try{
-					try {
-						_context.getModel ().store (null);
-					} catch (Throwable t){
-						throw new RuntimeException (t);
-					}
-				} finally {
-					_context.setProcessing (false);
-					progressBar.setString ("");
+		final SwingWorker worker = new VisibleWorker("saving") {
+			public void work() {
+				try {
+					_context.getModel ().store (null);
+				} catch (Throwable t){
+					throw new RuntimeException (t);
 				}
-
-				return null;
 			}
 		};
 			
@@ -2278,5 +2278,45 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		
 		
 	}	
+	
+	/**
+	 * Notifica l'applicazione l'esecuzione di lavori lunghi, mostrando la barra di progressione.
+	 * SOlo se il task dura + di 0.2 secs
+	 */
+	private abstract class VisibleWorker extends SwingWorker {
+		private final String initialMessage;
+		
+		public VisibleWorker (String initialMessage){
+			this.initialMessage = initialMessage;
+		}
+		
+		public abstract void work ();
+		public Object construct () {
+			final Processing processing = new Processing ();
+			processing.setValue (true);
+
+			final java.util.Timer timer = new java.util.Timer ("processNotificationTimer", true);
+			timer.schedule (new TimerTask (){
+				public void run (){
+					if (processing.booleanValue ()) {
+						_context.setProcessing (true);
+						progressBar.setString (initialMessage);
+					}
+				}}, 
+			/* 2 decimi di secondo */
+			200);
+
+
+			try{
+				work ();
+			} finally {
+				processing.setValue (false);
+				_context.setProcessing (false);
+				progressBar.setString ("");
+			}
+
+			return null;
+		}
+	}
 	
 }
