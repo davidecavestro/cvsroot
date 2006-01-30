@@ -8,10 +8,12 @@ package com.davidecavestro.rbe;
 
 import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.common.gui.persistence.UIPersister;
+import com.davidecavestro.common.help.HelpManager;
 import com.davidecavestro.rbe.conf.UserResources;
 import com.davidecavestro.rbe.conf.UserSettings;
 import com.davidecavestro.rbe.gui.WindowManager;
 import com.davidecavestro.rbe.actions.ActionManager;
+import com.davidecavestro.rbe.conf.ApplicationEnvironment;
 import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
 import com.davidecavestro.rbe.model.undo.RBUndoManager;
 import java.beans.PropertyChangeListener;
@@ -28,10 +30,11 @@ public class ApplicationContext {
 //	private final Logger _logger;
 	private final UserSettings _userSettings;
 	private final ApplicationData _applicationData;
-//	private final ApplicationEnvironment _env;
+	private final ApplicationEnvironment _env;
 	private final DefaultResourceBundleModel _resourceBundleModel;
 	private final RBUndoManager _undoManager;
 	private ActionManager _actionManager;
+	private HelpManager _helpManager;
 	
     private java.beans.PropertyChangeSupport changeSupport;
 	
@@ -41,16 +44,19 @@ public class ApplicationContext {
 	 * Costruttore.
 	 */
 	public ApplicationContext (
-	WindowManager windowManager,
-	UIPersister uiPersister,
-//	private final Logger _logger;
-	UserSettings userSettings,
-	ApplicationData applicationData,
-//	private final ApplicationEnvironment _env;
-	DefaultResourceBundleModel resourceBundleModel,
-	RBUndoManager undoManager,
-	ActionManager actionManager
-	) {
+		ApplicationEnvironment env,
+		WindowManager windowManager,
+		UIPersister uiPersister,
+	//	private final Logger _logger;
+		UserSettings userSettings,
+		ApplicationData applicationData,
+		DefaultResourceBundleModel resourceBundleModel,
+		RBUndoManager undoManager,
+		ActionManager actionManager,
+		HelpManager helpManager
+		) {
+			
+		this._env = env;
 		this._applicationData = applicationData;
 		this._windowManager = windowManager;
 		this._userSettings = userSettings;
@@ -58,6 +64,11 @@ public class ApplicationContext {
 		this._resourceBundleModel = resourceBundleModel;
 		this._undoManager = undoManager;
 		this._actionManager = actionManager;
+		this._helpManager = helpManager;
+	}
+	
+	public ApplicationEnvironment getApplicationEnvironment (){
+		return this._env;
 	}
 	
 	public WindowManager getWindowManager (){
@@ -82,6 +93,10 @@ public class ApplicationContext {
 	
 	public ActionManager getActionManager (){
 		return this._actionManager;
+	}
+	
+	public HelpManager getHelpManager (){
+		return this._helpManager;
 	}
 	
 	public ApplicationData getApplicationData (){

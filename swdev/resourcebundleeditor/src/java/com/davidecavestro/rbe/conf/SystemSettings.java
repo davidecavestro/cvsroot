@@ -1,5 +1,5 @@
 /*
- * UserSettings.java
+ * SystemSettings.java
  *
  * Created on 18 aprile 2004, 12.08
  */

@@ -9,6 +9,7 @@ package com.davidecavestro.common.application;
 import com.davidecavestro.common.cache.DisposableData;
 import com.davidecavestro.common.util.settings.SettingsSupport;
 import java.io.*;
+import java.net.URLDecoder;
 import java.util.*;
 
 /**
@@ -66,18 +67,8 @@ public final class ApplicationData {
 	
 	
 	/** Costruttore. */
-	public ApplicationData () {
-		this._releaseProperties = new Properties ();
-		try {
-			/*
-			 * carica dati di configurazione.
-			 */
-			this._releaseProperties.load(ApplicationData.class.getResourceAsStream("release.properties"));
-		} catch (final Exception e) {
-			System.err.println ("Cannot load release properties");
-			/*@todo mostrare stacktrace finito lo sviluppo*/
-//			e.printStackTrace (System.err);
-		}
+	public ApplicationData (Properties p) {
+		this._releaseProperties = p;
 	}
 	
 //	public static ApplicationData getInstance (){

@@ -20,6 +20,7 @@ import com.davidecavestro.common.util.file.FileUtils;
 import com.davidecavestro.rbe.ApplicationContext;
 import com.davidecavestro.rbe.actions.FindAction;
 import com.davidecavestro.rbe.gui.search.*;
+import com.davidecavestro.rbe.help.HelpResources;
 import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
 import com.davidecavestro.rbe.model.LocaleComparator;
 import com.davidecavestro.rbe.model.LocalizationProperties;
@@ -50,6 +51,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.TimerTask;
+import javax.help.CSH;
 import javax.swing.*;
 import javax.swing.Action;
 import javax.swing.DefaultCellEditor;
@@ -354,7 +356,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane3 = new javax.swing.JScrollPane();
         valuesTable = new JXTable (this._localizationTableModel);
-        jPanel1 = new javax.swing.JPanel();
+        editorPanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -368,7 +370,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jLabel6 = new javax.swing.JLabel();
         keyTextField = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
-        jToolBar2 = new javax.swing.JToolBar();
+        mainToolbar = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -408,6 +410,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         findMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentsMenuItem = new javax.swing.JMenuItem();
+        contextHelpMenuItem = new javax.swing.JMenuItem();
+        jSeparator7 = new javax.swing.JSeparator();
         aboutMenuItem = new javax.swing.JMenuItem();
 
         bundlePopupMenu.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -620,9 +624,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         jSplitPane1.setTopComponent(jScrollPane3);
 
-        jPanel1.setLayout(new java.awt.GridBagLayout());
+        editorPanel.setLayout(new java.awt.GridBagLayout());
 
-        jPanel1.setPreferredSize(new java.awt.Dimension(233, 60));
+        editorPanel.setPreferredSize(new java.awt.Dimension(233, 60));
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Comment:"));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -631,7 +635,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
-        jPanel1.add(jLabel4, gridBagConstraints);
+        editorPanel.add(jLabel4, gridBagConstraints);
 
         jLabel5.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel5, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Value:"));
@@ -641,7 +645,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
-        jPanel1.add(jLabel5, gridBagConstraints);
+        editorPanel.add(jLabel5, gridBagConstraints);
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
@@ -699,7 +703,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
-        jPanel1.add(jPanel2, gridBagConstraints);
+        editorPanel.add(jPanel2, gridBagConstraints);
 
         commentTextArea.setRows(2);
         commentTextArea.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("commentTextAreaTooltip"));
@@ -725,7 +729,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
-        jPanel1.add(jScrollPane1, gridBagConstraints);
+        editorPanel.add(jScrollPane1, gridBagConstraints);
 
         valueTextArea.setRows(2);
         valueTextArea.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("valueTextAreaTooltip"));
@@ -746,7 +750,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
-        jPanel1.add(jScrollPane2, gridBagConstraints);
+        editorPanel.add(jScrollPane2, gridBagConstraints);
 
         jLabel6.setFont(new java.awt.Font("Dialog", 0, 12));
         jLabel6.setLabelFor(keyTextField);
@@ -757,7 +761,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
-        jPanel1.add(jLabel6, gridBagConstraints);
+        editorPanel.add(jLabel6, gridBagConstraints);
 
         keyTextField.setEditable(false);
         keyTextField.setFont(new java.awt.Font("Dialog", 1, 12));
@@ -769,9 +773,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
-        jPanel1.add(keyTextField, gridBagConstraints);
+        editorPanel.add(keyTextField, gridBagConstraints);
 
-        jSplitPane1.setBottomComponent(jPanel1);
+        jSplitPane1.setBottomComponent(editorPanel);
 
         jPanel3.add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
@@ -781,8 +785,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         jPanel5.setLayout(new java.awt.BorderLayout());
 
-        jToolBar2.setRollover(true);
-        jToolBar2.setPreferredSize(new java.awt.Dimension(194, 28));
+        mainToolbar.setRollover(true);
+        mainToolbar.setPreferredSize(new java.awt.Dimension(194, 28));
+        javax.help.CSH.setHelpIDString (mainToolbar, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
+
         jButton1.setAction(new NewBundleAction ());
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/filenew.png")));
         jButton1.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("NewToolbuttonTooltip"));
@@ -791,7 +797,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton1.setMinimumSize(new java.awt.Dimension(22, 22));
         jButton1.setPreferredSize(new java.awt.Dimension(22, 22));
         jButton1.setOpaque(false);
-        jToolBar2.add(jButton1);
+        mainToolbar.add(jButton1);
 
         jButton2.setAction(new OpenAction ());
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/fileopen.png")));
@@ -802,7 +808,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton2.setMinimumSize(new java.awt.Dimension(22, 22));
         jButton2.setPreferredSize(new java.awt.Dimension(22, 22));
         jButton2.setOpaque(false);
-        jToolBar2.add(jButton2);
+        mainToolbar.add(jButton2);
 
         jButton3.setAction(saveAction);
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/filesave.png")));
@@ -813,7 +819,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton3.setMinimumSize(new java.awt.Dimension(22, 22));
         jButton3.setPreferredSize(new java.awt.Dimension(22, 22));
         jButton3.setOpaque(false);
-        jToolBar2.add(jButton3);
+        mainToolbar.add(jButton3);
 
         jButton5.setAction(new SaveAsAction ());
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/filesaveas.png")));
@@ -824,11 +830,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton5.setMinimumSize(new java.awt.Dimension(22, 22));
         jButton5.setPreferredSize(new java.awt.Dimension(22, 22));
         jButton5.setOpaque(false);
-        jToolBar2.add(jButton5);
+        mainToolbar.add(jButton5);
 
         jSeparator6.setMaximumSize(new java.awt.Dimension(8, 20));
         jSeparator6.setPreferredSize(new java.awt.Dimension(8, 2));
-        jToolBar2.add(jSeparator6);
+        mainToolbar.add(jSeparator6);
 
         jButton6.setAction(getActionByName(DefaultEditorKit.cutAction));
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/editcut.png")));
@@ -839,7 +845,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton6.setPreferredSize(new java.awt.Dimension(22, 22));
         jButton6.setOpaque(false);
         jButton6.setText (null);
-        jToolBar2.add(jButton6);
+        mainToolbar.add(jButton6);
 
         jButton7.setAction(getActionByName(DefaultEditorKit.copyAction));
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/editcopy.png")));
@@ -850,7 +856,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton7.setPreferredSize(new java.awt.Dimension(22, 22));
         jButton7.setOpaque(false);
         jButton7.setText (null);
-        jToolBar2.add(jButton7);
+        mainToolbar.add(jButton7);
 
         jButton8.setAction(getActionByName(DefaultEditorKit.pasteAction));
         jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/editpaste.png")));
@@ -861,7 +867,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton8.setPreferredSize(new java.awt.Dimension(22, 22));
         jButton8.setOpaque(false);
         jButton8.setText (null);
-        jToolBar2.add(jButton8);
+        mainToolbar.add(jButton8);
 
         jButton9.setAction(getActionByName(DefaultEditorKit.deleteNextCharAction));
         jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/editdelete.png")));
@@ -872,9 +878,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton9.setPreferredSize(new java.awt.Dimension(22, 22));
         jButton9.setOpaque(false);
         jButton9.setText (null);
-        jToolBar2.add(jButton9);
+        mainToolbar.add(jButton9);
 
-        jPanel5.add(jToolBar2, java.awt.BorderLayout.CENTER);
+        jPanel5.add(mainToolbar, java.awt.BorderLayout.CENTER);
 
         mainPanel.add(jPanel5, java.awt.BorderLayout.NORTH);
 
@@ -905,6 +911,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         fileMenu.add(openMenuItem);
 
+        recentMenu.setIcon(new javax.swing.ImageIcon("/usr/local/share/devel/swdev/resourcebundleeditor/src/java/com/davidecavestro/rbe/gui/images/transparent.png"));
         org.openide.awt.Mnemonics.setLocalizedText(recentMenu, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Recent"));
         recentMenu.setFont(new java.awt.Font("Dialog", 0, 12));
         fileMenu.add(recentMenu);
@@ -931,6 +938,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         fileMenu.add(jSeparator3);
 
         exitMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        exitMenuItem.setIcon(new javax.swing.ImageIcon("/usr/local/share/devel/swdev/resourcebundleeditor/src/java/com/davidecavestro/rbe/gui/images/transparent.png"));
         org.openide.awt.Mnemonics.setLocalizedText(exitMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("E&xit"));
         exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -946,10 +954,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         editMenu.setFont(new java.awt.Font("Dialog", 0, 12));
         undoMenuItem.setAction(_context.getUndoManager ().getUndoAction());
         undoMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        undoMenuItem.setIcon(new javax.swing.ImageIcon("/usr/local/share/devel/swdev/resourcebundleeditor/src/java/com/davidecavestro/rbe/gui/images/transparent.png"));
         editMenu.add(undoMenuItem);
 
         redoMenuItem.setAction(_context.getUndoManager ().getRedoAction());
         redoMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        redoMenuItem.setIcon(new javax.swing.ImageIcon("/usr/local/share/devel/swdev/resourcebundleeditor/src/java/com/davidecavestro/rbe/gui/images/transparent.png"));
         editMenu.add(redoMenuItem);
 
         editMenu.add(jSeparator4);
@@ -986,6 +996,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         findMenuItem.setAction(new FindAction (this._context));
         findMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        findMenuItem.setIcon(new javax.swing.ImageIcon("/usr/local/share/devel/swdev/resourcebundleeditor/src/java/com/davidecavestro/rbe/gui/images/transparent.png"));
         org.openide.awt.Mnemonics.setLocalizedText(findMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Find"));
         findMenuItem.setActionCommand("find");
         editMenu.add(findMenuItem);
@@ -994,11 +1005,22 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         org.openide.awt.Mnemonics.setLocalizedText(helpMenu, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Help"));
         helpMenu.setFont(new java.awt.Font("Dialog", 0, 12));
+        _context.getHelpManager ().initialize (contentsMenuItem);
         contentsMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        contentsMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/contents.png")));
         contentsMenuItem.setText("Contents");
         helpMenu.add(contentsMenuItem);
 
+        contextHelpMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        contextHelpMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/contexthelp.png")));
+        contextHelpMenuItem.setText("Item");
+        contextHelpMenuItem.addActionListener (new CSH.DisplayHelpAfterTracking (_context.getHelpManager ().getMainHelpBroker ()));
+        helpMenu.add(contextHelpMenuItem);
+
+        helpMenu.add(jSeparator7);
+
         aboutMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        aboutMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/info.png")));
         aboutMenuItem.setText("About");
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1145,6 +1167,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JTree bundleTree;
     private javax.swing.JTextArea commentTextArea;
     private javax.swing.JMenuItem contentsMenuItem;
+    private javax.swing.JMenuItem contextHelpMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
     private javax.swing.JButton deleteEntryButton;
@@ -1152,6 +1175,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JMenuItem deleteLocaleMenuItem;
     private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenu editMenu;
+    private javax.swing.JPanel editorPanel;
     private javax.swing.JPopupMenu entryPopupMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
@@ -1169,7 +1193,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -1183,11 +1206,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
+    private javax.swing.JSeparator jSeparator7;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JToolBar jToolBar2;
     private javax.swing.JTextField keyTextField;
     private javax.swing.JPopupMenu localePopupMenu;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JToolBar mainToolbar;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JLabel modifiedLabel;
     private javax.swing.JMenuItem newMenuItem;
@@ -1851,6 +1875,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		for (int i=0;i<recentPaths.length;i++){
 			final int ix = i;
 			final JMenuItem item = new JMenuItem ();
+			item.setFont(new java.awt.Font("Dialog", 0, 12));
 			item.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
 					if (!checkForDataLoss ()){

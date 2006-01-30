@@ -9,6 +9,8 @@ package com.davidecavestro.rbe;
 import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.common.gui.persistence.PersistenceStorage;
 import com.davidecavestro.common.gui.persistence.UIPersister;
+import com.davidecavestro.common.help.HelpManager;
+import com.davidecavestro.common.help.HelpResourcesResolver;
 import com.davidecavestro.common.log.CompositeLogger;
 import com.davidecavestro.common.log.Logger;
 import com.davidecavestro.common.log.LoggerAdapter;
@@ -84,15 +86,30 @@ public class Application {
 
 		final ApplicationData applicationData = new ApplicationData (releaseProps);
 		final UserSettings userSettings = new UserSettings (this, new UserResources (applicationData));
+		
+		/**
+		 * Percorso del file di configuraizone/mappatura, relativo alla directory di 
+		 * installazione dell'applicazione.
+		 */
+		final Properties p = new Properties ();
+		try {
+			p.load (new FileInputStream (_env.getApplicationDirPath ()+"/helpmap.properties"));
+		} catch (IOException ioe){
+			System.out.println ("Missing help resources mapping file");
+		}
+		
+		
 		this._context = new ApplicationContext (
-		new WindowManager (),
-		new UIPersister (new UserUIStorage (userSettings)),
-		userSettings,
-		applicationData,
-		model,
-		undoManager,
-		new ActionManager ()
-		);
+			_env,
+			new WindowManager (),
+			new UIPersister (new UserUIStorage (userSettings)),
+			userSettings,
+			applicationData,
+			model,
+			undoManager,
+			new ActionManager (),
+			new HelpManager (new HelpResourcesResolver (p), "help/MainUrbeHelp.hs")
+			);
 		model.addUndoableEditListener(undoManager);
 		
 		this._logger = new CompositeLogger (new LoggerAdapter (), new LoggerAdapter ());

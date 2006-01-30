@@ -6,6 +6,7 @@
 
 package com.davidecavestro.common.util;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -86,4 +87,15 @@ public final class StringUtils {
 		return (String[])l.toArray (voidStringArray);
 	}
 	
+	/**
+	 * Stampa l'array di Stringhe.
+	 *
+	 * @param s le stringhe da stampare.
+	 * @param ps lo stream di stampa.
+	 */	
+	public static void printStringArray (String[] s, PrintStream ps){
+		for (int i = 0;i<s.length;i++){
+			ps.println (s[i]);
+		}
+	}
 }
