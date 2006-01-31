@@ -309,6 +309,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		
 		setTitle (prepareTitle (this._context.getModel ()));
 		
+		setLocationRelativeTo (null);
+		
 	}
 	
 	
@@ -516,7 +518,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         tree_table_splitPane.setMaximumSize(null);
         tree_table_splitPane.setOneTouchExpandable(true);
         treeScrollPane.setMaximumSize(null);
-        treeScrollPane.setMinimumSize(new java.awt.Dimension(60, 50));
+        treeScrollPane.setMinimumSize(null);
+        treeScrollPane.setPreferredSize(null);
         bundleTree.setCellRenderer(	new DefaultTreeCellRenderer () {
             public Component getTreeCellRendererComponent(JTree tree, Object value,
                 boolean sel,
@@ -531,9 +534,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             }
         }
     );
-    bundleTree.setMinimumSize(new java.awt.Dimension(50, 50));
+    bundleTree.setMaximumSize(null);
+    bundleTree.setMinimumSize(null);
     bundleTree.setModel(new LocalizationTreeModel (this._wm.getApplicationContext ().getModel ()));
     bundleTree.setName("bundleTree");
+    bundleTree.setPreferredSize(new java.awt.Dimension(150, 150));
     bundleTree.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mousePressed(java.awt.event.MouseEvent evt) {
             bundleTreeMousePressed(evt);

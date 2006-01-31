@@ -527,8 +527,13 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	}
 	
 	public void load (File file){
-		final String fileName = file.getName ();		
-		setName (fileName.substring (0, fileName.lastIndexOf (".properties")));
+		final String fileName = file.getName ();
+		
+		final int idx = fileName.lastIndexOf (".properties");
+		if (idx<0){
+			return;
+		}
+		setName (fileName.substring (0, idx));
 		setPath (file.getParentFile ());
 		setBundles (buildResources (file));
 		resetModified ();

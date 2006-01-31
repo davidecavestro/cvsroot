@@ -108,9 +108,9 @@ public class About extends javax.swing.JDialog {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jLabel3, gridBagConstraints);
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("BuildLabel"));
@@ -131,9 +131,9 @@ public class About extends javax.swing.JDialog {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jLabel5, gridBagConstraints);
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel8, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("ReleaseDateLabel"));
@@ -150,9 +150,9 @@ public class About extends javax.swing.JDialog {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jLabel9, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -172,7 +172,9 @@ public class About extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         jPanel1.add(jPanel5, gridBagConstraints);
 
         jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Detail"), jPanel1);
