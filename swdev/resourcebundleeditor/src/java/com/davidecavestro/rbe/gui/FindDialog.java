@@ -79,6 +79,7 @@ public class FindDialog extends javax.swing.JDialog {
 
         setTitle(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Find"));
         setFont(new java.awt.Font("ActionIs", 0, 10));
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 exitForm(evt);
@@ -86,7 +87,6 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         patternComboBox.setEditable(true);
-        patternComboBox.setFocusCycleRoot(true);
         patternComboBox.setMinimumSize(new java.awt.Dimension(80, 24));
         patternComboBox.setPreferredSize(new java.awt.Dimension(200, 24));
         patternComboBox.addItemListener(new java.awt.event.ItemListener() {

@@ -63,6 +63,7 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -72,8 +73,10 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Key"));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         getContentPane().add(jLabel1, gridBagConstraints);
 
         jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -94,7 +97,6 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(jLabel3, gridBagConstraints);
 
-        keyField.setFocusCycleRoot(true);
         keyField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 keyFieldActionPerformed(evt);
@@ -110,6 +112,8 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
         getContentPane().add(keyField, gridBagConstraints);
 
         valueField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -124,6 +128,8 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
         getContentPane().add(valueField, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -132,6 +138,8 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
         getContentPane().add(commentField, gridBagConstraints);
 
         okButton.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -146,6 +154,7 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         getContentPane().add(okButton, gridBagConstraints);
 
         cancelButton.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -160,6 +169,7 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         getContentPane().add(cancelButton, gridBagConstraints);
 
         jButton3.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -170,7 +180,16 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         getContentPane().add(jButton3, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(jLabel4, gridBagConstraints);
 
         pack();
     }//GEN-END:initComponents
@@ -203,6 +222,7 @@ public class AddEntryDialog extends javax.swing.JDialog implements PersistentCom
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField keyField;
     private javax.swing.JButton okButton;
     private javax.swing.JTextField valueField;

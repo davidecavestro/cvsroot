@@ -72,6 +72,7 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellEditor;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
@@ -97,10 +98,18 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	private final WindowManager _wm;
 	private final PatternFinder _matcher;
 	
+	/*
+	 * Flags per la segnalazione di stati instabili dei componenti di editazione 
+	 */
+	
+	/* stati instabili per aggiornamento */
 	private boolean commentTextAreaUpdating;
-	private boolean commentTextAreaFiring;
 	private boolean valueTextAreaUpdating;
+	/* stati instabili per propagazione modifiche dovute ad editazione */
+	private boolean commentTextAreaFiring;
 	private boolean valueTextAreaFiring;
+	
+	
 	
 	private final static Color inactiveCaptionColor = javax.swing.UIManager.getDefaults().getColor("inactiveCaption");
 	private final static Color tableBackgroundColor = javax.swing.UIManager.getDefaults().getColor("Table.background");
@@ -137,114 +146,124 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		/*
 		 * notifica la textarea del cambio di selezione, aggiornandola
 		 */
-		final ListSelectionListener l = new ListSelectionListener (){
-			Document d = new PlainDocument ();
-			public void valueChanged (ListSelectionEvent e) {
-				int col = valuesTable.getColumnModel ().getSelectionModel ().getLeadSelectionIndex ();
-				int row = valuesTable.getSelectionModel ().getLeadSelectionIndex ();
-				if (e.getValueIsAdjusting ()){
-					return;
-				}
-				if (
-					col >= 0 
-					&& row >= 0
-					&& col < valuesTable.getColumnCount ()
-					&& row < valuesTable.getRowCount ()
-					){
-					currentCellPos.setLocation (valuesTable.convertColumnIndexToModel (col), 
-					((/*@todo rimuovere il cast alla fine (NEtbeans non supporta l'editing di JXTable) */JXTable)valuesTable).convertRowIndexToModel (row));
-					
-//					if (!valueTextArea.hasFocus ()){
-					if (!valueTextAreaUpdating && !valueTextAreaFiring){
-						valueTextAreaUpdating = true;
-						try {
-//						valueTextArea.setEditable (false);
-//						valueTextArea.setEnabled (false);
-//						valueTextArea.setFocusable (false);
-						if (valuesTable.convertColumnIndexToModel (col)>0){
-							valueTextArea.setText ((String)valuesTable.getValueAt (row, col));
-							valueTextArea.setEditable (true);
-							valueTextArea.setEnabled (true);
-//							valueTextArea.setFocusable (true);
-//							valueTextArea.setFocusable (true);
-//							final JTextField editorComponent = (JTextField)valuesTable.getEditorComponent ();
-//							
-//							if (editorComponent!=null){ 
-//								valueTextArea.setDocument (editorComponent.getDocument ());
+//		final ListSelectionListener l = new ListSelectionListener (){
+//			final Document d = new PlainDocument ();
+//			public void valueChanged (ListSelectionEvent e) {
+//				final int col = valuesTable.getColumnModel ().getSelectionModel ().getLeadSelectionIndex ();
+//				final int row = valuesTable.getSelectionModel ().getLeadSelectionIndex ();
+//				
+//				if (e.getValueIsAdjusting ()){
+//					/* evento spurio */
+//					return;
+//				}
+//				
+//				if (
+//					col >= 0 
+//					&& row >= 0
+//					&& col < valuesTable.getColumnCount ()
+//					&& row < valuesTable.getRowCount ()
+//					){
+//						
+//					/*
+//					 * evento valido (nel dominio)
+//					 */
+//					currentCellPos.setLocation (valuesTable.convertColumnIndexToModel (col), 
+//					((/*@todo rimuovere il cast alla fine (NEtbeans non supporta l'editing di JXTable) */JXTable)valuesTable).convertRowIndexToModel (row));
+//					
+//					if (!valueTextAreaUpdating && !valueTextAreaFiring){
+//						/* textarea in stato stabile */
+//						valueTextAreaUpdating = true;
+//						
+//						/*
+//						 * gestione dell'aggiornamento
+//						 */
+//						try {
+//							if (valuesTable.convertColumnIndexToModel (col)>0){
+//								valueTextArea.setText ((String)valuesTable.getValueAt (row, col));
+//								valueTextArea.setEditable (true);
+//								valueTextArea.setEnabled (true);
+//							} else {
+//								valueTextArea.setEnabled (false);
+//								valueTextArea.setEditable (false);
+//								valueTextArea.setText (null);
 //							}
-						} else {
-//							valueTextArea.setDocument (d);
-							valueTextArea.setEnabled (false);
-							valueTextArea.setEditable (false);
-							valueTextArea.setText (null);
-//							valueTextArea.setFocusable (false);
-						}
-						} finally {
-							valueTextAreaUpdating = false;
-						}
-					}
-
-					{
-						final int viewColumnIndex = valuesTable.convertColumnIndexToView (0);
-						if (viewColumnIndex>=0 && !keyTextField.hasFocus ()){
-//						keyTextField.setEnabled (false);
-							keyTextField.setText ((String)valuesTable.getValueAt (row, viewColumnIndex));
-//						keyTextField.setEnabled (col!=0);
-
-						}
-					}
-					
-					if (!commentTextAreaFiring && !commentTextAreaUpdating){
-					commentTextAreaUpdating = true;
-//						commentTextArea.setEnabled (false);
-						commentTextArea.setText ((String)_localizationTableModel.getCommentAt (row, col));
-						commentTextArea.setEnabled (valuesTable.convertColumnIndexToModel (col)!=0);
-					commentTextAreaUpdating = false;
-					}
-				} else {
-					valueTextArea.setEnabled (false);
-					valueTextArea.setText (null);
-					
-					keyTextField.setEnabled (false);
-					keyTextField.setText (null);
-					
-					commentTextArea.setEnabled (false);
-					commentTextArea.setText (null);
-				}
-				
-			}
-		};
-		valuesTable.getSelectionModel ().addListSelectionListener (l);
-		valuesTable.getColumnModel ().getSelectionModel ().addListSelectionListener (l);
+//						} finally {
+//							valueTextAreaUpdating = false;
+//						}
+//					} else {
+//						System.out.println ("Discarded spurious selection change event");
+//					}
+//
+//					{
+//						/* aggiornamento campo di visualizzazione chiave */
+//						
+//						final int viewColumnIndex = valuesTable.convertColumnIndexToView (0);
+//						if (viewColumnIndex>=0 && 
+//							!keyTextField.hasFocus ()){
+//								
+//							keyTextField.setText ((String)valuesTable.getValueAt (row, viewColumnIndex));
+//						}
+//					}
+//					
+//					if (!commentTextAreaFiring && 
+//						!commentTextAreaUpdating){
+//
+//						/* 
+//						 * textarea in stato stabile 
+//						 * gestione aggiornamento
+//						 */
+//						commentTextAreaUpdating = true;
+//						try {
+//							commentTextArea.setText ((String)_localizationTableModel.getCommentAt (row, col));
+//							commentTextArea.setEnabled (valuesTable.convertColumnIndexToModel (col)!=0);
+//						} finally {
+//							commentTextAreaUpdating = false;
+//						}
+//					}
+//				} else {
+//					valueTextArea.setEnabled (false);
+//					valueTextArea.setText (null);
+//					
+//					keyTextField.setEnabled (false);
+//					keyTextField.setText (null);
+//					
+//					commentTextArea.setEnabled (false);
+//					commentTextArea.setText (null);
+//				}
+//				
+//			}
+//		};
+//		valuesTable.getSelectionModel ().addListSelectionListener (l);
+//		valuesTable.getColumnModel ().getSelectionModel ().addListSelectionListener (l);
 		
 
 		/*
 		 * propaga le modifiche dalla textarea al modello
 		 */
-		valueTextArea.getDocument ().addDocumentListener (new DocumentListener (){
-			public void insertUpdate(DocumentEvent e){apply (e);}
-			public void removeUpdate(DocumentEvent e){apply (e);}
-			public void changedUpdate(DocumentEvent e){apply (e);}
-			
-			public void apply (DocumentEvent e){
-//				if (valueTextArea.isEnabled () && valueTextArea.hasFocus ()) {
-				if (valueTextArea.isEnabled () && 
-					valueTextArea.isEditable () && 
-					valueTextArea.hasFocus () && 
-					!valueTextAreaUpdating && 
-					!valueTextAreaFiring) {
-						
-					valueTextAreaFiring = true;
-					try {
-
-					/* propaga modifiche alla tabella modifica solo se textarea abilitata, altrimenti sarebbe un evento spurio */
-					valuesTable.getModel ().setValueAt (valueTextArea.getText (), (int)currentCellPos.getY (), (int)currentCellPos.getX ());
-					} finally {
-						valueTextAreaFiring = false;
-					}
-				}
-			}
-		});
+//		valueTextArea.getDocument ().addDocumentListener (new DocumentListener (){
+//			public void insertUpdate(DocumentEvent e){apply (e);}
+//			public void removeUpdate(DocumentEvent e){apply (e);}
+//			public void changedUpdate(DocumentEvent e){apply (e);}
+//			
+//			public void apply (DocumentEvent e){
+////				if (valueTextArea.isEnabled () && valueTextArea.hasFocus ()) {
+//				if (valueTextArea.isEnabled () && 
+//					valueTextArea.isEditable () && 
+//					valueTextArea.hasFocus () && 
+//					!valueTextAreaUpdating && 
+//					!valueTextAreaFiring) {
+//						
+//					valueTextAreaFiring = true;
+//					try {
+//
+//					/* propaga modifiche alla tabella modifica solo se textarea abilitata, altrimenti sarebbe un evento spurio */
+//					valuesTable.getModel ().setValueAt (valueTextArea.getText (), (int)currentCellPos.getY (), (int)currentCellPos.getX ());
+//					} finally {
+//						valueTextAreaFiring = false;
+//					}
+//				}
+//			}
+//		});
 		
 		/*
 		 * propaga le modifiche dalla textarea al modello
@@ -475,6 +494,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowDeactivated(java.awt.event.WindowEvent evt) {
+                formWindowDeactivated(evt);
+            }
+        });
+
         mainPanel.setLayout(new java.awt.BorderLayout());
 
         statusPanel.setLayout(new java.awt.GridBagLayout());
@@ -619,6 +644,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             }
         });
         valuesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                valuesTableMouseClicked(evt);
+            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 valuesTableMousePressed(evt);
             }
@@ -630,7 +658,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         editorPanel.setLayout(new java.awt.GridBagLayout());
 
+        editorPanel.setMaximumSize(null);
+        editorPanel.setMinimumSize(null);
         editorPanel.setPreferredSize(new java.awt.Dimension(233, 60));
+        _context.getUIPersisteer ().register (new PersistencePanelAdapter (editorPanel, "editorPanel"));
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Comment:"));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -676,6 +707,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         deleteEntryButton.setEnabled(false);
         valuesTable.getSelectionModel ().addListSelectionListener (new ListSelectionListener (){
             public void valueChanged(ListSelectionEvent e){
+                if (e.getValueIsAdjusting ()){
+                    return;
+                }
                 deleteEntryButton.setEnabled (valuesTable.getSelectedRowCount ()>0);
             }
         });
@@ -1041,6 +1075,42 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         pack();
     }//GEN-END:initComponents
 
+	private void formWindowDeactivated (java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowDeactivated
+		final TableCellEditor tce = valuesTable.getCellEditor ();
+		if (null==tce){
+			return;
+		}
+
+		/*
+		 * evita editazioniinvolontarie
+		 * @todo trovare una soluzione piu' elegante.
+		 *potebbe capitare di cancellare editazioni voluto, nel caso di popup esterni
+		 */
+//		tce.cancelCellEditing ();
+
+	}//GEN-LAST:event_formWindowDeactivated
+
+	private void valuesTableMouseClicked (java.awt.event.MouseEvent evt) {//GEN-FIRST:event_valuesTableMouseClicked
+		if (evt.getButton ()==MouseEvent.BUTTON1){
+			valuesTable.requestFocusInWindow ();
+			
+//			final int row = valuesTable.getSelectedRow ();
+//			final int col = valuesTable.getSelectedColumn ();
+//			if (row>=0 && row< valuesTable.getRowCount () && col>=0 && col<valuesTable.getColumnCount ()){
+//				if (valuesTable.getValueAt (row, col)==null){
+//					/* 
+//					 * evita perdita delle celle vuote a favore di 
+//					 * stringhe vuote a causa di editazioni involontarie
+//					 */
+//					return;
+//				}
+//				valuesTable.requestFocusInWindow ();
+////				valuesTable.editCellAt (row, col);
+////				valuesTable.getCellEditor (row, col).cancelCellEditing ();
+//			}
+		}
+	}//GEN-LAST:event_valuesTableMouseClicked
+
 	private void aboutMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
 		_wm.getAbout ().show ();
 	}//GEN-LAST:event_aboutMenuItemActionPerformed
@@ -1259,6 +1329,28 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	
 	}
 	
+	private class PersistencePanelAdapter implements PersistentComponent	{
+	
+		private final JComponent _panel;
+		private final String _key;
+		public PersistencePanelAdapter (JPanel panel, String key){
+			this._panel = panel;
+			this._key = key;
+		}
+		public String getPersistenceKey () {
+			return _key;
+		}	
+
+		public void makePersistent (com.davidecavestro.common.gui.persistence.PersistenceStorage props) {
+			PersistenceUtils.makeBoundsPersistent (props, this.getPersistenceKey (), this._panel);
+		}
+
+		public boolean restorePersistent (com.davidecavestro.common.gui.persistence.PersistenceStorage props) {
+			return PersistenceUtils.restorePersistentBoundsToPreferredSize (props, this.getPersistenceKey (), this._panel);
+		}
+	
+	}
+	
 	private final static String[] voidStringArray = new String[0];
 	
 	private class LocalizationTableModel extends AbstractTableModel implements ResourceBundleModelListener {
@@ -1308,12 +1400,22 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		
 	    public void resourceBundleChanged (ResourceBundleModelEvent e){
 			reindex ();
-			if (e.getType () == ResourceBundleModelEvent.UPDATE && e.getLocale ()!=ResourceBundleModelEvent.ALL_LOCALES){
-				this.fireTableDataChanged ();
-			} else {
-				this.fireTableStructureChanged ();
-			}
+//			if (e.getType () == ResourceBundleModelEvent.UPDATE && e.getLocale ()!=ResourceBundleModelEvent.ALL_LOCALES){
+//				this.fireTableDataChanged ();
+//			} else if (e.getType () == ResourceBundleModelEvent.DELETE && e.getLocale ()!=ResourceBundleModelEvent.ALL_LOCALES){
+//				this.fireTableDataChanged ();
+//			} else {
+//				this.fireTableStructureChanged ();
+//			}
 			
+			if (e.getLocale ()==ResourceBundleModelEvent.ALL_LOCALES ||
+				e.getKeys ()==ResourceBundleModelEvent.ALL_KEYS
+				){
+				
+				this.fireTableStructureChanged ();
+			} else {
+				this.fireTableDataChanged ();
+			}
 		}
 		
 		public String getColumnName (int columnIndex) {
@@ -1338,9 +1440,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 			
 		public void setValueAt (Object aValue, int rowIndex, int columnIndex) {
-			String key = this._keys[rowIndex];
+			final String key = this._keys[rowIndex];
 			if (columnIndex > 0){
-				Locale l = this._locales[columnIndex-1];
+				final Locale l = this._locales[columnIndex-1];
 				if (null==aValue){
 					if (this._resources.getLocales (key).size ()==1){
 						if (
@@ -1697,7 +1799,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			final JTextField field = (JTextField)this.getComponent ();
 			
 			/* condivide il modello con la textarea così una modifica da tabella viene subito riflessa nella textarea*/
-			valueTextArea.setDocument (field.getDocument ());
+//			valueTextArea.setDocument (field.getDocument ());
 //			field.setDocument (valueTextArea.getDocument ());
 //			field.getDocument ().addDocumentListener (new DocumentListener (){
 //				public void insertUpdate(DocumentEvent e){apply (e);}
@@ -1733,6 +1835,13 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 					 }
 				 }
 			});
+			
+			field.addFocusListener(new java.awt.event.FocusAdapter() {
+				public void focusLost(java.awt.event.FocusEvent evt) {
+					cancelCellEditing ();
+					System.out.println ("Edit cancelled");
+				}
+			});			
 		}
 		public boolean stopCellEditing() {
 //			_nullCalled = false;
@@ -1747,7 +1856,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				return delegate.getCellEditorValue();
 			}
 		}
-		
+				
 	}
 	
 	/**

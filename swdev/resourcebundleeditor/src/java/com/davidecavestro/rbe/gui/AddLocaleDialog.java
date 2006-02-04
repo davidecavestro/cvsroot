@@ -146,7 +146,6 @@ public class AddLocaleDialog extends javax.swing.JDialog implements PersistentCo
 
         languageCombo.setEditable(true);
         languageCombo.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Select_language"));
-        languageCombo.setFocusCycleRoot(true);
         languageCombo.setRenderer(new BasicComboBoxRenderer () {
             public Component getListCellRendererComponent (JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 final JLabel label = (JLabel)super.getListCellRendererComponent (list, value, index, isSelected, cellHasFocus);
