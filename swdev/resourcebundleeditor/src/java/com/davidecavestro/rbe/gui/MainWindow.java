@@ -519,7 +519,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         tree_table_splitPane.setOneTouchExpandable(true);
         treeScrollPane.setMaximumSize(null);
         treeScrollPane.setMinimumSize(null);
-        treeScrollPane.setPreferredSize(null);
         bundleTree.setCellRenderer(	new DefaultTreeCellRenderer () {
             public Component getTreeCellRendererComponent(JTree tree, Object value,
                 boolean sel,
