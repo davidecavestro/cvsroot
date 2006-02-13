@@ -146,124 +146,124 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		/*
 		 * notifica la textarea del cambio di selezione, aggiornandola
 		 */
-//		final ListSelectionListener l = new ListSelectionListener (){
-//			final Document d = new PlainDocument ();
-//			public void valueChanged (ListSelectionEvent e) {
-//				final int col = valuesTable.getColumnModel ().getSelectionModel ().getLeadSelectionIndex ();
-//				final int row = valuesTable.getSelectionModel ().getLeadSelectionIndex ();
-//				
-//				if (e.getValueIsAdjusting ()){
-//					/* evento spurio */
-//					return;
-//				}
-//				
-//				if (
-//					col >= 0 
-//					&& row >= 0
-//					&& col < valuesTable.getColumnCount ()
-//					&& row < valuesTable.getRowCount ()
-//					){
-//						
-//					/*
-//					 * evento valido (nel dominio)
-//					 */
-//					currentCellPos.setLocation (valuesTable.convertColumnIndexToModel (col), 
-//					((/*@todo rimuovere il cast alla fine (NEtbeans non supporta l'editing di JXTable) */JXTable)valuesTable).convertRowIndexToModel (row));
-//					
-//					if (!valueTextAreaUpdating && !valueTextAreaFiring){
-//						/* textarea in stato stabile */
-//						valueTextAreaUpdating = true;
-//						
-//						/*
-//						 * gestione dell'aggiornamento
-//						 */
-//						try {
-//							if (valuesTable.convertColumnIndexToModel (col)>0){
-//								valueTextArea.setText ((String)valuesTable.getValueAt (row, col));
-//								valueTextArea.setEditable (true);
-//								valueTextArea.setEnabled (true);
-//							} else {
-//								valueTextArea.setEnabled (false);
-//								valueTextArea.setEditable (false);
-//								valueTextArea.setText (null);
-//							}
-//						} finally {
-//							valueTextAreaUpdating = false;
-//						}
-//					} else {
-//						System.out.println ("Discarded spurious selection change event");
-//					}
-//
-//					{
-//						/* aggiornamento campo di visualizzazione chiave */
-//						
-//						final int viewColumnIndex = valuesTable.convertColumnIndexToView (0);
-//						if (viewColumnIndex>=0 && 
-//							!keyTextField.hasFocus ()){
-//								
-//							keyTextField.setText ((String)valuesTable.getValueAt (row, viewColumnIndex));
-//						}
-//					}
-//					
-//					if (!commentTextAreaFiring && 
-//						!commentTextAreaUpdating){
-//
-//						/* 
-//						 * textarea in stato stabile 
-//						 * gestione aggiornamento
-//						 */
-//						commentTextAreaUpdating = true;
-//						try {
-//							commentTextArea.setText ((String)_localizationTableModel.getCommentAt (row, col));
-//							commentTextArea.setEnabled (valuesTable.convertColumnIndexToModel (col)!=0);
-//						} finally {
-//							commentTextAreaUpdating = false;
-//						}
-//					}
-//				} else {
-//					valueTextArea.setEnabled (false);
-//					valueTextArea.setText (null);
-//					
-//					keyTextField.setEnabled (false);
-//					keyTextField.setText (null);
-//					
-//					commentTextArea.setEnabled (false);
-//					commentTextArea.setText (null);
-//				}
-//				
-//			}
-//		};
-//		valuesTable.getSelectionModel ().addListSelectionListener (l);
-//		valuesTable.getColumnModel ().getSelectionModel ().addListSelectionListener (l);
+		final ListSelectionListener l = new ListSelectionListener (){
+			final Document d = new PlainDocument ();
+			public void valueChanged (ListSelectionEvent e) {
+				final int col = valuesTable.getColumnModel ().getSelectionModel ().getLeadSelectionIndex ();
+				final int row = valuesTable.getSelectionModel ().getLeadSelectionIndex ();
+				
+				if (e.getValueIsAdjusting ()){
+					/* evento spurio */
+					return;
+				}
+				
+				if (
+					col >= 0 
+					&& row >= 0
+					&& col < valuesTable.getColumnCount ()
+					&& row < valuesTable.getRowCount ()
+					){
+						
+					/*
+					 * evento valido (nel dominio)
+					 */
+					currentCellPos.setLocation (valuesTable.convertColumnIndexToModel (col), 
+					((/*@todo rimuovere il cast alla fine (NEtbeans non supporta l'editing di JXTable) */JXTable)valuesTable).convertRowIndexToModel (row));
+					
+					if (!valueTextAreaUpdating && !valueTextAreaFiring){
+						/* textarea in stato stabile */
+						valueTextAreaUpdating = true;
+						
+						/*
+						 * gestione dell'aggiornamento
+						 */
+						try {
+							if (valuesTable.convertColumnIndexToModel (col)>0){
+								valueTextArea.setText ((String)valuesTable.getValueAt (row, col));
+								valueTextArea.setEditable (true);
+								valueTextArea.setEnabled (true);
+							} else {
+								valueTextArea.setEnabled (false);
+								valueTextArea.setEditable (false);
+								valueTextArea.setText (null);
+							}
+						} finally {
+							valueTextAreaUpdating = false;
+						}
+					} else {
+						System.out.println ("Discarded spurious selection change event");
+					}
+
+					{
+						/* aggiornamento campo di visualizzazione chiave */
+						
+						final int viewColumnIndex = valuesTable.convertColumnIndexToView (0);
+						if (viewColumnIndex>=0 && 
+							!keyTextField.hasFocus ()){
+								
+							keyTextField.setText ((String)valuesTable.getValueAt (row, viewColumnIndex));
+						}
+					}
+					
+					if (!commentTextAreaFiring && 
+						!commentTextAreaUpdating){
+
+						/* 
+						 * textarea in stato stabile 
+						 * gestione aggiornamento
+						 */
+						commentTextAreaUpdating = true;
+						try {
+							commentTextArea.setText ((String)_localizationTableModel.getCommentAt (row, col));
+							commentTextArea.setEnabled (valuesTable.convertColumnIndexToModel (col)!=0);
+						} finally {
+							commentTextAreaUpdating = false;
+						}
+					}
+				} else {
+					valueTextArea.setEnabled (false);
+					valueTextArea.setText (null);
+					
+					keyTextField.setEnabled (false);
+					keyTextField.setText (null);
+					
+					commentTextArea.setEnabled (false);
+					commentTextArea.setText (null);
+				}
+				
+			}
+		};
+		valuesTable.getSelectionModel ().addListSelectionListener (l);
+		valuesTable.getColumnModel ().getSelectionModel ().addListSelectionListener (l);
 		
 
 		/*
 		 * propaga le modifiche dalla textarea al modello
 		 */
-//		valueTextArea.getDocument ().addDocumentListener (new DocumentListener (){
-//			public void insertUpdate(DocumentEvent e){apply (e);}
-//			public void removeUpdate(DocumentEvent e){apply (e);}
-//			public void changedUpdate(DocumentEvent e){apply (e);}
-//			
-//			public void apply (DocumentEvent e){
-////				if (valueTextArea.isEnabled () && valueTextArea.hasFocus ()) {
-//				if (valueTextArea.isEnabled () && 
-//					valueTextArea.isEditable () && 
-//					valueTextArea.hasFocus () && 
-//					!valueTextAreaUpdating && 
-//					!valueTextAreaFiring) {
-//						
-//					valueTextAreaFiring = true;
-//					try {
-//
-//					/* propaga modifiche alla tabella modifica solo se textarea abilitata, altrimenti sarebbe un evento spurio */
-//					valuesTable.getModel ().setValueAt (valueTextArea.getText (), (int)currentCellPos.getY (), (int)currentCellPos.getX ());
-//					} finally {
-//						valueTextAreaFiring = false;
-//					}
-//				}
-//			}
-//		});
+		valueTextArea.getDocument ().addDocumentListener (new DocumentListener (){
+			public void insertUpdate(DocumentEvent e){apply (e);}
+			public void removeUpdate(DocumentEvent e){apply (e);}
+			public void changedUpdate(DocumentEvent e){apply (e);}
+			
+			public void apply (DocumentEvent e){
+//				if (valueTextArea.isEnabled () && valueTextArea.hasFocus ()) {
+				if (valueTextArea.isEnabled () && 
+					valueTextArea.isEditable () && 
+					valueTextArea.hasFocus () && 
+					!valueTextAreaUpdating && 
+					!valueTextAreaFiring) {
+						
+					valueTextAreaFiring = true;
+					try {
+
+					/* propaga modifiche alla tabella modifica solo se textarea abilitata, altrimenti sarebbe un evento spurio */
+					valuesTable.getModel ().setValueAt (valueTextArea.getText (), (int)currentCellPos.getY (), (int)currentCellPos.getX ());
+					} finally {
+						valueTextAreaFiring = false;
+					}
+				}
+			}
+		});
 		
 		/*
 		 * propaga le modifiche dalla textarea al modello
@@ -329,6 +329,30 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		setTitle (prepareTitle (this._context.getModel ()));
 		
 		setLocationRelativeTo (null);
+		
+		final Component[] tc = mainToolbar.getComponents ();
+		
+		for (int i=0;i<tc.length;i++){
+			final Component c = tc[i];
+			if (c instanceof JButton){
+				final JButton jb = (JButton)c;
+				jb.addMouseListener (new MouseAdapter (){
+					/**
+					 * Invoked when the mouse enters a component.
+					 */
+					public void mouseEntered(MouseEvent e) {
+						jb.setBorderPainted (true);
+					}
+
+					/**
+					 * Invoked when the mouse exits a component.
+					 */
+					public void mouseExited(MouseEvent e) {
+						jb.setBorderPainted (false);
+					}
+				});
+			}
+		}
 		
 	}
 	
@@ -401,6 +425,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
+        undoButton = new javax.swing.JButton();
+        redoButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newMenuItem = new javax.swing.JMenuItem();
@@ -658,8 +684,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         editorPanel.setLayout(new java.awt.GridBagLayout());
 
-        editorPanel.setMaximumSize(null);
-        editorPanel.setMinimumSize(null);
         editorPanel.setPreferredSize(new java.awt.Dimension(233, 60));
         _context.getUIPersisteer ().register (new PersistencePanelAdapter (editorPanel, "editorPanel"));
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -824,12 +848,14 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jPanel5.setLayout(new java.awt.BorderLayout());
 
         mainToolbar.setRollover(true);
+        mainToolbar.setMaximumSize(null);
+        mainToolbar.setMinimumSize(new java.awt.Dimension(18, 28));
         mainToolbar.setPreferredSize(new java.awt.Dimension(194, 28));
         javax.help.CSH.setHelpIDString (mainToolbar, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
         jButton1.setAction(new NewBundleAction ());
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/filenew.png")));
-        jButton1.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("NewToolbuttonTooltip"));
+        jButton1.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("NewToolbuttonTooltip+SHORTCUT"));
         jButton1.setBorderPainted(false);
         jButton1.setMargin(null);
         jButton1.setMinimumSize(new java.awt.Dimension(22, 22));
@@ -839,7 +865,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         jButton2.setAction(new OpenAction ());
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/fileopen.png")));
-        jButton2.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Open..."));
+        jButton2.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Open...+SHORTCUT"));
         jButton2.setBorderPainted(false);
         jButton2.setMargin(null);
         jButton2.setMaximumSize(new java.awt.Dimension(28, 28));
@@ -850,7 +876,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         jButton3.setAction(saveAction);
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/filesave.png")));
-        jButton3.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Save..."));
+        jButton3.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Save...+SHORTCUT"));
         jButton3.setBorderPainted(false);
         jButton3.setMargin(null);
         jButton3.setMaximumSize(new java.awt.Dimension(28, 28));
@@ -870,13 +896,15 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton5.setOpaque(false);
         mainToolbar.add(jButton5);
 
-        jSeparator6.setMaximumSize(new java.awt.Dimension(8, 20));
+        jSeparator6.setMaximumSize(new java.awt.Dimension(8, 50));
+        jSeparator6.setMinimumSize(null);
         jSeparator6.setPreferredSize(new java.awt.Dimension(8, 2));
+        jSeparator6.setEnabled(false);
         mainToolbar.add(jSeparator6);
 
         jButton6.setAction(getActionByName(DefaultEditorKit.cutAction));
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/editcut.png")));
-        jButton6.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Cut"));
+        jButton6.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Cut+SHORTCUT"));
         jButton6.setBorderPainted(false);
         jButton6.setMargin(null);
         jButton6.setMinimumSize(new java.awt.Dimension(22, 22));
@@ -887,7 +915,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         jButton7.setAction(getActionByName(DefaultEditorKit.copyAction));
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/editcopy.png")));
-        jButton7.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Copy"));
+        jButton7.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Copy+SHORTCUT"));
         jButton7.setBorderPainted(false);
         jButton7.setMargin(null);
         jButton7.setMinimumSize(new java.awt.Dimension(22, 22));
@@ -898,7 +926,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         jButton8.setAction(getActionByName(DefaultEditorKit.pasteAction));
         jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/editpaste.png")));
-        jButton8.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Paste"));
+        jButton8.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Paste+SHORTCUT"));
         jButton8.setBorderPainted(false);
         jButton8.setMargin(null);
         jButton8.setMinimumSize(new java.awt.Dimension(22, 22));
@@ -917,6 +945,34 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton9.setOpaque(false);
         jButton9.setText (null);
         mainToolbar.add(jButton9);
+
+        undoButton.setAction(_context.getUndoManager ().getUndoAction());
+        undoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/undo.png")));
+        undoButton.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Undo+SHORTCUT"));
+        undoButton.setBorderPainted(false);
+        undoButton.setMargin(null);
+        undoButton.setMaximumSize(new java.awt.Dimension(28, 28));
+        undoButton.setMinimumSize(new java.awt.Dimension(22, 22));
+        undoButton.setPreferredSize(new java.awt.Dimension(22, 22));
+        undoButton.setOpaque(false);
+        /* mantiene nascosto il testo  dell'action */
+        undoButton.setText (null);
+        undoButton.putClientProperty ("hideActionText", Boolean.TRUE);
+        mainToolbar.add(undoButton);
+
+        redoButton.setAction(_context.getUndoManager ().getRedoAction());
+        redoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/redo.png")));
+        redoButton.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Redo+SHORTCUT"));
+        redoButton.setBorderPainted(false);
+        redoButton.setMargin(null);
+        redoButton.setMaximumSize(new java.awt.Dimension(28, 28));
+        redoButton.setMinimumSize(new java.awt.Dimension(22, 22));
+        redoButton.setPreferredSize(new java.awt.Dimension(22, 22));
+        redoButton.setOpaque(false);
+        /* mantiene nascosto il testo  dell'action */
+        redoButton.setText (null);
+        redoButton.putClientProperty ("hideActionText", Boolean.TRUE);
+        mainToolbar.add(redoButton);
 
         jPanel5.add(mainToolbar, java.awt.BorderLayout.CENTER);
 
@@ -993,6 +1049,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         undoMenuItem.setAction(_context.getUndoManager ().getUndoAction());
         undoMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
         undoMenuItem.setIcon(new javax.swing.ImageIcon("/usr/local/share/devel/swdev/resourcebundleeditor/src/java/com/davidecavestro/rbe/gui/images/transparent.png"));
+        undoMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                undoMenuItemActionPerformed(evt);
+            }
+        });
+
         editMenu.add(undoMenuItem);
 
         redoMenuItem.setAction(_context.getUndoManager ().getRedoAction());
@@ -1074,6 +1136,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         pack();
     }//GEN-END:initComponents
+
+	private void undoMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoMenuItemActionPerformed
+		// TODO add your handling code here:
+	}//GEN-LAST:event_undoMenuItemActionPerformed
 
 	private void formWindowDeactivated (java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowDeactivated
 		final TableCellEditor tce = valuesTable.getCellEditor ();
@@ -1294,6 +1360,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JMenuItem pasteMenuItem;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JMenu recentMenu;
+    private javax.swing.JButton redoButton;
     private javax.swing.JMenuItem redoMenuItem;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JFileChooser saveFileChooser;
@@ -1303,6 +1370,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JPopupMenu tablePopupMenu;
     private javax.swing.JScrollPane treeScrollPane;
     private javax.swing.JSplitPane tree_table_splitPane;
+    private javax.swing.JButton undoButton;
     private javax.swing.JMenuItem undoMenuItem;
     private javax.swing.JTextArea valueTextArea;
     private javax.swing.JTable valuesTable;

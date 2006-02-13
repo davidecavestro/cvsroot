@@ -1117,7 +1117,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 		public void undo () throws CannotUndoException {
 			super.undo ();
 			
-			model.removeKey (key, false, true, true);
+			model.setValue (this.locale, this.key, null, false, true);
 		}
 		
 		

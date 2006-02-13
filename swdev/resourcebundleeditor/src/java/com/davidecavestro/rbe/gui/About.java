@@ -11,9 +11,12 @@ import com.davidecavestro.rbe.ApplicationContext;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
+import java.io.IOException;
 import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import org.jdesktop.swingx.JXTable;
@@ -73,6 +76,9 @@ public class About extends javax.swing.JDialog {
         jPanel5 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        licenseEditorPane = new javax.swing.JTextPane();
         jPanel3 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
@@ -173,11 +179,40 @@ public class About extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
         jPanel1.add(jPanel5, gridBagConstraints);
 
         jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Detail"), jPanel1);
+
+        jPanel6.setLayout(new java.awt.GridBagLayout());
+
+        jScrollPane2.setMaximumSize(null);
+        jScrollPane2.setMinimumSize(null);
+        jScrollPane2.setPreferredSize(null);
+        licenseEditorPane.setMaximumSize(null);
+        licenseEditorPane.setMinimumSize(null);
+        licenseEditorPane.setPreferredSize(null);
+        final java.net.URL licenseURL = getClass ().getResource ("license.html");
+
+        if (licenseURL != null) {
+            try {
+                licenseEditorPane.setPage (licenseURL);
+            } catch (final IOException ioe) {
+                System.err.println ("Attempted to read a bad URL: " + licenseURL);
+            }
+        } else {
+            System.err.println ("Couldn't find file: license.html");
+        }
+        jScrollPane2.setViewportView(licenseEditorPane);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel6.add(jScrollPane2, gridBagConstraints);
+
+        jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("License"), jPanel6);
 
         jPanel3.setLayout(new java.awt.BorderLayout());
 
@@ -249,7 +284,7 @@ public class About extends javax.swing.JDialog {
 
         jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("System"), jPanel3);
 
-        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.NORTH);
 
         pack();
     }//GEN-END:initComponents
@@ -280,11 +315,14 @@ public class About extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JTextPane licenseEditorPane;
     private javax.swing.JPanel presentationPanel;
     private javax.swing.JTable systemPropsTable;
     // End of variables declaration//GEN-END:variables
