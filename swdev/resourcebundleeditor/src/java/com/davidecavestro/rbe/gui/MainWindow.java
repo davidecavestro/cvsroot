@@ -586,13 +586,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         tree_table_splitPane.setOneTouchExpandable(true);
         bundleTreePanel.setLayout(new java.awt.BorderLayout());
 
-        bundleTreePanel.setMaximumSize(null);
-        bundleTreePanel.setMinimumSize(null);
-        bundleTreePanel.setPreferredSize(null);
         bundleTreePanel.setAutoscrolls(true);
         jScrollPane4.setMaximumSize(null);
         jScrollPane4.setMinimumSize(null);
-        jScrollPane4.setPreferredSize(null);
         bundleTree.setCellRenderer(	new DefaultTreeCellRenderer () {
             public Component getTreeCellRendererComponent(JTree tree, Object value,
                 boolean sel,
@@ -607,11 +603,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             }
         }
     );
-    bundleTree.setMaximumSize(null);
     bundleTree.setMinimumSize(null);
     bundleTree.setModel(new LocalizationTreeModel (this._wm.getApplicationContext ().getModel ()));
     bundleTree.setName("bundleTree");
-    bundleTree.setPreferredSize(null);
     bundleTree.setShowsRootHandles(true);
     bundleTree.setAutoscrolls(true);
     javax.help.CSH.setHelpIDString (bundleTree, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.BUNDLE_TREE ));
@@ -1086,7 +1080,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         editMenu.setFont(new java.awt.Font("Dialog", 0, 12));
         undoMenuItem.setAction(_context.getUndoManager ().getUndoAction());
         undoMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-        undoMenuItem.setIcon(new javax.swing.ImageIcon("/usr/local/share/devel/swdev/resourcebundleeditor/src/java/com/davidecavestro/rbe/gui/images/transparent.png"));
+        undoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/transparent.png")));
         undoMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 undoMenuItemActionPerformed(evt);
@@ -1097,7 +1091,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         redoMenuItem.setAction(_context.getUndoManager ().getRedoAction());
         redoMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-        redoMenuItem.setIcon(new javax.swing.ImageIcon("/usr/local/share/devel/swdev/resourcebundleeditor/src/java/com/davidecavestro/rbe/gui/images/transparent.png"));
+        redoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/transparent.png")));
         editMenu.add(redoMenuItem);
 
         editMenu.add(jSeparator4);
@@ -1134,6 +1128,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         findMenuItem.setAction(_findAction);
         findMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        findMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/transparent.png")));
+        org.openide.awt.Mnemonics.setLocalizedText(findMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Find"));
         editMenu.add(findMenuItem);
 
         menuBar.add(editMenu);
