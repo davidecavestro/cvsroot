@@ -62,6 +62,7 @@ public class Splash extends javax.swing.JFrame {
         mainPanel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2));
         progressBar.setValue(99);
         progressBar.setIndeterminate(true);
+        progressBar.setPreferredSize(new java.awt.Dimension(148, 8));
         mainPanel.add(progressBar, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);

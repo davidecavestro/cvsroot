@@ -1037,7 +1037,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         fileMenu.add(openMenuItem);
 
-        recentMenu.setIcon(new javax.swing.ImageIcon("/usr/local/share/devel/swdev/resourcebundleeditor/src/java/com/davidecavestro/rbe/gui/images/transparent.png"));
+        recentMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/transparent.png")));
         org.openide.awt.Mnemonics.setLocalizedText(recentMenu, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Recent"));
         recentMenu.setFont(new java.awt.Font("Dialog", 0, 12));
         fileMenu.add(recentMenu);
