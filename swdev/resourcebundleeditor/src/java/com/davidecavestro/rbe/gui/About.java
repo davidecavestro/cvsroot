@@ -92,7 +92,8 @@ public class About extends javax.swing.JDialog {
         setTitle("About");
         setName("aboutDialog");
         jTabbedPane1.setMaximumSize(null);
-        jTabbedPane1.setPreferredSize(new java.awt.Dimension(480, 360));
+        jTabbedPane1.setMinimumSize(null);
+        jTabbedPane1.setPreferredSize(null);
         presentationPanel.setLayout(new java.awt.GridBagLayout());
 
         jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("About"), presentationPanel);
@@ -189,9 +190,7 @@ public class About extends javax.swing.JDialog {
 
         jScrollPane2.setMaximumSize(null);
         jScrollPane2.setMinimumSize(null);
-        jScrollPane2.setPreferredSize(null);
         licenseEditorPane.setMaximumSize(null);
-        licenseEditorPane.setMinimumSize(null);
         licenseEditorPane.setPreferredSize(null);
         final java.net.URL licenseURL = getClass ().getResource ("license.html");
 
@@ -284,7 +283,7 @@ public class About extends javax.swing.JDialog {
 
         jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("System"), jPanel3);
 
-        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.NORTH);
+        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
         pack();
     }//GEN-END:initComponents

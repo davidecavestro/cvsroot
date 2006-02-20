@@ -27,4 +27,7 @@ public interface HelpResources {
 	/** Il pannello di ditazione. */
 	public final static HelpResource EDITOR_PANEL = new HelpResource ("html.editorpanel");
 	
+	/** La barra di stato. */
+	public final static HelpResource STATUS_BAR = new HelpResource ("html.statusbar");
+	
 }

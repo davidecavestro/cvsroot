@@ -51,6 +51,8 @@ public class FindDialog extends javax.swing.JDialog {
 			}
         });
 		
+		this.getRootPane ().setDefaultButton (okButton);
+		
 		pack ();
 		setLocationRelativeTo (null);
 		
@@ -65,7 +67,7 @@ public class FindDialog extends javax.swing.JDialog {
         java.awt.GridBagConstraints gridBagConstraints;
 
         patternComboBox = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
         closeButton = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -117,12 +119,12 @@ public class FindDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 8, 5, 8);
         getContentPane().add(patternComboBox, gridBagConstraints);
 
-        jButton1.setAction(_findNextAction);
-        jButton1.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Find"));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        okButton.setAction(_findNextAction);
+        okButton.setFont(new java.awt.Font("Dialog", 0, 12));
+        org.openide.awt.Mnemonics.setLocalizedText(okButton, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Find"));
+        okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                okButtonActionPerformed(evt);
             }
         });
 
@@ -132,7 +134,7 @@ public class FindDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 8, 5, 8);
-        getContentPane().add(jButton1, gridBagConstraints);
+        getContentPane().add(okButton, gridBagConstraints);
 
         closeButton.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(closeButton, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Close"));
@@ -268,9 +270,9 @@ public class FindDialog extends javax.swing.JDialog {
 
 	}//GEN-LAST:event_patternComboBoxActionPerformed
 
-	private void jButton1ActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+	private void okButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 		close ();
-	}//GEN-LAST:event_jButton1ActionPerformed
+	}//GEN-LAST:event_okButtonActionPerformed
 
 	private void closeButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
 		close ();
@@ -285,12 +287,12 @@ public class FindDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox backwardCheckBox;
     private javax.swing.JButton closeButton;
     private javax.swing.JCheckBox highlightCheckBox;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JCheckBox matchCaseCheckBox;
+    private javax.swing.JButton okButton;
     private javax.swing.JComboBox patternComboBox;
     // End of variables declaration//GEN-END:variables
 	
@@ -347,6 +349,14 @@ public class FindDialog extends javax.swing.JDialog {
 			return;
 		}
 		changeSupport.removePropertyChangeListener (listener);
+	}
+	
+	public void show (){
+		final Component c = this.patternComboBox.getEditor ().getEditorComponent ();
+		if (c instanceof JTextField) {
+			((JTextField)c).selectAll ();
+		}
+		super.show ();
 	}
 
 }
