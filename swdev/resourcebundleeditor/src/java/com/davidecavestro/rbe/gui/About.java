@@ -93,14 +93,20 @@ public class About extends javax.swing.JDialog {
         setName("aboutDialog");
         jTabbedPane1.setMaximumSize(null);
         jTabbedPane1.setMinimumSize(null);
-        jTabbedPane1.setPreferredSize(null);
+        jTabbedPane1.setPreferredSize(new java.awt.Dimension(340, 260));
         presentationPanel.setLayout(new java.awt.GridBagLayout());
 
+        presentationPanel.setMaximumSize(null);
+        presentationPanel.setMinimumSize(null);
+        presentationPanel.setPreferredSize(new java.awt.Dimension(320, 240));
         jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("About"), presentationPanel);
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
+        jPanel1.setMaximumSize(null);
+        jPanel1.setMinimumSize(null);
         jPanel1.setPreferredSize(new java.awt.Dimension(200, 200));
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("ProductVersionLabel"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -109,7 +115,7 @@ public class About extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jLabel2, gridBagConstraints);
 
-        jLabel3.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel3.setFont(new java.awt.Font("Monospaced", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel3, _context.getApplicationData ().getVersionNumber ());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -120,6 +126,7 @@ public class About extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jLabel3, gridBagConstraints);
 
+        jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("BuildLabel"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -128,7 +135,7 @@ public class About extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jLabel4, gridBagConstraints);
 
-        jLabel5.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel5.setFont(new java.awt.Font("Monospaced", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel5, _context.getApplicationData ().getBuildNumber ()
             +" ["
             +com.davidecavestro.common.util.CalendarUtils.getTimestamp (
@@ -143,6 +150,7 @@ public class About extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jLabel5, gridBagConstraints);
 
+        jLabel8.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel8, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("ReleaseDateLabel"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -151,7 +159,7 @@ public class About extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jLabel8, gridBagConstraints);
 
-        jLabel9.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel9.setFont(new java.awt.Font("Monospaced", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel9, com.davidecavestro.common.util.CalendarUtils.getTimestamp (_context.getApplicationData ().getReleaseDate ().getTime (), "yyyy/MM/dd"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
