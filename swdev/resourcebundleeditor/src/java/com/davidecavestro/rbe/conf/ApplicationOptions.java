@@ -118,4 +118,36 @@ public final class ApplicationOptions {
 		}
 	}
 
+	/**
+	 * Ritorna l'impostazione di creazione copie di backup.
+	 *
+	 * @return l'impostazione di creazione copie di backup.
+	 */	
+	/**
+	 * Ritorna il L&F impostato.
+	 *
+	 * @return il L&F impostato.
+	 */	
+	public boolean isBackupOnSaveEnabled (){
+		final Boolean returnValue = this._settings.getBackupOnSave ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue.booleanValue ();
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.isBackupOnSaveEnabled ();
+			} else {
+					/*
+					 * Default di sistema.
+					 */
+				return DefaultSettings.backupOnSave ();
+			}
+		}
+	}
+	
 }

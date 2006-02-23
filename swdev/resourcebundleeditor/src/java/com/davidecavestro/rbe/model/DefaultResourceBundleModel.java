@@ -8,6 +8,8 @@ package com.davidecavestro.rbe.model;
 
 import com.davidecavestro.common.util.*;
 import com.davidecavestro.common.util.NestedRuntimeException;
+import com.davidecavestro.rbe.conf.ApplicationOptions;
+import com.davidecavestro.rbe.conf.UserSettings;
 import com.davidecavestro.rbe.model.event.ResourceBundleModelEvent;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
@@ -63,18 +65,24 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
      */
     private java.beans.PropertyChangeSupport changeSupport;
 	
+	
+	private final ApplicationOptions _applicationOptions;
+	
 	private final static LocalizationProperties[] voidResourceArray = new LocalizationProperties[0];
 	private final static Locale[] voidLocaleArray = new Locale[0];
 	private final static String[] voidStringArray = new String[0];
 	
 	/**
 	 * Costruttore.
+	 * @param applicationOptions le opzioni di configurazione.
 	 * @param name il nome.
 	 * @param resources le risorse di localizzazione.
 	 */
-	public DefaultResourceBundleModel (String name, LocalizationProperties[] resources) {
+	public DefaultResourceBundleModel (ApplicationOptions applicationOptions, String name, LocalizationProperties[] resources) {
+		_applicationOptions = applicationOptions;
 		setName (name);
 		setBundles (resources);
+		
 	}
 
 	public void setName (String name){
@@ -686,7 +694,11 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 				fileName.append ('_').append (variant);
 			}
 			fileName.append (".properties");
-			lp.store (new File (_path.getPath (), fileName.toString ()), comment);
+			final File f = new File (_path.getPath (), fileName.toString ());
+			if (f.exists ()){
+				
+			}
+			lp.store (f, comment);
 		}
 		setModified (false);
 	}	

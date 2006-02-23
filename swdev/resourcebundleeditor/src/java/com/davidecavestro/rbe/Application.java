@@ -21,6 +21,8 @@ import com.davidecavestro.rbe.conf.UserResources;
 import com.davidecavestro.rbe.conf.UserSettings;
 import com.davidecavestro.rbe.gui.WindowManager;
 import com.davidecavestro.rbe.actions.ActionManager;
+import com.davidecavestro.rbe.conf.ApplicationOptions;
+import com.davidecavestro.rbe.conf.DefaultSettings;
 import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
 import com.davidecavestro.rbe.model.LocalizationProperties;
 import com.davidecavestro.rbe.model.ResourceBundleModel;
@@ -69,7 +71,6 @@ public class Application {
 //			ioe.printStackTrace (System.err);
 //		}
 		
-		DefaultResourceBundleModel model = new DefaultResourceBundleModel ("blank", new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties ())});
 		RBUndoManager undoManager = new RBUndoManager ();
 
 		final Properties releaseProps = new Properties ();
@@ -86,6 +87,9 @@ public class Application {
 
 		final ApplicationData applicationData = new ApplicationData (releaseProps);
 		final UserSettings userSettings = new UserSettings (this, new UserResources (applicationData));
+		
+		final ApplicationOptions applicationOptions = new ApplicationOptions (userSettings, new ApplicationOptions (new DefaultSettings (args), null));
+		final DefaultResourceBundleModel model = new DefaultResourceBundleModel (applicationOptions, "blank", new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties ())});
 		
 		/**
 		 * Percorso del file di configuraizone/mappatura, relativo alla directory di 

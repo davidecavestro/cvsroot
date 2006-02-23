@@ -80,4 +80,17 @@ public final class DefaultSettings implements ApplicationSettings {
 		return null;
 	}
 	
+	/**
+	 * Ritorna sempre Boolean.TRUE.
+	 */	
+	public Boolean getBackupOnSave () {
+		return Boolean.valueOf (backupOnSave ());
+	}
+	
+	/**
+	 * Ritorna sempre <TT>true</TT>.
+	 */	
+	public static boolean backupOnSave () {
+		return true;
+	}
 }

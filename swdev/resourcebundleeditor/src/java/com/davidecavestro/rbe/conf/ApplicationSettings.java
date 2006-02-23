@@ -48,4 +48,11 @@ public interface ApplicationSettings {
 	 */
 	String getLastPath ();
 	
+	/**
+	 * Ritorna l'impostazione di creazione copie di backup.
+	 *
+	 * @return l'impostazione di creazione copie di backup.
+	 */	
+	Boolean getBackupOnSave ();
+	
 }

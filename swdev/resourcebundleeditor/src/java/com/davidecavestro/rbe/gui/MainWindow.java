@@ -436,6 +436,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton9 = new javax.swing.JButton();
         undoButton = new javax.swing.JButton();
         redoButton = new javax.swing.JButton();
+        helpButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newMenuItem = new javax.swing.JMenuItem();
@@ -647,7 +648,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             boolean isSelected, boolean hasFocus, int row, int column) {
 
             final JLabel label = (JLabel)super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);
-            if (0 == column) {
+            final int modelColumn = valuesTable.convertColumnIndexToModel (column);
+            if (0 == modelColumn) {
                 // colonna chiavi
                 label.setFont (label.getFont ().deriveFont (Font.BOLD));
                 label.setBackground (keyBackgroundColor);
@@ -891,7 +893,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton1.setBorderPainted(false);
         jButton1.setMargin(null);
         jButton1.setMinimumSize(new java.awt.Dimension(22, 22));
-        jButton1.setPreferredSize(new java.awt.Dimension(22, 22));
+        jButton1.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton1.setOpaque(false);
         mainToolbar.add(jButton1);
 
@@ -902,7 +904,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton2.setMargin(null);
         jButton2.setMaximumSize(new java.awt.Dimension(28, 28));
         jButton2.setMinimumSize(new java.awt.Dimension(22, 22));
-        jButton2.setPreferredSize(new java.awt.Dimension(22, 22));
+        jButton2.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton2.setOpaque(false);
         mainToolbar.add(jButton2);
 
@@ -913,7 +915,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton3.setMargin(null);
         jButton3.setMaximumSize(new java.awt.Dimension(28, 28));
         jButton3.setMinimumSize(new java.awt.Dimension(22, 22));
-        jButton3.setPreferredSize(new java.awt.Dimension(22, 22));
+        jButton3.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton3.setOpaque(false);
         mainToolbar.add(jButton3);
 
@@ -924,7 +926,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton5.setMargin(null);
         jButton5.setMaximumSize(new java.awt.Dimension(28, 28));
         jButton5.setMinimumSize(new java.awt.Dimension(22, 22));
-        jButton5.setPreferredSize(new java.awt.Dimension(22, 22));
+        jButton5.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton5.setOpaque(false);
         mainToolbar.add(jButton5);
 
@@ -940,7 +942,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton6.setBorderPainted(false);
         jButton6.setMargin(null);
         jButton6.setMinimumSize(new java.awt.Dimension(22, 22));
-        jButton6.setPreferredSize(new java.awt.Dimension(22, 22));
+        jButton6.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton6.setOpaque(false);
         jButton6.setText (null);
         mainToolbar.add(jButton6);
@@ -951,7 +953,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton7.setBorderPainted(false);
         jButton7.setMargin(null);
         jButton7.setMinimumSize(new java.awt.Dimension(22, 22));
-        jButton7.setPreferredSize(new java.awt.Dimension(22, 22));
+        jButton7.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton7.setOpaque(false);
         jButton7.setText (null);
         mainToolbar.add(jButton7);
@@ -962,7 +964,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton8.setBorderPainted(false);
         jButton8.setMargin(null);
         jButton8.setMinimumSize(new java.awt.Dimension(22, 22));
-        jButton8.setPreferredSize(new java.awt.Dimension(22, 22));
+        jButton8.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton8.setOpaque(false);
         jButton8.setText (null);
         mainToolbar.add(jButton8);
@@ -973,7 +975,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton9.setBorderPainted(false);
         jButton9.setMargin(null);
         jButton9.setMinimumSize(new java.awt.Dimension(22, 22));
-        jButton9.setPreferredSize(new java.awt.Dimension(22, 22));
+        jButton9.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton9.setOpaque(false);
         jButton9.setText (null);
         mainToolbar.add(jButton9);
@@ -985,7 +987,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         undoButton.setMargin(null);
         undoButton.setMaximumSize(new java.awt.Dimension(28, 28));
         undoButton.setMinimumSize(new java.awt.Dimension(22, 22));
-        undoButton.setPreferredSize(new java.awt.Dimension(22, 22));
+        undoButton.setPreferredSize(new java.awt.Dimension(30, 30));
         undoButton.setOpaque(false);
         /* mantiene nascosto il testo  dell'action */
         undoButton.setText (null);
@@ -999,12 +1001,21 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         redoButton.setMargin(null);
         redoButton.setMaximumSize(new java.awt.Dimension(28, 28));
         redoButton.setMinimumSize(new java.awt.Dimension(22, 22));
-        redoButton.setPreferredSize(new java.awt.Dimension(22, 22));
+        redoButton.setPreferredSize(new java.awt.Dimension(30, 30));
         redoButton.setOpaque(false);
         /* mantiene nascosto il testo  dell'action */
         redoButton.setText (null);
         redoButton.putClientProperty ("hideActionText", Boolean.TRUE);
         mainToolbar.add(redoButton);
+
+        _context.getHelpManager ().initialize (helpButton);
+        helpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/contents.png")));
+        helpButton.setBorderPainted(false);
+        helpButton.setOpaque(false);
+        /* mantiene nascosto il testo  dell'action */
+        redoButton.setText (null);
+        redoButton.putClientProperty ("hideActionText", Boolean.TRUE);
+        mainToolbar.add(helpButton);
 
         jPanel5.add(mainToolbar, java.awt.BorderLayout.CENTER);
 
@@ -1140,6 +1151,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         contentsMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
         contentsMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/contents.png")));
         contentsMenuItem.setText("Contents");
+        contentsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                contentsMenuItemActionPerformed(evt);
+            }
+        });
+
         helpMenu.add(contentsMenuItem);
 
         contextHelpMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -1167,6 +1184,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         pack();
     }//GEN-END:initComponents
+
+	private void contentsMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contentsMenuItemActionPerformed
+		// TODO add your handling code here:
+	}//GEN-LAST:event_contentsMenuItemActionPerformed
 
 	private void deleteEntryMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteEntryMenuItemActionPerformed
 		
@@ -1360,6 +1381,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem findMenuItem;
+    private javax.swing.JButton helpButton;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
