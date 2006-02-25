@@ -337,10 +337,20 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		
 		setLocationRelativeTo (null);
 		
+		/*
+		 * Rollover su elementi toolbar
+		 */
 		final Component[] tc = mainToolbar.getComponents ();
+		final Component[] tc1 = mainToolbar1.getComponents ();
+		final Component[] tc2 = mainToolbar2.getComponents ();
 		
-		for (int i=0;i<tc.length;i++){
-			final Component c = tc[i];
+		final Component[] alltc = new Component[tc.length+tc1.length+tc2.length];
+		System.arraycopy (tc, 0, alltc, 0, tc.length);
+		System.arraycopy (tc1, 0, alltc, tc.length, tc1.length);
+		System.arraycopy (tc2, 0, alltc, tc.length+tc1.length, tc2.length);
+		
+		for (int i=0;i<alltc.length;i++){
+			final Component c = alltc[i];
 			if (c instanceof JButton){
 				final JButton jb = (JButton)c;
 				jb.addMouseListener (new MouseAdapter (){
@@ -429,13 +439,14 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
-        jSeparator6 = new javax.swing.JSeparator();
+        mainToolbar1 = new javax.swing.JToolBar();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
         undoButton = new javax.swing.JButton();
         redoButton = new javax.swing.JButton();
+        mainToolbar2 = new javax.swing.JToolBar();
         helpButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
@@ -634,6 +645,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     jScrollPane3.setMaximumSize(null);
     jScrollPane3.setMinimumSize(null);
     jScrollPane3.getViewport ().setBackground (javax.swing.UIManager.getDefaults().getColor("Table.background"));
+    valuesTable.setFont(new java.awt.Font("Monospaced", 0, 12));
     valuesTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_NEXT_COLUMN);
     valuesTable.setCellEditor(new ValueCellEditor ());
     valuesTable.setCellSelectionEnabled(true);
@@ -801,6 +813,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
         editorPanel.add(jPanel2, gridBagConstraints);
 
+        commentTextArea.setFont(new java.awt.Font("Monospaced", 0, 12));
         commentTextArea.setRows(2);
         commentTextArea.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("commentTextAreaTooltip"));
         commentTextArea.setWrapStyleWord(true);
@@ -827,6 +840,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
         editorPanel.add(jScrollPane1, gridBagConstraints);
 
+        valueTextArea.setFont(new java.awt.Font("Monospaced", 0, 12));
         valueTextArea.setRows(2);
         valueTextArea.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("valueTextAreaTooltip"));
         valueTextArea.setWrapStyleWord(true);
@@ -860,7 +874,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         editorPanel.add(jLabel6, gridBagConstraints);
 
         keyTextField.setEditable(false);
-        keyTextField.setFont(new java.awt.Font("Dialog", 1, 12));
+        keyTextField.setFont(new java.awt.Font("Monospaced", 1, 12));
         keyTextField.setForeground(keyForegroundColor);
         keyTextField.setToolTipText("KEY currentKeyFieldTooltip : RB com/davidecavestro/rbe/gui/res");
         keyTextField.setOpaque(false);
@@ -879,12 +893,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         mainPanel.add(tree_table_splitPane, java.awt.BorderLayout.CENTER);
 
-        jPanel5.setLayout(new java.awt.BorderLayout());
+        jPanel5.setLayout(new java.awt.GridBagLayout());
 
         mainToolbar.setRollover(true);
         mainToolbar.setMaximumSize(null);
         mainToolbar.setMinimumSize(new java.awt.Dimension(18, 28));
-        mainToolbar.setPreferredSize(new java.awt.Dimension(194, 28));
+        mainToolbar.setPreferredSize(null);
         javax.help.CSH.setHelpIDString (mainToolbar, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
         jButton1.setAction(new NewBundleAction ());
@@ -930,11 +944,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton5.setOpaque(false);
         mainToolbar.add(jButton5);
 
-        jSeparator6.setMaximumSize(new java.awt.Dimension(8, 50));
-        jSeparator6.setMinimumSize(null);
-        jSeparator6.setPreferredSize(new java.awt.Dimension(8, 2));
-        jSeparator6.setEnabled(false);
-        mainToolbar.add(jSeparator6);
+        jPanel5.add(mainToolbar, new java.awt.GridBagConstraints());
+
+        mainToolbar1.setRollover(true);
+        mainToolbar1.setMaximumSize(null);
+        mainToolbar1.setPreferredSize(null);
+        javax.help.CSH.setHelpIDString (mainToolbar1, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
         jButton6.setAction(getActionByName(DefaultEditorKit.cutAction));
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/editcut.png")));
@@ -945,7 +960,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton6.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton6.setOpaque(false);
         jButton6.setText (null);
-        mainToolbar.add(jButton6);
+        mainToolbar1.add(jButton6);
 
         jButton7.setAction(getActionByName(DefaultEditorKit.copyAction));
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/editcopy.png")));
@@ -956,7 +971,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton7.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton7.setOpaque(false);
         jButton7.setText (null);
-        mainToolbar.add(jButton7);
+        mainToolbar1.add(jButton7);
 
         jButton8.setAction(getActionByName(DefaultEditorKit.pasteAction));
         jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/editpaste.png")));
@@ -967,7 +982,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton8.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton8.setOpaque(false);
         jButton8.setText (null);
-        mainToolbar.add(jButton8);
+        mainToolbar1.add(jButton8);
 
         jButton9.setAction(getActionByName(DefaultEditorKit.deleteNextCharAction));
         jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/editdelete.png")));
@@ -978,7 +993,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton9.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton9.setOpaque(false);
         jButton9.setText (null);
-        mainToolbar.add(jButton9);
+        mainToolbar1.add(jButton9);
 
         undoButton.setAction(_context.getUndoManager ().getUndoAction());
         undoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/undo.png")));
@@ -992,7 +1007,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         /* mantiene nascosto il testo  dell'action */
         undoButton.setText (null);
         undoButton.putClientProperty ("hideActionText", Boolean.TRUE);
-        mainToolbar.add(undoButton);
+        mainToolbar1.add(undoButton);
 
         redoButton.setAction(_context.getUndoManager ().getRedoAction());
         redoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/redo.png")));
@@ -1006,7 +1021,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         /* mantiene nascosto il testo  dell'action */
         redoButton.setText (null);
         redoButton.putClientProperty ("hideActionText", Boolean.TRUE);
-        mainToolbar.add(redoButton);
+        mainToolbar1.add(redoButton);
+
+        jPanel5.add(mainToolbar1, new java.awt.GridBagConstraints());
+
+        mainToolbar2.setRollover(true);
+        javax.help.CSH.setHelpIDString (mainToolbar2, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
         _context.getHelpManager ().initialize (helpButton);
         helpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/rbe/gui/images/contents.png")));
@@ -1015,9 +1035,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         /* mantiene nascosto il testo  dell'action */
         redoButton.setText (null);
         redoButton.putClientProperty ("hideActionText", Boolean.TRUE);
-        mainToolbar.add(helpButton);
+        mainToolbar2.add(helpButton);
 
-        jPanel5.add(mainToolbar, java.awt.BorderLayout.CENTER);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(mainToolbar2, gridBagConstraints);
 
         mainPanel.add(jPanel5, java.awt.BorderLayout.NORTH);
 
@@ -1408,13 +1431,14 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
-    private javax.swing.JSeparator jSeparator6;
     private javax.swing.JSeparator jSeparator7;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextField keyTextField;
     private javax.swing.JPopupMenu localePopupMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JToolBar mainToolbar;
+    private javax.swing.JToolBar mainToolbar1;
+    private javax.swing.JToolBar mainToolbar2;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JLabel modifiedLabel;
     private javax.swing.JMenuItem newMenuItem;
