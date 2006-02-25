@@ -62,6 +62,19 @@ public final class HelpManager {
 	}
 	
 	/**
+	 * Inizializza il pulsante specificato per l'utilizzo come lancio dell'help.
+	 *
+	 * @param helpButton il pulsante
+	 */	
+	public void initialize (JButton helpButton){
+		
+		// listen to ActionEvents from the helpItem
+		if (_csh != null)
+			helpButton.addActionListener (_csh);
+		
+	}
+	
+	/**
 	 * Ritorna il broker principale.
 	 *
 	 * @return il broker principale.

@@ -42,6 +42,12 @@ public interface CustomizableSettings extends ApplicationSettings{
 	public final static String PROPNAME_LASTPATH = "lastpath";
 	
 	/**
+	 * Il parametro di abilitazione del salvataggiocopie di backup.
+	 */
+	public final static String PROPNAME_BACKUPONSAVE = "backuponsave";
+	
+	
+	/**
 	 * Ritorna il nome del file di preferenze associato a queste impostazioni.
 	 * @return il nome del file di preferenze associato a queste impostazioni.
 	 */	

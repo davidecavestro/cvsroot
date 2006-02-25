@@ -169,4 +169,7 @@ public abstract class AbstractSettings implements CustomizableSettings {
 		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_LASTPATH, value);
 	}
 	
+	public Boolean getBackupOnSave () {
+		return SettingsSupport.getBooleanProperty (this.getProperties (), PROPNAME_BACKUPONSAVE);
+	}	
 }
