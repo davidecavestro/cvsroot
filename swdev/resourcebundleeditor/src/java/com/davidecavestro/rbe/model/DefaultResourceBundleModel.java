@@ -16,6 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -694,10 +695,33 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 				fileName.append ('_').append (variant);
 			}
 			fileName.append (".properties");
+			
 			final File f = new File (_path.getPath (), fileName.toString ());
-			if (f.exists ()){
-				
+			if (_applicationOptions.isBackupOnSaveEnabled ()) {
+				/*
+				 * crea copie di backup
+				 */
+				final File fbak = new File (f.getPath ()+"~");
+				if (f.exists ()){
+					final FileInputStream in = new FileInputStream (f);
+					try {
+						final FileOutputStream out = new FileOutputStream (fbak);
+						try {
+							int c;
+
+							while ((c = in.read ()) != -1) {
+								out.write (c);
+							}
+
+						} finally {
+							out.close ();
+						}
+					} finally {
+						in.close ();
+					}
+				}
 			}
+			
 			lp.store (f, comment);
 		}
 		resetModified ();
