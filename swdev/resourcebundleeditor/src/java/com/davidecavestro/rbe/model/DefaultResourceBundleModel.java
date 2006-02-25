@@ -700,7 +700,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 			}
 			lp.store (f, comment);
 		}
-		setModified (false);
+		resetModified ();
 	}	
 	
 	/**
@@ -949,23 +949,29 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	private int _modifiedCounter = 0;
 	private void pushModified (){
 		_modifiedCounter++;
-		setModified (true);
+		syncModified ();
+	}
+	
+	private void syncModified (){
+		setModified (_modifiedCounter!=0);
 	}
 	
 	private void resetModified (){
 		_modifiedCounter=0;
-		setModified (false);
+		syncModified ();
 	}
 	
 	private void popModified (){
-		if (_modifiedCounter==0){
-			return;
-		}
+//		if (_modifiedCounter==0){
+//			/*
+//			 * UNDO dopo salvataggio (e successivo azzeramento)
+//			 */
+////			pushModified ();
+//			return;
+//		}
 		_modifiedCounter--;
 		
-		if (_modifiedCounter==0){
-			setModified (false);
-		}
+		syncModified ();
 	}
 	
 	/**
@@ -1044,7 +1050,14 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 		
 		
 		public String getPresentationName () {
-			return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("value_change");
+			if (null==newValue && newValue!=oldValue) {
+				/*
+				 * impostato valore a null
+				 */
+				return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("set_null");
+			} else {
+				return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("edit");
+			}
 		}
 		
 		
@@ -1084,7 +1097,14 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 		
 		
 		public String getPresentationName () {
-			return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("value_change");
+			if (null==newValue && newValue!=oldValue) {
+				/*
+				 * impostato valore a null
+				 */
+				return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("set_null");
+			} else {
+				return java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("edit");
+			}
 		}
 		
 		
