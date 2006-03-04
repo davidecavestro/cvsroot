@@ -9,6 +9,7 @@ package com.davidecavestro.rbe;
 import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.common.gui.persistence.UIPersister;
 import com.davidecavestro.common.help.HelpManager;
+import com.davidecavestro.common.log.Logger;
 import com.davidecavestro.rbe.conf.UserResources;
 import com.davidecavestro.rbe.conf.UserSettings;
 import com.davidecavestro.rbe.gui.WindowManager;
@@ -27,7 +28,7 @@ public class ApplicationContext {
 	
 	private final WindowManager _windowManager;
 	private final UIPersister _uiPersister;
-//	private final Logger _logger;
+	private final Logger _logger;
 	private final UserSettings _userSettings;
 	private final ApplicationData _applicationData;
 	private final ApplicationEnvironment _env;
@@ -47,7 +48,7 @@ public class ApplicationContext {
 		ApplicationEnvironment env,
 		WindowManager windowManager,
 		UIPersister uiPersister,
-	//	private final Logger _logger;
+		Logger logger,
 		UserSettings userSettings,
 		ApplicationData applicationData,
 		DefaultResourceBundleModel resourceBundleModel,
@@ -57,6 +58,7 @@ public class ApplicationContext {
 		) {
 			
 		this._env = env;
+		this._logger = logger;
 		this._applicationData = applicationData;
 		this._windowManager = windowManager;
 		this._userSettings = userSettings;
@@ -101,6 +103,10 @@ public class ApplicationContext {
 	
 	public ApplicationData getApplicationData (){
 		return _applicationData;
+	}
+	
+	public Logger getLogger (){
+		return _logger;
 	}
 	
 	public synchronized void addPropertyChangeListener (PropertyChangeListener listener) {

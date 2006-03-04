@@ -12,8 +12,10 @@ import com.davidecavestro.common.gui.persistence.UIPersister;
 import com.davidecavestro.common.help.HelpManager;
 import com.davidecavestro.common.help.HelpResourcesResolver;
 import com.davidecavestro.common.log.CompositeLogger;
+import com.davidecavestro.common.log.ConsoleLogger;
 import com.davidecavestro.common.log.Logger;
 import com.davidecavestro.common.log.LoggerAdapter;
+import com.davidecavestro.common.log.PlainTextLogger;
 import com.davidecavestro.common.util.*;
 import com.davidecavestro.rbe.conf.ApplicationEnvironment;
 import com.davidecavestro.rbe.conf.CommandLineApplicationEnvironment;
@@ -27,11 +29,15 @@ import com.davidecavestro.rbe.model.DefaultResourceBundleModel;
 import com.davidecavestro.rbe.model.LocalizationProperties;
 import com.davidecavestro.rbe.model.ResourceBundleModel;
 import com.davidecavestro.rbe.model.undo.RBUndoManager;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.Properties;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.StyledDocument;
 
 /**
  * Il gestore centrale dell'intera applicazione.
@@ -39,7 +45,7 @@ import java.util.Properties;
  * @author  davide
  */
 public class Application {
-	private final Logger _logger;
+	private CompositeLogger _logger;
 	private final ApplicationEnvironment _env;
 	private final ApplicationContext _context;
 	
@@ -103,10 +109,28 @@ public class Application {
 		}
 		
 		
+		try {
+			final StringBuffer sb = new StringBuffer ();
+			sb.append (applicationOptions.getLogDirPath () ).append ("/")
+			.append (CalendarUtils.getTS (Calendar.getInstance ().getTime (), CalendarUtils.FILENAME_TIMESTAMP_FORMAT))
+			.append (".log");
+			
+			final File plainTextLogFile = new File (sb.toString ());
+			
+//			logDocument.setParser (new javax.swing.text.html.parser.ParserDelegator ());
+			
+			_logger = new CompositeLogger (new PlainTextLogger (plainTextLogFile, true, 10), null);
+			
+		} catch (IOException ioe){
+			System.out.println ("Logging disabled. CAUSE: "+ExceptionUtils.getStackTrace (ioe));
+			this._logger = new CompositeLogger (new LoggerAdapter (), null);
+		}
+		
 		this._context = new ApplicationContext (
 			_env,
 			new WindowManager (),
 			new UIPersister (new UserUIStorage (userSettings)),
+			_logger,
 			userSettings,
 			applicationData,
 			model,
@@ -114,9 +138,9 @@ public class Application {
 			new ActionManager (),
 			new HelpManager (new HelpResourcesResolver (p), "help/MainUrbeHelp.hs")
 			);
+		
 		model.addUndoableEditListener(undoManager);
 		
-		this._logger = new CompositeLogger (new LoggerAdapter (), new LoggerAdapter ());
 	}
 	
 	
@@ -124,11 +148,17 @@ public class Application {
 	 * Fa partire l'applicazione.
 	 */
 	public void start (){
+		_context.getLogger().info ("starting UI");
 		final WindowManager wm = this._context.getWindowManager ();
 		wm.getSplashWindow (this._context.getApplicationData ()).show ();
 		try {
 			wm.getSplashWindow (this._context.getApplicationData ()).showInfo ("Initializing context...");
 			wm.init (this._context);
+			final ConsoleLogger cl = new ConsoleLogger (new DefaultStyledDocument(), true);
+
+			_context.getWindowManager ().getLogConsole ().init (cl.getDocument ());
+
+			this._logger.setSuccessor (cl);
 	//		{
 	//			wm.getMainWindow ().addWindowListener (
 	//			new java.awt.event.WindowAdapter () {
@@ -150,6 +180,7 @@ public class Application {
 			wm.getSplashWindow (this._context.getApplicationData ()).hide ();
 		}
 		wm.getMainWindow ().show ();
+		_context.getLogger().info ("UI successfully started");
 	}
 	
 	public Logger getLogger (){

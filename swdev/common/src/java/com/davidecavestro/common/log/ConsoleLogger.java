@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -134,7 +135,7 @@ public class ConsoleLogger implements Logger{
 	
 	/**
 	 * Registra nel file di log il messaggio, con il tipo e l'evento specificati. L'evento 
-	 * è opzionale.
+	 * ï¿½ opzionale.
 	 *
 	 * @param type il tipo di registrazione.
 	 * @param message il messaggio da registrare.
@@ -220,6 +221,7 @@ public class ConsoleLogger implements Logger{
 	private void createStyles () {
 		// no attributes defined
 		Style s = styles.addStyle (null, null);
+		StyleConstants.setForeground (s, Color.WHITE);
 		runAttr.put ("none", s);
 		s = styles.addStyle (null, null);
 		StyleConstants.setBold (s, true);
@@ -228,7 +230,9 @@ public class ConsoleLogger implements Logger{
 		
 		s = styles.addStyle (null, null);
 		StyleConstants.setFontFamily (s, "Monospaced");
-		StyleConstants.setForeground (s, new Color (51,102,153));
+		StyleConstants.setBold (s, true);
+//		StyleConstants.setForeground (s, new Color (51,102,153));
+		StyleConstants.setForeground (s, Color.WHITE);
 		runAttr.put ("timestamp", s); 
 		
 		Style def = styles.getStyle (StyleContext.DEFAULT_STYLE);
@@ -308,5 +312,8 @@ public class ConsoleLogger implements Logger{
 		String content;
 	}
 	
+	public Document getDocument (){
+		return this._document;
+	}
   
 }

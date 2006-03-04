@@ -131,6 +131,20 @@ public class WindowManager implements ActionListener, DialogListener {
 		return this._findDialog;
 	}
 	
+	private LogConsole _logConsole;	
+	/**
+	 * Ritorna la console dilog.
+	 * @return la console dilog.
+	 */
+	public LogConsole getLogConsole (){
+		if (this._logConsole==null){
+			this._logConsole = new LogConsole (getMainWindow (), false, _context);
+//			this._context.getUIPersisteer ().register (this._addLocaleDialog);
+//			this._addLocaleDialog.addDialogListener (this);
+		}
+		return this._logConsole;
+	}
+	
 	public void dialogChanged (com.davidecavestro.common.gui.dialog.DialogEvent e) {
 		if (e.getSource ()==this._addLocaleDialog){
 			if (e.getType ()==JOptionPane.OK_OPTION){

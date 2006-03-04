@@ -7,7 +7,7 @@
 package com.davidecavestro.common.log;
 
 /**
- * Logger composto. Implementa una catena di responsabilità, permettendo 
+ * Logger composto. Implementa una catena di responsabilitï¿½, permettendo 
  * l'utilizo in sequenza di diversi tipi di logger.
  *
  * @author  davide
@@ -32,6 +32,15 @@ public final class CompositeLogger implements Logger{
 	public CompositeLogger (final Logger actualLogger, final Logger successor) {
 		this._actualLogger = actualLogger;
 		this._successor = successor;
+	}
+	
+	/**
+	 * Imposta il logger successivo.
+	 * 
+	 * @param successor  il logger successivo.
+	 */
+	public void setSuccessor (final Logger successor) {
+	    this._successor = successor;
 	}
 	
 	/**

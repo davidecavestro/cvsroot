@@ -175,7 +175,7 @@
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="recentMenu">
               <Properties>
-                <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/transparent.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -205,8 +205,8 @@
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="final SaveAction saveAction = new SaveAction ();"/>
-                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="_context.getModel ().addPropertyChangeListener (saveAction);"/>
+                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
               </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveAsMenuItem">
@@ -235,7 +235,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="2" name="/usr/local/share/devel/swdev/resourcebundleeditor/src/java/com/davidecavestro/rbe/gui/images/transparent.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -272,7 +272,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/transparent.png"/>
                 </Property>
               </Properties>
@@ -288,7 +288,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/transparent.png"/>
                 </Property>
               </Properties>
@@ -303,7 +303,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/editcut.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -326,7 +326,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/editcopy.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -349,7 +349,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/editpaste.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -372,7 +372,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/editdelete.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -397,7 +397,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/transparent.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -407,6 +407,34 @@
               <AuxValues>
                 <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
               </AuxValues>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="toolsMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="com/davidecavestro/rbe/gui/res.properties" key="&amp;Tools" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameDots}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Dialog" size="12" style="0"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="logConsoleMenuItem">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Dialog" size="12" style="0"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="com/davidecavestro/rbe/gui/res.properties" key="Log_console" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="logConsoleMenuItemActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -428,7 +456,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/contents.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Contents"/>
@@ -445,7 +473,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/contexthelp.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Item"/>
@@ -461,7 +489,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/info.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="About"/>
@@ -486,6 +514,10 @@
     <EventHandler event="windowDeactivated" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowDeactivated"/>
   </Events>
   <AuxValues>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
     <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,43,0,0,2,19"/>
   </AuxValues>
 
@@ -753,8 +785,8 @@
                                 <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="valuesTableMousePressed"/>
                               </Events>
                               <AuxValues>
-                                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="&#xa;valuesTable.setDefaultRenderer (Object.class, new SearchRenderer (this._matcher, new DefaultTableCellRenderer () {&#xa;&#x9;public Component getTableCellRendererComponent(JTable table, Object value,&#xa;&#x9;&#x9;boolean isSelected, boolean hasFocus, int row, int column) {&#xa;&#xa;&#x9;&#x9;final JLabel label = (JLabel)super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);&#xa;&#x9;&#x9;final int modelColumn = valuesTable.convertColumnIndexToModel (column);&#xa;&#x9;&#x9;if (0 == modelColumn) {&#xa;&#x9;&#x9;&#x9;// colonna chiavi &#xa;&#x9;&#x9;&#x9;label.setFont (label.getFont ().deriveFont (Font.BOLD));&#xa;&#x9;&#x9;&#x9;label.setBackground (keyBackgroundColor);&#xa;&#x9;&#x9;&#x9;label.setForeground (keyForegroundColor);&#xa;&#x9;&#x9;} else {&#xa;&#x9;&#x9;&#x9;label.setFont (label.getFont ().deriveFont (Font.PLAIN));&#xa;&#x9;&#x9;&#x9;if (null==value) {&#xa;&#x9;&#x9;&#x9;&#x9;label.setBackground (inactiveCaptionColor);&#xa;&#x9;&#x9;&#x9;} else {&#xa;&#x9;&#x9;&#x9;&#x9;label.setBackground (tableBackgroundColor);&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;label.setForeground (valueForegroundColor);&#xa;&#x9;&#x9;}&#xa;&#x9;&#x9;return label;&#xa;&#x9;}&#xa;&#x9;&#xa;}));&#xa;&#xa;&#xa;valuesTable.setDefaultEditor (String.class, new ValueCellEditor ());&#xa;&#xa;/*&#xa; * editor (shortcut per cancellazione&#xa; */&#xa;valuesTable.addKeyListener (new KeyAdapter (){&#xa;&#x9; public void keyPressed(KeyEvent e) {&#xa;&#x9;&#x9; if (e.isControlDown ()){&#xa;&#x9;&#x9;&#x9; if (e.getKeyCode ()==KeyEvent.VK_DELETE){&#xa;&#x9;&#x9;&#x9;&#x9; int rowIdx = valuesTable.getSelectedRow ();&#xa;&#x9;&#x9;&#x9;&#x9; int colIdx = valuesTable.getSelectedColumn ();&#xa;&#x9;&#x9;&#x9;&#x9; if (colIdx&gt;0 &amp;&amp; rowIdx&gt;=0){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9; //barbatrucco per evitare editazione spuria&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;//valuesTable.editCellAt(rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;valuesTable.setValueAt (null, rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;e.consume ();&#xa;&#x9;&#x9;&#x9;&#x9; }&#xa;&#x9;&#x9;&#x9; } else if (e.getKeyCode ()==KeyEvent.VK_SPACE){&#xa;&#x9;&#x9;&#x9;&#x9; int rowIdx = valuesTable.getSelectedRow ();&#xa;&#x9;&#x9;&#x9;&#x9; int colIdx = valuesTable.getSelectedColumn ();&#xa;&#x9;&#x9;&#x9;&#x9; if (colIdx&gt;0 &amp;&amp; rowIdx&gt;=0){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9; //barbatrucco per evitare editazione spuria&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;//valuesTable.editCellAt(rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;valuesTable.setValueAt (&quot;&quot;, rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;e.consume ();&#xa;&#x9;&#x9;&#x9;&#x9; }&#xa;&#x9;&#x9;&#x9; }&#xa;&#x9;&#x9; }&#xa;&#x9; }&#xa;});&#xa;&#xa;javax.help.CSH.setHelpIDString (valuesTable, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.VALUES_TABLE ));"/>
                                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JXTable (this._localizationTableModel);"/>
+                                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="&#xa;valuesTable.setDefaultRenderer (Object.class, new SearchRenderer (this._matcher, new DefaultTableCellRenderer () {&#xa;&#x9;public Component getTableCellRendererComponent(JTable table, Object value,&#xa;&#x9;&#x9;boolean isSelected, boolean hasFocus, int row, int column) {&#xa;&#xa;&#x9;&#x9;final JLabel label = (JLabel)super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);&#xa;&#x9;&#x9;final int modelColumn = valuesTable.convertColumnIndexToModel (column);&#xa;&#x9;&#x9;if (0 == modelColumn) {&#xa;&#x9;&#x9;&#x9;// colonna chiavi &#xa;&#x9;&#x9;&#x9;label.setFont (label.getFont ().deriveFont (Font.BOLD));&#xa;&#x9;&#x9;&#x9;label.setBackground (keyBackgroundColor);&#xa;&#x9;&#x9;&#x9;label.setForeground (keyForegroundColor);&#xa;&#x9;&#x9;} else {&#xa;&#x9;&#x9;&#x9;label.setFont (label.getFont ().deriveFont (Font.PLAIN));&#xa;&#x9;&#x9;&#x9;if (null==value) {&#xa;&#x9;&#x9;&#x9;&#x9;label.setBackground (inactiveCaptionColor);&#xa;&#x9;&#x9;&#x9;} else {&#xa;&#x9;&#x9;&#x9;&#x9;label.setBackground (tableBackgroundColor);&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;label.setForeground (valueForegroundColor);&#xa;&#x9;&#x9;}&#xa;&#x9;&#x9;return label;&#xa;&#x9;}&#xa;&#x9;&#xa;}));&#xa;&#xa;&#xa;valuesTable.setDefaultEditor (String.class, new ValueCellEditor ());&#xa;&#xa;/*&#xa; * editor (shortcut per cancellazione&#xa; */&#xa;valuesTable.addKeyListener (new KeyAdapter (){&#xa;&#x9; public void keyPressed(KeyEvent e) {&#xa;&#x9;&#x9; if (e.isControlDown ()){&#xa;&#x9;&#x9;&#x9; if (e.getKeyCode ()==KeyEvent.VK_DELETE){&#xa;&#x9;&#x9;&#x9;&#x9; int rowIdx = valuesTable.getSelectedRow ();&#xa;&#x9;&#x9;&#x9;&#x9; int colIdx = valuesTable.getSelectedColumn ();&#xa;&#x9;&#x9;&#x9;&#x9; if (colIdx&gt;0 &amp;&amp; rowIdx&gt;=0){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9; //barbatrucco per evitare editazione spuria&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;//valuesTable.editCellAt(rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;valuesTable.setValueAt (null, rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;e.consume ();&#xa;&#x9;&#x9;&#x9;&#x9; }&#xa;&#x9;&#x9;&#x9; } else if (e.getKeyCode ()==KeyEvent.VK_SPACE){&#xa;&#x9;&#x9;&#x9;&#x9; int rowIdx = valuesTable.getSelectedRow ();&#xa;&#x9;&#x9;&#x9;&#x9; int colIdx = valuesTable.getSelectedColumn ();&#xa;&#x9;&#x9;&#x9;&#x9; if (colIdx&gt;0 &amp;&amp; rowIdx&gt;=0){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9; //barbatrucco per evitare editazione spuria&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;//valuesTable.editCellAt(rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;valuesTable.setValueAt (&quot;&quot;, rowIdx, colIdx);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;e.consume ();&#xa;&#x9;&#x9;&#x9;&#x9; }&#xa;&#x9;&#x9;&#x9; }&#xa;&#x9;&#x9; }&#xa;&#x9; }&#xa;});&#xa;&#xa;javax.help.CSH.setHelpIDString (valuesTable, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.VALUES_TABLE ));"/>
                               </AuxValues>
                             </Component>
                           </SubComponents>
@@ -866,8 +898,8 @@
                                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteEntryButtonActionPerformed"/>
                               </Events>
                               <AuxValues>
-                                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="valuesTable.getSelectionModel ().addListSelectionListener (new ListSelectionListener (){&#xa;&#x9;&#x9;public void valueChanged(ListSelectionEvent e){&#xa;&#x9;&#x9;&#x9;if (e.getValueIsAdjusting ()){&#xa;&#x9;&#x9;&#x9;&#x9;return;&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;deleteEntryButton.setEnabled (valuesTable.getSelectedRowCount ()&gt;0);&#xa;&#x9;&#x9;}&#xa;&#x9;});"/>
+                                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                               </AuxValues>
                               <Constraints>
                                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1008,14 +1040,8 @@
             <Container class="javax.swing.JToolBar" name="mainToolbar">
               <Properties>
                 <Property name="rollover" type="boolean" value="true"/>
-                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="null"/>
-                </Property>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[18, 28]"/>
-                </Property>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="null"/>
                 </Property>
               </Properties>
               <AuxValues>
@@ -1034,7 +1060,7 @@
                     <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="new NewBundleAction ()" type="code"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/filenew.png"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -1047,10 +1073,10 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[22, 22]"/>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[30, 30]"/>
                     </Property>
-                    <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <AuxValues>
                     <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
@@ -1061,7 +1087,7 @@
                     <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="new OpenAction ()" type="code"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/fileopen.png"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -1077,10 +1103,10 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[22, 22]"/>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[30, 30]"/>
                     </Property>
-                    <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <AuxValues>
                     <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
@@ -1091,7 +1117,7 @@
                     <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="saveAction" type="code"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/filesave.png"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -1107,10 +1133,10 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[22, 22]"/>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[30, 30]"/>
                     </Property>
-                    <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <AuxValues>
                     <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
@@ -1121,7 +1147,7 @@
                     <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="new SaveAsAction ()" type="code"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/filesaveas.png"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -1137,10 +1163,10 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[22, 22]"/>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[30, 30]"/>
                     </Property>
-                    <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <AuxValues>
                     <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
@@ -1151,12 +1177,6 @@
             <Container class="javax.swing.JToolBar" name="mainToolbar1">
               <Properties>
                 <Property name="rollover" type="boolean" value="true"/>
-                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="null"/>
-                </Property>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="null"/>
-                </Property>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="javax.help.CSH.setHelpIDString (mainToolbar1, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));&#xa;"/>
@@ -1174,7 +1194,7 @@
                     <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="getActionByName(DefaultEditorKit.cutAction)" type="code"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/editcut.png"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -1187,14 +1207,14 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[22, 22]"/>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[30, 30]"/>
                     </Property>
-                    <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                     <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jButton6.setText (null);"/>
+                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JButton" name="jButton7">
@@ -1202,7 +1222,7 @@
                     <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="getActionByName(DefaultEditorKit.copyAction)" type="code"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/editcopy.png"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -1215,14 +1235,14 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[22, 22]"/>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[30, 30]"/>
                     </Property>
-                    <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                     <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jButton7.setText (null);"/>
+                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JButton" name="jButton8">
@@ -1230,7 +1250,7 @@
                     <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="getActionByName(DefaultEditorKit.pasteAction)" type="code"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/editpaste.png"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -1243,14 +1263,14 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[22, 22]"/>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[30, 30]"/>
                     </Property>
-                    <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                     <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jButton8.setText (null);"/>
+                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JButton" name="jButton9">
@@ -1258,7 +1278,7 @@
                     <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="getActionByName(DefaultEditorKit.deleteNextCharAction)" type="code"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/editdelete.png"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -1271,14 +1291,14 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[22, 22]"/>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[30, 30]"/>
                     </Property>
-                    <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                     <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jButton9.setText (null);"/>
+                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JButton" name="undoButton">
@@ -1286,7 +1306,7 @@
                     <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="_context.getUndoManager ().getUndoAction()" type="code"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/undo.png"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -1302,14 +1322,14 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[22, 22]"/>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[30, 30]"/>
                     </Property>
-                    <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                     <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="/* mantiene nascosto il testo  dell&apos;action */&#xa;undoButton.setText (null);&#xa;undoButton.putClientProperty (&quot;hideActionText&quot;, Boolean.TRUE);"/>
+                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JButton" name="redoButton">
@@ -1317,7 +1337,7 @@
                     <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="_context.getUndoManager ().getRedoAction()" type="code"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/redo.png"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -1333,14 +1353,14 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[22, 22]"/>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[30, 30]"/>
                     </Property>
-                    <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                     <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="/* mantiene nascosto il testo  dell&apos;action */&#xa;redoButton.setText (null);&#xa;redoButton.putClientProperty (&quot;hideActionText&quot;, Boolean.TRUE);"/>
+                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                   </AuxValues>
                 </Component>
               </SubComponents>
@@ -1362,16 +1382,16 @@
               <SubComponents>
                 <Component class="javax.swing.JButton" name="helpButton">
                   <Properties>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/com/davidecavestro/rbe/gui/images/contents.png"/>
                     </Property>
                     <Property name="borderPainted" type="boolean" value="false"/>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                     <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="/* mantiene nascosto il testo  dell&apos;action */&#xa;redoButton.setText (null);&#xa;redoButton.putClientProperty (&quot;hideActionText&quot;, Boolean.TRUE);"/>
                     <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="_context.getHelpManager ().initialize (helpButton);"/>
+                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
                   </AuxValues>
                 </Component>
               </SubComponents>
