@@ -46,10 +46,30 @@ import javax.swing.undo.UndoableEdit;
  */
 public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	
+	/**
+	 * Mappa Locale->Properties
+	 */
 	private final Map _resourceMap = new HashMap ();
+	
+	/*
+	 * I campi di cache sono previsti a scopo di incremento delle performance.
+	 * Essi devono essere mantenuti allineati ad ogni modifica.
+	 */
+	/**
+	 * Cache: array di Locale
+	 */
 	private Locale[] _locales;
+	/**
+	 * Cache: array di Properties
+	 */
 	private LocalizationProperties[] _resources;
+	/**
+	 * Cache: set di chiavi (unione delle chiavi per tutti i locale)
+	 */
 	private final Set _keys = new HashSet ();
+	/**
+	 * Cache: Set di Locale
+	 */
 	private final Set _localesSet = new HashSet ();
 	
 	private String _name;
