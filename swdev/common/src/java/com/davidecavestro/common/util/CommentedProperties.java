@@ -346,8 +346,12 @@ public class CommentedProperties extends Hashtable {
 						nextComment.setLength (0);
 					}
                 } else {
-					nextComment.setLength (0);
-					nextComment.append (line.substring (1));
+//					nextComment.setLength (0);
+					if (nextComment.length ()>0) {
+						nextComment.append ("\n");
+//						nextComment.append ("#");
+					}
+					nextComment.append (loadConvert (line.substring (1)));
 				}
             }
 	}
@@ -548,10 +552,12 @@ public class CommentedProperties extends Hashtable {
 		final Set servedKeys = new HashSet ();
 		for (final Iterator it = initialOrder.iterator ();it.hasNext ();){
 			String key = (String)it.next ();
-			servedKeys.add (key);
-			
-            String val = (String)get(key);
-			storeEntry (awriter, key, val);
+			if (keySet ().contains (key)) {
+				servedKeys.add (key);
+
+				String val = (String)get(key);
+				storeEntry (awriter, key, val);
+			}
 		}
 		for (Enumeration e = keys(); e.hasMoreElements();) {
             String key = (String)e.nextElement();
@@ -564,15 +570,20 @@ public class CommentedProperties extends Hashtable {
     }
 	
 	private void storeEntry (BufferedWriter awriter, String key, String val) throws IOException{
+		writeln(awriter, "");
+		String comment = (String)commentsMap.get (key);
 		key = saveConvert(key, true);
 
 	/* No need to escape embedded and trailing spaces for value, hence
 	 * pass false to flag.
 	 */
 		val = saveConvert(val, false);
-		String comment = (String)commentsMap.get (key);
-		if (comment!=null){
-			writeln (awriter, "#"+saveConvert(comment, false));
+		if (comment!=null && comment.length ()>0){
+			final String[] commentRows = StringUtils.toStringArray (comment.replace ("\n", "\\n"));
+			for (int i=0;i<commentRows.length ;i++){
+				final String commentRow = saveConvert (commentRows[i], false);
+				writeln (awriter, "#"+ commentRow);
+			}
 		}
 		writeln(awriter, key + "=" + val);
 	}
@@ -710,6 +721,7 @@ public class CommentedProperties extends Hashtable {
 	
 	
 	private final Map commentsMap = new HashMap ();
+	private final Map voidRowsMap = new HashMap ();
 	
 	public synchronized Object setProperty (String key, String value, String comment) {
 		Object o =  put (key, value);
