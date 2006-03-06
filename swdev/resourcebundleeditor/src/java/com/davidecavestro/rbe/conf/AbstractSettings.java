@@ -17,7 +17,7 @@ import java.util.*;
 
 /**
  * Implementazione di base delle impostazioni applicative.
- * Il retrieving delle impostazioni avvviene tramite una catena di responsabilità.
+ * Il retrieving delle impostazioni avvviene tramite una catena di responsabilitï¿½.
  *
  * @author  davide
  */
@@ -60,6 +60,7 @@ public abstract class AbstractSettings implements CustomizableSettings {
 			} catch (Exception e){
 				/* evita eccezioni dovute a dipendenze inizializzazione*/
 				System.out.println (ExceptionUtils.getStackTrace (e));
+				System.out.println ("Above error IS NOT a bad thing if you are running this application for the first time.");
 			}
 		} catch (IOException ioe) {
 			throw new NestedRuntimeException (ioe);

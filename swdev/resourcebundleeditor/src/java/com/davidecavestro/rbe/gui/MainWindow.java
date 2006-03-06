@@ -550,6 +550,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setIconImage(new javax.swing.ImageIcon (MainWindow.class.getResource ("/com/davidecavestro/rbe/gui/images/locale-20x20.png")).getImage ());
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowDeactivated(java.awt.event.WindowEvent evt) {
                 formWindowDeactivated(evt);
@@ -1170,7 +1171,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         org.openide.awt.Mnemonics.setLocalizedText(toolsMenu, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Tools"));
         toolsMenu.setFont(new java.awt.Font("Dialog", 0, 12));
         logConsoleMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-        logConsoleMenuItem.setText(java.util.ResourceBundle.getBundle("com/davidecavestro/rbe/gui/res").getString("Log_console"));
+        org.openide.awt.Mnemonics.setLocalizedText(logConsoleMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Log_console"));
         logConsoleMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 logConsoleMenuItemActionPerformed(evt);
@@ -1218,7 +1219,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         setJMenuBar(menuBar);
 
-        pack();
+        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        setBounds((screenSize.width-800)/2, (screenSize.height-600)/2, 800, 600);
     }// </editor-fold>//GEN-END:initComponents
 
     private void logConsoleMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logConsoleMenuItemActionPerformed
