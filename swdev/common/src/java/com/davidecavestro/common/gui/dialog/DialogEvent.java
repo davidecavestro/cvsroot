@@ -10,10 +10,10 @@ import java.awt.Dialog;
 import java.util.Locale;
 
 /**
- * DialogEvent è usato per notificare i listener di una dialog.
+ * DialogEvent e' usato per notificare i listener di una dialog.
  * Il tipo puo' assumere i valori di ritorno di JOptionPane quali, ad esempio, JOptionPane.OK_OPTION, JOptionPane.CANCEL_OPTION.
  *
- * L'evento puòavere un valore associato, al quale e' possibile accedere tramite il metodo #getValue .
+ * L'evento puo'avere un valore associato, al quale e' possibile accedere tramite il metodo #getValue .
  * @author  davide
  */
 public class DialogEvent extends java.util.EventObject {

@@ -10,7 +10,7 @@ import javax.swing.UIManager;
 
 /**
  * Opzioni di configurazione dell'applicazione. E' possibile implementare una catena
- * di responsabilit�, innestando diversi oggetti di questo tipo.
+ * di responsabilita'', innestando diversi oggetti di questo tipo.
  *
  * @author  davide
  */
@@ -22,7 +22,7 @@ public final class ApplicationOptions {
 	private ApplicationSettings _settings;
 	
 	/**
-	 * L'anello successore nella catena di responsabilit�.
+	 * L'anello successore nella catena di responsabilita''.
 	 */
 	private ApplicationOptions _successor;
 	
@@ -31,7 +31,7 @@ public final class ApplicationOptions {
 	 * Costruttore privato, evita istanzazione dall'esterno.
 	 *
 	 * @param settings le impostazioni.
-	 * @param successor l'anello successore nella catena di responsabilit�.
+	 * @param successor l'anello successore nella catena di responsabilita''.
 	 */
 	public ApplicationOptions (ApplicationSettings settings, ApplicationOptions successor) {
 		this._settings = settings;
@@ -83,7 +83,7 @@ public final class ApplicationOptions {
 			} else {
 				/*
 				 * Informazione non disponibile.
-				 * Funzionalit� disabilitata.
+				 * Funzionalit� disabilita'ta.
 				 */
 				return 8192;
 			}

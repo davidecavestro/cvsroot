@@ -9,6 +9,9 @@ package com.davidecavestro.rbe.gui;
 import com.davidecavestro.rbe.ApplicationContext;
 import com.davidecavestro.rbe.conf.ApplicationOptions;
 import com.davidecavestro.rbe.conf.UserSettings;
+import java.awt.event.ActionEvent;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 
 /**
  * Dialog di impostazione delle opzioni.
@@ -28,6 +31,16 @@ public class OptionsDialog extends javax.swing.JDialog {
 		initComponents ();
 		
 		init (context.getApplicationOptions ());
+		
+		cancelButton.getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put (KeyStroke.getKeyStroke ("ESCAPE"), "cancel");
+		cancelButton.getActionMap().put("cancel", new javax.swing.AbstractAction ("cancel"){
+			public void actionPerformed (ActionEvent ae){
+				cancel ();
+			}
+		});
+		
+		this.getRootPane ().setDefaultButton (okButton);
+		
 	}
 	
 	/** This method is called from within the constructor to
@@ -111,7 +124,7 @@ public class OptionsDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_okButtonActionPerformed
 
 	private void cancelButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-		hide ();
+		cancel ();
 	}//GEN-LAST:event_cancelButtonActionPerformed
 	
 	
@@ -135,5 +148,9 @@ public class OptionsDialog extends javax.swing.JDialog {
 	private void init (ApplicationOptions ao) {
 		createBackupFilesCheckBox.getModel ().setSelected (ao.isBackupOnSaveEnabled ());
 		enableKeyEditingCheckBox.getModel ().setSelected (ao.isKeyEditingEnabled ());
+	}
+	
+	private void cancel (){
+		hide ();
 	}
 }

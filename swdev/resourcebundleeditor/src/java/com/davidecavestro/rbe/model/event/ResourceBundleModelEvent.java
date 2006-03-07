@@ -10,8 +10,8 @@ import com.davidecavestro.rbe.model.ResourceBundleModel;
 import java.util.Locale;
 
 /**
- * ResourceBundleModelEvent è usato per notificare i listener che un modello di 
- * ResourceBundle è cambiato.
+ * ResourceBundleModelEvent  e'  usato per notificare i listener che un modello di 
+ * ResourceBundle  e'  cambiato.
  *
  * @author  davide
  */

@@ -9,7 +9,7 @@ package com.davidecavestro.common.util;
 import java.io.*;
 
 /**
- * Utilità per la gestione dei file.
+ * Utilita' per la gestione dei file.
  *
  * @author  davide
  */
@@ -76,7 +76,7 @@ public class FileUtils {
 	public static void makeFilePath (File file){
 		if (file.exists ()){
 			/*
-			 * File già esistente.
+			 * File gia' esistente.
 			 */
 			return;
 		} else {

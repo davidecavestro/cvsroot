@@ -135,7 +135,7 @@ public class ConsoleLogger implements Logger{
 	
 	/**
 	 * Registra nel file di log il messaggio, con il tipo e l'evento specificati. L'evento 
-	 * � opzionale.
+	 * e' opzionale.
 	 *
 	 * @param type il tipo di registrazione.
 	 * @param message il messaggio da registrare.

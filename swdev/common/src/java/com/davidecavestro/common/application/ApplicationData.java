@@ -31,7 +31,7 @@ public final class ApplicationData {
 	public final static String PROPNAME_EXTERNALAPPLICATIONNAME = "external.name";
 
 	/**
-	 * Nome della proprieta' contenente il numero di versione pi� significativo.
+	 * Nome della proprieta' contenente il numero di versione piu' significativo.
 	 */
 	public final static String PROPNAME_MAJORVERSIONNUMBER = "major.version.number";
 
@@ -66,7 +66,7 @@ public final class ApplicationData {
 //	private static ApplicationData _instance;
 	
 	/**
-	 * Propriet� di configurazione di questo descrittore.
+	 * Proprieta' di configurazione di questo descrittore.
 	 */
 	private final Properties _releaseProperties;
 	
@@ -84,7 +84,7 @@ public final class ApplicationData {
 //	}
 	
 	/**
-	 * Ritorna il nome interno dell'applicazione. Questo nome � inteso ad uso 
+	 * Ritorna il nome interno dell'applicazione. Questo nome e' inteso ad uso 
 	 * dei processi di identificazione e configurazione dell'applicazione.
 	 *
 	 * @return il nome interno dell'applicazione.
@@ -94,7 +94,7 @@ public final class ApplicationData {
 	}
 	
 	/**
-	 * Ritorna il nome esterno dell'applicazione. Questo nome � inteso ad uso 
+	 * Ritorna il nome esterno dell'applicazione. Questo nome e' inteso ad uso 
 	 * dei processi di presentazione dell'applicazione.
 	 *
 	 * @return il nome esterno dell'applicazione.

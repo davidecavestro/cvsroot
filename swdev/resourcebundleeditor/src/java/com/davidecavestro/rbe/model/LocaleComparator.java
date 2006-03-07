@@ -10,7 +10,7 @@ import java.util.Comparator;
 import java.util.Locale;
 
 /**
- * Compara due Locale. Il locale di Default (<TT>LocalizationProperties.DEFAULT</TT>) è il minore.
+ * Compara due Locale. Il locale di Default (<TT>LocalizationProperties.DEFAULT</TT>)  e'  il minore.
  *
  * @author  davide
  */

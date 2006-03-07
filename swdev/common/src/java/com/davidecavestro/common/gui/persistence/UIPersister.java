@@ -34,7 +34,7 @@ public class UIPersister {
 	 * Registra il componente specificato per la persistenza e lo inizializza.
 	 *
 	 * @param component il componente.
-	 * @return <TT>true</TT> se il <TT>component</TT> è stato inizializzato con i dati persistenti.
+	 * @return <TT>true</TT> se il <TT>component</TT> e' stato inizializzato con i dati persistenti.
 	 */	
 	public boolean register (final PersistentComponent component) {
 		return this.register (component, true);
@@ -44,7 +44,7 @@ public class UIPersister {
 	 *
 	 * @param component il componente.
 	 * @param init <TT>true</TT> per inizializzare il componente con i dati precedentemente salvati.
-	 * @return <TT>true</TT> se il <TT>component</TT> è stato inizializzato con i dati persistenti.
+	 * @return <TT>true</TT> se il <TT>component</TT> e' stato inizializzato con i dati persistenti.
 	 */	
 	public boolean register (final PersistentComponent component, final boolean init) {
 		if (!this._register.contains (component)){

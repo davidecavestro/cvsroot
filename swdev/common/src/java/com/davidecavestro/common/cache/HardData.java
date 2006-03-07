@@ -7,7 +7,7 @@
 package com.davidecavestro.common.cache;
 
 /**
- * Componente dei dati in cache. Questa componente non offre la possibilità di riduzione automatica
+ * Componente dei dati in cache. Questa componente non offre la possibilita' di riduzione automatica
  * della memoria allocata. Naturalmente le sue prestazioni non soffrono del degrado dovuto 
  * all'introduzione dei references.
  * Inoltre i dati non possono essere invalidati.

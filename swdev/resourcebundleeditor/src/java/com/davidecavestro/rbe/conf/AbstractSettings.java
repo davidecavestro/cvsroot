@@ -17,7 +17,7 @@ import java.util.*;
 
 /**
  * Implementazione di base delle impostazioni applicative.
- * Il retrieving delle impostazioni avvviene tramite una catena di responsabilit�.
+ * Il retrieving delle impostazioni avvviene tramite una catena di responsabilita'.
  *
  * @author  davide
  */

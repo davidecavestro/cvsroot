@@ -7,7 +7,7 @@
 package com.davidecavestro.common.util;
 
 /**
- * Utilità per la manipolazione di valori booleani.
+ * Utilita' per la manipolazione di valori booleani.
  *
  * @author  davide
  */

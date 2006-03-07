@@ -7,7 +7,7 @@
 package com.davidecavestro.common.util;
 
 /**
- * Condizione di errore derivata. Può essere usata per incapsulare una eccezione
+ * Condizione di errore derivata. Puo' essere usata per incapsulare una eccezione
  * normale in modo da non doverla dichiarare come sollevabile, ovvero trattarla 
  * come non prevedibile.
  *

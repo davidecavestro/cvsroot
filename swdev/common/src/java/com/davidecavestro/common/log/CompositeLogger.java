@@ -7,7 +7,7 @@
 package com.davidecavestro.common.log;
 
 /**
- * Logger composto. Implementa una catena di responsabilit�, permettendo 
+ * Logger composto. Implementa una catena di responsabilita', permettendo 
  * l'utilizo in sequenza di diversi tipi di logger.
  *
  * @author  davide

@@ -13,12 +13,12 @@ package com.davidecavestro.common.cache;
  */
 public interface Data {
 	/**
-	 * Ritorna <TT>true</TT> se questa entry è ancora valida.
+	 * Ritorna <TT>true</TT> se questa entry e' ancora valida.
 	 * Un'entry potrebbe essere invalidata da processi di riduzione della 
 	 * memoria allocata, qualora la politica di gestione dell'applicazione
 	 * lo consenta.
 	 *
-	 * @return <TT>true</TT> se questa entry è ancora valida.
+	 * @return <TT>true</TT> se questa entry e' ancora valida.
 	 */	
 	public boolean isValid ();
 	/**

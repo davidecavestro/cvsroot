@@ -34,12 +34,12 @@ public interface ResourceNames {
 	public final static String SYSTEM_SETTINGSFILE_NAME = "systemprefs.properties";
 	
 	/**
-	 * Nome proprietà di sistema contenente il percorso della home directory utente.
+	 * Nome proprieta' di sistema contenente il percorso della home directory utente.
 	 */
 	public final static String USER_HOMEDIR_PATH = "user.home";
 	
 	/**
-	 * Nome proprietà di sistema contenente il percorso della directory di lavoro dell'utente utente.
+	 * Nome proprieta' di sistema contenente il percorso della directory di lavoro dell'utente utente.
 	 */
 	public final static String USER_WORKINGDIR_PATH = "user.dir";
 	

@@ -10,11 +10,11 @@ import java.lang.ref.*;
 
 /**
  * Componente dei dati in cache.
- * Questa componente offre la possibilità di riduzione automatica della memoria allocata.
+ * Questa componente offre la possibilita' di riduzione automatica della memoria allocata.
  * Questo avviene tramite l'utiizzo dei weak references, al prezzo di una riduzione delle prestazioni.
  * I dati possono quindi venire invalidati.
- * L'azione di deallocazione dei dati è demandata interamente alla JVM, fermo restando
- * la possibilità di accedere in modo sicuro alla componente, che diverrà non più valida.
+ * L'azione di deallocazione dei dati e' demandata interamente alla JVM, fermo restando
+ * la possibilita' di accedere in modo sicuro alla componente, che diverra' non piu' valida.
  *
  * @see HardData
  * @author  davide

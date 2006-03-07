@@ -90,7 +90,7 @@ public abstract class AbstractResourceBundleModel implements ResourceBundleModel
     }
 	
     /**
-     * Notifica tutti i listener che la struttura del ResourceBundle è cambiata.
+     * Notifica tutti i listener che la struttura del ResourceBundle  e'  cambiata.
 	 * Puo' essereusato per notificare l'inserimento o la rimozione di Locale.
      *
      * @see ResourceBundleModelEvent
@@ -117,7 +117,7 @@ public abstract class AbstractResourceBundleModel implements ResourceBundleModel
 	
 	
     /**
-	 * Notifica tutti i listener che è cambiato il valore per una entry nel ResourceBundle .
+	 * Notifica tutti i listener che  e'  cambiato il valore per una entry nel ResourceBundle .
 	 *
 	 * @see ResourceBundleModelEvent
 	 * @see EventListenerList
@@ -152,12 +152,12 @@ public abstract class AbstractResourceBundleModel implements ResourceBundleModel
     /**
 	 * Ritonra un array di tutti gli oggetti attualmente registrati come
 	 * listener del tipo <code><em>Foo</em>Listener</code>, su questo modello,
-	 * dove <em>Foo</em> è individuato dal tipo specificato.
+	 * dove <em>Foo</em>  e'  individuato dal tipo specificato.
 	 *
 	 *
 	 * @return un array di oggetti regitrati come 
 	 *          <code><em>Foo</em>Listener</code>s su questo modello, 
-	 *			oppure un array vuoto, se nessun listener di tale tipo è' stato registrato,
+	 *			oppure un array vuoto, se nessun listener di tale tipo  e' ' stato registrato,
 	 * @see #getResourceBundleModelListeners
 	 * @param listenerType il tipo di lestener richiesto; questo parametro
 	 *			dovrebbe individuare un'interfaccia che derivi da 

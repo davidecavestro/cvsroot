@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * Utilità per la manipolazione di stringhe.
+ * Utilita' per la manipolazione di stringhe.
  *
  * @author  davide
  */

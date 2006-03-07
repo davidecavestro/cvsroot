@@ -26,11 +26,11 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Ritorna il valore di una proprietà di tipo booleano.
+	 * Ritorna il valore di una proprieta' di tipo booleano.
 	 *
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
-	 * @return il valore di una proprietà di tipo booleano.
+	 * @param propertyName il nome della proprieta'.
+	 * @return il valore di una proprieta' di tipo booleano.
 	 */	
 	public static Boolean getBooleanProperty (Properties properties, String propertyName){
 		final String propertyValue = properties.getProperty (propertyName);
@@ -42,11 +42,11 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Imposta il valore di una proprietà di tipo booleano.
+	 * Imposta il valore di una proprieta' di tipo booleano.
 	 *
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
-	 * @param propertyValue il valore della proprietà.
+	 * @param propertyName il nome della proprieta'.
+	 * @param propertyValue il valore della proprieta'.
 	 */	
 	public static void setBooleanProperty (final Properties properties, final String propertyName, final Boolean propertyValue){
 		if (propertyValue!=null){
@@ -57,33 +57,33 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Ritorna il valore di una proprietà di tipo stringa.
+	 * Ritorna il valore di una proprieta' di tipo stringa.
 	 *
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
-	 * @return il valore di una proprietà di tipo stringa.
+	 * @param propertyName il nome della proprieta'.
+	 * @return il valore di una proprieta' di tipo stringa.
 	 */	
 	public static String getStringProperty (Properties properties, String propertyName){
 		return properties.getProperty (propertyName);
 	}
 	
 	/**
-	 * Imposta il valore di una proprietà di tipo stringa.
+	 * Imposta il valore di una proprieta' di tipo stringa.
 	 *
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
-	 * @param propertyName il valore della proprietà.
+	 * @param propertyName il nome della proprieta'.
+	 * @param propertyName il valore della proprieta'.
 	 */	
 	public static void setStringProperty (final Properties properties, final String propertyName, final String propertyValue){
 		properties.setProperty (propertyName, propertyValue);
 	}
 	
 	/**
-	 * Ritorna il valore di una proprietà di tipo data.
+	 * Ritorna il valore di una proprieta' di tipo data.
 	 *
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
-	 * @return il valore di una proprietà di tipo data.
+	 * @param propertyName il nome della proprieta'.
+	 * @return il valore di una proprieta' di tipo data.
 	 */	
 	public static Calendar getCalendarProperty (Properties properties, String propertyName){
 		final String propertyValue = properties.getProperty (propertyName);
@@ -95,11 +95,11 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Ritorna il valore di una proprietà di tipo intero.
+	 * Ritorna il valore di una proprieta' di tipo intero.
 	 *
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
-	 * @return il valore di una proprietà di tipo intero.
+	 * @param propertyName il nome della proprieta'.
+	 * @return il valore di una proprieta' di tipo intero.
 	 */	
 	public static Integer getIntegerProperty (Properties properties, String propertyName){
 		final String propertyValue = properties.getProperty (propertyName);
@@ -111,11 +111,11 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Imposta il valore di una proprietà di tipo intero.
+	 * Imposta il valore di una proprieta' di tipo intero.
 	 *
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
-	 * @param propertyValue il valore della proprietà.
+	 * @param propertyName il nome della proprieta'.
+	 * @param propertyValue il valore della proprieta'.
 	 */	
 	public static void setIntegerProperty (Properties properties, String propertyName, Integer propertyValue){
 		if (propertyValue!=null){
@@ -127,11 +127,11 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Ritorna il valore di una proprietà di tipo double.
+	 * Ritorna il valore di una proprieta' di tipo double.
 	 *
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
-	 * @return il valore di una proprietà di tipo double.
+	 * @param propertyName il nome della proprieta'.
+	 * @return il valore di una proprieta' di tipo double.
 	 */	
 	public static Double getDoubleProperty (Properties properties, String propertyName){
 		final String propertyValue = properties.getProperty (propertyName);
@@ -143,11 +143,11 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Imposta il valore di una proprietà di tipo double.
+	 * Imposta il valore di una proprieta' di tipo double.
 	 *
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
-	 * @param propertyValue il valore della proprietà.
+	 * @param propertyName il nome della proprieta'.
+	 * @param propertyValue il valore della proprieta'.
 	 */	
 	public static void setDoubleProperty (Properties properties, String propertyName, Double propertyValue){
 		if (propertyValue!=null){
@@ -159,11 +159,11 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Ritorna il valore di una proprietà di tipo Color.
+	 * Ritorna il valore di una proprieta' di tipo Color.
 	 *
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
-	 * @return il valore di una proprietà di tipo Color.
+	 * @param propertyName il nome della proprieta'.
+	 * @return il valore di una proprieta' di tipo Color.
 	 */	
 	public static Color getColorProperty (Properties properties, String propertyName){
 		final String colorValue = properties.getProperty (propertyName);
@@ -195,11 +195,11 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Imposta il valore di una proprietà di tipo Color.
+	 * Imposta il valore di una proprieta' di tipo Color.
 	 *
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
-	 * @param colorValue il valore della proprietà.
+	 * @param propertyName il nome della proprieta'.
+	 * @param colorValue il valore della proprieta'.
 	 */	
 	public static void setColorProperty (Properties properties, String propertyName, Color colorValue){
 		final StringBuffer propertyValue = new StringBuffer ();
@@ -216,14 +216,14 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Ritorna il valore di un set di proprietà che rappresentano un tipo rettangolo.
+	 * Ritorna il valore di un set di proprieta' che rappresentano un tipo rettangolo.
 	 *
 	 * @param properties la risorsa di configurazione.
-	 * @param xPosName il nome della proprietà POSIZIONE ORIZZONTALE.
-	 * @param yPosName il nome della proprietà POSIZIONE VERTICALE.
-	 * @param widthName il nome della proprietà LARGHEZZA.
-	 * @param heightName il nome della proprietà ALTEZZA.
-	 * @return il valore di un set di proprietà che rappresentano un tipo rettangolo.
+	 * @param xPosName il nome della proprieta' POSIZIONE ORIZZONTALE.
+	 * @param yPosName il nome della proprieta' POSIZIONE VERTICALE.
+	 * @param widthName il nome della proprieta' LARGHEZZA.
+	 * @param heightName il nome della proprieta' ALTEZZA.
+	 * @return il valore di un set di proprieta' che rappresentano un tipo rettangolo.
 	 */	
 	public static Rectangle getRectangle (final Properties properties, final String xPosName, final String yPosName, final String widthName, final String heightName){
 		final Double xPos = getDoubleProperty (properties, xPosName);
@@ -246,14 +246,14 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Imposta il valore di un set di proprietà che rappresentano un tipo rettangolo.
+	 * Imposta il valore di un set di proprieta' che rappresentano un tipo rettangolo.
 	 *
 	 * @param properties la risorsa di configurazione.
 	 * @param r il rettangolo.
-	 * @param xPosName il nome della proprietà POSIZIONE ORIZZONTALE.
-	 * @param yPosName il nome della proprietà POSIZIONE VERTICALE.
-	 * @param widthName il nome della proprietà LARGHEZZA.
-	 * @param heightName il nome della proprietà ALTEZZA.
+	 * @param xPosName il nome della proprieta' POSIZIONE ORIZZONTALE.
+	 * @param yPosName il nome della proprieta' POSIZIONE VERTICALE.
+	 * @param widthName il nome della proprieta' LARGHEZZA.
+	 * @param heightName il nome della proprieta' ALTEZZA.
 	 */	
 	public static void setRectangle (final Properties properties, final Rectangle r, final String xPosName, final String yPosName, final String widthName, final String heightName){
 		setDoubleProperty (properties, xPosName, new Double (r.getX ()));
@@ -263,12 +263,12 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Ritorna l'array di valori di una proprietà di tipo stringa vettoriale.
+	 * Ritorna l'array di valori di una proprieta' di tipo stringa vettoriale.
 	 *
-	 * @return i valori di una proprietà di tipo stringa vettoriale.
+	 * @return i valori di una proprieta' di tipo stringa vettoriale.
 	 * @param delimiter il delimitatore dei valori.
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
+	 * @param propertyName il nome della proprieta'.
 	 */	
 	public static String[] getPaths (Properties properties, String propertyName, String delimiter){
 		
@@ -287,12 +287,12 @@ public final class SettingsSupport {
 	}
 	
 	/**
-	 * Imposta i valori di una proprietà di tipo stringa vettoriale.
+	 * Imposta i valori di una proprieta' di tipo stringa vettoriale.
 	 *
 	 * @param values i valori.
 	 * @param delimiter il delimitatore dei valori.
 	 * @param properties la risorsa di configurazione.
-	 * @param propertyName il nome della proprietà.
+	 * @param propertyName il nome della proprieta'.
 	 */	
 	public static void setPaths (Properties properties, String propertyName, String[] values, String delimiter){
 		final StringBuffer value = new StringBuffer ();

@@ -1995,7 +1995,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			final JTextField field = (JTextField)this.getComponent ();
 			field.setFont (new java.awt.Font("Monospaced", 0, 12));
 			
-			/* condivide il modello con la textarea cos� una modifica da tabella viene subito riflessa nella textarea*/
+			/* condivide il modello con la textarea cosi' una modifica da tabella viene subito riflessa nella textarea*/
 //			valueTextArea.setDocument (field.getDocument ());
 //			field.setDocument (valueTextArea.getDocument ());
 //			field.getDocument ().addDocumentListener (new DocumentListener (){
@@ -2368,7 +2368,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			int colIdx = valuesTable.getSelectedColumn ();
 			
 			if (rowIdx>=0 && colIdx>=0){
-				/* cella selezionata, controlla se contiene gi�
+				/* cella selezionata, controlla se contiene giaì
 				 * l'editor con la selezione
 				 */
 				

@@ -10,7 +10,7 @@ import java.text.*;
 import java.util.*;
 
 /**
- * Classe di utilità per oggetti rappresentanti date.
+ * Classe di utilita' per oggetti rappresentanti date.
  * @author  davide
  */
 public final class CalendarUtils {
@@ -33,7 +33,7 @@ public final class CalendarUtils {
 	 * istanze <code>null</code>.
 	 * @param c1 la prima istanza da confrontare.
 	 * @param c2 la seconda istanza da confrontare.
-	 * @return <code>true</code> se <code>c1</code> è uguale a <code>c2</code>; 
+	 * @return <code>true</code> se <code>c1</code> e' uguale a <code>c2</code>; 
 	 * <code>false</code> altrimenti.
 	 */	
 	public static boolean equals (final Date c1, final Date c2){
@@ -46,7 +46,7 @@ public final class CalendarUtils {
 	
 	/**
 	 * Ritorna una stringa che rappresenta la data specificata. Il formato utilizzato
-	 * è <TT>dd/MM/yyyy HH:mm:ss</TT>. Questo metodo deve essere usatoa solo scopo di 
+	 * e' <TT>dd/MM/yyyy HH:mm:ss</TT>. Questo metodo deve essere usatoa solo scopo di 
 	 * log o debug. Il formato potebbe in futuro cambiare.
 	 *
 	 * @param date la data
