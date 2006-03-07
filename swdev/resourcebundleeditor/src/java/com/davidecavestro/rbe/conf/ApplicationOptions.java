@@ -10,7 +10,7 @@ import javax.swing.UIManager;
 
 /**
  * Opzioni di configurazione dell'applicazione. E' possibile implementare una catena
- * di responsabilità, innestando diversi oggetti di questo tipo.
+ * di responsabilitï¿½, innestando diversi oggetti di questo tipo.
  *
  * @author  davide
  */
@@ -22,7 +22,7 @@ public final class ApplicationOptions {
 	private ApplicationSettings _settings;
 	
 	/**
-	 * L'anello successore nella catena di responsabilità.
+	 * L'anello successore nella catena di responsabilitï¿½.
 	 */
 	private ApplicationOptions _successor;
 	
@@ -31,7 +31,7 @@ public final class ApplicationOptions {
 	 * Costruttore privato, evita istanzazione dall'esterno.
 	 *
 	 * @param settings le impostazioni.
-	 * @param successor l'anello successore nella catena di responsabilità.
+	 * @param successor l'anello successore nella catena di responsabilitï¿½.
 	 */
 	public ApplicationOptions (ApplicationSettings settings, ApplicationOptions successor) {
 		this._settings = settings;
@@ -83,7 +83,7 @@ public final class ApplicationOptions {
 			} else {
 				/*
 				 * Informazione non disponibile.
-				 * Funzionalità disabilitata.
+				 * Funzionalitï¿½ disabilitata.
 				 */
 				return 8192;
 			}
@@ -123,11 +123,6 @@ public final class ApplicationOptions {
 	 *
 	 * @return l'impostazione di creazione copie di backup.
 	 */	
-	/**
-	 * Ritorna il L&F impostato.
-	 *
-	 * @return il L&F impostato.
-	 */	
 	public boolean isBackupOnSaveEnabled (){
 		final Boolean returnValue = this._settings.getBackupOnSave ();
 		if (returnValue!=null){
@@ -146,6 +141,33 @@ public final class ApplicationOptions {
 					 * Default di sistema.
 					 */
 				return DefaultSettings.backupOnSave ();
+			}
+		}
+	}
+	
+	/**
+	 * Ritorna l'impostazione di editazione chiavi.
+	 *
+	 * @return l'impostazione di editazione chiavi.
+	 */	
+	public boolean isKeyEditingEnabled (){
+		final Boolean returnValue = this._settings.getKeyEditing ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue.booleanValue ();
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.isKeyEditingEnabled ();
+			} else {
+					/*
+					 * Default di sistema.
+					 */
+				return DefaultSettings.keyEditing ();
 			}
 		}
 	}

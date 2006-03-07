@@ -479,6 +479,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         findMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         logConsoleMenuItem = new javax.swing.JMenuItem();
+        optionsMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentsMenuItem = new javax.swing.JMenuItem();
         contextHelpMenuItem = new javax.swing.JMenuItem();
@@ -1180,6 +1181,16 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         toolsMenu.add(logConsoleMenuItem);
 
+        optionsMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        org.openide.awt.Mnemonics.setLocalizedText(optionsMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Options"));
+        optionsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                optionsMenuItemActionPerformed(evt);
+            }
+        });
+
+        toolsMenu.add(optionsMenuItem);
+
         menuBar.add(toolsMenu);
 
         org.openide.awt.Mnemonics.setLocalizedText(helpMenu, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("&Help"));
@@ -1222,6 +1233,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         setBounds((screenSize.width-800)/2, (screenSize.height-600)/2, 800, 600);
     }// </editor-fold>//GEN-END:initComponents
+
+	private void optionsMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsMenuItemActionPerformed
+		_context.getWindowManager().getOptionsDialog().show();
+	}//GEN-LAST:event_optionsMenuItemActionPerformed
 
     private void logConsoleMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logConsoleMenuItemActionPerformed
         _context.getWindowManager().getLogConsole().show();
@@ -1464,6 +1479,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JMenuItem newMenuItem;
     private javax.swing.JFileChooser openFileChooser;
     private javax.swing.JMenuItem openMenuItem;
+    private javax.swing.JMenuItem optionsMenuItem;
     private javax.swing.JMenuItem pasteMenuItem;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JMenu recentMenu;
@@ -1608,7 +1624,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 		
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return true; //columnIndex!=0;
+			return columnIndex==0?_context.getApplicationOptions ().isKeyEditingEnabled ():true; 
 		}
 		
 		public Class getColumnClass(int col) {

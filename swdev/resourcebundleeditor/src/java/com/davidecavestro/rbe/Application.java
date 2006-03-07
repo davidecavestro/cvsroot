@@ -128,6 +128,7 @@ public class Application {
 		
 		this._context = new ApplicationContext (
 			_env,
+			applicationOptions,
 			new WindowManager (),
 			new UIPersister (new UserUIStorage (userSettings)),
 			_logger,

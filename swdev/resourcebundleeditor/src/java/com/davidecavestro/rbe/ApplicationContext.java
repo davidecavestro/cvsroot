@@ -10,6 +10,7 @@ import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.common.gui.persistence.UIPersister;
 import com.davidecavestro.common.help.HelpManager;
 import com.davidecavestro.common.log.Logger;
+import com.davidecavestro.rbe.conf.ApplicationOptions;
 import com.davidecavestro.rbe.conf.UserResources;
 import com.davidecavestro.rbe.conf.UserSettings;
 import com.davidecavestro.rbe.gui.WindowManager;
@@ -27,6 +28,7 @@ import javax.swing.undo.UndoManager;
 public class ApplicationContext {
 	
 	private final WindowManager _windowManager;
+	private final ApplicationOptions _applicationOptions;
 	private final UIPersister _uiPersister;
 	private final Logger _logger;
 	private final UserSettings _userSettings;
@@ -46,6 +48,7 @@ public class ApplicationContext {
 	 */
 	public ApplicationContext (
 		ApplicationEnvironment env,
+		ApplicationOptions applicationOptions,
 		WindowManager windowManager,
 		UIPersister uiPersister,
 		Logger logger,
@@ -58,6 +61,7 @@ public class ApplicationContext {
 		) {
 			
 		this._env = env;
+		this._applicationOptions = applicationOptions;
 		this._logger = logger;
 		this._applicationData = applicationData;
 		this._windowManager = windowManager;
@@ -71,6 +75,10 @@ public class ApplicationContext {
 	
 	public ApplicationEnvironment getApplicationEnvironment (){
 		return this._env;
+	}
+	
+	public ApplicationOptions getApplicationOptions (){
+		return this._applicationOptions;
 	}
 	
 	public WindowManager getWindowManager (){

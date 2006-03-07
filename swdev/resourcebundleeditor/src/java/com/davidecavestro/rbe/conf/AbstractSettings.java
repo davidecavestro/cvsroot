@@ -172,5 +172,17 @@ public abstract class AbstractSettings implements CustomizableSettings {
 	
 	public Boolean getBackupOnSave () {
 		return SettingsSupport.getBooleanProperty (this.getProperties (), PROPNAME_BACKUPONSAVE);
-	}	
+	}
+	
+	public void setBackupOnSave (Boolean b) {
+		SettingsSupport.setBooleanProperty (this.getProperties (), PROPNAME_BACKUPONSAVE, b);
+	}
+	
+	public Boolean getKeyEditing () {
+		return SettingsSupport.getBooleanProperty (this.getProperties (), PROPNAME_KEYEDITING);
+	}
+	
+	public void setKeyEditing (Boolean b) {
+		SettingsSupport.setBooleanProperty (this.getProperties (), PROPNAME_KEYEDITING, b);
+	}
 }

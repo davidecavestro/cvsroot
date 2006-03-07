@@ -55,4 +55,11 @@ public interface ApplicationSettings {
 	 */	
 	Boolean getBackupOnSave ();
 	
+	/**
+	 * Ritorna l'impostazione di abilitazione editazione chiavi.
+	 *
+	 * @return l'impostazione di abilitazione editazione chiavi.
+	 */	
+	Boolean getKeyEditing ();
+	
 }

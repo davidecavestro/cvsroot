@@ -145,6 +145,19 @@ public class WindowManager implements ActionListener, DialogListener {
 		return this._logConsole;
 	}
 	
+	private OptionsDialog _optionsDialog;	
+	/**
+	 * Ritorna la dialog di impostazione delle opzioni.
+	 * 
+	 * @return la dialog di impostazione delle opzioni.
+	 */
+	public OptionsDialog getOptionsDialog (){
+		if (this._optionsDialog==null){
+			this._optionsDialog = new OptionsDialog (getMainWindow (), true, _context);
+		}
+		return this._optionsDialog;
+	}
+	
 	public void dialogChanged (com.davidecavestro.common.gui.dialog.DialogEvent e) {
 		if (e.getSource ()==this._addLocaleDialog){
 			if (e.getType ()==JOptionPane.OK_OPTION){

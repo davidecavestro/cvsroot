@@ -46,6 +46,13 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 */
 	public final static String PROPNAME_BACKUPONSAVE = "backuponsave";
 	
+	/**
+	 * Il parametro di abilitazione dell'editazione chiavi.
+	 */
+	public final static String PROPNAME_KEYEDITING = "keyediting";
+	
+	
+	
 	
 	/**
 	 * Ritorna il nome del file di preferenze associato a queste impostazioni.
@@ -102,4 +109,13 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 */
 	void setRecentPaths (String[] paths);
 	
+	/**
+	 * Abilita/disabilita il salvataggio dei file di backup.
+	 */
+	void setBackupOnSave (Boolean b);
+	
+	/**
+	 * Abilita/disabilita l'editazione delle chiavi.
+	 */
+	void setKeyEditing (Boolean b);
 }

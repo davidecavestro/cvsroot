@@ -88,9 +88,26 @@ public final class DefaultSettings implements ApplicationSettings {
 	}
 	
 	/**
+	 * Ritorna il valore di default per l'impostazione di salvataggio copie di backup.
 	 * Ritorna sempre <TT>true</TT>.
 	 */	
 	public static boolean backupOnSave () {
 		return true;
 	}
+	
+	/**
+	 * Ritorna sempre Boolean.FALSE.
+	 */	
+	public Boolean getKeyEditing () {
+		return Boolean.valueOf (keyEditing ());
+	}
+	
+	/**
+	 * Ritorna il valore di default per l'impostazione di editazione chiavi.
+	 * Ritorna sempre <TT>false</TT>.
+	 */	
+	public static boolean keyEditing () {
+		return false;
+	}
+	
 }
