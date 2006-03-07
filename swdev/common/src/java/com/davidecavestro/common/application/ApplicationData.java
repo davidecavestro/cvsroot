@@ -21,37 +21,42 @@ import java.util.*;
 public final class ApplicationData {
 
 	/**
-	 * Nome della proprietà contenente il nome dell'applicazione per uso interno.
+	 * Nome della proprieta' contenente il nome dell'applicazione per uso interno.
 	 */
 	public final static String PROPNAME_INTERNALAPPLICATIONNAME = "internal.name";
 
 	/**
-	 * Nome della proprietà contenente il nome dell'applicazione per uso esterno.
+	 * Nome della proprieta' contenente il nome dell'applicazione per uso esterno.
 	 */
 	public final static String PROPNAME_EXTERNALAPPLICATIONNAME = "external.name";
 
 	/**
-	 * Nome della proprietà contenente il numero di versione più significativo.
+	 * Nome della proprieta' contenente il numero di versione piï¿½ significativo.
 	 */
 	public final static String PROPNAME_MAJORVERSIONNUMBER = "major.version.number";
 
 	/**
-	 * Nome della proprietà contenente il numero di versione meno significativo.
+	 * Nome della proprieta' contenente il numero di versione meno significativo.
 	 */
 	public final static String PROPNAME_MINORVERSIONNUMBER = "minor.version.number";
 
 	/**
-	 * Nome della proprietà contenente il numero progressivo di build dell'applicazione.
+	 * Nome della proprieta' contenente il suffisso di versione.
+	 */
+	public final static String PROPNAME_VERSIONSUFFIX = "version.suffix";
+
+	/**
+	 * Nome della proprieta' contenente il numero progressivo di build dell'applicazione.
 	 */
 	public final static String PROPNAME_BUILDNUMBER = "build.number";
 
 	/**
-	 * Nome della proprietà contenente la data di rilascio dell'applicazione.
+	 * Nome della proprieta' contenente la data di rilascio dell'applicazione.
 	 */
 	public final static String PROPNAME_RELEASE_DATE = "release.date";
 
 	/**
-	 * Nome della proprietà contenente la data di preparazione dell'applicazione.
+	 * Nome della proprieta' contenente la data di preparazione dell'applicazione.
 	 */
 	public final static String PROPNAME_BUILD_DATE = "build.date";
 
@@ -61,7 +66,7 @@ public final class ApplicationData {
 //	private static ApplicationData _instance;
 	
 	/**
-	 * Proprietà di configurazione di questo descrittore.
+	 * Proprietï¿½ di configurazione di questo descrittore.
 	 */
 	private final Properties _releaseProperties;
 	
@@ -79,7 +84,7 @@ public final class ApplicationData {
 //	}
 	
 	/**
-	 * Ritorna il nome interno dell'applicazione. Questo nome è inteso ad uso 
+	 * Ritorna il nome interno dell'applicazione. Questo nome ï¿½ inteso ad uso 
 	 * dei processi di identificazione e configurazione dell'applicazione.
 	 *
 	 * @return il nome interno dell'applicazione.
@@ -89,7 +94,7 @@ public final class ApplicationData {
 	}
 	
 	/**
-	 * Ritorna il nome esterno dell'applicazione. Questo nome è inteso ad uso 
+	 * Ritorna il nome esterno dell'applicazione. Questo nome ï¿½ inteso ad uso 
 	 * dei processi di presentazione dell'applicazione.
 	 *
 	 * @return il nome esterno dell'applicazione.
@@ -114,6 +119,11 @@ public final class ApplicationData {
 			sb.append (_releaseProperties.getProperty (PROPNAME_MAJORVERSIONNUMBER));
 			sb.append (".");
 			sb.append (_releaseProperties.getProperty (PROPNAME_MINORVERSIONNUMBER));
+			
+			final String versionSuffix = _releaseProperties.getProperty (PROPNAME_VERSIONSUFFIX);
+			if (versionSuffix!=null){
+				sb.append (versionSuffix);
+			}
 			_versionNumber = new DisposableData (sb.toString ());
 		}
 		return (String)_versionNumber.getData ();
