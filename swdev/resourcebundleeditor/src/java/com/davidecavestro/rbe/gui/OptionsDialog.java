@@ -30,8 +30,6 @@ public class OptionsDialog extends javax.swing.JDialog {
 		this._context = context;
 		initComponents ();
 		
-		init (context.getApplicationOptions ());
-		
 		cancelButton.getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put (KeyStroke.getKeyStroke ("ESCAPE"), "cancel");
 		cancelButton.getActionMap().put("cancel", new javax.swing.AbstractAction ("cancel"){
 			public void actionPerformed (ActionEvent ae){
@@ -62,6 +60,12 @@ public class OptionsDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Options"));
         setModal(true);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
+
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(createBackupFilesCheckBox, java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Create_&backup_files"));
@@ -118,6 +122,11 @@ public class OptionsDialog extends javax.swing.JDialog {
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         setBounds((screenSize.width-306)/2, (screenSize.height-112)/2, 306, 112);
     }// </editor-fold>//GEN-END:initComponents
+
+	private void formComponentShown (java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+		init (_context.getApplicationOptions ());		
+
+	}//GEN-LAST:event_formComponentShown
 
 	private void okButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 		confirm ();
