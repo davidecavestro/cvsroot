@@ -166,7 +166,7 @@ public class WindowManager implements ActionListener, DialogListener {
 					JOptionPane.showMessageDialog (this._mainWindow, 
 					java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Duplicate_locale"));
 				} else {
-					this._context.getModel ().addLocale (new LocalizationProperties (l, new CommentedProperties ()));
+					this._context.getModel ().addLocale (new LocalizationProperties (l, new CommentedProperties (_context.getPropertiesExceptionHandler ())));
 				}
 			}
 		} else if (e.getSource ()==this._addEntryDialog){

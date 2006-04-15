@@ -45,7 +45,7 @@ public class NewBundleAction extends AbstractAction {
 			}
 		}
 		
-		rbm.setBundles (new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties ())}); 
+		rbm.setBundles (new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties (_context.getPropertiesExceptionHandler ()))}); 
 		final String baseName = (String)JOptionPane.showInputDialog (this._context.getWindowManager ().getMainWindow (), 
 			java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Insert_bundle_base_name"),
 			java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("Insert_bundle_base_name"),

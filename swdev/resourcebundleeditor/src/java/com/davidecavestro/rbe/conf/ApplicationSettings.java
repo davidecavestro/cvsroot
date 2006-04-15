@@ -62,4 +62,10 @@ public interface ApplicationSettings {
 	 */	
 	Boolean getKeyEditing ();
 	
+	/**
+	 * Ritorna l'impostazione di scarto dei locale con codifiche non valide.
+	 *
+	 * @return l'impostazione di scarto dei locale con codifiche non valide.
+	 */	
+	Boolean getDiscardMalformedEncoding ();
 }

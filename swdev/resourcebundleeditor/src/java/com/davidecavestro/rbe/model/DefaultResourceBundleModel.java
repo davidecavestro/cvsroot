@@ -88,6 +88,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	
 	
 	private final ApplicationOptions _applicationOptions;
+	private final PropertiesExceptionHandler _peh;
 	
 	private final static LocalizationProperties[] voidResourceArray = new LocalizationProperties[0];
 	private final static Locale[] voidLocaleArray = new Locale[0];
@@ -99,8 +100,9 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	 * @param name il nome.
 	 * @param resources le risorse di localizzazione.
 	 */
-	public DefaultResourceBundleModel (ApplicationOptions applicationOptions, String name, LocalizationProperties[] resources) {
+	public DefaultResourceBundleModel (ApplicationOptions applicationOptions, PropertiesExceptionHandler peh, String name, LocalizationProperties[] resources) {
 		_applicationOptions = applicationOptions;
+		_peh = peh;
 		setName (name);
 		setBundles (resources);
 		
@@ -619,7 +621,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 				if (!defaultFound && l == LocalizationProperties.DEFAULT){
 					defaultFound = true;
 				}
-				final CommentedProperties p = new CommentedProperties ();
+				final CommentedProperties p = new CommentedProperties (_peh);
 				p.load (new FileInputStream (f));
 				retValue.add (new LocalizationProperties (l, p));
 			} catch (IllegalArgumentException iae){
@@ -634,7 +636,7 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 			/*
 			 * Aggiunge Locale di default
 			 */
-			retValue.add (0, new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties ()));
+			retValue.add (0, new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties (_peh)));
 		}
 		return (LocalizationProperties[])retValue.toArray (voidResourceArray);
 		

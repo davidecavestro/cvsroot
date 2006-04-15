@@ -110,4 +110,23 @@ public final class DefaultSettings implements ApplicationSettings {
 		return false;
 	}
 	
+	/**
+	 * Ritorna il valore di default per l'impostazione di scarto dei locale con codifiche non valide.
+	 * Ritorna sempre <TT>false</TT>.
+	 *
+	 * @return il valore di default per l'impostazione di scarto dei locale con codifiche non valide.
+	 */	
+	public Boolean getDiscardMalformedEncoding (){
+		return Boolean.valueOf (discardMalformedEncoding ());
+	}
+	
+	/**
+	 * Ritorna il valore di default per l'impostazione di scarto dei locale con codifiche non valide.
+	 * Ritorna sempre <TT>false</TT>.
+	 *
+	 */	
+	public static boolean discardMalformedEncoding (){
+		return false;
+	}
+	
 }

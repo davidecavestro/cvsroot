@@ -172,4 +172,32 @@ public final class ApplicationOptions {
 		}
 	}
 	
+	/**
+	 * Ritorna l'impostazione di scarto dei locale con codifiche non valide.
+	 *
+	 * @return l'impostazione di scarto dei locale con codifiche non valide.
+	 */	
+	public boolean discardMalformedEncoding (){
+		final Boolean returnValue = this._settings.getDiscardMalformedEncoding ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue.booleanValue ();
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.discardMalformedEncoding ();
+			} else {
+					/*
+					 * Default di sistema.
+					 */
+				return DefaultSettings.discardMalformedEncoding ();
+			}
+		}
+	}
+	
+	
 }

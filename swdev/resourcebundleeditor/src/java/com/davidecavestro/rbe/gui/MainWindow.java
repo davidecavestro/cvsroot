@@ -2613,7 +2613,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				}
 			}
 			
-			rbm.setBundles (new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties ())});
+			rbm.setBundles (new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties (_context.getPropertiesExceptionHandler ()))});
 			final String baseName = (String)JOptionPane.showInputDialog (_context.getWindowManager ().getMainWindow (),
 			java.util.ResourceBundle.getBundle ("com.davidecavestro.rbe.gui.res").getString ("Insert_bundle_base_name"),
 			java.util.ResourceBundle.getBundle ("com.davidecavestro.rbe.gui.res").getString ("Insert_bundle_base_name"),

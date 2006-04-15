@@ -185,4 +185,14 @@ public abstract class AbstractSettings implements CustomizableSettings {
 	public void setKeyEditing (Boolean b) {
 		SettingsSupport.setBooleanProperty (this.getProperties (), PROPNAME_KEYEDITING, b);
 	}
+	
+	public void setDiscardMalformedEncoding (Boolean b){
+		SettingsSupport.setBooleanProperty (this.getProperties (), PROPNAME_DISCARDMALFORMEDENCODING, b);
+	}
+	
+	public Boolean getDiscardMalformedEncoding (){
+		return SettingsSupport.getBooleanProperty (this.getProperties (), PROPNAME_DISCARDMALFORMEDENCODING);
+	}
+	
+	
 }

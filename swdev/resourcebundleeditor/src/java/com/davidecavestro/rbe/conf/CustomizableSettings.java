@@ -51,6 +51,11 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 */
 	public final static String PROPNAME_KEYEDITING = "keyediting";
 	
+	/**
+	 * Il parametro di scarto locale con codifica non valida.
+	 */
+	public final static String PROPNAME_DISCARDMALFORMEDENCODING = "discardmalformedencoding";
+	
 	
 	
 	
@@ -118,4 +123,11 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 * Abilita/disabilita l'editazione delle chiavi.
 	 */
 	void setKeyEditing (Boolean b);
+	
+	/**
+	 * Abilita/disabilita la rimozione dei locale con codifica non valida..
+	 */
+	void setDiscardMalformedEncoding (Boolean b);
+	
+	
 }
