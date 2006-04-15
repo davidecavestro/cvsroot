@@ -10,6 +10,7 @@ import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.common.gui.persistence.UIPersister;
 import com.davidecavestro.common.help.HelpManager;
 import com.davidecavestro.common.log.Logger;
+import com.davidecavestro.common.util.PropertiesExceptionHandler;
 import com.davidecavestro.rbe.conf.ApplicationOptions;
 import com.davidecavestro.rbe.conf.UserResources;
 import com.davidecavestro.rbe.conf.UserSettings;
@@ -38,6 +39,7 @@ public class ApplicationContext {
 	private final RBUndoManager _undoManager;
 	private ActionManager _actionManager;
 	private HelpManager _helpManager;
+	private final PropertiesExceptionHandler _propsExceptionHandler;
 	
     private java.beans.PropertyChangeSupport changeSupport;
 	
@@ -57,7 +59,8 @@ public class ApplicationContext {
 		DefaultResourceBundleModel resourceBundleModel,
 		RBUndoManager undoManager,
 		ActionManager actionManager,
-		HelpManager helpManager
+		HelpManager helpManager,
+		PropertiesExceptionHandler propsExceptionHandler
 		) {
 			
 		this._env = env;
@@ -71,6 +74,7 @@ public class ApplicationContext {
 		this._undoManager = undoManager;
 		this._actionManager = actionManager;
 		this._helpManager = helpManager;
+		this._propsExceptionHandler = propsExceptionHandler;
 	}
 	
 	public ApplicationEnvironment getApplicationEnvironment (){
@@ -108,6 +112,10 @@ public class ApplicationContext {
 	public HelpManager getHelpManager (){
 		return this._helpManager;
 	}
+	
+	public PropertiesExceptionHandler getPropertiesExceptionHandler (){
+		return this._propsExceptionHandler;
+	}	
 	
 	public ApplicationData getApplicationData (){
 		return _applicationData;

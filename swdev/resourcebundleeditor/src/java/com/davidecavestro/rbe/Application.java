@@ -95,7 +95,6 @@ public class Application {
 		final UserSettings userSettings = new UserSettings (this, new UserResources (applicationData));
 		
 		final ApplicationOptions applicationOptions = new ApplicationOptions (userSettings, new ApplicationOptions (new DefaultSettings (args), null));
-		final DefaultResourceBundleModel model = new DefaultResourceBundleModel (applicationOptions, "blank", new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties ())});
 		
 		/**
 		 * Percorso del file di configuraizone/mappatura, relativo alla directory di 
@@ -126,6 +125,18 @@ public class Application {
 			this._logger = new CompositeLogger (new LoggerAdapter (), null);
 		}
 		
+		final PropertiesExceptionHandler peh = new PropertiesExceptionHandler () {
+				public void malformedEncoding (String s) throws IllegalArgumentException {
+					if (applicationOptions.discardMalformedEncoding ()) {
+						_logger.error ("Malformed \\uxxxx encoding in string: "+ s);
+						 throw new IllegalArgumentException("Malformed \\uxxxx encoding.");
+					}
+					_logger.warning ("Malformed \\uxxxx encoding in string: "+ s);
+				}
+			};
+		
+		final DefaultResourceBundleModel model = new DefaultResourceBundleModel (applicationOptions, peh, "blank", new LocalizationProperties [] {new LocalizationProperties (LocalizationProperties.DEFAULT, new CommentedProperties (peh))});
+		
 		this._context = new ApplicationContext (
 			_env,
 			applicationOptions,
@@ -137,7 +148,8 @@ public class Application {
 			model,
 			undoManager,
 			new ActionManager (),
-			new HelpManager (new HelpResourcesResolver (p), "help/MainUrbeHelp.hs")
+			new HelpManager (new HelpResourcesResolver (p), "help/MainUrbeHelp.hs"),
+			peh
 			);
 		
 		model.addUndoableEditListener(undoManager);
