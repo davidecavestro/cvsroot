@@ -35,6 +35,7 @@
 		<property location="${src.base.dir}/java" name="src.dir"/>
 		<property location="bin" name="bin.dir"/>
 		<property location="license" name="license.dir"/>
+		<property location="icons" name="icons.dir"/>
 		<property location="${work.dir}/classes" name="classes.dir"/>
 		<property location="${work.dir}/doc/api" name="javadoc.dir"/>
 		<property location="${work.dir}/tmp" name="tmp.dir"/>
@@ -49,6 +50,7 @@
 		<property location="${app.dir}/res" name="app.res.dir"/>
 		<property location="${app.dir}/bin" name="app.bin.dir"/>
 		<property location="${app.dir}/license" name="app.license.dir"/>
+		<property location="${app.dir}/icons" name="app.icons.dir"/>
 
 		<property location="${app.dir}/${project.name}.jar" name="app.jar"/>
 		<property location="${app.res.dir}/i18n.jar" name="i18n.jar"/>
@@ -102,6 +104,10 @@
 			    <include name="com/davidecavestro/rbe/release.properties"/>
 			</fileset>
 		</copy>
+		<copy todir="${classes.dir}/com/davidecavestro/rbe/gui/">
+			<fileset dir="${license.dir}"/>
+			<mapper type="flatten"/>
+		</copy>
 		
 	</target>
 
@@ -122,7 +128,7 @@
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Main-Class" value="com.davidecavestro.rbe.Launcher"/>
-				<attribute name="Class-Path" value=". lib/jhall.jar res/i18n.jar lib/AbsoluteLayout.jar lib/swingx.jar lib/jlfgr-1_0.jar res/images.jar res/help.jar "/>
+				<attribute name="Class-Path" value=". lib/jhall.jar res/i18n.jar lib/AbsoluteLayout.jar lib/swingx.jar lib/jlfgr-1_0.jar lib/org-openide-awt.jar lib/org-openide-util.jar res/images.jar res/help.jar "/>
 				<attribute name="Implementation-Title" value="${project.name}"/>
 				<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
 				<attribute name="Implementation-Vendor" value="Davide Cavestro"/>
@@ -162,9 +168,13 @@
 		<copy toDir="${app.bin.dir}">
 			<fileset dir="${bin.dir}"/>
 		</copy>
-		<!-- copia i file delle llicenze -->
+		<!-- copia i file delle licenze -->
 		<copy toDir="${app.license.dir}">
 			<fileset dir="${license.dir}"/>
+		</copy>
+		<!-- copia le icone -->
+		<copy toDir="${app.icons.dir}">
+			<fileset dir="${icons.dir}"/>
 		</copy>
 		<!-- rende i file di lancio leggibili ed eseguibili da tutti gli utenti -->
 		<chmod dir="${app.bin.dir}" perm="ugo+rx" includes="**/*.sh"/>
