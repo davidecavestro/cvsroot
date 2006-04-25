@@ -1,11 +1,14 @@
 /*
  * LogConsole.java
  *
- * Created on 25 febbraio 2006, 11.09
+ * Created on April 18, 2006, 2:32 PM
  */
 
 package com.davidecavestro.rbe.gui;
 
+import com.davidecavestro.common.gui.persistence.PersistenceStorage;
+import com.davidecavestro.common.gui.persistence.PersistenceUtils;
+import com.davidecavestro.common.gui.persistence.PersistentComponent;
 import com.davidecavestro.rbe.ApplicationContext;
 import javax.swing.text.Document;
 
@@ -14,13 +17,12 @@ import javax.swing.text.Document;
  *
  * @author  davide
  */
-public class LogConsole extends javax.swing.JDialog {
+public class LogConsole extends javax.swing.JFrame implements PersistentComponent {
 	
 	private final ApplicationContext _context;
-	
 	/** Costruttore. */
-	public LogConsole (java.awt.Frame parent, boolean modal, ApplicationContext context) {
-		super (parent, modal);
+	public LogConsole (ApplicationContext context) {
+		super ();
 		this._context = context;
 		
 		initComponents ();
@@ -37,12 +39,11 @@ public class LogConsole extends javax.swing.JDialog {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jPanel1 = new javax.swing.JPanel();
         logPanel = new javax.swing.JTextPane();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        jPanel1.setLayout(new java.awt.GridBagLayout());
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         logPanel.setBackground(new java.awt.Color(0, 0, 0));
         logPanel.setEditable(false);
         logPanel.setForeground(new java.awt.Color(255, 255, 255));
@@ -53,9 +54,7 @@ public class LogConsole extends javax.swing.JDialog {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        jPanel1.add(logPanel, gridBagConstraints);
-
-        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(logPanel, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -67,18 +66,28 @@ public class LogConsole extends javax.swing.JDialog {
 	 */	
 	public void init (final Document logDocument){
 		logPanel.setDocument (logDocument);
-		setTitle (prepareTitle ());
+		setTitle (prepareTitle (_context));
 	}
 	
-	
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JTextPane logPanel;
     // End of variables declaration//GEN-END:variables
 	
-	private String prepareTitle (){
+	private String prepareTitle (ApplicationContext context){
 		final StringBuffer sb = new StringBuffer ();
-		sb.append (_context.getApplicationData ().getApplicationExternalName ()).append (" - Log console");
+		sb.append (context.getApplicationData ().getApplicationExternalName ()).append (" - Log console");
 		return sb.toString ();
+	}
+
+	public String getPersistenceKey () {
+		return "logconsole";
+	}
+
+	public void makePersistent (PersistenceStorage props) {
+		PersistenceUtils.makeBoundsPersistent (props, this.getPersistenceKey (), this);
+	}
+
+	public boolean restorePersistent (PersistenceStorage props) {
+		return PersistenceUtils.restorePersistentBounds (props, this.getPersistenceKey (), this);
 	}
 }

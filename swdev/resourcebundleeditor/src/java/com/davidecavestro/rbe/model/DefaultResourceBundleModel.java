@@ -687,6 +687,9 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	public void saveAs (File file, String comment) throws FileNotFoundException, IOException{
 		setName (file.getName ());
 		setPath (file.getParentFile ());
+		if (null == comment){
+			comment ="Created by URBE";
+		}
 		store (comment);
 	}
 	
@@ -695,9 +698,6 @@ public class DefaultResourceBundleModel extends AbstractResourceBundleModel {
 	 * @param comment un commento.
 	 */
 	public void store (String comment) throws FileNotFoundException, IOException{
-		if (null==comment){
-			comment="Created by URBE";
-		}
 		for (int i =0;i<this._resources.length;i++){
 			final LocalizationProperties lp = this._resources[i];
 			final CommentedProperties p = lp.getProperties ();

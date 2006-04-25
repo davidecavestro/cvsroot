@@ -138,9 +138,8 @@ public class WindowManager implements ActionListener, DialogListener {
 	 */
 	public LogConsole getLogConsole (){
 		if (this._logConsole==null){
-			this._logConsole = new LogConsole (getMainWindow (), false, _context);
-//			this._context.getUIPersisteer ().register (this._addLocaleDialog);
-//			this._addLocaleDialog.addDialogListener (this);
+			this._logConsole = new LogConsole (_context);
+			this._context.getUIPersisteer ().register (this._logConsole);
 		}
 		return this._logConsole;
 	}

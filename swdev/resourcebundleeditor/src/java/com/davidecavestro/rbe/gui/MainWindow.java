@@ -43,9 +43,11 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -73,8 +75,11 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
+import javax.swing.text.Highlighter;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -82,7 +87,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import org.jdesktop.swingx.*;
-import org.jdesktop.swingx.decorator.*;
 
 /**
  * La finestra principale dell'applicazione.
@@ -1521,6 +1525,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	
 	}
 	
+	/**
+	 * Implementa la persistenza delle dimensioni per un pannello.
+	 */
 	private class PersistencePanelAdapter implements PersistentComponent	{
 	
 		private final JComponent _panel;
@@ -1545,6 +1552,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	
 	private final static String[] voidStringArray = new String[0];
 	
+	/**
+	 * Il modello della tabella di editazione dei valori.
+	 */
 	private class LocalizationTableModel extends AbstractTableModel implements ResourceBundleModelListener {
 		
 		private final DefaultResourceBundleModel _resources;
@@ -1630,7 +1640,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		public Class getColumnClass(int col) {
 			return String.class;
 		}
-			
+		
+		/**
+		 * Imposta il valore nel modello della tabella, propagandolo al modello applicativo.
+		 */
 		public void setValueAt (Object aValue, int rowIndex, int columnIndex) {
 			final String key = this._keys[rowIndex];
 			if (columnIndex > 0){
@@ -1669,7 +1682,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}
 	
 	
-		
+	/**
+	 * Modello dell'albero delle chiavi.
+	 */
 	private class LocalizationTreeModel /*extends DefaultTreeModel */ implements TreeModel, ResourceBundleModelListener, PropertyChangeListener {
 		
 		private final DefaultResourceBundleModel _model;
@@ -1734,6 +1749,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 //			}
 		}
 
+		/**
+		 * Ritorna gli indici delle stringhe ricercate in un array di stringhe ordinato.
+		 */
 		private int[] getIndexes (String[] orderedContainer, String[] wanted){
 			final int[] retValue = new int [wanted.length];
 
@@ -1937,11 +1955,16 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		
 	}
 		
-	
+	/**
+	 * Mostra la dialog di inserimento valore di default.
+	 */
 	private void showAddEntryDialog (){
 		this._actionNotifier.fireActionPerformed (new ActionEvent (this, -1, "showAddEntryDialog"));
 	}
 	
+	/**
+	 * Mostra la dialog di inserimento valore dato un locale.
+	 */
 	private void showAddEntryDialog (Locale l){
 		this._actionNotifier.fireActionPerformed (new ActionEvent (new NewEntryDialogRequester (l), -1, "showAddEntryDialog"));
 	}
@@ -1956,14 +1979,23 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 	}
 	
+	/**
+	 * Elimina una chiave dal modello.
+	 */
 	private void deleteEntry (String key){
 		this._context.getModel ().removeKey (key);
 	}
 	
+	/**
+	 * Elimina una entry dal modello.
+	 */
 	private void deleteEntry (Locale l, String key){
 		this._context.getModel ().setValue (l, key, null);
 	}
 	
+	/**
+	 * Elimina un locale dal modello.
+	 */
 	private void deleteLocale (Locale locale){
 		if (JOptionPane.showConfirmDialog (
 		this, 
@@ -1988,11 +2020,72 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		this._actionNotifier.removeActionListener (l);
 	}
 	
+	/**
+	 * L'editor di cella specializzato per la tabella dei valori.
+	 */
 	class ValueCellEditor extends DefaultCellEditor {
 		private boolean _nullCalled;
 		public ValueCellEditor (){
 			super ( new JTextField ());
 			final JTextField field = (JTextField)this.getComponent ();
+
+			/*
+			 * Gestione highlighting
+			 */
+			final DefaultHighlighter.DefaultHighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter (Color.YELLOW);
+			field.addFocusListener (new FocusAdapter () {
+				public void focusGained (FocusEvent e) {
+					/*
+					 * Questo evento dovrebbe consentire di effettuare l'highlighting 
+					 *
+					 */
+					if (_matcher == null){
+						return;
+					}
+					
+					final String sValue = _matcher.getCaseSensitive ()?field.getText ():field.getText ().toLowerCase ();
+					if (sValue == null){
+						return;
+					}
+					
+					if (!_matcher.getHighlight ()){
+						return;
+					}
+					
+					final Highlighter h = field.getHighlighter();
+					h.removeAllHighlights();
+
+					if (_matcher.match (sValue)){
+						final String p = _matcher.getCaseSensitive ()?_matcher.getPattern ():_matcher.getPattern ().toLowerCase ();
+
+						int patternLength = p.length ();
+						int fromIdx = 0;
+						int matchIdx = fromIdx;
+						do {
+							matchIdx = sValue.indexOf (p, fromIdx);
+							if (-1==matchIdx){
+								return;
+							}
+							if (-1<matchIdx){
+
+								try {
+									h.addHighlight (matchIdx, matchIdx + patternLength, painter);
+								} catch (BadLocationException ble) {
+									_context.getLogger ().error ("Error highlighting search result on editor", ble);
+								}
+
+								fromIdx = matchIdx + patternLength;
+
+							}
+						} while (fromIdx > matchIdx);
+
+					}
+				}
+			});
+			
+			/*
+			 * Imposta il cvarattere per l'editor
+			 */
 			field.setFont (new java.awt.Font("Monospaced", 0, 12));
 			
 			/* condivide il modello con la textarea cosi' una modifica da tabella viene subito riflessa nella textarea*/
@@ -2036,7 +2129,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			field.addFocusListener(new java.awt.event.FocusAdapter() {
 				public void focusLost(java.awt.event.FocusEvent evt) {
 					cancelCellEditing ();
-					System.out.println ("Edit cancelled");
+//					System.out.println ("Edit cancelled");
 				}
 			});			
 		}
@@ -2057,7 +2150,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}
 	
 	/**
-	 * CArica un nuovo bundle di risorse.
+	 * Carica un nuovo bundle di risorse.
 	 *
 	 * @param file il file di base del bundle.
 	 */	
@@ -2103,6 +2196,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		updateRecentPathMenu ();
 	}
 	
+	/**
+	 * Stato di operazione in corso.
+	 */
 	private class Processing {
 		private boolean p;
 		
@@ -2114,6 +2210,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 	}
 	
+	/**
+	 * Carica il bundle da file.
+	 */
 	private void load (final File f){
 		final SwingWorker worker = new VisibleWorker("loading") {
 			public void work() {
@@ -2131,7 +2230,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}
 	
 	/**
-	 * CHiede conferma all'utente nel caso in cui ci siano modifiche che potrebbero andare perse, 
+	 * Chiede conferma all'utente nel caso in cui ci siano modifiche che potrebbero andare perse, 
 	 * permettendogli di salvarle.
 	 * Ritorna <TT>true</TT> se l'utente vuole continuare.
 	 *
@@ -2161,6 +2260,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		return true;
 	}
 	
+	/**
+	 * COntrolla che l'uscita non provochi una perdita dati, proponendo eventualmente un salvataggio.
+	 */
 	private void checkForDataLossOnExit (){
 		if (this._context.getModel ().isModified ()){
 			if (
@@ -2182,6 +2284,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 	}
 	
+	/**
+	 * Aggiorna il menu dati recenti.
+	 */
 	private void updateRecentPathMenu (){
 		final String[] recentPaths = this._context.getUserSettings ().getRecentPaths ();
 		recentMenu.removeAll ();
@@ -2210,6 +2315,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}
 
 	boolean postInitialized = false;
+	/**
+	 * Mostra la finestra, eventualmente completando la fase di inizializzazione.
+	 * @see #postInit
+	 */
 	public void show (){
 		if (!postInitialized){
 			postInit ();
@@ -2217,12 +2326,20 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		super.show ();
 	}
 	
+	/**
+	 * Fase di post-inizializzazione.
+	 * Consente di inizializzare cio' che prima avrebbe prodottoproblemi di dipendenze:
+	 * Registra la dialog di ricerca.
+	 */
 	private void postInit (){
 		postInitialized = true;
 		this._wm.getFindDialog ().addPropertyChangeListener (this._matcher);
 	}
 	
 	
+	/**
+	 * Salva richiedendo il percorso.
+	 */
 	private boolean saveAs (){
 		saveFileChooser.setSelectedFile (new File (this._context.getModel ().getName ()));
 		if (saveFileChooser.showSaveDialog (this)==JFileChooser.APPROVE_OPTION){
@@ -2237,7 +2354,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				}
 			};
 
-			_context.getLogger().info ("saving bundle");
+			_context.getLogger().info ("saving bundle...");
 			try {
 				worker.start();
 			} catch (Throwable t){
@@ -2248,11 +2365,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 		return true;
 		
-		
-		
-		
 	}
-	
+
+	/**
+	 * Salva senza chiedere il percorso su file precedentemente caricato.
+	 */
 	private boolean save (){
 		final SwingWorker worker = new VisibleWorker("saving") {
 			public void work() {
@@ -2264,7 +2381,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			}
 		};
 			
-		_context.getLogger().info ("saving bundle");
+		_context.getLogger().info ("saving bundle...");
 		try {
 			worker.start();
 		} catch (Throwable t){
@@ -2274,11 +2391,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		_context.getLogger().info ("bundle successfully saved");
 		return true;
 	}
-	
-//	public Matcher getMatcher (){
-//		return this._matcher;
-//	}
-//	
+
+	/**
+	 * Implementa la logica di ricerca all'interno dei bundle.
+	 * Notifica la variazione della proprieta' "pattern".
+	 */
 	private class PatternFinder implements Matcher, SearchNavigator, PropertyChangeListener {
 		
 		private String p;
@@ -2322,7 +2439,14 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			if (null==s){
 				return false;
 			}
-			return -1 != s.indexOf (p);
+			if (!matchcase) {
+				/*
+				 * case-INsensitive
+				 */
+				return -1 != s.toLowerCase ().indexOf (p.toLowerCase ());
+			} else {
+				return -1 != s.indexOf (p);
+			}
 		}
 		
 		public String getPattern (){
@@ -2361,88 +2485,134 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 		
 		private void nextMatch (Matcher m, boolean backward) {
-			int rowCount = valuesTable.getRowCount ();
-			int columnCount = valuesTable.getColumnCount ();
+			final int rowCount = valuesTable.getRowCount ();
+			final int columnCount = valuesTable.getColumnCount ();
 			
 			int rowIdx = valuesTable.getSelectedRow ();
-			int colIdx = valuesTable.getSelectedColumn ();
+			final int colIdx = valuesTable.getSelectedColumn ();
+			
+			final String pattern = matchcase?p:p.toLowerCase ();
 			
 			if (rowIdx>=0 && colIdx>=0){
-				/* cella selezionata, controlla se contiene giaì
+				/* cella selezionata, controlla se contiene gia'
 				 * l'editor con la selezione
 				 */
 				
-				Component editor = valuesTable.getEditorComponent ();
+				final Component editor = valuesTable.getEditorComponent ();
 				if (editor != null){
-					JTextField textEditor = (JTextField)editor;
-					if (textEditor.getSelectedText ()!=null && textEditor.getSelectedText ().length ()>0){
-						String value = textEditor.getText ();
-						int nextValidPos = backward?0:textEditor.getSelectionEnd ();
-						String toTest = value.substring (
+					final JTextField textEditor = (JTextField)editor;
+					if (textEditor.hasFocus ()/*getSelectedText ()!=null && textEditor.getSelectedText ().length ()>0*/){
+						/*
+						 * Editor con focus.
+						 */
+						final String value = matchcase?textEditor.getText ():textEditor.getText ().toLowerCase ();
+						final int nextValidPos = backward?0:textEditor.getSelectionEnd ();
+						
+						final String toTest = value.substring (
 							nextValidPos, 
 							backward?textEditor.getSelectionStart ():value.length ());
+						
 						if (toTest.length ()>0){
-							int selectionStart = backward?toTest.lastIndexOf (m.getPattern ()):toTest.indexOf (m.getPattern ());
+							int selectionStart = backward?toTest.lastIndexOf (pattern):toTest.indexOf (pattern);
 							if (selectionStart>=0){
-								selectionStart+= nextValidPos;
-								int selectionEnd = selectionStart + m.getPattern ().length ();
-								((JTextField)editor).select (selectionStart, selectionEnd);
-								editor.requestFocus ();
+								
+								selectionStart += nextValidPos;
+								final int selectionEnd = selectionStart + pattern.length ();
+								
+
+								final int selectionStart1 = selectionStart;
+								
+								SwingUtilities.invokeLater (new Runnable () {
+									public void run () {
+										editor.requestFocusInWindow ();
+										textEditor.select (selectionStart1, selectionEnd);
+//										System.out.println ("Changed selection on same cell");
+									}
+								});
+								
+								/*
+								 * Selezione effettuata.
+								 */
 								return;
 							}
-					}
+						}
 					}
 				}
 			}
 
+			/*
+			 * non c'e' una prossima selezione nell'editor sulla cella attualmente selezionata
+			 * Cerca nelle celle successive
+			 */
 			if (rowIdx<0){
 				rowIdx = 0;
 			}
 
-			int start = rowIdx * columnCount + colIdx + (backward?0:1);
+			final int start = rowIdx * columnCount + colIdx + (backward?0:1);
 			
-			int cellCount = rowCount * columnCount;
-			int initValue = backward?cellCount-1:0;
-			int testValue = backward?-1:cellCount;
+			final int cellCount = rowCount * columnCount;
+			final int initValue = backward?cellCount-1:0;
+			final int testValue = backward?-1:cellCount;
+			
 			for (final For f = new For (initValue, testValue, !backward); f.test (); f.execute ()){
-				int i = f.counter ();
-				int t = (i + start ) % cellCount;
-				int r = t / columnCount;
-				int c = t % columnCount;
-				String value = (String)valuesTable.getValueAt (r, c);
-				if (m.match (value)){
-					
+				final int i = f.counter ();
+				final int t = (i + start ) % cellCount;
+				final int r = t / columnCount;
+				final int c = t % columnCount;
+				
+				final String modelValue = (String)valuesTable.getValueAt (r, c);
+				
+				if (m.match (modelValue)){
+
+					final String value = 
+						matchcase?
+						modelValue:
+						modelValue.toLowerCase ();
+				
 					valuesTable.scrollRectToVisible (valuesTable.getCellRect (r, c, true));
 					valuesTable.getCellEditor (r, c).cancelCellEditing ();
-					
-					valuesTable.editCellAt (r, c);
 					
 					valuesTable.getSelectionModel ().setSelectionInterval (r, r);
 					valuesTable.getColumnModel ().getSelectionModel ().setSelectionInterval (c, c);
 					
-					int selectionStart = backward?value.lastIndexOf (m.getPattern ()):value.indexOf (m.getPattern ());
-					int selectionEnd = selectionStart + m.getPattern ().length ();
-					Component editor = valuesTable.getEditorComponent ();
+					valuesTable.editCellAt (r, c);
+					
+					final int selectionStart = backward?value.lastIndexOf (pattern):value.indexOf (pattern);
+					final int selectionEnd = selectionStart + pattern.length ();
+					final Component editor = valuesTable.getEditorComponent ();
 					if (editor != null){
 						final JTextField textField = (JTextField)editor;
-						if (textField.getText ()==null || !textField.getText ().equals (value)){
+						if (textField.getText ()==null || !textField.getText ().equals (modelValue)){
 							/*
 							 * in caso di editor non allineato (mai usato l'editor)), lo inizializza
 							 */
-							textField.setText (value);
+							textField.setText (modelValue);
 						}
 						
-						textField.select (selectionStart, selectionEnd);
-//						if (!editor.hasFocus ()) {
-//							editor.requestFocus ();
-//						}
+						if (editor.isFocusOwner ()){
+//							System.out.println ("Editor has already the focus");
+						}
+						SwingUtilities.invokeLater (new Runnable () {
+							public void run () {
+								valuesTable.editCellAt (r, c);
+					
+								editor.requestFocusInWindow ();
+//								button.requestFocus ();
+								textField.select (selectionStart, selectionEnd);
+//								System.out.println ("Selected in different cell");
+							}
+						});
 						
+						return;
 					}
 					return;
 				}
 			}
 		}
 		
+		/**
+		 * Implementa uno pseudo ciclo for.
+		 */
 		private class For {
 			private int i;
 			private final int initValue;
@@ -2498,16 +2668,65 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				} else if (evt.getPropertyName ().equals ("backward")){
 					this.backward = ((Boolean)evt.getNewValue ()).booleanValue ();
 				} else if (evt.getPropertyName ().equals ("matchcase")){
-					this.matchcase = ((Boolean)evt.getNewValue ()).booleanValue ();
+					setCaseSensitive (((Boolean)evt.getNewValue ()).booleanValue ());
 				}
 			}
 		}
 		
+
+		public int[] getMatches (String s) {
+			final List<Integer> indexes = new ArrayList<Integer> ();
+			final String sValue = matchcase?s:s.toLowerCase ();
+			final String pattern = matchcase?p:p.toLowerCase ();
+
+			final StringBuffer sb = new StringBuffer ();
+			int patternLength = pattern.length ();
+			int fromIdx = 0;
+			int matchIdx = fromIdx;
+			do {
+				matchIdx = sValue.indexOf (pattern, fromIdx);
+				if (-1==matchIdx){
+					break;
+				}
+				if (-1<matchIdx){
+
+					indexes.add (matchIdx);
+					indexes.add (matchIdx + patternLength);
+
+					fromIdx = matchIdx + patternLength;
+
+				}
+			} while (fromIdx > matchIdx);
+			
+			final int length = indexes.size ();
+
+			final int[] r = new int[length];
+			for (int i = 0; i < length; i++){
+				r[i] = indexes.get (i);
+			}
+			return r;
+			
+		}
+
+		public void setCaseSensitive (boolean v) {
+			matchcase = v;
+			forceTableRepaint ();
+		}
+
+		public boolean getCaseSensitive () {
+			return matchcase;
+		}
+		
 	}
 	
-	
+	/**
+	 * Array delle azioni.
+	 */
 	private final Map actions = new HashMap ();
 	
+	/**
+	 * Crea l'array delle azioni registrate su di un componente testuale.
+	 */
 	private void createActionTable (JTextComponent textComponent) {
 		Action[] actionsArray = textComponent.getActions ();
 		for (int i = 0; i < actionsArray.length; i++) {
@@ -2521,7 +2740,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	}
 	
 	
-	
+	/**
+	 * Consente di caricare un bundle esistente.
+	 */
 	private class OpenAction extends AbstractAction {
 
 		public OpenAction (){
@@ -2567,7 +2788,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 	}
 	
-	
+	/**
+	 * Effettua il salvataggio del bundle su percorso a scelta.
+	 */
 	private class SaveAsAction extends AbstractAction {
 
 		/** Costruttore. */

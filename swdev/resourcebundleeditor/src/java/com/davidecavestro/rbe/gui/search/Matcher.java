@@ -43,4 +43,26 @@ public interface Matcher {
 	 * @return il valore dell'opzione di highlight dei match.
 	 */
 	boolean getHighlight ();
+	
+	/**
+	 * Imposta l'opzione di case-sensitivity.
+	 * 
+	 * @param v il valore dell'opzione. 
+	 */
+	void setCaseSensitive (boolean v);
+	
+	/**
+	 * Ritorna il valore dell'opzione di case-sensitivity.
+	 * 
+	 * @return il valore dell'opzione di case-sensitivity.
+	 */
+	boolean getCaseSensitive ();
+	
+	/**
+	 * Ritorna l'array contenente gli indici delle sottostringhe che soddisfano i criteri di ricerca.
+	 * 
+	 * @param s la stringa su cui effettuare la ricerca.
+	 * @return  l'array contenente gli indici delle sottostringhe che soddisfano i criteri di ricerca.
+	 */
+	int[] getMatches (String s);
 }

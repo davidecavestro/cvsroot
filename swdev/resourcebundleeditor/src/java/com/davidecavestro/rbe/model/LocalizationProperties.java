@@ -57,7 +57,7 @@ public class LocalizationProperties {
 	 * Salva il contenuto di queste risorse nel file specificato.
 	 *
 	 * @param file il file di salvataggio.
-	 * @param header commento.
+	 * @param header commento di testa. Puo' essere <TT>null</TT>.
 	 * @throws FileNotFoundException nel caso di problemi di accesso al file.
 	 * @throws IOException nel caso qualcosa vada male durante il salvataggio.
 	 */	
