@@ -122,7 +122,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	//	private final Color keyBackgroundColor = javax.swing.UIManager.getDefaults().getColor("control");
 	private final static Color keyBackgroundColor = javax.swing.UIManager.getDefaults().getColor("Table.background");
 	//	private final Color keyForegroundColor = javax.swing.UIManager.getDefaults().getColor("textInactiveText");
-	private final static Color keyForegroundColor = javax.swing.UIManager.getDefaults().getColor("Menu.acceleratorForeground");
+	private final static Color keyForegroundColor = javax.swing.UIManager.getDefaults().getColor("Menu.acceleratorForeground").darker ();
 	private final static Color valueForegroundColor = javax.swing.UIManager.getDefaults().getColor("Table.foreground");
 	
 	/** 
@@ -885,7 +885,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         keyTextField.setEditable(false);
         keyTextField.setFont(new java.awt.Font("Monospaced", 1, 12));
         keyTextField.setForeground(keyForegroundColor);
-        keyTextField.setToolTipText("KEY currentKeyFieldTooltip : RB com/davidecavestro/rbe/gui/res");
+        keyTextField.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.rbe.gui.res").getString("currentKeyFieldTooltip"));
         keyTextField.setOpaque(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
