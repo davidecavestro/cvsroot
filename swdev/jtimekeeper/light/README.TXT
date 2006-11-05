@@ -1,0 +1,1 @@
+Repository sorgenti versione light.
