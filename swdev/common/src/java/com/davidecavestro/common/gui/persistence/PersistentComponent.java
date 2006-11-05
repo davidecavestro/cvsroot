@@ -6,9 +6,6 @@
 
 package com.davidecavestro.common.gui.persistence;
 
-import java.awt.Rectangle;
-import java.util.Properties;
-
 /**
  * Componente con attributi persistenti.
  *
