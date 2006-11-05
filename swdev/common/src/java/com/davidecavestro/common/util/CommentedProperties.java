@@ -72,12 +72,17 @@ public class CommentedProperties extends Hashtable {
      * @serial
      */
     protected CommentedProperties defaults;
+	
+	/**
+	 * Il gestore di eccezioni personalizzato.
+	 */
+	private final PropertiesExceptionHandler _eh;
 
     /**
      * Creates an empty property list with no default values.
      */
-    public CommentedProperties () {
-	this(null);
+    public CommentedProperties (final PropertiesExceptionHandler eh) {
+	this(null, eh);
     }
 
     /**
@@ -85,8 +90,9 @@ public class CommentedProperties extends Hashtable {
      *
      * @param   defaults   the defaults.
      */
-    public CommentedProperties (CommentedProperties defaults) {
+    public CommentedProperties (CommentedProperties defaults, final PropertiesExceptionHandler eh) {
 	this.defaults = defaults;
+	this._eh = eh;
     }
 
     /**
@@ -401,8 +407,10 @@ public class CommentedProperties extends Hashtable {
 			     value = (value << 4) + 10 + aChar - 'A';
 			     break;
 			  default:
-                              throw new IllegalArgumentException(
-                                           "Malformed \\uxxxx encoding.");
+				  this._eh.malformedEncoding (theString);
+				  value = aChar;
+//                              throw new IllegalArgumentException(
+//                                           "Malformed \\uxxxx encoding.");
                         }
                     }
                     outBuffer.append((char)value);
@@ -546,8 +554,8 @@ public class CommentedProperties extends Hashtable {
     {
         BufferedWriter awriter;
         awriter = new BufferedWriter(new OutputStreamWriter(out, "8859_1"));
-//        if (header != null)
-//            writeln(awriter, "#" + header + " - " + new Date().toString());
+        if (header != null)
+            writeln(awriter, "#" + header + " - " + new Date().toString());
 		
 		final Set servedKeys = new HashSet ();
 		for (final Iterator it = initialOrder.iterator ();it.hasNext ();){

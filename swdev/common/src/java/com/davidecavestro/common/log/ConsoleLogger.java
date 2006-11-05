@@ -173,26 +173,42 @@ public class ConsoleLogger implements Logger{
 //		}
 	}
 	
-	private final static class MessageType {
+	private abstract static class MessageType {
 		/**
 		 * Messaggio di DEBUG.
 		 */
-		public final static MessageType DEBUG = new MessageType ("DEBUG");
+		public final static MessageType DEBUG = new MessageType ("DEBUG") {
+			public void accept (MessageTypeVisitor v){
+				v.visitDebug (this);
+			}
+		};
 		
 		/**
 		 * Messaggio di INFO.
 		 */
-		public final static MessageType INFO = new MessageType ("INFO");
+		public final static MessageType INFO = new MessageType ("INFO") {
+			public  void accept (MessageTypeVisitor v){
+				v.visitInfo (this);
+			}
+		};
 		
 		/**
 		 * Messaggio di WARNING.
 		 */
-		public final static MessageType WARNING = new MessageType ("WARNING");
+		public final static MessageType WARNING = new MessageType ("WARNING") {
+			public  void accept (MessageTypeVisitor v){
+				v.visitWarning (this);
+			}
+		};
 		
 		/**
 		 * Messaggio di ERROR.
 		 */
-		public final static MessageType ERROR = new MessageType ("ERROR");
+		public final static MessageType ERROR = new MessageType ("ERROR") {
+			public  void accept (MessageTypeVisitor v){
+				v.visitError (this);
+			}
+		};
 		
 		/**
 		 * L adescrizione.
@@ -214,6 +230,23 @@ public class ConsoleLogger implements Logger{
 		public String getType (){
 			return this._type;
 		}
+		
+		/**
+		 * Accetta l'agente esterno "visitatore", in modo da consentire un'espansione dell'interfaccia.
+		 * 
+		 * @param v  il visitatore.
+		 */
+		abstract void accept (MessageTypeVisitor v);
+	}
+	
+	/**
+	 * INterfaccia "visitatore" per l'elaborazione dei tipi di messaggio.
+	 */
+	private static interface MessageTypeVisitor {
+		void visitDebug (MessageType mt);
+		void visitInfo (MessageType mt);
+		void visitWarning (MessageType mt);
+		void visitError (MessageType mt);
 	}
 	
 	
