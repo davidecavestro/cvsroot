@@ -33,13 +33,22 @@ public class PresentationPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         jPanel1 = new javax.swing.JPanel();
-        appNameLabel = new javax.swing.JLabel();
         appVersionLabel = new javax.swing.JLabel();
+        appNameLabel = new javax.swing.JLabel();
         applicationImageLabel = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
+        setPreferredSize(new java.awt.Dimension(420, 300));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(420, 300));
+        appVersionLabel.setFont(new java.awt.Font("Impact", 1, 28));
+        appVersionLabel.setForeground(new java.awt.Color(0, 0, 0));
+        org.openide.awt.Mnemonics.setLocalizedText(appVersionLabel, _appData.getVersionNumber ());
+        appVersionLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        appVersionLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jPanel1.add(appVersionLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 34, 140, 90));
 
         appNameLabel.setFont(new java.awt.Font("Impact", 1, 50));
         appNameLabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -47,19 +56,13 @@ public class PresentationPanel extends javax.swing.JPanel {
         org.openide.awt.Mnemonics.setLocalizedText(appNameLabel, _appData.getApplicationExternalName ());
         appNameLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         appNameLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jPanel1.add(appNameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 2, 210, 100));
-
-        appVersionLabel.setFont(new java.awt.Font("Impact", 1, 28));
-        appVersionLabel.setForeground(new java.awt.Color(255, 255, 255));
-        org.openide.awt.Mnemonics.setLocalizedText(appVersionLabel, _appData.getVersionNumber ());
-        appVersionLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        appVersionLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jPanel1.add(appVersionLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 34, 100, 60));
+        jPanel1.add(appNameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 2, 260, 130));
 
         applicationImageLabel.setForeground(new java.awt.Color(255, 255, 255));
         applicationImageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/splash.png")));
         applicationImageLabel.setIconTextGap(-300);
-        jPanel1.add(applicationImageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        applicationImageLabel.setPreferredSize(new java.awt.Dimension(420, 300));
+        jPanel1.add(applicationImageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 430, 290));
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
 

@@ -6,11 +6,15 @@
 
 package com.davidecavestro.timekeeper.model;
 
-import com.davidecavestro.timekeeper.model.PieceOfWork;
-import com.davidecavestro.timekeeper.model.Task;
 import com.davidecavestro.timekeeper.model.event.TaskTreeModelEvent;
 import com.davidecavestro.timekeeper.model.event.TaskTreeModelListener;
+import com.davidecavestro.timekeeper.model.event.WorkAdvanceModelEvent;
+import com.davidecavestro.timekeeper.model.event.WorkAdvanceModelListener;
+import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.swing.event.EventListenerList;
 
 /**
@@ -21,7 +25,9 @@ import javax.swing.event.EventListenerList;
  *
  * @author  davide
  */
-public abstract class AbstractTaskTreeModel implements TaskTreeModel {
+public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanceModel {
+	
+	private final Set<PieceOfWork> _advancingPOWs;
 	
 	protected final EventListenerList listenerList = new EventListenerList ();
 	
@@ -29,6 +35,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel {
 	
 	/** Costruttore vuoto. */
 	public AbstractTaskTreeModel () {
+		_advancingPOWs = new HashSet ();
 	}
 	
 	/**
@@ -36,6 +43,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel {
 	 * @param root la radice dell'albero.
 	 */
 	public AbstractTaskTreeModel (final Task root) {
+		this ();
 		_root = root;
 	}
 	
@@ -409,7 +417,12 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel {
 		int[]           newIndexs = new int[1];
 		
 		newIndexs[0] = index;
+		
+		final PieceOfWork[] discovered = discoverNewAdvancingProgresses (newChild);
 		nodesWereInserted (parent, newIndexs);
+		if (discovered.length>0) {
+			fireAdvancingInserted (this, discovered);
+		}
 	}
 	
 	/**
@@ -426,11 +439,18 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel {
 		
 		int[]            childIndex = new int[1];
 		Task[]         removedArray = new Task[1];
+
+		final PieceOfWork[] erased = eraseOldAdvancingProgresses (node);
 		
 		childIndex[0] = parent.childIndex (node);
 		parent.remove (childIndex[0]);
 		removedArray[0] = node;
 		nodesWereRemoved (parent, childIndex, removedArray);
+		
+		if (erased.length>0) {
+			fireAdvancingRemoved (this, erased);
+		}
+		
 	}
 	
 	/**
@@ -523,22 +543,241 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel {
 	}
 	
 	/**
+	 * Invoked this to insert newPOW at location index in parents children.
+	 * This will then message nodesWereInserted to create the appropriate
+	 * event. This is the preferred way to add children as it will create
+	 * the appropriate event.
+	 */
+	public void insertPieceOfWorkInto (PieceOfWork newPOW,
+		Task t, int index){
+		t.insert (newPOW, index);
+		
+		int[]           newIndexs = new int[1];
+		
+		newIndexs[0] = index;
+		piecesOfWorkWereInserted (t, newIndexs);
+		if (addToAdvancingIfNeeded (newPOW)){
+			fireAdvancingInserted (this, new PieceOfWork [] {newPOW});
+		}
+	}
+	
+	/**
+	 * Invocare questo metodo per rimuovere un avanzmaneto.
+	 * Questo metodo si occupa di notificare la rimozione tramite .
+	 */
+	public void removePieceOfWork (PieceOfWork pow){
+		final Task t = pow.getTask ();
+		final int pos = t.pieceOfWorkIndex (pow);
+		t.removePieceOfWOrk (pow);
+		
+		piecesOfWorkWereRemoved (t, new int[] {pos}, new PieceOfWork[] {pow});
+		
+		if (eraseIfNeeded (pow, false)){
+			fireAdvancingRemoved (this, new PieceOfWork [] {pow});
+		}
+	}
+	
+	
+	/**
 	 * Invoke this method after you've changed how node is to be
 	 * represented in the tree.
 	 */
 	public void pieceOfWorkChanged (PieceOfWork pow) {
-		if(listenerList != null && pow != null) {
-			Task         parent = pow.getTask ();
+		if (pow != null) {
 			
-			if(parent != null) {
-				int        anIndex = parent.pieceOfWorkIndex (pow);
-				if(anIndex != -1) {
-					int[]        cIndexs = new int[1];
-					
-					cIndexs[0] = anIndex;
-					nodesChanged (parent, cIndexs);
+			if (listenerList!=null) {
+				Task         parent = pow.getTask ();
+
+				if(parent != null) {
+					int        anIndex = parent.pieceOfWorkIndex (pow);
+					if(anIndex != -1) {
+						int[]        cIndexs = new int[1];
+
+						cIndexs[0] = anIndex;
+						nodesChanged (parent, cIndexs);
+					}
 				}
+			}
+			if (addToAdvancingIfNeeded (pow)) {
+				fireAdvancingInserted (this, new PieceOfWork[] {pow});
+			} else if (eraseIfNeeded (pow, true)) {
+				fireAdvancingRemoved (this, new PieceOfWork[] {pow});
 			}
 		}
 	}
+	
+	/**
+	 * Invoke this method after you've inserted some TreeNodes into
+	 * node.  childIndices should be the index of the new elements and
+	 * must be sorted in ascending order.
+	 */
+	public void piecesOfWorkWereInserted (Task node, int[] childIndices) {
+		if(listenerList != null && node != null && childIndices != null
+			&& childIndices.length > 0) {
+			int               cCount = childIndices.length;
+			PieceOfWork[]          newChildren = new PieceOfWork[cCount];
+			
+			for(int counter = 0; counter < cCount; counter++)
+				newChildren[counter] = node.pieceOfWorkAt (childIndices[counter]);
+			firePiecesOfWorkInserted (this, getPathToRoot (node), childIndices,
+				newChildren);
+		}
+	}
+	
+	/**
+	 * Invoke this method after you've removed some TreeNodes from
+	 * node.  childIndices should be the index of the removed elements and
+	 * must be sorted in ascending order. And removedChildren should be
+	 * the array of the children objects that were removed.
+	 */
+	public void piecesOfWorkWereRemoved (Task node, int[] childIndices,
+		PieceOfWork[] removedChildren) {
+		if(node != null && childIndices != null) {
+			firePiecesOfWorkRemoved (this, getPathToRoot (node), childIndices,
+				removedChildren);
+		}
+	}
+
+	public Set<PieceOfWork> getAdvancing () {
+		return _advancingPOWs;
+	}
+
+	public void addWorkAdvanceModelListener (WorkAdvanceModelListener l) {
+		listenerList.add (WorkAdvanceModelListener.class, l);
+	}
+
+	public void removeWorkAdvanceModelListener (WorkAdvanceModelListener l) {
+		listenerList.remove (WorkAdvanceModelListener.class, l);
+	}
+	
+	private final static PieceOfWork[] _voidPOWArray = new PieceOfWork [0];
+	
+	/**
+	 * Cerca e inserisce nell'elenco eventuali avanzamenti in fase di progresso appartenenti al sottoalbero.
+	 * 
+	 * @param t la radice del sottoalbero da esaminare.
+	 * @return i nuovi avanzamenti inseriti nell'elenco.
+	 */
+	private PieceOfWork[] discoverNewAdvancingProgresses (final Task t) {
+		final List<PieceOfWork> discovered = new ArrayList ();
+		final List<PieceOfWork> l = t.getSubtreeProgresses ();
+		synchronized (_advancingPOWs) {
+			for (final PieceOfWork pow : l) {
+				if (addToAdvancingIfNeeded (pow)){
+					discovered.add (pow);
+				}
+			}
+		}
+		return discovered.toArray (_voidPOWArray);
+	}
+	
+	/**
+	 * Valuta se &egrave; necessario inserire l'avanzmaneto nell'elenco di quelli in fase di progress.
+	 * <P>
+	 * L'avanzamento verrà inserito se risulta in progress e non &egrave; ancora presente nell'elenco;
+	 *
+	 */
+	private boolean addToAdvancingIfNeeded (final PieceOfWork pow) {
+		synchronized (_advancingPOWs) {
+			if (pow.isEndOpened () && !_advancingPOWs.contains (pow)){
+				_advancingPOWs.add (pow);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Cerca e rimuove dall'elenco eventuali avanzamenti in fase di progresso appartenenti al sottoalbero.
+	 * 
+	 * @param t la radice del sottoalbero da esaminare.
+	 * @return gli avanzamenti rimossi nell'elenco.
+	 */
+	private PieceOfWork[] eraseOldAdvancingProgresses (final Task t) {
+		final List<PieceOfWork> removed = new ArrayList ();
+		final List<PieceOfWork> l = t.getSubtreeProgresses ();
+		synchronized (_advancingPOWs) {
+			for (final PieceOfWork pow : l) {
+				if (l.contains (pow)) {
+					if (eraseIfNeeded (pow, false)){
+						removed.add (pow);
+					}
+				}
+			}
+		}
+		return removed.toArray (_voidPOWArray);
+	}
+	
+	/**
+	 * Valuta se &egrave; necessario rimuovere l'avanzamento nell'elenco di quelli in progress.
+	 * <P>
+	 * Per essere rimosso, l'avanzamento dele essere gi&agrave;presente nell'elenco.
+	 * Se <CODE>onlyIfClosed</CODE> value <CODE>true</CODE>, l'avanzamento deve anche avere la dat di fine impostata.
+	 * 
+	 */
+	private boolean eraseIfNeeded (final PieceOfWork pow, final boolean onlyIfClosed) {
+		if (!onlyIfClosed || !pow.isEndOpened ()) {
+			return _advancingPOWs.remove (pow);
+		}
+		return false;
+	}
+	
+	/**
+	 * Notifies all listeners that have registered interest for
+	 * notification on this event type.  The event instance
+	 * is lazily created using the parameters passed into
+	 * the fire method.
+	 *
+	 * @param source the node where new elements are being inserted
+	 * @param path the path to the root node
+	 * @param childIndices the indices of the new elements
+	 * @param children the new elements
+	 * @see EventListenerList
+	 */
+	protected void fireAdvancingInserted (Object source, PieceOfWork[] pow) {
+		// Guaranteed to return a non-null array
+		Object[] listeners = listenerList.getListenerList ();
+		WorkAdvanceModelEvent e = null;
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length-2; i>=0; i-=2) {
+			if (listeners[i]==WorkAdvanceModelListener.class) {
+				// Lazily create the event:
+				if (e == null) {
+					e = new WorkAdvanceModelEvent (source, pow, WorkAdvanceModelEvent.INSERT);
+				}
+				((WorkAdvanceModelListener)listeners[i+1]).elementsInserted (e);
+			}
+		}
+	}
+	
+	/**
+	 * Notifies all listeners that have registered interest for
+	 * notification on this event type.  The event instance
+	 * is lazily created using the parameters passed into
+	 * the fire method.
+	 *
+	 * @param source the node where elements are being removed
+	 * @param path the path to the root node
+	 * @param childIndices the indices of the removed elements
+	 * @param children the removed elements
+	 * @see EventListenerList
+	 */
+	protected void fireAdvancingRemoved (Object source, PieceOfWork[] pow) {
+		// Guaranteed to return a non-null array
+		Object[] listeners = listenerList.getListenerList ();
+		WorkAdvanceModelEvent e = null;
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length-2; i>=0; i-=2) {
+			if (listeners[i]==WorkAdvanceModelListener.class) {
+				// Lazily create the event:
+				if (e == null) {
+					e = new WorkAdvanceModelEvent (source, pow, WorkAdvanceModelEvent.DELETE);
+				}
+				((WorkAdvanceModelListener)listeners[i+1]).elementsRemoved (e);
+			}
+		}
+	}
+	
 }

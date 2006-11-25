@@ -325,7 +325,7 @@ public class TaskTreeModelImpl extends AbstractTaskTreeModel {
 			i++;
 		}
 		for (final Task t : l) {
-			parent.remove (indices[i]);
+			parent.remove (parent.childIndex (t));
 		}
 		fireTasksRemoved (this, parentPath, indices, removed);
 	}
