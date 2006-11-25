@@ -10,7 +10,7 @@ package com.davidecavestro.timekeeper.model.event;
 import java.util.EventListener;
 
 /**
- * Definisce l'iNterfaccia per la notifica delle modifiche all'a'lbero degli avanzamenti (TaskTreeModel).
+ * Definisce l'interfaccia per la notifica delle modifiche all'albero degli avanzamenti (TaskTreeModel).
  *<P>
  *
  * @see javax.swing.event.TreeModelListener

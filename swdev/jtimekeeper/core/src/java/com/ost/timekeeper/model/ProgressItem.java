@@ -592,4 +592,12 @@ public final class ProgressItem extends Observable implements Task {
 	public int pieceOfWorkIndex (PieceOfWork p) {
 		return progresses.indexOf (p);
 	}
+
+	public PieceOfWork pieceOfWorkAt (int pos) {
+		return (PieceOfWork)this.progresses.get (pos);
+	}
+
+	public int pieceOfWorkCount () {
+		return this.progresses.size ();
+	}
 }

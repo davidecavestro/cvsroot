@@ -20,7 +20,7 @@ public interface Task {
 	
 	/**
 	 * Ritorna il task superiore nella gerarchia.
-	 * 
+	 *
 	 * @return il task superiore.
 	 */
 	Task getParent ();
@@ -32,6 +32,14 @@ public interface Task {
 	 * @param pos la posizione del figlio.
 	 */
 	void insert (Task child, int pos);
+	
+	/**
+	 * Aggiunge il periodo di avanzamento specificato a questo nodo.
+	 *
+	 * @param progress l'avanzamento da aggiungere.
+	 * @param position la posizione dell'avanzamento.
+	 */
+	void insert (PieceOfWork progress, int position);
 	
 	/**
 	 * Ritorna l'indice relativo alla posizione del figlio tra tutti i figli di
@@ -78,14 +86,21 @@ public interface Task {
 	 *
 	 * @return il nome.
 	 */
-	String getName ();	
+	String getName ();
 	
 	/**
 	 * Ritorna il numero di figli di questo nodo.
 	 *
 	 * @return il numero dei figli.
 	 */
-	int childCount ();	
+	int childCount ();
+	
+	/**
+	 * Ritorna il numero di avanzamenti di questo nodo.
+	 *
+	 * @return il numero di avanzamenti.
+	 */
+	int pieceOfWorkCount ();
 	
 	/**
 	 * Rimuove il periodo di avanzamento specificato da questo nodo.
@@ -94,10 +109,29 @@ public interface Task {
 	void removePieceOfWOrk (PieceOfWork p);
 	
 	/**
+	 * Ritorna l'avanzamento che occupa una determinata posizione tra gli avanzamenti
+	 * di questo nodo.
+	 *
+	 * @param pos la posizione dell'avanzamento da cercare.
+	 * @return l'avanzamento di questo nodo avente posizione <TT>pos</TT>.
+	 */
+	PieceOfWork pieceOfWorkAt (int pos);
+	
+	/**
 	 * Ritorna l'indice dell'avanzamento tra quelli appartenenti a questo task
-	 * 
-	 * @param p 
-	 * @return 
+	 *
+	 * @param p
+	 * @return
 	 */
 	int pieceOfWorkIndex (PieceOfWork p);
+	
+	/**
+	 * Ritorna gli avanzamenti apparteneneti al sottoalbero avente questo nodo
+	 * come radice.
+	 * Una lista di {@link com.ost.timekeeper.model.PieceOfWork}.
+	 *
+	 * @return gli avanzamenti apparteneneti al sottoalbero.
+	 */
+	List getSubtreeProgresses ();
+	
 }
