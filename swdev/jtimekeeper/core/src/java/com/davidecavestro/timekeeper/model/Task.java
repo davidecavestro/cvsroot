@@ -89,6 +89,12 @@ public interface Task {
 	String getName ();
 	
 	/**
+	 * Cambia il nome di questo nodo.
+	 * @param n il nuovo nome.
+	 */
+	void setName (String n);
+	
+	/**
 	 * Ritorna il numero di figli di questo nodo.
 	 *
 	 * @return il numero dei figli.

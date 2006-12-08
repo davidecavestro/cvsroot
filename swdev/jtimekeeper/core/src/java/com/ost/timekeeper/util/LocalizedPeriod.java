@@ -44,17 +44,17 @@ public interface LocalizedPeriod {
 	LocalizedPeriod intersection (final LocalizedPeriod period);
 	
 	/**
-	 * Verifica se questo periodo è valido.
+	 * Verifica se questo periodo ï¿½ valido.
 	 *
-	 * @return <code>true</code> se questo è un periodo temporale valido;
+	 * @return <code>true</code> se questo ï¿½ un periodo temporale valido;
 	 * <code>false</code> altrimenti.
 	 */
 	boolean isValid ();
 	
 	/**
-	 * Verifica se questo periodo non è terminato.
+	 * Verifica se questo periodo non ï¿½ terminato.
 	 *
-	 * @return <code>true</code> se questo è un periodo temporale non terminato;
+	 * @return <code>true</code> se questo ï¿½ un periodo temporale non terminato;
 	 * <code>false</code> altrimenti.
 	 */
 	boolean isEndOpened ();
@@ -65,4 +65,11 @@ public interface LocalizedPeriod {
 	 * @return la durata.
 	 */
 	Duration getDuration ();
+	
+	/**
+	 * Ritorna la durata di questo periodo, in millisecondi.
+	 * 
+	 * @return la durata di questo periodo, in millisecondi.
+	 */
+	long getTime ();
 }

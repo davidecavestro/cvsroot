@@ -250,5 +250,16 @@ public class Period extends Observable implements LocalizedPeriod{
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
-	
+
+	public long getTime () {
+		if (this.isEndOpened ()){
+			return toNow ();
+		} else {
+			return getDuration ().getTime ();
+		}		
+	}
+
+	private long toNow () {
+		return System.currentTimeMillis () - from.getTime ();
+	}
 }

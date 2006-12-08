@@ -268,6 +268,17 @@ public class LocalizedPeriodImpl extends Observable implements LocalizedPeriod {
 		sb.append (this._to);
 		return sb.toString ().hashCode ();
 	}
-	
+
+	public long getTime () {
+		if (this.isEndOpened ()){
+			return toNow ();
+		} else {
+			return getDuration ().getTime ();
+		}		
+	}
+
+	private long toNow () {
+		return System.currentTimeMillis () - _from.getTime ();
+	}
 }
 

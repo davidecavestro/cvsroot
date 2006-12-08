@@ -90,7 +90,7 @@ public class TaskTreePath {
 			return _parentPath.equals (testingParent);
 		} else {
 			/* true se entrambi NULL */
-			return _lastElement==testingParent;
+			return _parentPath==testingParent;
 		}
 	}
 	

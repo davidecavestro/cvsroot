@@ -101,6 +101,15 @@ public final class Duration {
 		}
 	}
 	
+	/**
+	 * Indice, nell'array di interi fornito daimetodi statici di calcolo, della posizione che contiene il valore TOTALE.
+	 */
+	private final static int TOTAL_SLOT = 0;
+	/**
+	 * Indice, nell'array di interi fornito daimetodi statici di calcolo, della posizione che contiene il valore del RESTO.
+	 */
+	private final static int MOD_SLOT = 1;
+	
 	private boolean computedTotalMilliseconds;
 	
 	private boolean computedMilliseconds = false;
@@ -120,27 +129,58 @@ public final class Duration {
 	private long totalSeconds = 0;
 	private long modSeconds = 0;
 	private final void computeSeconds (){
-		this.totalSeconds = this.totalMilliseconds / MILLISECONDS_PER_SECOND;
-		this.modSeconds = this.totalSeconds % SECONDS_PER_MINUTE;
+		final long[] m = computeSeconds (totalMilliseconds);
+		this.totalSeconds = m[TOTAL_SLOT];
+		this.modSeconds = m[MOD_SLOT];
 		computedSeconds = true;
 	}
+	
+	/**
+	 * Ritorna un array a due elementi, contenente il numero totale di secondi corrispondenti al numero di millisecondi specificato,
+	 * ed il numero di minuti rimanenti, modulo {@link #SECONDS_PER_MINUTE}.
+	 * 
+	 * @param millis il numero di millisecondi.
+	 */
+	private final static long[] computeSeconds (final long millis) {
+		final long total = millis / MILLISECONDS_PER_SECOND;
+		final long mod = total % SECONDS_PER_MINUTE;
+		return new long [] {total, mod};
+	}
+	
 	
 	private boolean computedMinutes = false;
 	private long totalMinutes = 0;
 	private long modMinutes = 0;
 	private final void computeMinutes (){
-		this.totalMinutes = this.totalMilliseconds / MILLISECONDS_PER_MINUTE;
-		this.modMinutes = this.totalMinutes % MINUTES_PER_HOUR;
+		final long[] m = computeMinutes (totalMilliseconds);
+		this.totalMinutes = m[TOTAL_SLOT];
+		this.modMinutes = m[MOD_SLOT];
 		computedMinutes = true;
+	}
+	
+	/**
+	 * Ritorna un array a due elementi, contenente il numero totale di minuti corrispondenti al numerodi millisecondi specificato,
+	 * ed il numero di minuti rimanenti, modulo {@link #MINUTES_PER_HOUR}.
+	 * 
+	 * @param millis il numero di millisecondi.
+	 */
+	private final static long[] computeMinutes (final long millis) {
+		final long total = millis / MILLISECONDS_PER_MINUTE;
+		final long mod = total % MINUTES_PER_HOUR;
+		return new long [] {total, mod};
 	}
 	
 	private boolean computedHours = false;
 	private long totalHours = 0;
 	private long modHours = 0;
 	private final void computeHours (){
-		this.totalHours = this.totalMilliseconds / MILLISECONDS_PER_HOUR;
+		this.totalHours = computeTotalHours (totalMilliseconds);
 		this.modHours = this.totalHours % HOURS_PER_DAY;
 		computedHours = true;
+	}
+	
+	private final static long computeTotalHours (final long millis){
+		return  millis / MILLISECONDS_PER_HOUR;
 	}
 	
 	private boolean computedDays = false;
@@ -211,5 +251,29 @@ public final class Duration {
 	 */	
 	public long getTime (){
 		return this.totalMilliseconds;
+	}
+	
+	/**
+	 * Posizione dello slot contenente il valore dei secondi, nel risultato del metodo <CODE>getDurationFields</CODE>.
+	 */
+	public final static int SECONDS_SLOT = 0;
+	/**
+	 * Posizione dello slot contenente il valore dei minuti, nel risultato del metodo <CODE>getDurationFields</CODE>.
+	 */
+	public final static int MINUTES_SLOT = 1;
+	/**
+	 * Posizione dello slot contenente il valore delle ore, nel risultato del metodo <CODE>getDurationFields</CODE>.
+	 */
+	public final static int HOURS_SLOT = 2;
+	/**
+	 * Ritorna un array contenente il valore, dei campi <PRE>[secondi, minuti, ore]</PRE> relatici alla durata specificata.
+	 * <BR>
+	 * Tali valori corrispondono ai valori che ritornerebbero le chiamate ai metodi <PRE>[getSeconds (), getMinutes (), getTtalHours ()] </PRE>di una Duration creta a partire dal numero di millisecondi specificato.
+	 * 
+	 * @param millis il numerodi millisecondi
+	 * @return un array contenente il valore, dei campi <PRE>[secondi, minuti, ore]</PRE> relatici alla durata specificata.
+	 */
+	public final static long[] getDurationFields (final long millis) {
+		return new  long[] {computeSeconds (millis)[MOD_SLOT], computeMinutes (millis)[MOD_SLOT], computeTotalHours (millis)};
 	}
 }
