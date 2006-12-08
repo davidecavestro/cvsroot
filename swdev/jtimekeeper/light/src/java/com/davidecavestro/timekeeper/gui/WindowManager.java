@@ -10,6 +10,7 @@ import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.common.gui.dialog.DialogListener;
 import com.davidecavestro.timekeeper.ApplicationContext;
 import com.davidecavestro.timekeeper.model.Task;
+import com.ost.timekeeper.model.Progress;
 import com.ost.timekeeper.model.ProgressItem;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
@@ -65,12 +66,34 @@ public class WindowManager implements ActionListener, DialogListener {
 		return this._mainWindow;
 	}
 	
+	private NewPieceOfWorkDialog _mewPOWDialog;	
+	/**
+	 * Ritorna la dialog di inserimento nuovo avanzamento.
+	 * @return la dialog di inserimento nuovo avanzamento.
+	 */
+	public NewPieceOfWorkDialog getNewPieceOfWorkDialog () {
+		if (_mewPOWDialog==null){
+			_mewPOWDialog = new NewPieceOfWorkDialog (getMainWindow (), true);
+			_context.getUIPersisteer ().register (_mewPOWDialog);
+			_mewPOWDialog.addDialogListener (this);
+		}
+		return _mewPOWDialog;
+	}
+	
+	/**
+	 * Rende visibile la dialog di inserimento nuovo avanzamento.
+	 */
+	public void showNewPieceOfWorkDialog (final Task parent) {
+		getNewPieceOfWorkDialog ().showForTask (parent);
+	}
+	
+	
 	private NewTaskDialog _mewTaskDialog;	
 	/**
 	 * Ritorna la dialog di inserimento nuovo ytask.
 	 * @return la dialog di inserimento nuovo ytask.
 	 */
-	private NewTaskDialog getAddEntryDialog (){
+	public NewTaskDialog getNewTaskDialog () {
 		if (this._mewTaskDialog==null){
 			this._mewTaskDialog = new NewTaskDialog (getMainWindow (), true);
 			this._context.getUIPersisteer ().register (this._mewTaskDialog);
@@ -80,7 +103,7 @@ public class WindowManager implements ActionListener, DialogListener {
 	}
 	
 	public void showNewTaskDialog (final Task parent) {
-		getAddEntryDialog ().showForParent (parent);
+		getNewTaskDialog ().showForParent (parent);
 	}
 	
 
@@ -126,6 +149,21 @@ public class WindowManager implements ActionListener, DialogListener {
 					-1
 					);
 			}
+		} else if (e.getSource ()==_mewPOWDialog){
+			if (e.getType ()==JOptionPane.OK_OPTION){
+				final ProgressItem t = (ProgressItem)_mewPOWDialog.getTask ();
+				final Progress p = new Progress (
+						_mewPOWDialog.getFromDate (), 
+						_mewPOWDialog.getToDate (), 
+						t
+					);
+				p.setDescription (_mewPOWDialog.getDescriptionText ());
+				this._context.getModel ().insertPieceOfWorkInto (
+					p,
+					t, 
+					-1
+					);
+			}
 		}
 		
 	}
@@ -154,6 +192,6 @@ public class WindowManager implements ActionListener, DialogListener {
 		}
 		return this._about;
 	}
-	
+
 	
 }

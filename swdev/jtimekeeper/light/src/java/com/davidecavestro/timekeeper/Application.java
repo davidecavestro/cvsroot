@@ -16,6 +16,7 @@ import com.davidecavestro.common.log.ConsoleLogger;
 import com.davidecavestro.common.log.Logger;
 import com.davidecavestro.common.log.LoggerAdapter;
 import com.davidecavestro.common.log.PlainTextLogger;
+import com.davidecavestro.common.undo.RBUndoManager;
 import com.davidecavestro.common.util.*;
 import com.davidecavestro.timekeeper.conf.ApplicationEnvironment;
 import com.davidecavestro.timekeeper.conf.CommandLineApplicationEnvironment;
@@ -25,9 +26,8 @@ import com.davidecavestro.timekeeper.gui.WindowManager;
 import com.davidecavestro.timekeeper.actions.ActionManager;
 import com.davidecavestro.timekeeper.conf.ApplicationOptions;
 import com.davidecavestro.timekeeper.conf.DefaultSettings;
-import com.davidecavestro.timekeeper.model.TaskTreeModelImpl;
-import com.davidecavestro.timekeeper.model.undo.RBUndoManager;
 import com.davidecavestro.timekeeper.model.TaskTreeModelExceptionHandler;
+import com.davidecavestro.timekeeper.model.UndoableTaskTreeModel;
 import com.ost.timekeeper.model.Progress;
 import com.ost.timekeeper.model.ProgressItem;
 import com.ost.timekeeper.model.Project;
@@ -57,7 +57,7 @@ public class Application {
 
 
 		
-		RBUndoManager undoManager = new RBUndoManager ();
+		final RBUndoManager undoManager = new RBUndoManager ();
 
 		final Properties releaseProps = new Properties ();
 		try {
@@ -107,11 +107,9 @@ public class Application {
 		
 		final TaskTreeModelExceptionHandler peh = new TaskTreeModelExceptionHandler () {};
 
-		final ProgressItem pi = new ProgressItem ("foo");
-		pi.insert (new ProgressItem ("foo child"));
-		pi.addProgress (new Progress (new Date (), new Date (), pi));
-		final Project prj = new Project ("foo", pi);
-		final TaskTreeModelImpl model = new TaskTreeModelImpl (applicationOptions, peh, prj);
+		final ProgressItem pi = new ProgressItem ("New workspace");
+		final Project prj = new Project (pi.getName (), pi);
+		final UndoableTaskTreeModel model = new UndoableTaskTreeModel (undoManager, applicationOptions, peh, prj);
 		
 		this._context = new ApplicationContext (
 			_env,
@@ -158,6 +156,17 @@ public class Application {
 		} finally {
 			wm.getSplashWindow (this._context.getApplicationData ()).hide ();
 		}
+		
+		/*
+		 * Codice temporaneo per test
+		 * @todo rimuovere
+		 */
+		final ProgressItem pi = new ProgressItem ("foo");
+		pi.insert (new ProgressItem ("foo child"));
+		pi.addProgress (new Progress (new Date (), null, pi));
+		final Project prj = new Project ("foo", pi);
+		
+		_context.getModel ().setWorkSpace (prj);
 		wm.getMainWindow ().show ();
 		_context.getLogger().info ("UI successfully started");
 	}

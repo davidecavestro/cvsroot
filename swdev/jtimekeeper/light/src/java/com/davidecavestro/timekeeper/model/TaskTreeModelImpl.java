@@ -8,8 +8,6 @@ package com.davidecavestro.timekeeper.model;
 
 import com.davidecavestro.timekeeper.conf.ApplicationOptions;
 import java.beans.PropertyChangeListener;
-import java.util.List;
-import javax.swing.event.UndoableEditListener;
 
 /**
  * Il modello di albero degli avanzamenti.
@@ -49,22 +47,25 @@ public class TaskTreeModelImpl extends AbstractTaskTreeModel {
 		super (workSpace.getRoot ());
 		_applicationOptions = applicationOptions;
 		_peh = peh;
-		setWorkSpace (workSpace);
 		
+		setWorkSpace (workSpace);
 	}
 
-//	public void setName (String name){
-//		if (this._name!=name){
-//			final String old = this._name;
-//			this._name = name;
-//			firePropertyChange ("name", old, name);
-//		}
-//	}
-	
+	/**
+	 * Imposta il nuovo workspace.
+	 *Provvede inoltre alla notifica divarizione della property "name".
+	 * 
+	 * @param workSpace 
+	 */
 	public void setWorkSpace (final WorkSpace workSpace){
+		final WorkSpace oldWS = _workSpace;
 		this._workSpace = workSpace;
 		setRoot (workSpace.getRoot ());
 		reload (workSpace.getRoot ());
+		final String oldName = oldWS!=null?oldWS.getName ():null;
+		final String newName = workSpace!=null?workSpace.getName ():null;
+		if (oldName!=newName)
+		firePropertyChange ("name", oldName, newName);
 	}
 	
 
@@ -272,63 +273,4 @@ public class TaskTreeModelImpl extends AbstractTaskTreeModel {
 		changeSupport.firePropertyChange (propertyName, oldValue, newValue);
 	}
 	
-
-	
-	
-	public void addUndoableEditListener (UndoableEditListener listener) {
-		listenerList.add (UndoableEditListener.class, listener);
-	}
-	
-	public void removeUndoableEditListener (UndoableEditListener listener) {
-		listenerList.remove (UndoableEditListener.class, listener);
-	}
-
-	/**
-	 * RImuove avanzamenti fratelli.
-	 * 
-	 * @param t il rask che contiene gli avazamenti da rimuovere.
-	 * @param l gli avanzamenti da rimuovere.
-	 */
-	public void removePiecesOfWork (final Task t, final List<PieceOfWork> l) {
-		final int count = l.size ();
-		final int[] indices = new int [count];
-		final PieceOfWork[] removed = new PieceOfWork [count];
-		
-		int i=0;
-		for (final PieceOfWork p : l) {
-			indices [i] = t.pieceOfWorkIndex (p);
-			removed[i] = p;
-			i++;
-		}
-		for (final PieceOfWork p : l) {
-			p.getTask ().removePieceOfWOrk (p);
-		}
-		firePiecesOfWorkRemoved (this, new TaskTreePath (t), indices, removed);
-	}
-	
-	/**
-	 * Rimuove task fratelli.
-	 * 
-	 * @param parent il padre dei task da rimuovere.
-	 * @param l i taskda rimuovere.
-	 */
-	public void removeTasks (final Task parent, final List<Task> l) {
-		final TaskTreePath parentPath = new TaskTreePath (parent);
-		final int count = l.size ();
-		final int[] indices = new int [count];
-		final Task[] removed = new Task [count];
-		
-		int i=0;
-		for (final Task t : l) {
-			indices [i] = parent.childIndex (t);
-			removed[i] = t;
-			i++;
-		}
-		for (final Task t : l) {
-			parent.remove (parent.childIndex (t));
-		}
-		fireTasksRemoved (this, parentPath, indices, removed);
-	}
-	
-
 }

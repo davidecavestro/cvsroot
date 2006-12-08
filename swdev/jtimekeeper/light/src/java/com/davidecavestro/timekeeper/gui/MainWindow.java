@@ -9,12 +9,19 @@ package com.davidecavestro.timekeeper.gui;
 import com.davidecavestro.common.gui.SwingWorker;
 import com.davidecavestro.common.gui.persistence.PersistenceUtils;
 import com.davidecavestro.common.gui.persistence.PersistentComponent;
+import com.davidecavestro.common.util.IllegalOperationException;
 import com.davidecavestro.common.util.StringUtils;
 import com.davidecavestro.common.util.action.ActionNotifier;
 import com.davidecavestro.common.util.action.ActionNotifierImpl;
 import com.davidecavestro.common.util.file.CustomFileFilter;
 import com.davidecavestro.common.util.file.FileUtils;
 import com.davidecavestro.timekeeper.ApplicationContext;
+import com.davidecavestro.timekeeper.gui.dnd.DataFlavors;
+import com.davidecavestro.timekeeper.gui.dnd.ProgressItemSelection;
+import com.davidecavestro.timekeeper.gui.dnd.ProgressItemTransferHandler;
+import com.davidecavestro.timekeeper.gui.dnd.ProgressTransferHandler;
+import com.davidecavestro.timekeeper.gui.dnd.TransferAction;
+import com.davidecavestro.timekeeper.gui.dnd.TransferActionListener;
 import com.davidecavestro.timekeeper.help.HelpResources;
 import com.davidecavestro.timekeeper.model.TaskTreeModelImpl;
 import com.davidecavestro.timekeeper.model.PieceOfWork;
@@ -22,37 +29,40 @@ import com.davidecavestro.timekeeper.model.Task;
 import com.davidecavestro.timekeeper.model.TaskTreePath;
 import com.davidecavestro.timekeeper.model.event.TaskTreeModelEvent;
 import com.davidecavestro.timekeeper.model.event.TaskTreeModelListener;
+import com.davidecavestro.timekeeper.model.event.WorkAdvanceModelEvent;
+import com.davidecavestro.timekeeper.model.event.WorkAdvanceModelListener;
 import com.ost.timekeeper.model.Progress;
 import com.ost.timekeeper.model.ProgressItem;
 import com.ost.timekeeper.util.Duration;
 import com.ost.timekeeper.util.LocalizedPeriod;
 import com.ost.timekeeper.util.LocalizedPeriodImpl;
 import java.awt.Component;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.Font;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.image.ImageObserver;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.DecimalFormat;
-import java.text.FieldPosition;
-import java.text.Format;
-import java.text.ParsePosition;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.EventObject;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimerTask;
 import javax.help.CSH;
 import javax.swing.*;
@@ -68,11 +78,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.text.DateFormatter;
 import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.Document;
-import javax.swing.text.InternationalFormatter;
 import javax.swing.text.JTextComponent;
-import javax.swing.text.PlainDocument;
 import javax.swing.tree.TreePath;
+import org.jdesktop.swingx.decorator.FilterPipeline;
+import org.jdesktop.swingx.decorator.SortController;
+import org.jdesktop.swingx.decorator.Sorter;
 import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 
 /**
@@ -83,13 +93,16 @@ import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 public class MainWindow extends javax.swing.JFrame implements PersistentComponent, ActionNotifier {
 	
 	private final ActionNotifierImpl _actionNotifier;
-//	private final ProgressesJTableModel _progressesJTableModel;
 	
 	private final ApplicationContext _context;
 	private final WindowManager _wm;
 	
+	private final AdvancingTicPump _ticPump;
 	
+	private MouseEvent _taskTreeFirstMouseEvent;
 	
+	private final TransferActionListener tal = new TransferActionListener ();
+
 	/**
 	 * Costruttore.
 	 */
@@ -98,28 +111,52 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		this._context = context;
 		this._wm = context.getWindowManager ();
 		
-//		this._progressesJTableModel = new ProgressesJTableModel (this._context.getModel ());
+		/*
+		 * va istanziato prima dell'inizializzazione dei componenti, che vi si registrano
+		 */
+		_ticPump = new AdvancingTicPump (_context.getModel (), 1000);
+		_context.getModel ().addWorkAdvanceModelListener (_ticPump);
 		
 		createActionTable (new JTextArea ());
 		
 		initComponents ();
-		this._context.getUIPersisteer ().register (new MainWindow.PersistencePanelAdapter (this.taskTreePanel, "taskTreePanel"));
-		
-		final Point currentCellPos = new Point ();
+//		this._context.getUIPersisteer ().register (new MainWindow.PersistencePanelAdapter (this.taskTreePanel, "taskTreePanel"));
 		
 		/*
-		 * notifica la textarea del cambio di selezione, aggiornandola
+		 * registra l'albero e la tabella per la gestioen del cut&paste dal menu e toolbar
 		 */
-		final ListSelectionListener l = new ListSelectionListener (){
-			final Document d = new PlainDocument ();
-			public void valueChanged (ListSelectionEvent e) {
-			}
-		};
-		progressesTable.getSelectionModel ().addListSelectionListener (l);
-		progressesTable.getColumnModel ().getSelectionModel ().addListSelectionListener (l);
+		tal.register (taskTree);
+		tal.register (progressesTable);
+		
+		
+//		/*
+//		 * notifica la textarea del cambio di selezione, aggiornandola
+//		 */
+//		final ListSelectionListener l = new ListSelectionListener (){
+//			final Document d = new PlainDocument ();
+//			public void valueChanged (ListSelectionEvent e) {
+//			}
+//		};
+//		progressesTable.getSelectionModel ().addListSelectionListener (l);
+//		progressesTable.getColumnModel ().getSelectionModel ().addListSelectionListener (l);
 		progressesTable.setDefaultEditor (Date.class, new DateCellEditor ());
 		progressesTable.setDefaultEditor (PieceOfWork.class, new DurationCellEditor ());
 		progressesTable.setDefaultEditor (Duration.class, new DurationCellEditor ());
+		progressesTable.setDefaultEditor (String.class, new DefaultCellEditor (new JTextField ()) {
+			
+			/**
+			 * Editazione parte, in caso di evento del mouse, solo dopo doppio click
+			 */
+			@Override
+			public boolean isCellEditable (EventObject eo) {
+				if (eo instanceof MouseEvent) {
+					return ((MouseEvent)eo).getClickCount ()>1;
+				} else {
+					return super.isCellEditable (eo);
+				}
+			}
+		});
+
 		
 		
 		
@@ -193,7 +230,138 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				});
 			}
 		}
+
+//		//disable internal dnd functionality, because we need our own implementation
+//		taskTree.setDragEnabled (false);
 		
+		//attach transfer handler
+		taskTree.setTransferHandler (new TaskTreeTransferHandler ());
+		
+		progressesTable.setTransferHandler (new ProgressTableTransferHandler ());
+		
+//		//since we have a transfer handler, we just need to attach mouse listeners
+//		//to initiate the drag inside of the transfer handler
+//		final MouseAdapter dndMouseAdapter = new MouseAdapter () {
+//			public void mousePressed (MouseEvent e) {
+//				_taskTreeFirstMouseEvent = e;
+//				e.consume ();
+//			}
+//			
+//			public void mouseReleased (MouseEvent e) {
+//				_taskTreeFirstMouseEvent = null;
+//			}
+//		};
+//		
+//		taskTree.addMouseListener (dndMouseAdapter);
+//		taskTree.addMouseMotionListener (new java.awt.event.MouseMotionAdapter () {
+//			
+//			//define diplacement of five pixel for as drag
+//			private static final int PIXEL_DISPLACEMENT = 5;
+//			
+//			public void mouseDragged (MouseEvent e) {
+//				if (_taskTreeFirstMouseEvent != null) {
+//					e.consume ();
+//					
+//					//if the user holds down the control key -> COPY, otherwise MOVE
+//					int ctrlMask = java.awt.event.InputEvent.CTRL_DOWN_MASK;
+//					int action = ((e.getModifiersEx () & ctrlMask) == ctrlMask) ? TransferHandler.COPY : TransferHandler.MOVE;
+//					
+//					int dx = Math.abs (e.getX () - _taskTreeFirstMouseEvent.getX ());
+//					int dy = Math.abs (e.getY () - _taskTreeFirstMouseEvent.getY ());
+//					
+//					//define a displacement of at least some pixel as a drag
+//					if (dx > PIXEL_DISPLACEMENT || dy > PIXEL_DISPLACEMENT) {
+//						//starting to drag...
+//						JComponent c = (JComponent) e.getSource ();
+//						TransferHandler handler = c.getTransferHandler ();
+//						
+//						//tell transfer handler to start drag
+//						handler.exportAsDrag (c, _taskTreeFirstMouseEvent, action);
+//						
+//						int x = e.getX ();
+//						int y = e.getY ();
+//						
+//						//reset first mouse event for the next time
+//						_taskTreeFirstMouseEvent = null;
+//					}
+//				}
+//			}
+//		});
+//		
+//		//revert MouseListeners order so that our MouseListener is called first
+//		//this is important to give drag n drop first priority and prevent the
+//		//internal mouse handler of tableUI changing the selection.
+//		java.awt.event.MouseListener[] mls = this.getMouseListeners ();
+//		for (int i = 0; i < mls.length; i++) {
+//			if (mls[i] != dndMouseAdapter) {
+//				this.removeMouseListener (mls[i]);
+//				this.addMouseListener (mls[i]);
+//			}
+//		}		
+		
+		_context.getModel ().addWorkAdvanceModelListener (new WorkAdvanceModelListener () {
+			public void elementsInserted (WorkAdvanceModelEvent e) {
+				adjustStatusLabel ();
+			}
+			public void elementsRemoved (WorkAdvanceModelEvent e) {
+				adjustStatusLabel ();
+			}
+			
+			private void adjustStatusLabel () {
+				if (_context.getModel ().getAdvancing ().isEmpty ()) {
+					appStatusLabel.setText ("IDLE");
+				} else {
+					appStatusLabel.setText ("RUNNING");
+				}				
+			}
+		});
+			
+		
+		/*
+		 * toggle sort
+		 * 1 asc, 2 desc, 3 null
+		 */
+		progressesTable.setFilters (new FilterPipeline () {
+			protected SortController createDefaultSortController() {
+				return new SorterBasedSortController () {
+ 
+					 public void toggleSortOrder(int column, Comparator comparator) {
+						 Sorter currentSorter = getSorter();
+						 if ((currentSorter != null) 
+								 && (currentSorter.getColumnIndex() == column)
+								 && !currentSorter.isAscending()) {
+							 setSorter(null);
+						 } else {
+							 super.toggleSortOrder(column, comparator);
+						 }
+					 }
+
+				 };
+			}			
+		});
+		
+		taskTree.getTreeTableModel ().addTreeModelListener (new TreeModelListener () {
+			public void treeNodesChanged (TreeModelEvent e) {
+			}
+			public void treeNodesInserted (TreeModelEvent e) {
+				taskTree.packAll ();
+			}
+			public void treeNodesRemoved (TreeModelEvent e) {
+				taskTree.packAll ();
+			}
+			public void treeStructureChanged (TreeModelEvent e) {
+				taskTree.packAll ();
+			}
+		});
+		
+		progressesTable.getModel ().addTableModelListener (new TableModelListener () {
+			public void tableChanged (TableModelEvent e) {
+				if (e.getColumn ()==TableModelEvent.ALL_COLUMNS && e.getLastRow ()==Integer.MAX_VALUE) {
+					/* denota un ricaricamento totale */
+					progressesTable.packAll ();
+				}
+			}
+		});
 	}
 	
 	
@@ -225,35 +393,36 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         openFileChooser = new javax.swing.JFileChooser();
         saveFileChooser = new javax.swing.JFileChooser();
         mainPanel = new javax.swing.JPanel();
+        tree_table_splitPane = new javax.swing.JSplitPane();
+        taskTreePanel = new javax.swing.JPanel();
+        jSplitPane2 = new javax.swing.JSplitPane();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        taskTree = new org.jdesktop.swingx.JXTreeTable();
+        chartsPanel = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        progressesTablePanel = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        progressesTable = new org.jdesktop.swingx.JXTable();
         statusPanel = new javax.swing.JPanel();
-        runningStatusLabel = new javax.swing.JLabel();
+        appStatusLabel = new javax.swing.JLabel();
         progressBar = new javax.swing.JProgressBar();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         tableTaskNameLabel = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         tableProgressCountLabel = new javax.swing.JLabel();
-        tree_table_splitPane = new javax.swing.JSplitPane();
-        taskTreePanel = new javax.swing.JPanel();
-        jSplitPane2 = new javax.swing.JSplitPane();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        taskTree = new org.jdesktop.swingx.JXTreeTable();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        progressesTablePanel = new javax.swing.JPanel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        progressesTable = new org.jdesktop.swingx.JXTable();
         jPanel5 = new javax.swing.JPanel();
         mainToolbar = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jSeparator5 = new javax.swing.JSeparator();
+        jButton4 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        jButton10 = new javax.swing.JButton();
         mainToolbar1 = new javax.swing.JToolBar();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
         undoButton = new javax.swing.JButton();
         redoButton = new javax.swing.JButton();
         mainToolbar2 = new javax.swing.JToolBar();
@@ -281,8 +450,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         pasteMenuItem = new javax.swing.JMenuItem();
         getActionByName(DefaultEditorKit.deleteNextCharAction).putValue (Action.ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_DELETE, 0));
         deleteMenuItem = new javax.swing.JMenuItem();
-        jSeparator5 = new javax.swing.JSeparator();
-        findMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         logConsoleMenuItem = new javax.swing.JMenuItem();
         optionsMenuItem = new javax.swing.JMenuItem();
@@ -366,49 +533,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
         mainPanel.setLayout(new java.awt.BorderLayout());
 
-        statusPanel.setLayout(new java.awt.GridBagLayout());
-
-        javax.help.CSH.setHelpIDString (statusPanel, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.STATUS_BAR));
-        runningStatusLabel.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(runningStatusLabel, "IDLE");
-        runningStatusLabel.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Editing_status"));
-        runningStatusLabel.setMinimumSize(new java.awt.Dimension(90, 19));
-        runningStatusLabel.setPreferredSize(new java.awt.Dimension(70, 19));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        statusPanel.add(runningStatusLabel, gridBagConstraints);
-
-        progressBar.setBorder(null);
-        progressBar.setMinimumSize(new java.awt.Dimension(10, 6));
-        progressBar.setString("");
-        progressBar.setStringPainted(true);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.weightx = 1.0;
-        statusPanel.add(progressBar, gridBagConstraints);
-
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel1.setText("Task:");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, -1, -1));
-
-        tableTaskNameLabel.setFont(new java.awt.Font("Monospaced", 0, 12));
-        jPanel2.add(tableTaskNameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(43, 2, 90, 20));
-
-        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel2.setText("Progresses:");
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 5, -1, -1));
-
-        tableProgressCountLabel.setFont(new java.awt.Font("Monospaced", 0, 12));
-        jPanel2.add(tableProgressCountLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 0, 20, 20));
-
-        statusPanel.add(jPanel2, new java.awt.GridBagConstraints());
-
-        mainPanel.add(statusPanel, java.awt.BorderLayout.SOUTH);
-
         tree_table_splitPane.setMaximumSize(null);
         tree_table_splitPane.setOneTouchExpandable(true);
         taskTreePanel.setLayout(new java.awt.BorderLayout());
@@ -416,24 +540,33 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         taskTreePanel.setAutoscrolls(true);
         taskTreePanel.setPreferredSize(new java.awt.Dimension(120, 354));
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane2.setResizeWeight(1.0);
+        jSplitPane2.setMaximumSize(null);
+        jSplitPane2.setMinimumSize(new java.awt.Dimension(50, 50));
+        jSplitPane2.setOneTouchExpandable(true);
         jScrollPane4.setMaximumSize(null);
         jScrollPane4.setMinimumSize(null);
+        taskTree.setColumnControlVisible(true);
         taskTree.setDragEnabled(true);
+        taskTree.setFocusCycleRoot(true);
         taskTree.setFont(new java.awt.Font("Monospaced", 0, 12));
+        taskTree.setHorizontalScrollEnabled(true);
         taskTree.setMaximumSize(null);
         taskTree.setMinimumSize(null);
         taskTree.setRootVisible(true);
         taskTree.setShowVerticalLines(true);
-        taskTree.setSortable(true);
         taskTree.setTreeTableModel(new TaskJTreeModel (_context.getModel ()));
         javax.help.CSH.setHelpIDString (taskTree, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.TASK_TREE ));
+        taskTree.setRowSelectionInterval (0, 0);
         jScrollPane4.setViewportView(taskTree);
 
         jSplitPane2.setTopComponent(jScrollPane4);
 
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        chartsPanel.setLayout(new java.awt.BorderLayout());
 
-        jSplitPane2.setBottomComponent(jPanel1);
+        _context.getUIPersisteer ().register (new MainWindow.PersistencePanelAdapter (chartsPanel, "chartsPanel"));
+
+        jSplitPane2.setBottomComponent(chartsPanel);
 
         taskTreePanel.add(jSplitPane2, java.awt.BorderLayout.CENTER);
 
@@ -450,10 +583,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jScrollPane3.getViewport ().setBackground (javax.swing.UIManager.getDefaults().getColor("Table.background"));
         progressesTable.setModel(new ProgressesJTableModel (_context.getModel ()));
         progressesTable.setAutoStartEditOnKeyStroke(false);
+        progressesTable.setColumnControlVisible(true);
+        progressesTable.setDragEnabled(true);
         progressesTable.setFont(new java.awt.Font("Monospaced", 0, 12));
         progressesTable.setHorizontalScrollEnabled(true);
         progressesTable.setPreferredSize(null);
-        progressesTable.setSurrendersFocusOnKeystroke(true);
 
         //progressesTable.setDefaultEditor (String.class, new ValueCellEditor ());
 
@@ -485,16 +619,27 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
             progressesTable.setDefaultRenderer (Duration.class,
                 new DefaultTableCellRenderer () {
+                    private Font _originalFont;
+                    private Font _boldFont;
                     public Component getTableCellRendererComponent (final JTable table, final Object value, boolean isSelected, boolean hasFocus, final int row, final int column) {
 
-                        final Component res = super.getTableCellRendererComponent ( table, value, isSelected, hasFocus, row, column);
+                        final JLabel res = (JLabel)super.getTableCellRendererComponent ( table, value, isSelected, hasFocus, row, column);
                         final PieceOfWork progress = (PieceOfWork)value;
 
                         final boolean progressing = progress.getTo ()==null;
-                        final ImageIcon icon = progressing?runningIcon:staticIcon;
-                        setIcon (icon);
+                        //final ImageIcon icon = progressing?runningIcon:staticIcon;
+                        //setIcon (icon);
+
+                        if (null==_originalFont) {
+                            _originalFont = res.getFont ();
+                        }
+                        if (null==_boldFont) {
+                            _boldFont = _originalFont.deriveFont (Font.BOLD);
+                        }
 
                         if (progressing){
+                            res.setFont (_boldFont);
+                            /*
                             icon.setImageObserver (new ImageObserver (){
                                 public boolean imageUpdate (Image img, int flags, int x, int y, int w, int h) {
                                     if ((flags & (FRAMEBITS | ALLBITS)) != 0) {
@@ -505,19 +650,69 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
                                     return (flags & (ALLBITS | ABORT)) == 0;
                                 }
                             });
+                            **/
+                        } else {
+                            res.setFont (_originalFont);
                         }
 
                         return res;
                     }
                     public void setValue (Object value) {
                         final PieceOfWork progress = (PieceOfWork)value;
-                        setText (MainWindow.this.format (progress.getDuration ()));
+                        setText (DurationUtils.formatDuration (progress.getTime ()));
                     }
                 }
             );
             jScrollPane3.setViewportView(progressesTable);
 
             progressesTablePanel.add(jScrollPane3, java.awt.BorderLayout.CENTER);
+
+            statusPanel.setLayout(new java.awt.GridBagLayout());
+
+            statusPanel.setMinimumSize(new java.awt.Dimension(320, 20));
+            statusPanel.setPreferredSize(new java.awt.Dimension(436, 20));
+            javax.help.CSH.setHelpIDString (statusPanel, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.STATUS_BAR));
+            appStatusLabel.setFont(new java.awt.Font("Dialog", 0, 12));
+            org.openide.awt.Mnemonics.setLocalizedText(appStatusLabel, "IDLE");
+            appStatusLabel.setToolTipText("Running status");
+            appStatusLabel.setMinimumSize(new java.awt.Dimension(90, 19));
+            appStatusLabel.setPreferredSize(new java.awt.Dimension(70, 19));
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+            statusPanel.add(appStatusLabel, gridBagConstraints);
+
+            progressBar.setBorder(null);
+            progressBar.setMinimumSize(new java.awt.Dimension(10, 6));
+            progressBar.setString("");
+            progressBar.setStringPainted(true);
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+            gridBagConstraints.weightx = 1.0;
+            statusPanel.add(progressBar, gridBagConstraints);
+
+            jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+            jPanel2.setPreferredSize(new java.awt.Dimension(250, 22));
+            jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
+            jLabel1.setText("Task:");
+            jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, -1, -1));
+
+            tableTaskNameLabel.setFont(new java.awt.Font("Monospaced", 0, 12));
+            jPanel2.add(tableTaskNameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(43, 5, 90, 20));
+
+            jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
+            jLabel2.setText("Pr. #:");
+            jLabel2.setToolTipText("Progress count");
+            jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 5, -1, -1));
+
+            tableProgressCountLabel.setFont(new java.awt.Font("Monospaced", 0, 12));
+            jPanel2.add(tableProgressCountLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 5, 20, 20));
+
+            statusPanel.add(jPanel2, new java.awt.GridBagConstraints());
+
+            progressesTablePanel.add(statusPanel, java.awt.BorderLayout.SOUTH);
 
             jPanel3.add(progressesTablePanel, java.awt.BorderLayout.CENTER);
 
@@ -527,8 +722,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
             jPanel5.setLayout(new java.awt.GridBagLayout());
 
+            jPanel5.setPreferredSize(new java.awt.Dimension(420, 40));
             mainToolbar.setRollover(true);
-            mainToolbar.setMinimumSize(new java.awt.Dimension(18, 28));
             javax.help.CSH.setHelpIDString (mainToolbar, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
             jButton1.setAction(new NewTaskAction ());
@@ -550,6 +745,19 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton2.setPreferredSize(new java.awt.Dimension(30, 30));
             mainToolbar.add(jButton2);
 
+            mainToolbar.add(jSeparator5);
+
+            jButton4.setAction(new NewPieceOfWorkAction ());
+            jButton4.setBorderPainted(false);
+            jButton4.setMargin(null);
+            jButton4.setMaximumSize(new java.awt.Dimension(28, 28));
+            jButton4.setMinimumSize(new java.awt.Dimension(22, 22));
+            jButton4.setOpaque(false);
+            jButton4.setPreferredSize(new java.awt.Dimension(30, 30));
+            mainToolbar.add(jButton4);
+
+            jButton3.setAction(new StartProgressAction ());
+            jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/start.png")));
             jButton3.setBorderPainted(false);
             jButton3.setMargin(null);
             jButton3.setMaximumSize(new java.awt.Dimension(28, 28));
@@ -558,22 +766,24 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton3.setPreferredSize(new java.awt.Dimension(30, 30));
             mainToolbar.add(jButton3);
 
-            jButton5.setBorderPainted(false);
-            jButton5.setMargin(null);
-            jButton5.setMaximumSize(new java.awt.Dimension(28, 28));
-            jButton5.setMinimumSize(new java.awt.Dimension(22, 22));
-            jButton5.setOpaque(false);
-            jButton5.setPreferredSize(new java.awt.Dimension(30, 30));
-            mainToolbar.add(jButton5);
+            jButton10.setAction(new StopProgressAction ());
+            jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/stop.png")));
+            jButton10.setBorderPainted(false);
+            jButton10.setMargin(null);
+            jButton10.setMaximumSize(new java.awt.Dimension(28, 28));
+            jButton10.setMinimumSize(new java.awt.Dimension(22, 22));
+            jButton10.setOpaque(false);
+            jButton10.setPreferredSize(new java.awt.Dimension(30, 30));
+            mainToolbar.add(jButton10);
 
             jPanel5.add(mainToolbar, new java.awt.GridBagConstraints());
 
             mainToolbar1.setRollover(true);
             javax.help.CSH.setHelpIDString (mainToolbar1, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
-            jButton6.setAction(getActionByName(DefaultEditorKit.cutAction));
+            jButton6.setAction(new TransferAction (TransferAction.Type.CUT, tal));
             jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/editcut.png")));
-            jButton6.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Cut+SHORTCUT"));
+            jButton6.setToolTipText("Cut");
             jButton6.setBorderPainted(false);
             jButton6.setMargin(null);
             jButton6.setMinimumSize(new java.awt.Dimension(22, 22));
@@ -582,9 +792,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton6.setText (null);
             mainToolbar1.add(jButton6);
 
-            jButton7.setAction(getActionByName(DefaultEditorKit.copyAction));
+            jButton7.setAction(new TransferAction (TransferAction.Type.COPY, tal));
             jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/editcopy.png")));
-            jButton7.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Copy+SHORTCUT"));
+            jButton7.setToolTipText("Copy");
             jButton7.setBorderPainted(false);
             jButton7.setMargin(null);
             jButton7.setMinimumSize(new java.awt.Dimension(22, 22));
@@ -593,9 +803,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton7.setText (null);
             mainToolbar1.add(jButton7);
 
-            jButton8.setAction(getActionByName(DefaultEditorKit.pasteAction));
+            jButton8.setAction(new TransferAction (TransferAction.Type.PASTE, tal));
             jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/editpaste.png")));
-            jButton8.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Paste+SHORTCUT"));
+            jButton8.setToolTipText("Paste");
             jButton8.setBorderPainted(false);
             jButton8.setMargin(null);
             jButton8.setMinimumSize(new java.awt.Dimension(22, 22));
@@ -603,17 +813,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton8.setPreferredSize(new java.awt.Dimension(30, 30));
             jButton8.setText (null);
             mainToolbar1.add(jButton8);
-
-            jButton9.setAction(getActionByName(DefaultEditorKit.deleteNextCharAction));
-            jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/editdelete.png")));
-            jButton9.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Delete"));
-            jButton9.setBorderPainted(false);
-            jButton9.setMargin(null);
-            jButton9.setMinimumSize(new java.awt.Dimension(22, 22));
-            jButton9.setOpaque(false);
-            jButton9.setPreferredSize(new java.awt.Dimension(30, 30));
-            jButton9.setText (null);
-            mainToolbar1.add(jButton9);
 
             undoButton.setAction(_context.getUndoManager ().getUndoAction());
             undoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/undo.png")));
@@ -649,7 +848,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             javax.help.CSH.setHelpIDString (mainToolbar2, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
             _context.getHelpManager ().initialize (helpButton);
-            helpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/contents.png")));
+            helpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/help.png")));
             helpButton.setBorderPainted(false);
             helpButton.setOpaque(false);
             /* mantiene nascosto il testo  dell'action */
@@ -712,7 +911,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             editMenu.setFont(new java.awt.Font("Dialog", 0, 12));
             undoMenuItem.setAction(_context.getUndoManager ().getUndoAction());
             undoMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-            undoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/transparent.png")));
+            undoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/small/undo.png")));
             undoMenuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     undoMenuItemActionPerformed(evt);
@@ -723,43 +922,39 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
             redoMenuItem.setAction(_context.getUndoManager ().getRedoAction());
             redoMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-            redoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/transparent.png")));
+            redoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/small/redo.png")));
             editMenu.add(redoMenuItem);
 
             editMenu.add(jSeparator4);
 
-            cutMenuItem.setAction(getActionByName(DefaultEditorKit.cutAction));
+            cutMenuItem.setAction(new TransferAction (TransferAction.Type.CUT, tal));
+            cutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
             cutMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-            cutMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/editcut.png")));
-            org.openide.awt.Mnemonics.setLocalizedText(cutMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Cu&t"));
-            cutMenuItem.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Cut"));
+            cutMenuItem.setMnemonic('X');
+            org.openide.awt.Mnemonics.setLocalizedText(cutMenuItem, "Cut");
             editMenu.add(cutMenuItem);
 
-            copyMenuItem.setAction(getActionByName(DefaultEditorKit.copyAction));
+            copyMenuItem.setAction(new TransferAction (TransferAction.Type.COPY, tal));
+            copyMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
             copyMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-            copyMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/editcopy.png")));
-            org.openide.awt.Mnemonics.setLocalizedText(copyMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("&Copy"));
-            copyMenuItem.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Copy"));
+            copyMenuItem.setMnemonic('C');
+            org.openide.awt.Mnemonics.setLocalizedText(copyMenuItem, "Copy");
+            copyMenuItem.setToolTipText("");
             editMenu.add(copyMenuItem);
 
-            pasteMenuItem.setAction(getActionByName(DefaultEditorKit.pasteAction));
+            pasteMenuItem.setAction(new TransferAction (TransferAction.Type.CUT, tal));
+            pasteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
             pasteMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-            pasteMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/editpaste.png")));
-            org.openide.awt.Mnemonics.setLocalizedText(pasteMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("&Paste"));
-            pasteMenuItem.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Paste"));
+            pasteMenuItem.setMnemonic('V');
+            org.openide.awt.Mnemonics.setLocalizedText(pasteMenuItem, "Paste");
             editMenu.add(pasteMenuItem);
 
             deleteMenuItem.setAction(getActionByName(DefaultEditorKit.deleteNextCharAction));
             deleteMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-            deleteMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/editdelete.png")));
+            deleteMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/small/editdelete.png")));
             org.openide.awt.Mnemonics.setLocalizedText(deleteMenuItem, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("&Delete"));
             deleteMenuItem.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Delete"));
             editMenu.add(deleteMenuItem);
-
-            editMenu.add(jSeparator5);
-
-            findMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
-            editMenu.add(findMenuItem);
 
             menuBar.add(editMenu);
 
@@ -825,7 +1020,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             setJMenuBar(menuBar);
 
             java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-            setBounds((screenSize.width-800)/2, (screenSize.height-600)/2, 800, 600);
+            setBounds((screenSize.width-802)/2, (screenSize.height-600)/2, 802, 600);
         }// </editor-fold>//GEN-END:initComponents
 
 	private void newTaskMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newTaskMenuItemActionPerformed
@@ -904,7 +1099,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JLabel appStatusLabel;
     private java.awt.BorderLayout borderLayout1;
+    private javax.swing.JPanel chartsPanel;
     private javax.swing.JMenuItem contentsMenuItem;
     private javax.swing.JMenuItem contextHelpMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
@@ -915,21 +1112,19 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JMenuItem findMenuItem;
     private javax.swing.JButton helpButton;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel5;
@@ -961,7 +1156,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JPanel progressesTablePanel;
     private javax.swing.JButton redoButton;
     private javax.swing.JMenuItem redoMenuItem;
-    private javax.swing.JLabel runningStatusLabel;
     private javax.swing.JFileChooser saveFileChooser;
     private javax.swing.JPanel statusPanel;
     private javax.swing.JPopupMenu tablePopupMenu;
@@ -1043,9 +1237,14 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	public final static int END_COL_INDEX = 2;
 		
 	/**
+	 * Indice della colonna di descrizione.
+	 */
+	public final int DESCRIPTION_COL_INDEX = 3;
+		
+	/**
 	 * Il modello della tabella degli avanzamenti.
 	 */
-	private class ProgressesJTableModel extends AbstractTableModel implements TaskTreeModelListener, TreeSelectionListener, TableModelListener {
+	private class ProgressesJTableModel extends AbstractTableModel implements TaskTreeModelListener, TreeSelectionListener, TableModelListener, AdvancingTicListener, WorkAdvanceModelListener {
 		
 		private final TaskTreeModelImpl _taskTreeModel;
 		
@@ -1055,10 +1254,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		
 
 		
-		/**
-		 * Indice della colonna di descrizione.
-		 */
-		public final int DESCRIPTION_COL_INDEX = 3;
 		
 		
 		public ProgressesJTableModel (final TaskTreeModelImpl ttm){
@@ -1066,6 +1261,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 //			reload ();
 			fireTableStructureChanged ();
 			ttm.addTaskTreeModelListener (this);
+			ttm.addWorkAdvanceModelListener (this);
+			_ticPump.addAdvancingTicListener (this);
 		}
 		
 		public int getColumnCount () {
@@ -1122,6 +1319,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				_progresses = _master.getPiecesOfWork ();
 				_masterPath = new TaskTreePath (_master);
 			}
+			cacheAdvancingProgress ();
 		}
 		
 		private final String[] _columnNames = new String[] {
@@ -1138,11 +1336,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		
 		
 		public boolean isCellEditable (int rowIndex, int columnIndex) {
-			//modifica la data di inizio e fine per avanzamenti non in corso
 			return 
-				!getPieceOfWork (rowIndex).isEndOpened ()/*
-				&&
-				(columnIndex==0 || columnIndex==1 || columnIndex==2)*/;
+				!getPieceOfWork (rowIndex).isEndOpened ()
+				|| (columnIndex!=DURATION_COL_INDEX && columnIndex!=END_COL_INDEX);
 		}
 		
 		private final Class[] _columnClasses = new Class[] {
@@ -1169,29 +1365,26 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 					
 					final PieceOfWork pow = getPieceOfWork (rowIndex);
 					
-					pow.setTo (new Date (pow.getFrom ().getTime ()+((Duration)aValue).getTime ()));
-					_context.getModel ().pieceOfWorkChanged (pow);
+					
+					_context.getModel ().updatePieceOfWork (pow, pow.getFrom (), new Date (pow.getFrom ().getTime ()+((Duration)aValue).getTime ()), pow.getDescription ());
 					break;
 				}
 				case START_COL_INDEX:
 				{
 					final PieceOfWork pow = getPieceOfWork (rowIndex);
-					pow.setFrom ((Date)aValue);
-					_context.getModel ().pieceOfWorkChanged (pow);
+					_context.getModel ().updatePieceOfWork (pow, (Date)aValue, pow.getTo (), pow.getDescription ());
 					break;
 				}
 				case END_COL_INDEX:
 				{
 					final PieceOfWork pow = getPieceOfWork (rowIndex);
-					pow.setTo ((Date)aValue);
-					_context.getModel ().pieceOfWorkChanged (pow);
+					_context.getModel ().updatePieceOfWork (pow, pow.getFrom (), (Date)aValue, pow.getDescription ());
 					break;
 				}
 				case DESCRIPTION_COL_INDEX:
 				{
 					final PieceOfWork pow = getPieceOfWork (rowIndex);
-					pow.setDescription ((String)aValue);
-					_context.getModel ().pieceOfWorkChanged (pow);
+					_context.getModel ().updatePieceOfWork (pow, pow.getFrom (), pow.getTo (), (String)aValue);
 					break;
 				}
 				default:
@@ -1208,7 +1401,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				return null;
 			}
 			public Object inspectPROGRESS (Object source, int type, TaskTreePath path, int[] childIndices, PieceOfWork[] progresses){
-				if (!path.equals (_masterPath)) {
+				if (_masterPath==null || !path.equals (_masterPath)) {
 					/*
 					 * Evento esterno al percorso di interesse.
 					 */
@@ -1328,6 +1521,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 		
 		public void treeStructureChanged (TaskTreeModelEvent e) {
+			if (_masterPath==null) {
+				return;
+			}
 			if (e.getPath ().contains (_masterPath)) {
 				cache ();
 				fireTableDataChanged ();
@@ -1352,13 +1548,58 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			tableTaskNameLabel.setText (_master==null?"":_master.getName ());
 			tableProgressCountLabel.setText (Integer.toString (progressesTable.getModel ().getRowCount ()));
 		}
+
+		public void advanceTic (AdvancingTicEvent e) {
+			final int l = advancingIdx.length;
+			for (int i = 0; i < l; i++) {
+				final int idx = advancingIdx[i];
+				fireTableCellUpdated (idx, DURATION_COL_INDEX);
+			}
+//			fireTableChanged (new TableModelEvent (this, 0, getRowCount ()-1, DURATION_COL_INDEX));
+		}
+
+		public void elementsInserted (WorkAdvanceModelEvent e) {
+			cacheAdvancingProgress ();
+		}
+
+		public void elementsRemoved (WorkAdvanceModelEvent e) {
+			cacheAdvancingProgress ();
+		}
+		
+		/**
+		 * array contenente gli indici delle righe che sono in avanzamento
+		 */
+		private int[] advancingIdx;
+		/**
+		 * aggiorna l'array contenente gli indici delle righe che sono in avanzamento
+		 */
+		private void cacheAdvancingProgress () {
+			final Set advancing = _context.getModel ().getAdvancing ();
+			int[] tmp = new int[0];
+			int counter = 0;
+			int i = 0;
+			for (final PieceOfWork p : _progresses) {
+				if (advancing.contains (p)) {
+					final int[] tmp1 = tmp;
+					tmp = new int[counter+1];
+					
+					System.arraycopy (tmp1, 0, tmp, 0, tmp1.length);
+					
+					tmp[counter] = i;
+					counter++;
+				}
+				i++;
+			}
+			advancingIdx = new int[tmp.length];
+			System.arraycopy (tmp, 0, advancingIdx, 0, tmp.length);
+		}
 	}
 	
 	
 	/**
 	 * Modello dell'albero deglki avanzamenti.
 	 */
-	private static class TaskJTreeModel extends AbstractTreeTableModel implements /*TreeModel,*/ TaskTreeModelListener, PropertyChangeListener {
+	private class TaskJTreeModel extends AbstractTreeTableModel implements /*TreeModel,*/ TaskTreeModelListener, PropertyChangeListener, WorkAdvanceModelListener, AdvancingTicListener {
 		
 		private final TaskTreeModelImpl _model;
 		
@@ -1380,6 +1621,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			_model = model;
 			model.addTaskTreeModelListener (this);
 //			fireTreeStructureChanged (this, new TreePath (new Object[]{getRoot ()}));
+			_ticPump.addAdvancingTicListener (this);			
+			model.addWorkAdvanceModelListener (this);
 		}
 		
 //		public Object getChild (Object parent, int index) {
@@ -1562,9 +1805,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				return null;
 			}
 			public Object inspectPROGRESS (Object source, int type, TaskTreePath path, int[] childIndices, PieceOfWork[] progresses){
+				final AbstractTableModel m = (AbstractTableModel)taskTree.getModel ();
 				/*
-				 * evento  non di interesse
+				 * Evento modifica colonne durata
 				 */
+		        m.fireTableChanged(new TableModelEvent(m, 0, m.getRowCount (), TODAY_COLUMN_INDEX));
+		        m.fireTableChanged(new TableModelEvent(m, 0, m.getRowCount (), GLOBAL_COLUMN_INDEX));
 				return null;
 			}
 		};
@@ -1581,9 +1827,14 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				return null;
 			}
 			public Object inspectPROGRESS (Object source, int type, TaskTreePath path, int[] childIndices, PieceOfWork[] progresses){
+//				fireTreeNodesChanged (source, toObjectArray (path.getParentPath ()), new int[] {path.getLastPathComponent ().getParent ().childIndex (path.getLastPathComponent ())}, new Object[] {path.getLastPathComponent ()});
+				final AbstractTableModel m = (AbstractTableModel)taskTree.getModel ();
 				/*
-				 * evento  non di interesse
+				 * Evento modifica colonne durata
 				 */
+		        m.fireTableChanged(new TableModelEvent(m, 0, m.getRowCount (), TODAY_COLUMN_INDEX));
+		        m.fireTableChanged(new TableModelEvent(m, 0, m.getRowCount (), GLOBAL_COLUMN_INDEX));
+
 				return null;
 			}
 		};
@@ -1600,9 +1851,12 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				return null;
 			}
 			public Object inspectPROGRESS (Object source, int type, TaskTreePath path, int[] childIndices, PieceOfWork[] progresses){
+				final AbstractTableModel m = (AbstractTableModel)taskTree.getModel ();
 				/*
-				 * evento  non di interesse
+				 * Evento modifica colonne durata
 				 */
+		        m.fireTableChanged(new TableModelEvent(m, 0, m.getRowCount (), TODAY_COLUMN_INDEX));
+		        m.fireTableChanged(new TableModelEvent(m, 0, m.getRowCount (), GLOBAL_COLUMN_INDEX));
 				return null;
 			}
 		};
@@ -1615,15 +1869,28 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		 */
 		private TaskTreeModelEvent.Inspector _treeStructureChangedInspector = new TaskTreeModelEvent.Inspector (){
 			public Object inspectTASK (Object source, int type, TaskTreePath path, int[] childIndices, Task[] children){
-				final Object[] ar = new Object[children.length];
-				System.arraycopy (children, 0, ar, 0, children.length);
-				fireTreeStructureChanged (source, toObjectArray (path), childIndices, ar);
+				if (path.getParentPath ()!=null) {
+					Object[] ar = null;
+					if (children!=null) {
+						ar = new Object[children.length];
+						System.arraycopy (children, 0, ar, 0, children.length);
+					}
+					
+					fireTreeStructureChanged (source, toObjectArray (path), childIndices, ar);
+				} else {
+					//radice
+					TaskJTreeModel.super.root = path.getLastPathComponent ();
+		            fireTreeStructureChanged(source, toObjectArray (path), null, null);
+				}
 				return null;
 			}
 			public Object inspectPROGRESS (Object source, int type, TaskTreePath path, int[] childIndices, PieceOfWork[] progresses){
+				final AbstractTableModel m = (AbstractTableModel)taskTree.getModel ();
 				/*
-				 * evento  non di interesse
+				 * Evento modifica colonne durata
 				 */
+		        m.fireTableChanged(new TableModelEvent(m, 0, m.getRowCount (), TODAY_COLUMN_INDEX));
+		        m.fireTableChanged(new TableModelEvent(m, 0, m.getRowCount (), GLOBAL_COLUMN_INDEX));
 				return null;
 			}
 		};
@@ -1631,6 +1898,33 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			e.allow (_treeStructureChangedInspector);
 		}
 		
+//    /*
+//     * Notifies all listeners that have registered interest for
+//     * notification on this event type.  The event instance
+//     * is lazily created using the parameters passed into
+//     * the fire method.
+//     *
+//     * @param source the node where the tree model has changed
+//     * @param path the path to the root node
+//     * @see EventListenerList
+//     */
+//    private void fireTreeStructureChanged(Object source, TreePath path) {
+//        // Guaranteed to return a non-null array
+//        Object[] listeners = listenerList.getListenerList();
+//        TreeModelEvent e = null;
+//        // Process the listeners last to first, notifying
+//        // those that are interested in this event
+//        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+//            if (listeners[i] == TreeModelListener.class) {
+//                // Lazily create the event:
+//                if (e == null)
+//                    e = new TreeModelEvent(source, path);
+//                ((TreeModelListener) listeners[i + 1]).treeStructureChanged(e);
+//            }
+//        }
+//    }
+	
+	
 		private Object[] toObjectArray (final TaskTreePath p){
 			final List l = new ArrayList ();
 			populateList (l, p);
@@ -1673,7 +1967,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 					}
 					
 					
-					return format (new Duration (totalDuration));
+					return DurationUtils.format (new Duration (totalDuration));
 				}
 				//colonna durata totale
 				case GLOBAL_COLUMN_INDEX: /*@todo ottimizzare!*/ {
@@ -1689,7 +1983,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 						return "";
 					}
 					
-					return format (duration);
+					return DurationUtils.format (duration);
 				}
 			}
 			return null;
@@ -1700,8 +1994,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				//colonna  albero
 				case TREE_COLUMN_INDEX:
 					final ProgressItem t = (ProgressItem)object0;
-					t.setName ((String)object);
-					_model.nodeChanged (t);
+					_model.updateTask (t, (String)object);
 				default:
 					return;
 			}
@@ -1729,6 +2022,24 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			
 			return this._today;
 			
+		}
+
+		public void elementsInserted (WorkAdvanceModelEvent e) {
+		}
+
+		public void elementsRemoved (WorkAdvanceModelEvent e) {
+		}
+
+		public void advanceTic (AdvancingTicEvent e) {
+//			for (final int idx : advancingIdx) {
+//				fireTableCellUpdated (idx, DURATION_COL_INDEX);
+//			}
+				final AbstractTableModel m = (AbstractTableModel)taskTree.getModel ();
+				/*
+				 * Evento modifica colonne durata
+				 */
+		        m.fireTableChanged(new TableModelEvent(m, 0, m.getRowCount (), TODAY_COLUMN_INDEX));
+		        m.fireTableChanged(new TableModelEvent(m, 0, m.getRowCount (), GLOBAL_COLUMN_INDEX));
 		}
 		
 		
@@ -2050,16 +2361,17 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	 * Fa partire un nuovo avanzamento.
 	 *
 	 */
-	private class StartProgressAction extends AbstractAction implements TreeSelectionListener {
+	private class StartProgressAction extends AbstractAction implements TreeSelectionListener, WorkAdvanceModelListener {
 		
 		
 		/**
 		 * Costruttore.
 		 */
 		public StartProgressAction () {
-			super (null, new javax.swing.ImageIcon (MainWindow.class.getResource ("/com/davidecavestro/timekeeper/gui/images/filenew.png")));
+			super (null, new javax.swing.ImageIcon (MainWindow.class.getResource ("/com/davidecavestro/timekeeper/gui/images/start.png")));
 			this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.CTRL_MASK));
 			taskTree.addTreeSelectionListener (this);
+			_context.getModel ().addWorkAdvanceModelListener (this);
 			setEnabled (false);
 		}
 		
@@ -2068,11 +2380,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			m.insertPieceOfWorkInto (new Progress (new Date (), null, (ProgressItem)_candidateParent), _candidateParent, _candidateParent.pieceOfWorkCount ());
 		}
 		
-		Task _candidateParent;
-		private boolean isEnabled (final Task candidateParent) {
-			return candidateParent!=null;
+		private boolean _isEnabled () {
+			return _candidateParent!=null && _context.getModel ().getAdvancing ().isEmpty ();
 		}
 
+		Task _candidateParent;
 		public void valueChanged (TreeSelectionEvent e) {
 			final Task oldCandidateParent = _candidateParent;
 			final TreePath path = e.getPath ();
@@ -2087,8 +2399,53 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				}
 			}
 			if (oldCandidateParent!=_candidateParent){
-				setEnabled (isEnabled (_candidateParent));
+				setEnabled (_isEnabled ());
 			}
+		}
+		
+		public void elementsInserted (WorkAdvanceModelEvent e) {
+			setEnabled (_isEnabled ());
+		}
+
+		public void elementsRemoved (WorkAdvanceModelEvent e) {
+			setEnabled (_isEnabled ());
+		}
+	}
+	
+	/**
+	 * Ferma un avanzamento in progress.
+	 *
+	 */
+	private class StopProgressAction extends AbstractAction implements WorkAdvanceModelListener {
+		
+		
+		/**
+		 * Costruttore.
+		 */
+		public StopProgressAction () {
+			super (null, new javax.swing.ImageIcon (MainWindow.class.getResource ("/com/davidecavestro/timekeeper/gui/images/stop.png")));
+			this.putValue (ACCELERATOR_KEY, javax.swing.KeyStroke.getKeyStroke (java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
+			_context.getModel ().addWorkAdvanceModelListener (this);
+			setEnabled (false);
+		}
+		
+		public void actionPerformed (java.awt.event.ActionEvent e) {
+			final TaskTreeModelImpl m = _context.getModel ();
+			final PieceOfWork pow = _context.getModel ().getAdvancing ().iterator ().next ();
+			pow.setTo (new Date ());
+			m.pieceOfWorkChanged (pow);
+		}
+
+		private void setEnabled () {
+			setEnabled (!_context.getModel ().getAdvancing ().isEmpty ());
+		}
+		
+		public void elementsInserted (WorkAdvanceModelEvent e) {
+			setEnabled ();
+		}
+
+		public void elementsRemoved (WorkAdvanceModelEvent e) {
+			setEnabled ();
 		}
 		
 	}
@@ -2097,29 +2454,29 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	 * Crea un nuovo avanzamento.
 	 *
 	 */
-	private class NewProgressAction extends AbstractAction implements TreeSelectionListener {
+	private class NewPieceOfWorkAction extends AbstractAction implements TreeSelectionListener {
 		
 		
 		/**
 		 * Costruttore.
 		 */
-		public NewProgressAction () {
-			super (null, new javax.swing.ImageIcon (MainWindow.class.getResource ("/com/davidecavestro/timekeeper/gui/images/filenew.png")));
+		public NewPieceOfWorkAction () {
+			super (null, new javax.swing.ImageIcon (MainWindow.class.getResource ("/com/davidecavestro/timekeeper/gui/images/add.png")));
 			taskTree.addTreeSelectionListener (this);
 			setEnabled (false);
 		}
 		
 		public void actionPerformed (java.awt.event.ActionEvent e) {
 			final TaskTreeModelImpl m = _context.getModel ();
-			_context.getWindowManager ().getNewPieceOfWorkDialog ().show ();
-			m.insertPieceOfWorkInto (new Progress (new Date (), null, (ProgressItem)_candidateParent), _candidateParent, _candidateParent.pieceOfWorkCount ());
+			_context.getWindowManager ().getNewPieceOfWorkDialog ().showForTask (_candidateParent);
+//			m.insertPieceOfWorkInto (new Progress (new Date (), null, (ProgressItem)_candidateParent), _candidateParent, _candidateParent.pieceOfWorkCount ());
 		}
 		
-		Task _candidateParent;
-		private boolean isEnabled (final Task candidateParent) {
-			return candidateParent!=null;
+		private boolean _isEnabled () {
+			return _candidateParent!=null;
 		}
 
+		Task _candidateParent;
 		public void valueChanged (TreeSelectionEvent e) {
 			final Task oldCandidateParent = _candidateParent;
 			final TreePath path = e.getPath ();
@@ -2134,9 +2491,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				}
 			}
 			if (oldCandidateParent!=_candidateParent){
-				setEnabled (isEnabled (_candidateParent));
+				setEnabled (_isEnabled ());
 			}
 		}
+		
 		
 	}
 	
@@ -2253,19 +2611,23 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 	}
 	
-	private final static DurationNumberFormatter durationNumberFormatter = new DurationNumberFormatter ();
-
-	private static class DurationNumberFormatter extends DecimalFormat {
-		public DurationNumberFormatter (){
-			setMinimumIntegerDigits (2);
-		}
-	}
-	
 	private class DateCellEditor extends AbstractCellEditor implements TableCellEditor {
 		final JFormattedTextField _component;
 			
 		public DateCellEditor () {
 			_component = new JFormattedTextField (new DateFormatter (new SimpleDateFormat (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("from_to_format_long"))));
+		}
+
+		/**
+		 * Editazione parte, in caso di evento del mouse, solo dopo doppio click
+		 */
+		@Override
+		public boolean isCellEditable (EventObject eo) {
+			if (eo instanceof MouseEvent) {
+				return ((MouseEvent)eo).getClickCount ()>1;
+			} else {
+				return super.isCellEditable (eo);
+			}
 		}
 
 		public Object getCellEditorValue () {
@@ -2281,58 +2643,19 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 	private class DurationCellEditor extends AbstractCellEditor implements TableCellEditor {
 		final JFormattedTextField _component;
 		public DurationCellEditor () {
-			_component = new JFormattedTextField (
-				new InternationalFormatter (
-					new Format () {
-						@Override
-						public StringBuffer format (Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-							final StringBuffer sb = new StringBuffer ();
-							final Duration d = (Duration)obj;
-							if (d==null){
-								return sb;
-							}
-							final String f = MainWindow.this.format (d);
-							sb.append (f.substring (pos.getBeginIndex (), pos.getEndIndex ()));
-							return sb;
-						}
-						
-						@Override
-						public Object parseObject (String source, ParsePosition pos) {
-							final String[] s = source.split (":");
-							if (s.length<3) {
-								pos.setErrorIndex (pos.getIndex ());
-								return null;
-							}
-							
-							int i = 0;
-							
-							int newPos = pos.getIndex ();
-							
-							final int hours = Integer.parseInt (s[i]);
-							newPos+=s[i].length ()+1;
-							i++;
-							
-							final int minutes = Integer.parseInt (s[i]);
-							if (minutes>59) {
-								pos.setErrorIndex (newPos);
-								return null;
-							}
-							newPos+=s[i].length ()+1;
-							i++;
-							
-							final int seconds = Integer.parseInt (s[i]);
-							if (seconds>59) {
-								pos.setErrorIndex (newPos);
-								return null;
-							}
-							newPos+=s[i].length ();
-							i++;
-
-							pos.setIndex (newPos);
-							return new Duration (hours, minutes, seconds, 0);
-						}
-					}) {
-				});
+			_component = new DurationTextField ();;
+		}
+		
+		/**
+		 * Editazione parte, in caso di evento del mouse, solo dopo doppio click
+		 */
+		@Override
+		public boolean isCellEditable (EventObject eo) {
+			if (eo instanceof MouseEvent) {
+				return ((MouseEvent)eo).getClickCount ()>1;
+			} else {
+				return super.isCellEditable (eo);
+			}
 		}
 
 		public Object getCellEditorValue () {
@@ -2347,19 +2670,241 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			 * riceve un avanzamento
 			 */
 			_component.setValue (((PieceOfWork)value).getDuration ());
-			_component.setText (format (((PieceOfWork)value).getDuration ()));
+			_component.setText (DurationUtils.format (((PieceOfWork)value).getDuration ()));
 			return _component;
 		}
 	}
 
-	private static String format (final Duration d) {
-		final StringBuffer sb = new StringBuffer ();
-					
-		sb.append (durationNumberFormatter.format (d.getTotalHours ()))
-		.append (":")
-		.append (durationNumberFormatter.format (d.getMinutes ()))
-		.append (":")
-		.append (durationNumberFormatter.format (d.getSeconds ()));
-		return sb.toString ();		
+
+	/**
+	 * Trasferimento dati (DnD, cut&paste) per l'albero
+	 */
+	private final class TaskTreeTransferHandler extends ProgressItemTransferHandler{
+		
+		private final DataFlavor progressItemFlavor = DataFlavors.progressItemFlavor;
+		
+		public TaskTreeTransferHandler () {
+			super (_context);
+		}
+		
+		/**
+		 * Crea un oggetto trasferibile.
+		 *
+		 * @param c l'elemento della UI.
+		 * @return un oggetto trasferibile.
+		 */
+		protected Transferable createTransferable (JComponent c) {
+			return new ProgressItemSelection (exportProgressItems (c));
+		}
+		
+		public int getSourceActions (JComponent c) {
+			return COPY_OR_MOVE;
+		}
+		
+		public boolean importData (JComponent c, Transferable t) {
+			if (canImport (c, t.getTransferDataFlavors ())) {
+				try {
+					if (hasProgressItemFlavor (t.getTransferDataFlavors ())){
+						final Task[] progressItems = (Task[])t.getTransferData (progressItemFlavor);
+						importProgressItems (c, progressItems);
+						return true;
+					} else if (hasProgressFlavor (t.getTransferDataFlavors ())){
+						
+						final PieceOfWork[] progresses = (PieceOfWork[])t.getTransferData (progressFlavor);
+						importProgresses (c, progresses);
+						return true;
+					}
+				} catch (UnsupportedFlavorException ufe) {
+					_context.getLogger ().warning ("Error transferring UI data.", ufe);
+				} catch (IOException ioe) {
+					_context.getLogger ().warning ("Error transferring UI data.", ioe);
+				}
+			}
+			
+			return false;
+		}
+		
+		protected void exportDone (JComponent c, Transferable data, int action) {
+			cleanup (c, action == MOVE);
+		}
+		
+		/**
+		 * Does the flavor list have a ProgressItem flavor?
+		 */
+		protected boolean hasProgressItemFlavor (DataFlavor[] flavors) {
+			if (progressItemFlavor == null) {
+				return false;
+			}
+			
+			for (int i = 0; i < flavors.length; i++) {
+				if (progressItemFlavor.equals (flavors[i])) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		/**
+		 * Overridden to include a check for a ProgressItem or Progress flavor.
+		 */
+		public boolean canImport (JComponent c, DataFlavor[] flavors) {
+			return hasProgressItemFlavor (flavors) || hasProgressFlavor (flavors);
+		}
+		
+	/*
+	 * If the remove argument is true, the drop has been
+	 * successful and it's time to remove the selected items
+	 * from the list. If the remove argument is false, it
+	 * was a Copy operation and the original list is left
+	 * intact.
+	 */
+		protected void cleanup (JComponent c, boolean remove) {
+		}
+		
+		/*
+		 * Bundle up the selected items in the list
+		 * as a single string, for export.
+		 */
+		protected Task[] exportProgressItems (JComponent c) {
+			if (c!=taskTree){return null;}
+
+			final TreePath[] p = taskTree.getTreeSelectionModel ().getSelectionPaths ();
+			if (p==null) {
+				return new Task[0];
+			}
+			final Task[] t = new Task[p.length];
+			for (int i = 0; i < p.length; i++) {
+				t[i] = (Task)p[i].getLastPathComponent ();
+			}
+			return t;
+		}
+		
+		/**
+		 * Importa i task. 
+		 *
+		 * @param c il componente.
+		 * @param progressItems gli avanzamentida importare.
+		 */
+		protected void importProgressItems (JComponent c, Task[] progressItems) {
+			if (c!=taskTree){return;}
+			if (progressItems.length == 0) {
+				return;
+			}
+			final ProgressItem target = (ProgressItem)taskTree.getTreeSelectionModel ().getSelectionPath ().getLastPathComponent ();
+			try {
+				final Map<Task, List<Task>> m = new HashMap<Task, List<Task>> ();
+				for (final Task t : progressItems) {
+					final Task p = t.getParent ();
+					if (m.containsKey (p)) {
+						m.get (p).add (t);
+					} else {
+						final List<Task> l = new ArrayList<Task> ();
+						l.add (t);
+						m.put (p, l);
+					}
+				}
+				for (final Task p : m.keySet ()) {
+					_context.getModel ().moveTasksTo (p, m.get (p), target, -1);
+				}
+			} catch (final IllegalOperationException iae){
+				JOptionPane.showMessageDialog (taskTree, iae.getMessage ());
+			}
+		}
+		
+		
+		
+		
+		
+		private final DataFlavor progressFlavor = DataFlavors.progressFlavor;
+		
+	
+		
+		/**
+		 * Does the flavor list have a Progress flavor?
+		 */
+		protected boolean hasProgressFlavor (DataFlavor[] flavors) {
+			if (progressFlavor == null) {
+				return false;
+			}
+			
+			for (int i = 0; i < flavors.length; i++) {
+				if (progressFlavor.equals (flavors[i])) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		
+		
+		
+		
+		protected com.ost.timekeeper.model.Progress exportProgress (JComponent c) {
+			return null;
+		}
+		
+		/**
+		 * 
+		 * ATTENZIONE: gli avanzamenti devono appartenere allo stesso task.
+		 * 
+		 * @param c 
+		 * @param progresses 
+		 */
+		protected void importProgresses (JComponent c, PieceOfWork[] progresses) {
+			if (c!=taskTree){return;}
+			if (progresses.length==0) {
+				return;
+			}
+			final ProgressItem target = (ProgressItem)taskTree.getTreeSelectionModel ().getSelectionPath ().getLastPathComponent ();
+			_context.getModel ().movePiecesOfWorkTo (progresses[0].getTask (), Arrays.asList (progresses), target, -1);
+		}
+		
 	}
+
+
+
+
+	/**
+	 * Trasferimento dati (DnD, cut&paste) per la tabella
+	 */
+	private final class ProgressTableTransferHandler extends ProgressTransferHandler{
+		public ProgressTableTransferHandler () {
+			super (_context);
+		}
+		
+		protected void cleanup (JComponent c, boolean remove) {
+		}
+		
+		protected PieceOfWork[] exportProgresses (JComponent c) {
+			if (c!=progressesTable){
+				return null;
+			}
+			final int[] selectedRows = progressesTable.getSelectedRows ();
+			final int selectedRowsCount = selectedRows.length;
+			final PieceOfWork[] exportedProgresses = new PieceOfWork[selectedRowsCount];
+			for (int i=0;i<selectedRowsCount;i++){
+				exportedProgresses[i] = (PieceOfWork)((ProgressesJTableModel)progressesTable.getModel ()).getValueAt (selectedRows[i], DURATION_COL_INDEX);
+			}
+			System.out.println ("Exported progresses: "+selectedRowsCount);
+			return exportedProgresses;
+		}
+		
+		/**
+		 * ATTENZIONE: si assume che gli avanzamenti appartengano almedesimo task.
+		 */
+		protected void importProgresses (JComponent c, PieceOfWork[] progresses) {
+			if (c!=progressesTable){
+				return;
+			}
+			if (progresses.length==0) {
+				return;
+			}
+			
+			final ProgressItem target = (ProgressItem)taskTree.getTreeSelectionModel ().getSelectionPath ().getLastPathComponent ();
+			_context.getModel ().movePiecesOfWorkTo (progresses[0].getTask (), Arrays.asList (progresses), target, -1);
+
+		}
+		
+	}
+
 }

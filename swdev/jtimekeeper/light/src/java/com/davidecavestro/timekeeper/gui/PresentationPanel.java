@@ -61,7 +61,7 @@ public class PresentationPanel extends javax.swing.JPanel {
         applicationImageLabel.setForeground(new java.awt.Color(255, 255, 255));
         applicationImageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/splash.png")));
         applicationImageLabel.setIconTextGap(-300);
-        applicationImageLabel.setPreferredSize(new java.awt.Dimension(420, 300));
+        applicationImageLabel.setMaximumSize(null);
         jPanel1.add(applicationImageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 430, 290));
 
         add(jPanel1, java.awt.BorderLayout.CENTER);

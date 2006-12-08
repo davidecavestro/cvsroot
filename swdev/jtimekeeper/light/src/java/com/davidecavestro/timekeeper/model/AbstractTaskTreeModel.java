@@ -6,11 +6,14 @@
 
 package com.davidecavestro.timekeeper.model;
 
+import com.davidecavestro.common.util.IllegalOperationException;
 import com.davidecavestro.timekeeper.model.event.TaskTreeModelEvent;
 import com.davidecavestro.timekeeper.model.event.TaskTreeModelListener;
 import com.davidecavestro.timekeeper.model.event.WorkAdvanceModelEvent;
 import com.davidecavestro.timekeeper.model.event.WorkAdvanceModelListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.EventListener;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +37,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	private Task _root;
 	
 	/** Costruttore vuoto. */
-	public AbstractTaskTreeModel () {
+	private AbstractTaskTreeModel () {
 		_advancingPOWs = new HashSet ();
 	}
 	
@@ -44,6 +47,9 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	 */
 	public AbstractTaskTreeModel (final Task root) {
 		this ();
+		if (root==null) {
+			throw new NullPointerException ();
+		}
 		_root = root;
 	}
 	
@@ -345,12 +351,27 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	 * the tree is to display nothing, and is legal.
 	 */
 	public void setRoot (Task root) {
-		final Object oldRoot = _root;
+		final Task oldRoot = _root;
 		_root = root;
-		if (root == null && oldRoot != null) {
+        if (root == null && oldRoot != null) {
 			fireTreeStructureChanged (this, null);
 		} else {
 			nodeStructureChanged (root);
+		}
+		if (root!=oldRoot) {
+			if (oldRoot!=null) {
+				final PieceOfWork[] removed = eraseOldAdvancingProgresses (oldRoot);
+				if (removed.length>0) {
+					fireAdvancingRemoved (this, removed);
+				}
+			}
+			
+			if (root!=null) {
+				final PieceOfWork[] discovered = discoverNewAdvancingProgresses (root);
+				if (discovered.length>0) {
+					fireAdvancingInserted (this, discovered);
+				}
+			}
 		}
 	}
 	
@@ -412,6 +433,10 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	 */
 	public void insertNodeInto (Task newChild,
 		Task parent, int index){
+		
+		if (index < 0) {
+			index = parent.childCount ();
+		}
 		parent.insert (newChild, index);
 		
 		int[]           newIndexs = new int[1];
@@ -550,6 +575,9 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	 */
 	public void insertPieceOfWorkInto (PieceOfWork newPOW,
 		Task t, int index){
+		if (index < 0){
+			index = t.pieceOfWorkCount ();
+		}
 		t.insert (newPOW, index);
 		
 		int[]           newIndexs = new int[1];
@@ -578,6 +606,92 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	}
 	
 	
+	
+	/**
+	 * RImuove avanzamenti fratelli.
+	 * 
+	 * @param t il rask che contiene gli avazamenti da rimuovere.
+	 * @param l gli avanzamenti da rimuovere.
+	 */
+	public void removePiecesOfWork (final Task t, final List<PieceOfWork> l) {
+		final int count = l.size ();
+		final int[] indices = new int [count];
+		final PieceOfWork[] removed = new PieceOfWork [count];
+		
+		int i=0;
+		for (final PieceOfWork p : l) {
+			indices [i] = t.pieceOfWorkIndex (p);
+			removed[i] = p;
+			i++;
+		}
+		for (final PieceOfWork p : l) {
+			p.getTask ().removePieceOfWOrk (p);
+		}
+		firePiecesOfWorkRemoved (this, new TaskTreePath (t), indices, removed);
+	}
+	
+	/**
+	 * Rimuove task fratelli.
+	 * 
+	 * @param parent il padre dei task da rimuovere.
+	 * @param l i taskda rimuovere.
+	 */
+	public void removeTasks (final Task parent, final List<Task> l) {
+		final TaskTreePath parentPath = new TaskTreePath (parent);
+		final int count = l.size ();
+		final int[] indices = new int [count];
+		final Task[] removed = new Task [count];
+		
+		int i=0;
+		for (final Task t : l) {
+			indices [i] = parent.childIndex (t);
+			removed[i] = t;
+			i++;
+		}
+		for (final Task t : l) {
+			parent.remove (parent.childIndex (t));
+		}
+		fireTasksRemoved (this, parentPath, indices, removed);
+	}
+	
+
+	public void moveTasksTo (final Task previousParent, final List<Task> l, final Task target, final int position) {
+		final TaskTreePath targetPath = new TaskTreePath (target);
+		for (final Task t : l) {
+			if (targetPath.contains (t)) {
+				throw new IllegalOperationException ("Cannot move a task into its subtree!");
+			}
+		}
+		removeTasks (previousParent, l);
+		final List<PieceOfWork> reverse = new ArrayList (l);
+		Collections.reverse (reverse);
+		for (final Task t : l) {
+			insertNodeInto (t, target, position);
+		}
+	}
+	
+	public void movePiecesOfWorkTo (final Task previousTask, final List<PieceOfWork> l, final Task target, final int position) {
+		removePiecesOfWork (previousTask, l);
+		final List<PieceOfWork> reverse = new ArrayList (l);
+		Collections.reverse (reverse);
+		for (final PieceOfWork pow : l) {
+			insertPieceOfWorkInto (pow, target, position);
+		}
+	}
+	
+	public void updateTask (final Task t, final String name) {
+		t.setName (name);
+		nodeChanged (t);
+	}
+	
+	public void updatePieceOfWork (final PieceOfWork pow, final Date from, final Date to, final String description) {
+		pow.setFrom (from);
+		pow.setTo (to);
+		pow.setDescription (description);
+		
+		pieceOfWorkChanged (pow);
+	}
+	
 	/**
 	 * Invoke this method after you've changed how node is to be
 	 * represented in the tree.
@@ -586,15 +700,16 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 		if (pow != null) {
 			
 			if (listenerList!=null) {
-				Task         parent = pow.getTask ();
+				Task         task = pow.getTask ();
 
-				if(parent != null) {
-					int        anIndex = parent.pieceOfWorkIndex (pow);
+				if(task != null) {
+					int        anIndex = task.pieceOfWorkIndex (pow);
 					if(anIndex != -1) {
 						int[]        cIndexs = new int[1];
 
 						cIndexs[0] = anIndex;
-						nodesChanged (parent, cIndexs);
+						firePiecesOfWorkChanged (this, getPathToRoot (task),
+						cIndexs, new PieceOfWork[] {pow});
 					}
 				}
 			}

@@ -10,17 +10,16 @@ import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.common.gui.persistence.UIPersister;
 import com.davidecavestro.common.help.HelpManager;
 import com.davidecavestro.common.log.Logger;
+import com.davidecavestro.common.undo.RBUndoManager;
 import com.davidecavestro.timekeeper.model.TaskTreeModelExceptionHandler;
 import com.davidecavestro.timekeeper.conf.ApplicationOptions;
-import com.davidecavestro.timekeeper.conf.UserResources;
 import com.davidecavestro.timekeeper.conf.UserSettings;
 import com.davidecavestro.timekeeper.gui.WindowManager;
 import com.davidecavestro.timekeeper.actions.ActionManager;
 import com.davidecavestro.timekeeper.conf.ApplicationEnvironment;
 import com.davidecavestro.timekeeper.model.TaskTreeModelImpl;
-import com.davidecavestro.timekeeper.model.undo.RBUndoManager;
+import com.davidecavestro.timekeeper.model.UndoableTaskTreeModel;
 import java.beans.PropertyChangeListener;
-import javax.swing.undo.UndoManager;
 
 /**
  * Contesto applicativo.
@@ -37,7 +36,7 @@ public class ApplicationContext {
 	private final UserSettings _userSettings;
 	private final ApplicationData _applicationData;
 	private final ApplicationEnvironment _env;
-	private final TaskTreeModelImpl _ttm;
+	private final UndoableTaskTreeModel _ttm;
 	private final RBUndoManager _undoManager;
 	private ActionManager _actionManager;
 	private HelpManager _helpManager;
@@ -51,18 +50,18 @@ public class ApplicationContext {
 	 * Costruttore.
 	 */
 	public ApplicationContext (
-		ApplicationEnvironment env,
-		ApplicationOptions applicationOptions,
-		WindowManager windowManager,
-		UIPersister uiPersister,
-		Logger logger,
-		UserSettings userSettings,
-		ApplicationData applicationData,
-		TaskTreeModelImpl ttm,
-		RBUndoManager undoManager,
-		ActionManager actionManager,
-		HelpManager helpManager,
-		TaskTreeModelExceptionHandler propsExceptionHandler
+		final ApplicationEnvironment env,
+		final ApplicationOptions applicationOptions,
+		final WindowManager windowManager,
+		final UIPersister uiPersister,
+		final Logger logger,
+		final UserSettings userSettings,
+		final ApplicationData applicationData,
+		final UndoableTaskTreeModel ttm,
+		final RBUndoManager undoManager,
+		final ActionManager actionManager,
+		final HelpManager helpManager,
+		final TaskTreeModelExceptionHandler propsExceptionHandler
 		) {
 			
 		this._env = env;
