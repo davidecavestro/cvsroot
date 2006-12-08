@@ -37,10 +37,10 @@ public class PersistenceUtils {
 		SettingsSupport.setRectangle (
 			persistenceStorage.getRegistry (), 
 			component.getBounds (),
-			key+"xpos",
-			key+"ypos",
-			key+"width",
-			key+"height");
+			key+"-x-pos",
+			key+"-y-pos",
+			key+"-width",
+			key+"-height");
 	}
 	
 	/**
@@ -54,10 +54,10 @@ public class PersistenceUtils {
 	public final static boolean restorePersistentBounds (final PersistenceStorage persistenceStorage, final String key, final Component component ){
 		final Rectangle bounds =  SettingsSupport.getRectangle (
 			persistenceStorage.getRegistry (), 
-			key+"xpos",
-			key+"ypos",
-			key+"width",
-			key+"height");
+			key+"-x-pos",
+			key+"-y-pos",
+			key+"-width",
+			key+"-height");
 		if (bounds!=null){
 			component.setBounds (bounds);
 			return true;
@@ -76,10 +76,10 @@ public class PersistenceUtils {
 	public final static boolean restorePersistentBoundsToPreferredSize (final PersistenceStorage persistenceStorage, final String key, final JComponent component ){
 		final Rectangle bounds =  SettingsSupport.getRectangle (
 			persistenceStorage.getRegistry (), 
-			key+"xpos",
-			key+"ypos",
-			key+"width",
-			key+"height");
+			key+"-x-pos",
+			key+"-y-pos",
+			key+"-width",
+			key+"-height");
 		if (bounds!=null){
 			component.setPreferredSize (bounds.getSize ());
 			return true;
@@ -94,7 +94,7 @@ public class PersistenceUtils {
 			final TableColumn column = (TableColumn)en.nextElement ();
 			SettingsSupport.setIntegerProperty (
 			persistenceStorage.getRegistry (), 
-			key+"colwidth"+i++, 
+			key+"-col-width"+i++, 
 			new Integer (column.getWidth ()));
 		}
 	}
@@ -106,7 +106,7 @@ public class PersistenceUtils {
 			final TableColumn column = (TableColumn)en.nextElement ();
 			final Integer width = SettingsSupport.getIntegerProperty (
 			persistenceStorage.getRegistry (), 
-			key+"colwidth"+i++);
+			key+"-col-width"+i++);
 			
 			if (width!=null){
 				column.setPreferredWidth (width.intValue ());
