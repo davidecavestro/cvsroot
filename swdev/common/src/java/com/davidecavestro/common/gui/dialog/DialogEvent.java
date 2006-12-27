@@ -16,7 +16,7 @@ import java.util.Locale;
  * L'evento puo'avere un valore associato, al quale e' possibile accedere tramite il metodo #getValue .
  * @author  davide
  */
-public class DialogEvent extends java.util.EventObject {
+public class DialogEvent<T> extends java.util.EventObject {
 	
 	/**
 	 * Il tipo di evento.
@@ -26,7 +26,7 @@ public class DialogEvent extends java.util.EventObject {
 	/**
 	 * Il valore associato all'evento.
 	 */
-	protected Object value;
+	protected T value;
 
 	/** 
 	 * Evento senza valore associato.
@@ -43,7 +43,7 @@ public class DialogEvent extends java.util.EventObject {
 	 * @param value il valore interessato.
 	 * @param type il tipo di evento.
 	 */
-	public DialogEvent (Dialog source, Object value, int type) {
+	public DialogEvent (Dialog source, T value, int type) {
 		super (source);
 		this.value = value;
 		this.type=type;
@@ -64,7 +64,7 @@ public class DialogEvent extends java.util.EventObject {
 	 *
 	 * @return il valore interessato da questo evento.
 	 */	
-	public Object getValue (){
+	public T getValue (){
 		return this.value;
 	}
 	
