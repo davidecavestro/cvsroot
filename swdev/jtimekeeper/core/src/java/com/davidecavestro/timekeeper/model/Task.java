@@ -27,19 +27,21 @@ public interface Task {
 	
 	/**
 	 * Inserisce un nuovo elemento figlio alla posizione desiderata.
-	 *
+	 * 
 	 * @param child il nuovo figlio.
 	 * @param pos la posizione del figlio.
+	 * @return la posizione effettiva.
 	 */
-	void insert (Task child, int pos);
+	int insert (Task child, int pos);
 	
 	/**
 	 * Aggiunge il periodo di avanzamento specificato a questo nodo.
 	 *
 	 * @param progress l'avanzamento da aggiungere.
 	 * @param position la posizione dell'avanzamento.
+	 * @return la posizione effettiva.
 	 */
-	void insert (PieceOfWork progress, int position);
+	int insert (PieceOfWork progress, int position);
 	
 	/**
 	 * Ritorna l'indice relativo alla posizione del figlio tra tutti i figli di
@@ -79,7 +81,7 @@ public interface Task {
 	 *
 	 * @return la lista di avanzamenti appartnenti a queto nodo.
 	 */
-	List<PieceOfWork> getPiecesOfWork ();
+	List getPiecesOfWork ();
 	
 	/**
 	 * Ritorna il nome di questo nodo.
@@ -112,7 +114,7 @@ public interface Task {
 	 * Rimuove il periodo di avanzamento specificato da questo nodo.
 	 * @param p l'avanzamento da rimuovere.
 	 */
-	void removePieceOfWOrk (PieceOfWork p);
+	void removePieceOfWork (PieceOfWork p);
 	
 	/**
 	 * Ritorna l'avanzamento che occupa una determinata posizione tra gli avanzamenti
@@ -139,5 +141,30 @@ public interface Task {
 	 * @return gli avanzamenti apparteneneti al sottoalbero.
 	 */
 	List getSubtreeProgresses ();
+	
+	/**
+	 * Ritorna la lista dei figli di questo task.
+	 *<BR>
+	 *Una lista di <CODE>Task</CODE>.
+	 * 
+	 * @return la lista dei figli di questo task.
+	 */
+	List getChildren ();
+	
+	/**
+	 * Ritorna un clone di questo nodo, a solo scopo di backup.
+	 */
+	TaskBackup backup ();
+	
+//	/**
+//	 * Ripristina il proprio stato interno dal backup specificato.
+//	 */
+//	void restore (TaskBackup t);
+
+	String getCode ();
+
+	String getDescription ();
+
+	String getNotes ();
 	
 }

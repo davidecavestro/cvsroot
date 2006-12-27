@@ -7,6 +7,7 @@
 
 package com.davidecavestro.timekeeper.model.event;
 
+import com.davidecavestro.timekeeper.model.WorkSpace;
 import java.util.EventListener;
 
 /**

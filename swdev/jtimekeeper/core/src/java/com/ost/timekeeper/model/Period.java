@@ -23,12 +23,12 @@ public class Period extends Observable implements LocalizedPeriod{
 	/** 
 	 * La data di inizio periodo. 
 	 */
-	private Date from;
+	protected Date from;
 	
 	/** 
 	 * La data di fine periodo. 
 	 */
-	private Date to;
+	protected Date to;
 	
 	/**
 	 * Durata calcolata (valida).
@@ -43,12 +43,12 @@ public class Period extends Observable implements LocalizedPeriod{
 	/** 
 	 * La descrizione di questo periodo. 
 	 */
-	private String description;
+	protected String description;
 	
 	/** 
 	 * Le note di questo periodo. 
 	 */
-	private String notes;
+	protected String notes;
 	
 	/** 
 	 * Costruttore vuoto.

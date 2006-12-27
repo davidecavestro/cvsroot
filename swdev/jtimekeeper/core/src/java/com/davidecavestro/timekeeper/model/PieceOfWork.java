@@ -58,4 +58,16 @@ public interface PieceOfWork extends LocalizedPeriod {
 	 * @param d la descrizione di periodo di lavoro.
 	 */
 	void setDescription(String d);
+	
+	/**
+	 * Ritorna un clone di questo avanzamento, a solo scopo di backup.
+	 */
+	PieceOfWorkBackup backup ();
+
+//	/**
+//	 * Copia il proprio stato internodall'oggetto specificato.
+//	 */
+//	void restore (PieceOfWorkBackup pow);
+
+	String getNotes ();
 }

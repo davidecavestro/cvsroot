@@ -7,7 +7,10 @@
 package com.ost.timekeeper.model;
 
 import com.davidecavestro.timekeeper.model.PieceOfWork;
+import com.davidecavestro.timekeeper.model.PieceOfWorkBackup;
 import com.davidecavestro.timekeeper.model.Task;
+import com.ost.timekeeper.util.Duration;
+import com.ost.timekeeper.util.LocalizedPeriod;
 import java.util.Date;
 
 /**
@@ -19,9 +22,9 @@ import java.util.Date;
  *
  * @author  davide
  */
-public final class Progress extends Period implements PieceOfWork {
+public class Progress extends Period implements PieceOfWork {
 	
-	private ProgressItem progressItem;
+	protected ProgressItem progressItem;
 	
 	/** Costruttore vuoto. */
 	private Progress () {
@@ -62,4 +65,33 @@ public final class Progress extends Period implements PieceOfWork {
 	 */	
 	public void setTask (final Task progressItem){this.progressItem=(ProgressItem)progressItem;}
 	
+	public PieceOfWorkBackup backup () {
+		return new PieceOfWorkBackupImpl (this);
+	}
+
+	/**
+	 * Implementa il backup. Classe ad esclusivo uso interno, da non rendere persistente.
+	 *<P>
+	 * La classe &egrave; statica per evitare l'accesso involontarioalle variabili della classe che la contiene. Deve avere l'accesso solamente per estensione!
+	 */
+	private static class PieceOfWorkBackupImpl extends Progress implements PieceOfWorkBackup {
+		private final Progress _source;
+		public PieceOfWorkBackupImpl (Progress p) {
+			super (p);
+			_source = p;
+		}
+		public PieceOfWork getSource () {
+			return _source;
+		}
+		
+		public void restore () {
+			
+			_source.from = from;
+			_source.to = to;
+			_source.description = description;
+			_source.notes = notes;
+			_source.progressItem = progressItem;
+		}
+	
+	}
 }

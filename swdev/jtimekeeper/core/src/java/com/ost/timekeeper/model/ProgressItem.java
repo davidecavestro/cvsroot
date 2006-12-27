@@ -7,7 +7,9 @@
 package com.ost.timekeeper.model;
 
 import com.davidecavestro.timekeeper.model.PieceOfWork;
+import com.davidecavestro.timekeeper.model.PieceOfWorkBackup;
 import com.davidecavestro.timekeeper.model.Task;
+import com.davidecavestro.timekeeper.model.TaskBackup;
 import com.davidecavestro.timekeeper.model.WorkSpace;
 import java.util.*;
 
@@ -24,57 +26,59 @@ import java.util.*;
  *
  * @author  davide
  */
-public final class ProgressItem extends Observable implements Task {
+public class ProgressItem extends Observable implements Task {
 	
 	/**
 	 * Il codice di questo nodo.
 	 */
-	private String code;
+	protected String code;
 	
 	/**
 	 * Il nome di questo nodo.
 	 */
-	private String name;
+	protected String name;
 	
 	/**
 	 * La descrizione di qeusto nodo.
 	 */
-	private String description;
+	protected String description;
 	
 	/**
 	 * Le annotazioni relative a questo nodo.
 	 */
-	private String notes;
+	protected String notes;
 	
 	/**
 	 * Stato di avanzamento
+	 * @deprecated campo non pi&ugrave; gestito dalla versione 2.
 	 */
 	private boolean progressing;
 	
 	/**
 	 * Il padre.
 	 */
-	private Task parent;
+	protected ProgressItem parent;
 	
 	/**
 	 * I figli di questo nodo.
 	 */
-	private List children = new ArrayList ();
+	protected List children = new ArrayList ();
 	
 	/**
 	 * Gli avanzamenti effettuati su questo nodo.
 	 */
-	private List progresses = new ArrayList ();
+	protected List progresses = new ArrayList ();
 	
 	/**
 	 * L'avanzamento corrente di questo nodo.
+	 * @deprecated campo non pi&ugrave; gestito dalla versione 2.
 	 */
-	private PieceOfWork currentProgress;
+	private Progress currentProgress;
 	
 	/**
 	 * Il progetto di appartenenza.
 	 */
-	private Project project;
+	protected Project project;
 	
 	
 	/**
@@ -158,10 +162,17 @@ public final class ProgressItem extends Observable implements Task {
 	 * questo nodo e sul nuovo figlio.
 	 *
 	 * @param child il nuovo figlio.
-	 * @param pos la posizione del figlio.
+	 * @param pos la posizione del figlio. Usare unvalore negativoper accodare.
 	 */
-	public void insert (Task child, int pos){
-		this.children.add (pos, child);
+	public int insert (Task child, int pos){
+		int retValue;
+		if (pos<0) {
+			children.add (child);
+			retValue = children.indexOf (child);
+		} else {
+			children.add (pos, child);
+			retValue = pos;
+		}
 		((ProgressItem)child).parent=this;
 		((ProgressItem)child).project = this.project;
 		
@@ -169,6 +180,8 @@ public final class ProgressItem extends Observable implements Task {
 		((ProgressItem)child).setChanged ();
 		this.notifyObservers ();
 		((ProgressItem)child).notifyObservers ();
+		
+		return retValue;
 	}
 	
 	/**
@@ -180,8 +193,11 @@ public final class ProgressItem extends Observable implements Task {
 	 * @return la posizione di inserimento del nuovo nodo.
 	 */
 	public int insert (Task child){
-		final int position = this.children.size ();
-		insert (child, position);
+		int position;
+		synchronized (children) {
+			position = this.children.size ();
+			insert (child, position);
+		}
 		return position;
 	}
 	
@@ -458,8 +474,9 @@ public final class ProgressItem extends Observable implements Task {
 	 * @see com.ost.timekeeper.model.Task#insert .
 	 *
 	 * @param parent il nuovo padre.
+	 *@throws ClassCastException se il parametro passato non &egrave; di tipo ProgressItem
 	 */
-	public void setParent (Task parent) {this.parent=parent;}
+	public void setParent (Task parent) {this.parent=(ProgressItem)parent;}
 	
 	/**
 	 * Imposta gli avanzamenti relativi a questo nodo.
@@ -551,7 +568,7 @@ public final class ProgressItem extends Observable implements Task {
 	 * Rimuove il periodo di avanzamento specificato da questo nodo.
 	 * @param progress l'avanzamento da rimuovere.
 	 */
-	public synchronized void removePieceOfWOrk (final PieceOfWork progress){
+	public synchronized void removePieceOfWork (final PieceOfWork progress){
 		final int size = this.progresses.size ();
 		for (int i=0;i<size;i++){
 			final PieceOfWork candidate = (PieceOfWork)this.progresses.get (i);
@@ -580,13 +597,24 @@ public final class ProgressItem extends Observable implements Task {
 	
 	/**
 	 * Aggiunge il periodo di avanzamento specificato a questo nodo.
+	 * 
+	 * @param position la posizionedelnuovoavanzamento. Usare unvalore negativoper accodare.
 	 * @param progress l'avanzamento da aggiungere.
 	 */
-	public synchronized void insert (final PieceOfWork progress, int position){
+	public synchronized int insert (final PieceOfWork progress, int position){
 		progress.setTask (this);
-		this.progresses.add (position, progress);
+		int retValue;
+		if (position<0) {
+			progresses.add (progress);
+			retValue = progresses.indexOf (progress);
+		} else {
+			progresses.add (position, progress);
+			retValue = position;
+		}
 		this.setChanged ();
 		this.notifyObservers ();
+		
+		return retValue;
 	}
 
 	public int pieceOfWorkIndex (PieceOfWork p) {
@@ -599,5 +627,64 @@ public final class ProgressItem extends Observable implements Task {
 
 	public int pieceOfWorkCount () {
 		return this.progresses.size ();
+	}
+
+	public TaskBackup backup () {
+		return new TaskBackupOmpl (this);
+	}
+
+	/**
+	 * Implementa il backup. Classe ad esclusivo uso interno, da non rendere persistente.
+	 *<P>
+	 * La classe &egrave; statica per evitare l'accesso involontarioalle variabili della classe che la contiene. Deve avere l'accesso solamente per estensione!
+	 */
+	private static class TaskBackupOmpl extends ProgressItem implements TaskBackup {
+		private final ProgressItem _source;
+		public TaskBackupOmpl (final ProgressItem pi) {
+			super (pi);
+			_source = pi;
+			
+			/*
+			 * Usa le liste interne di riferimenti per salvare i backup.
+			 */
+			children = new ArrayList ();
+			for (final Iterator it = pi.children.iterator (); it.hasNext ();) {
+				final Task t = (Task)it.next ();
+				children.add (t.backup ());
+			}
+			progresses = new ArrayList ();
+			for (final Iterator it = pi.progresses.iterator (); it.hasNext ();) {
+				final PieceOfWork pow = (PieceOfWork)it.next ();
+				progresses.add (pow.backup ());
+			}
+			
+		}
+		public Task getSource () {
+			return _source;
+		}
+		
+	public void restore () {
+		
+		_source.code = code;
+		_source.description = description;
+		_source.name = name;
+		_source.notes = notes;
+
+		_source.project = project;
+		
+		_source.children = new ArrayList ();
+		for (final Iterator it = children.iterator (); it.hasNext ();) {
+			final TaskBackup tb = (TaskBackup)it.next ();
+			tb.restore ();
+			_source.children.add (tb.getSource ());
+		}
+		_source.progresses = new ArrayList ();
+		for (final Iterator it = progresses.iterator (); it.hasNext ();) {
+			final PieceOfWorkBackup powb = (PieceOfWorkBackup)it.next ();
+			powb.restore ();
+			_source.progresses.add (powb.getSource ());
+		}
+	}
+		
 	}
 }

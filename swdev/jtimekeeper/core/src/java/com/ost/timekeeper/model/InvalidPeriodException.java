@@ -7,8 +7,8 @@
 package com.ost.timekeeper.model;
 
 /**
- * Segnala che un periodo temporale non è valido.
- * UN periodo temporale è valido quando i suoi limiti sono definiti ed il limite
+ * Segnala che un periodo temporale non &egrave; valido.
+ * UN periodo temporale &egrave; valido quando i suoi limiti sono definiti ed il limite
  * inferiore precede quello superiore.
  *
  * @author  davide
