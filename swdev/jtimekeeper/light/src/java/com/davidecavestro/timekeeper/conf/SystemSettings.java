@@ -41,9 +41,34 @@ public final class SystemSettings extends AbstractSettings {
 	public String getPropertiesHeader () {
 		return PROPERTIES_HEADER;
 	}
-	
-	public String[] getRecentPaths () {
+
+
+	/**
+	 * Impostazione utente, nessun override previsto attualmente per il sistema.
+	 */
+	public String getLastProjectName () {
 		return null;
-	}	
+	}
+
+	/**
+	 * Impostazione utente, nessun override previsto attualmente per il sistema.
+	 */
+	public String getJDOUserName () {
+		return null;
+	}
+
+	/**
+	 * Impostazione utente, nessun override previsto attualmente per il sistema.
+	 */
+	public String getJDOStorageName () {
+		return null;
+	}
+
+	/**
+	 * Impostazione utente, nessun override previsto attualmente per il sistema.
+	 */
+	public String getJDOStorageDirPath () {
+		return null;
+	}
 
 }

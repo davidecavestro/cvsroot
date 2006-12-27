@@ -154,45 +154,33 @@ public abstract class AbstractSettings implements CustomizableSettings {
 		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_LOOKANDFEEL, lookAndFeel);
 	}
 
-	public String[] getRecentPaths () {
-		return SettingsSupport.getPaths (this.getProperties (), PROPNAME_RECENTPATHS, File.pathSeparator);
+	public String getJDOUserName () {
+		return SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_JDOSTORAGEUSER_NAME);
 	}
-	
-	public void setRecentPaths (String[] paths) {
-		SettingsSupport.setPaths (this.getProperties (), PROPNAME_RECENTPATHS, paths, File.pathSeparator);
+
+	public void setJDOUserName (String s) {
+		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_JDOSTORAGEUSER_NAME, s);
 	}
-	
-	public String getLastPath () {
-		return SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_LASTPATH);
+
+	public String getJDOStorageName () {
+		return SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_JDOSTORAGE_NAME);
 	}
-	
-	public void setLastPath (String value) {
-		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_LASTPATH, value);
+
+	public void setJDOStorageName (String s) {
+		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_JDOSTORAGE_NAME, s);
 	}
-	
-	public Boolean getBackupOnSave () {
-		return SettingsSupport.getBooleanProperty (this.getProperties (), PROPNAME_BACKUPONSAVE);
+
+	public String getJDOStorageDirPath () {
+		return SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_JDOSTORAGEDIR_PATH);
 	}
-	
-	public void setBackupOnSave (Boolean b) {
-		SettingsSupport.setBooleanProperty (this.getProperties (), PROPNAME_BACKUPONSAVE, b);
+
+	public void setJDOStorageDirPath (String s) {
+		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_JDOSTORAGEDIR_PATH, s);
 	}
-	
-	public Boolean getKeyEditing () {
-		return SettingsSupport.getBooleanProperty (this.getProperties (), PROPNAME_KEYEDITING);
+
+	public void setLastProjectName (String s) {
+		SettingsSupport.setStringProperty (this.getProperties (), PROPNAME_LASTPROJECTNAME, s);
 	}
-	
-	public void setKeyEditing (Boolean b) {
-		SettingsSupport.setBooleanProperty (this.getProperties (), PROPNAME_KEYEDITING, b);
-	}
-	
-	public void setDiscardMalformedEncoding (Boolean b){
-		SettingsSupport.setBooleanProperty (this.getProperties (), PROPNAME_DISCARDMALFORMEDENCODING, b);
-	}
-	
-	public Boolean getDiscardMalformedEncoding (){
-		return SettingsSupport.getBooleanProperty (this.getProperties (), PROPNAME_DISCARDMALFORMEDENCODING);
-	}
-	
+
 	
 }

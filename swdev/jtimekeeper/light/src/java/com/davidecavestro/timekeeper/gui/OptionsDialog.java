@@ -149,14 +149,14 @@ public class OptionsDialog extends javax.swing.JDialog {
 	private final void confirm (){
 		final UserSettings us = _context.getUserSettings ();
 		
-		us.setBackupOnSave (Boolean.valueOf (createBackupFilesCheckBox.getModel ().isSelected ()));
-		us.setKeyEditing (Boolean.valueOf (enableKeyEditingCheckBox.getModel ().isSelected ()));
+//		us.setBackupOnSave (Boolean.valueOf (createBackupFilesCheckBox.getModel ().isSelected ()));
+//		us.setKeyEditing (Boolean.valueOf (enableKeyEditingCheckBox.getModel ().isSelected ()));
 		hide ();
 	}
 	
 	private void init (ApplicationOptions ao) {
-		createBackupFilesCheckBox.getModel ().setSelected (ao.isBackupOnSaveEnabled ());
-		enableKeyEditingCheckBox.getModel ().setSelected (ao.isKeyEditingEnabled ());
+//		createBackupFilesCheckBox.getModel ().setSelected (ao.isBackupOnSaveEnabled ());
+//		enableKeyEditingCheckBox.getModel ().setSelected (ao.isKeyEditingEnabled ());
 	}
 	
 	private void cancel (){

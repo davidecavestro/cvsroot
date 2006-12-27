@@ -53,7 +53,10 @@ public final class UserSettings extends AbstractSettings {
 	public String getPropertiesHeader () {
 		return PROPERTIES_HEADER;
 	}
-	
-	
+
+	public String getLastProjectName () {
+		return SettingsSupport.getStringProperty (this.getProperties (), PROPNAME_LASTPROJECTNAME);
+	}
+
 
 }

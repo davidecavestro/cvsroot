@@ -7,7 +7,7 @@
 package com.davidecavestro.timekeeper.conf;
 
 /**
- * I nomi delle risorse utilizzabili.
+ * Costanti che definiscono i nomi delle risorse utilizzabili.
  *
  * @author  davide
  */
@@ -47,5 +47,6 @@ public interface ResourceNames {
 	 * Nome account utente corrente.
 	 */
 	public final static String USER_ACCOUNT = "user.name";
+
 	
 }

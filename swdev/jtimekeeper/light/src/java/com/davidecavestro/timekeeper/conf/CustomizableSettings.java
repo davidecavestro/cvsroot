@@ -30,35 +30,29 @@ public interface CustomizableSettings extends ApplicationSettings{
 	 * Il LookAndFeel.
 	 */
 	public final static String PROPNAME_LOOKANDFEEL = "lookandfeel";
+		
 	
 	/**
-	 * I percorsi degli ultimi file aperti.
+	 * Parametro che definisce il nome dell'utente da usare per l'0accesso allo storage JDO.
 	 */
-	public final static String PROPNAME_RECENTPATHS = "recentpaths";
+	public final static String PROPNAME_JDOSTORAGEUSER_NAME = "jdousername";
+
+	/**
+	 * Parametro che definisce il nome dello storage JDO per la persistenza.
+	 */
+	public final static String PROPNAME_JDOSTORAGE_NAME = "jdostoragename";
+
+	/**
+	 * Parametro che definisce il percorso della directory contenente lo storage JDO per la persistenza.
+	 */
+	public final static String PROPNAME_JDOSTORAGEDIR_PATH = "jdostoragedirpath";
 	
 	/**
-	 * Il percorso dell'ultima directory utilizzata.
+	 * Parametro che definisce ilnome dell'ultimo progetto utilizzato.
 	 */
-	public final static String PROPNAME_LASTPATH = "lastpath";
+	public final static String PROPNAME_LASTPROJECTNAME = "lastprojectname";
 	
-	/**
-	 * Il parametro di abilitazione del salvataggiocopie di backup.
-	 */
-	public final static String PROPNAME_BACKUPONSAVE = "backuponsave";
-	
-	/**
-	 * Il parametro di abilitazione dell'editazione chiavi.
-	 */
-	public final static String PROPNAME_KEYEDITING = "keyediting";
-	
-	/**
-	 * Il parametro di scarto locale con codifica non valida.
-	 */
-	public final static String PROPNAME_DISCARDMALFORMEDENCODING = "discardmalformedencoding";
-	
-	
-	
-	
+		
 	/**
 	 * Ritorna il nome del file di preferenze associato a queste impostazioni.
 	 * @return il nome del file di preferenze associato a queste impostazioni.
@@ -105,29 +99,31 @@ public interface CustomizableSettings extends ApplicationSettings{
 	void setLookAndFeel (final String lookAndFeel);
 	
 	/**
-	 * Imposta il percorso dell'ultima directory usata.
+	 * Imposta il nome utente da utilizare per accedere allo storage JDo.
+	 *
+	 * @param s il nuovo valore.
 	 */
-	void setLastPath (String value);
-	
+	void setJDOUserName (String s);
+
 	/**
-	 * Imposta i percorsi dei file recenti.
+	 * Imposta il nome dello storage JDo.
+	 *
+	 * @param s il nuovo valore.
 	 */
-	void setRecentPaths (String[] paths);
-	
+	void setJDOStorageName (String s);
+
 	/**
-	 * Abilita/disabilita il salvataggio dei file di backup.
+	 * Imposta il percorso della directory da usare per lo storage JDO.
+	 * 
+	 * @param s il nuovo valore.
 	 */
-	void setBackupOnSave (Boolean b);
-	
+	void setJDOStorageDirPath (String s);	
+
 	/**
-	 * Abilita/disabilita l'editazione delle chiavi.
+	 * Imposta il nome dell'ultimo project caricato.
+	 * 
+	 * @param s il nome dell'ultimo project caricato.
 	 */
-	void setKeyEditing (Boolean b);
-	
-	/**
-	 * Abilita/disabilita la rimozione dei locale con codifica non valida..
-	 */
-	void setDiscardMalformedEncoding (Boolean b);
-	
+	void setLastProjectName (String s);	
 	
 }

@@ -18,7 +18,7 @@ import javax.swing.*;
  *
  * @author  davide
  */
-public abstract class ProgressItemTransferHandler extends TransferHandler {
+public abstract class ProgressItemTransferHandler extends TransferHandler implements PredictiveTransferhandler {
 	
 	private final DataFlavor progressItemFlavor = DataFlavors.progressItemFlavor;
 	
@@ -32,8 +32,8 @@ public abstract class ProgressItemTransferHandler extends TransferHandler {
 	}
 	
 	protected abstract Task[] exportProgressItems (JComponent c);
-	protected abstract void importProgressItems (JComponent c, Task[] progressItem);
-	protected abstract void cleanup (JComponent c, boolean remove);
+	protected abstract void importProgressItems (JComponent c, Task[] progressItem, boolean removeFromSource);
+	protected abstract void cleanup (JComponent c, Transferable data, int action);
 	
 	/**
 	 * Crea un oggetto trasferibile.
@@ -41,32 +41,32 @@ public abstract class ProgressItemTransferHandler extends TransferHandler {
 	 * @param c l'elemento della UI.
 	 * @return un oggetto trasferibile.
 	 */	
+	@Override
 	protected Transferable createTransferable (JComponent c) {
 		return new ProgressItemSelection (exportProgressItems (c));
 	}
 	
+	@Override
 	public int getSourceActions (JComponent c) {
 		return COPY_OR_MOVE;
 	}
 	
+	@Override
 	public boolean importData (JComponent c, Transferable t) {
 		if (canImport (c, t.getTransferDataFlavors ())) {
-			try {
-				final Task[] progressItem = (Task[])t.getTransferData (progressItemFlavor);
-				importProgressItems (c, progressItem);
-				return true;
-			} catch (UnsupportedFlavorException ufe) {
-				_context.getLogger ().warning ("Error transferring UI data.", ufe);
-			} catch (IOException ioe) {
-				_context.getLogger ().warning ("Error transferring UI data.", ioe);
-			}
+			return true;
 		}
 		
 		return false;
 	}
 	
+	/**
+	 * Scavalcato per impostare l'azione di esportazione utilizata.
+	 */
+	@Override
 	protected void exportDone (JComponent c, Transferable data, int action) {
-		cleanup (c, action == MOVE);
+		((MemoTransferable)data).setAction (action);
+		cleanup (c, data, action);
 	}
 	
     /**
@@ -88,8 +88,9 @@ public abstract class ProgressItemTransferHandler extends TransferHandler {
 	/**
      * Overridden to include a check for a ProgressItem flavor.
      */
+	@Override
     public boolean canImport(JComponent c, DataFlavor[] flavors) {
         return hasProgressItemFlavor(flavors);
     }
-	
+
 }

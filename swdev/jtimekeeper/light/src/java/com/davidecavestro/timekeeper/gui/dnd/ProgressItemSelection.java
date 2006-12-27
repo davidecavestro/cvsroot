@@ -8,13 +8,15 @@ package com.davidecavestro.timekeeper.gui.dnd;
 
 import com.davidecavestro.timekeeper.model.Task;
 import java.awt.datatransfer.*;
+import java.io.IOException;
+import javax.swing.TransferHandler;
 
 /**
  * La selezione contenente di un nodo di avanzamento.
  *
  * @author  davide
  */
-public class ProgressItemSelection implements Transferable{
+public class ProgressItemSelection implements MemoTransferable {
 	
 	/** I tipi di dato supportati. */
 	private static final DataFlavor[] flavors = {
@@ -22,6 +24,7 @@ public class ProgressItemSelection implements Transferable{
 	};
 	
     private Task[] data;
+	private int _action = TransferHandler.NONE;
 						   
 	/**
 	 * Costruttore con nodo di avanzamento.
@@ -31,6 +34,10 @@ public class ProgressItemSelection implements Transferable{
         this.data = data;
     }
 	
+	public void setAction (int action) {
+		_action = action;
+	}
+	
 	/**
 	 * Ritorna il dato trasportato, in base al tipo di dato specificato.
 	 *
@@ -39,9 +46,9 @@ public class ProgressItemSelection implements Transferable{
 	 * @throws IOException
 	 * @return il dato trasportato, in base al tipo di dato specificato.
 	 */	
-	public Object getTransferData (DataFlavor flavor) throws UnsupportedFlavorException, java.io.IOException {
+	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
 		if (flavor.equals (DataFlavors.progressItemFlavor)) {
-			return (Task[])data;
+			return new TransferData<Task> (data, _action);
 		} else {
 			throw new UnsupportedFlavorException (flavor);
 		}

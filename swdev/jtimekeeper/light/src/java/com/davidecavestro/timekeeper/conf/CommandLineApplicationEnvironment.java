@@ -11,6 +11,7 @@ import com.davidecavestro.common.cache.DisposableData;
 import java.util.*;
 
 /**
+ * Ambiente di configurazione dell'applicazione impostato dai parametri di lancio.
  *
  * @author  davide
  */
@@ -40,8 +41,8 @@ public class CommandLineApplicationEnvironment implements ApplicationEnvironment
 	 * @param args i parametri della linea i comando.
 	 */
 	public CommandLineApplicationEnvironment (String[] args) {
-		this._args = args;
-		this._props = prepareProperties (args);
+		_args = args;
+		_props = prepareProperties (args);
 	}
 	
 	/**
@@ -53,8 +54,8 @@ public class CommandLineApplicationEnvironment implements ApplicationEnvironment
 	 * @return
 	 */	
 	public String getApplicationDirPath () {
-		if (this._applicationDirPath==null || !this._applicationDirPath.isValid ()){
-			this._applicationDirPath = new DisposableData (this._props.getProperty (APPLICATION_DIRECTORY));
+		if (_applicationDirPath==null || !_applicationDirPath.isValid ()){
+			_applicationDirPath = new DisposableData (_props.getProperty (APPLICATION_DIRECTORY));
 		}
 		return (String)_applicationDirPath.getData ();
 	}
@@ -64,8 +65,8 @@ public class CommandLineApplicationEnvironment implements ApplicationEnvironment
 	 */
 	private Data _applicationSettingsPath;
 	public String getApplicationSettingsPath () {
-		if (this._applicationSettingsPath==null || !this._applicationSettingsPath.isValid ()){
-			this._applicationSettingsPath = new DisposableData (this._props.getProperty (APPLICATION_SETTINGS_DIRECTORY));
+		if (_applicationSettingsPath==null || !_applicationSettingsPath.isValid ()){
+			_applicationSettingsPath = new DisposableData (_props.getProperty (APPLICATION_SETTINGS_DIRECTORY));
 		}
 		return (String)_applicationSettingsPath.getData ();
 	}

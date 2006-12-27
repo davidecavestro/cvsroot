@@ -51,20 +51,27 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 	
 	
 	
+	@Override
 	public void removePieceOfWork (final PieceOfWork pow) {
+		final PieceOfWorkBackup backup = pow.backup ();
+			
 		final Task t = pow.getTask ();
 		final int pos = t.pieceOfWorkIndex (pow);
 		super.removePieceOfWork (pow);
 		
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
-			
 			public String getPresentationName () {
-				return "progress removal";
+				return "delete progress";
 			}
 			
 			
 			public void undo () throws CannotUndoException {
 				super.undo ();
+				
+				/*
+				 * @workaroud ripristina lo stato interno, annullato da JDO
+				 */
+				backup.restore ();
 				
 				UndoableTaskTreeModel.super.insertPieceOfWorkInto (pow, t, pos);
 			}
@@ -78,13 +85,16 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		});
 	}
 	
+	@Override
 	public void insertPieceOfWorkInto (final PieceOfWork newPOW, final Task t, final int index) {
 		super.insertPieceOfWorkInto (newPOW, t, index);
 		
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
+			private final PieceOfWorkBackup backup = newPOW.backup ();
+			
 			public String getPresentationName () {
-				return "progress insertion";
+				return "new progress";
 			}
 			
 			
@@ -98,26 +108,39 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 			public void redo () throws CannotUndoException {
 				super.redo ();
 				
+				/*
+				 * @workaroud ripristina lo stato interno, annullato da JDO
+				 */
+				backup.restore ();
+				
 				UndoableTaskTreeModel.super.insertPieceOfWorkInto (newPOW, t, index);
 			}
 		});
 		
 	}
 	
+	@Override
 	public void removeNodeFromParent (final Task node) {
+		final TaskBackup backup = backupSubTree (node);
+		
 		final Task p = node.getParent ();
 		final int pos = p.childIndex (node);
 		super.removeNodeFromParent (node);
 		
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
-			
+
 			public String getPresentationName () {
-				return "task removal";
+				return "delete task";
 			}
 			
 			
 			public void undo () throws CannotUndoException {
 				super.undo ();
+				
+				/*
+				 * @workaroud ripristina lo stato interno, annullato da JDO
+				 */
+				backup.restore ();
 				
 				UndoableTaskTreeModel.super.insertNodeInto (node, p, pos);
 			}
@@ -131,13 +154,16 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		});
 	}
 	
+	@Override
 	public void insertNodeInto (final Task newChild, final Task parent, final int index) {
 		super.insertNodeInto (newChild, parent, index);
 		
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
+			private final TaskBackup backup = backupSubTree (newChild);
+			
 			public String getPresentationName () {
-				return "task insertion";
+				return "new task";
 			}
 			
 			
@@ -151,17 +177,26 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 			public void redo () throws CannotUndoException {
 				super.redo ();
 				
+				/*
+				 * @workaroud ripristina lo stato interno, annullato da JDO
+				 */
+				backup.restore ();
+				
 				UndoableTaskTreeModel.super.insertNodeInto (newChild, parent, index);
 			}
 		});
 	}
 	
+	@Override
 	public void removeTasks (final Task parent, final List<Task> l) {
+		final Map<Integer, TaskBackup> backupMap = new HashMap<Integer, TaskBackup> ();
+		
 		final Map<Integer, Task> m = new HashMap<Integer, Task> ();
 		final List<Integer> positions = new ArrayList<Integer> ();
 		for (final Task t : l) {
 			final Integer pos = parent.childIndex (t);
 			m.put (pos, t);
+			backupMap.put (pos, backupSubTree (t));
 			positions.add (pos);
 		}
 		
@@ -172,7 +207,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
 			public String getPresentationName () {
-				return "tasks removal";
+				return "delete tasks";
 			}
 			
 			
@@ -180,7 +215,13 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 				super.undo ();
 				
 				for (final Integer i : positions) {
-					UndoableTaskTreeModel.super.insertNodeInto (m.get (i), parent, i.intValue ());
+					final Task t = m.get (i);
+					final TaskBackup backup = backupMap.get (i);
+					/*
+					 * @workaroud ripristina lo stato interno, annullato da JDO
+					 */
+					backup.restore ();
+					UndoableTaskTreeModel.super.insertNodeInto (t, parent, i.intValue ());
 				}
 			}
 			
@@ -193,12 +234,16 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		});
 	}
 	
+	@Override
 	public void removePiecesOfWork (final Task t, final List<PieceOfWork> l) {
+		final Map<Integer, PieceOfWorkBackup> backupMap = new HashMap<Integer, PieceOfWorkBackup> ();
+		
 		final Map<Integer, PieceOfWork> m = new HashMap<Integer, PieceOfWork> ();
 		final List<Integer> positions = new ArrayList<Integer> ();
 		for (final PieceOfWork pow : l) {
 			final Integer pos = t.pieceOfWorkIndex (pow);
 			m.put (pos, pow);
+			backupMap.put (pos, pow.backup ());
 			positions.add (pos);
 		}
 		
@@ -209,7 +254,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
 			public String getPresentationName () {
-				return "progresses removal";
+				return "delete progresses";
 			}
 			
 			
@@ -217,7 +262,13 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 				super.undo ();
 				
 				for (final Integer i : positions) {
-					UndoableTaskTreeModel.super.insertPieceOfWorkInto (m.get (i), t, i.intValue ());
+					final PieceOfWork pow = m.get (i);
+					final PieceOfWorkBackup backup = backupMap.get (i);
+					/*
+					 * @workaroud ripristina lo stato interno, annullato da JDO
+					 */
+					backup.restore ();
+					UndoableTaskTreeModel.super.insertPieceOfWorkInto (pow, t, i.intValue ());
 				}
 			}
 			
@@ -230,6 +281,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		});
 	}
 	
+	@Override
 	public void moveTasksTo (final Task previousParent, final List<Task> l, final Task target, final int position) {
 		final Map<Integer, Task> m = new HashMap<Integer, Task> ();
 		final List<Integer> positions = new ArrayList<Integer> ();
@@ -246,7 +298,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
 			public String getPresentationName () {
-				return "tasks move";
+				return "move tasks";
 			}
 			
 			
@@ -270,6 +322,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		
 	}
 	
+	@Override
 	public void movePiecesOfWorkTo (final Task previousTask, final List<PieceOfWork> l, final Task target, final int position) {
 		final Map<Integer, PieceOfWork> m = new HashMap<Integer, PieceOfWork> ();
 		final List<Integer> positions = new ArrayList<Integer> ();
@@ -286,7 +339,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
 			public String getPresentationName () {
-				return "progresses move";
+				return "move progresses";
 			}
 			
 			
@@ -309,6 +362,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		});
 	}
 	
+	@Override
 	public void updateTask (final Task t, final String name) {
 		final String oldName = t.getName ();
 		super.updateTask (t, name);
@@ -316,7 +370,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
 			public String getPresentationName () {
-				return "task change";
+				return "edit task";
 			}
 			
 			
@@ -337,6 +391,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 	}
 	
 	
+	@Override
 	public void updatePieceOfWork (final PieceOfWork pow, final Date from, final Date to, final String description) {
 		final Date oldFrom = pow.getFrom ();
 		final Date oldTo = pow.getTo ();
@@ -346,7 +401,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
 			public String getPresentationName () {
-				return "progress change";
+				return "edit progress";
 			}
 			
 			
@@ -372,5 +427,19 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		for (int i=0; i< listeners.length;i++){
 			listeners[i].undoableEditHappened (editEvent);
 		}
+	}
+	
+	private final TaskBackup backupSubTree (final Task task) {
+		final List<Task> l = new ArrayList<Task> ();
+		l.add (task);
+		return backupSubTree (l).get (0);
+	}
+	
+	private final List<TaskBackup> backupSubTree (final List<Task> tasks) {
+		final List<TaskBackup> backups = new ArrayList<TaskBackup> ();
+		for (final Task t : tasks) {
+			backups.add (t.backup ());
+		}
+		return backups;
 	}
 }

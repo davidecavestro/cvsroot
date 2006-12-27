@@ -9,6 +9,8 @@ package com.davidecavestro.timekeeper.gui.dnd;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.TransferHandler;
@@ -19,19 +21,20 @@ import javax.swing.event.EventListenerList;
  *
  * @author Davide Cavestro
  */
-public class TransferAction extends AbstractAction {
+public class TransferAction extends AbstractAction implements PropertyChangeListener {
 	
 	public enum Type {
 		CUT,
 		COPY,
-		PASTE
+		PASTE,
+		DELETE
 	}
 	
 	/**
 	 * Costruttore.
 	 */
 	public TransferAction (final Type t, final TransferActionListener tal) {
-		super ((String)
+		this ((String)
 		(
 			t==Type.CUT
 			?
@@ -46,10 +49,20 @@ public class TransferAction extends AbstractAction {
 				)
 				)
 		
-		.getValue (Action.NAME));
+		.getValue (Action.NAME), tal);
+	}
+	
+	/**
+	 * Costruttore.
+	 */
+	public TransferAction (final String name, final TransferActionListener tal) {
+		super (name);
 		
 		addActionListener (tal);
+		tal.addPropertyChangeListener ("focusOwner", this);
 	}
+	
+	
 	
     /** A list of event listeners for this component. */
     protected EventListenerList listenerList = new EventListenerList();
@@ -125,5 +138,15 @@ public class TransferAction extends AbstractAction {
             }          
         }
     }
+
+	/*
+	 * @todo completare supporto all'abilitazione di cut&paste
+	 */
+	public void propertyChange (PropertyChangeEvent evt) {
+//		final TransferHandler t = ((JComponent)evt.getNewValue ()).getTransferHandler ();
+//		if (t instanceof PredictiveTransferhandler) {
+//			
+//		}
+	}
   	
 }

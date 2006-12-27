@@ -34,13 +34,13 @@ public final class ApplicationOptions {
 	 * @param successor l'anello successore nella catena di responsabilita''.
 	 */
 	public ApplicationOptions (ApplicationSettings settings, ApplicationOptions successor) {
-		this._settings = settings;
-		this._successor = successor;
+		_settings = settings;
+		_successor = successor;
 	}
 	
 	
 	public String getLogDirPath (){
-		final String returnValue = this._settings.getLogDirPath ();
+		final String returnValue = _settings.getLogDirPath ();
 		if (returnValue!=null){
 				/*
 				 * Risposta locale.
@@ -68,7 +68,7 @@ public final class ApplicationOptions {
 	 * @return la dimensione del buffer per il logger di testo semplice.
 	 */
 	public int getPlainTextLogBufferSize (){
-		final Integer returnValue = this._settings.getPlainTextLogBufferSize ();
+		final Integer returnValue = _settings.getPlainTextLogBufferSize ();
 		if (returnValue!=null){
 			/*
 			 * Risposta locale.
@@ -97,7 +97,7 @@ public final class ApplicationOptions {
 	 * @return il L&F impostato.
 	 */	
 	public String getLookAndFeel (){
-		final String returnValue = this._settings.getLookAndFeel ();
+		final String returnValue = _settings.getLookAndFeel ();
 		if (returnValue!=null){
 				/*
 				 * Risposta locale.
@@ -118,86 +118,116 @@ public final class ApplicationOptions {
 		}
 	}
 
+
+	
+
+	
 	/**
-	 * Ritorna l'impostazione di creazione copie di backup.
+	 * Ritorna il percorso per il database.
 	 *
-	 * @return l'impostazione di creazione copie di backup.
+	 * @return il percorso per il database.
 	 */	
-	public boolean isBackupOnSaveEnabled (){
-		final Boolean returnValue = this._settings.getBackupOnSave ();
+	public String getJDOStorageDirPath (){
+		final String returnValue = _settings.getJDOStorageDirPath ();
 		if (returnValue!=null){
 				/*
 				 * Risposta locale.
 				 */
-			return returnValue.booleanValue ();
+			return returnValue;
 		} else {
 			if (_successor!=null){
 					/*
 					 * Delega successore.
 					 */
-				return _successor.isBackupOnSaveEnabled ();
+				return _successor.getJDOStorageDirPath ();
 			} else {
-					/*
-					 * Default di sistema.
-					 */
-				return DefaultSettings.backupOnSave ();
+				/*
+				 * Informazione non disponibile
+				 */
+				return null;
 			}
 		}
 	}
-	
+
 	/**
-	 * Ritorna l'impostazione di editazione chiavi.
+	 * Ritorna il nome del db.
 	 *
-	 * @return l'impostazione di editazione chiavi.
+	 * @return il nome del db.
 	 */	
-	public boolean isKeyEditingEnabled (){
-		final Boolean returnValue = this._settings.getKeyEditing ();
+	public String getJDOStorageName (){
+		final String returnValue = _settings.getJDOStorageName ();
 		if (returnValue!=null){
 				/*
 				 * Risposta locale.
 				 */
-			return returnValue.booleanValue ();
+			return returnValue;
 		} else {
 			if (_successor!=null){
 					/*
 					 * Delega successore.
 					 */
-				return _successor.isKeyEditingEnabled ();
+				return _successor.getJDOStorageName ();
 			} else {
-					/*
-					 * Default di sistema.
-					 */
-				return DefaultSettings.keyEditing ();
+				/*
+				 * Informazione non disponibile
+				 */
+				return null;
 			}
 		}
 	}
 	
 	/**
-	 * Ritorna l'impostazione di scarto dei locale con codifiche non valide.
+	 * Ritorna il nome del db.
 	 *
-	 * @return l'impostazione di scarto dei locale con codifiche non valide.
+	 * @return il nome del db.
 	 */	
-	public boolean discardMalformedEncoding (){
-		final Boolean returnValue = this._settings.getDiscardMalformedEncoding ();
+	public String getJDOUserName (){
+		final String returnValue = _settings.getJDOUserName ();
 		if (returnValue!=null){
 				/*
 				 * Risposta locale.
 				 */
-			return returnValue.booleanValue ();
+			return returnValue;
 		} else {
 			if (_successor!=null){
 					/*
 					 * Delega successore.
 					 */
-				return _successor.discardMalformedEncoding ();
+				return _successor.getJDOUserName ();
 			} else {
-					/*
-					 * Default di sistema.
-					 */
-				return DefaultSettings.discardMalformedEncoding ();
+				/*
+				 * Informazione non disponibile
+				 */
+				return null;
 			}
 		}
 	}
 	
+	/**
+	 * Ritorna il nome dell'ultimo progettoutilizzato.
+	 *
+	 * @return il nome dell'ultimo progettoutilizzato.
+	 */	
+	public String getLastProjectName (){
+		final String returnValue = _settings.getLastProjectName ();
+		if (returnValue!=null){
+				/*
+				 * Risposta locale.
+				 */
+			return returnValue;
+		} else {
+			if (_successor!=null){
+					/*
+					 * Delega successore.
+					 */
+				return _successor.getLastProjectName ();
+			} else {
+				/*
+				 * Informazione non disponibile
+				 */
+				return null;
+			}
+		}
+	}
 	
 }

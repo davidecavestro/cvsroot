@@ -18,9 +18,9 @@ import javax.swing.*;
  *
  * @author  davide
  */
-public abstract class ProgressTransferHandler extends TransferHandler {
+public abstract class ProgressTransferHandler extends TransferHandler implements PredictiveTransferhandler {
 	
-	private final DataFlavor progressFlavor = DataFlavors.progressFlavor;
+	protected final DataFlavor progressFlavor = DataFlavors.progressFlavor;
 	
 	private final ApplicationContext _context;
 	/**
@@ -31,8 +31,8 @@ public abstract class ProgressTransferHandler extends TransferHandler {
 	}
 	
 	protected abstract PieceOfWork[] exportProgresses (JComponent c);
-	protected abstract void importProgresses (JComponent c, PieceOfWork[] progress);
-	protected abstract void cleanup (JComponent c, boolean remove);
+	protected abstract void importProgresses (JComponent c, PieceOfWork[] progress, boolean removeFromSource);
+	protected abstract void cleanup (JComponent c, Transferable data, int action);
 	
 	/**
 	 * Crea un oggetto trasferibile.
@@ -40,33 +40,40 @@ public abstract class ProgressTransferHandler extends TransferHandler {
 	 * @param c l'elemento della UI.
 	 * @return un oggetto trasferibile.
 	 */	
+	@Override
 	protected Transferable createTransferable (JComponent c) {
 		return new ProgressSelection (exportProgresses (c));
 	}
 	
+	@Override
 	public int getSourceActions (JComponent c) {
-		return MOVE;
+		return COPY_OR_MOVE;
 	}
 	
+	@Override
 	public boolean importData (JComponent c, Transferable t) {
-		System.out.println ("Importing progress data ");
-		if (canImport (c, t.getTransferDataFlavors ())) {
-			try {
-				final PieceOfWork[] progresses = (PieceOfWork[])t.getTransferData (progressFlavor);
-				importProgresses (c, progresses);
-				return true;
-			} catch (UnsupportedFlavorException ufe) {
-				_context.getLogger ().warning ("Error transferring UI data.", ufe);
-			} catch (IOException ioe) {
-				_context.getLogger ().warning ("Error transferring UI data.", ioe);
-			}
+		if (!canImport (c, t.getTransferDataFlavors ())) {
+			return false;
 		}
 		
-		return false;
+		try {
+			final TransferData<PieceOfWork> td = (TransferData<PieceOfWork>)t.getTransferData (progressFlavor);
+			final PieceOfWork[] progresses = td.getData ();
+			importProgresses (c, progresses, td.getAction ()!=TransferHandler.COPY);
+		} catch (UnsupportedFlavorException ufe) {
+			_context.getLogger ().warning ("Error transferring UI data.", ufe);
+			return false;
+		} catch (IOException ioe) {
+			_context.getLogger ().warning ("Error transferring UI data.", ioe);
+			return false;
+		}
+		return true;
 	}
 	
+	@Override
 	protected void exportDone (JComponent c, Transferable data, int action) {
-		cleanup (c, action == MOVE);
+		((MemoTransferable)data).setAction (action);
+		cleanup (c, data, action);
 	}
 	
     /**
@@ -88,6 +95,7 @@ public abstract class ProgressTransferHandler extends TransferHandler {
 	/**
      * Overridden to include a check for a Progress flavor.
      */
+	@Override
     public boolean canImport(JComponent c, DataFlavor[] flavors) {
         return hasProgressFlavor(flavors);
     }

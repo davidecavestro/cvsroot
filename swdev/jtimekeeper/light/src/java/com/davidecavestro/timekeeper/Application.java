@@ -26,8 +26,9 @@ import com.davidecavestro.timekeeper.gui.WindowManager;
 import com.davidecavestro.timekeeper.actions.ActionManager;
 import com.davidecavestro.timekeeper.conf.ApplicationOptions;
 import com.davidecavestro.timekeeper.conf.DefaultSettings;
+import com.davidecavestro.timekeeper.model.PersistentTaskTreeModel;
 import com.davidecavestro.timekeeper.model.TaskTreeModelExceptionHandler;
-import com.davidecavestro.timekeeper.model.UndoableTaskTreeModel;
+import com.davidecavestro.timekeeper.persistence.PersistenceNode;
 import com.ost.timekeeper.model.Progress;
 import com.ost.timekeeper.model.ProgressItem;
 import com.ost.timekeeper.model.Project;
@@ -36,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import javax.swing.text.DefaultStyledDocument;
 
@@ -48,12 +50,13 @@ public class Application {
 	private CompositeLogger _logger;
 	private final ApplicationEnvironment _env;
 	private final ApplicationContext _context;
+	private final PersistenceNode _persistenceNode;
 	
 	/** 
 	 * Costruttore.
 	 */
 	public Application (final CommandLineApplicationEnvironment args) {
-		this._env = args;
+		_env = args;
 
 
 		
@@ -102,16 +105,17 @@ public class Application {
 			
 		} catch (IOException ioe){
 			System.out.println ("Logging disabled. CAUSE: "+ExceptionUtils.getStackTrace (ioe));
-			this._logger = new CompositeLogger (new LoggerAdapter (), null);
+			_logger = new CompositeLogger (new LoggerAdapter (), null);
 		}
 		
 		final TaskTreeModelExceptionHandler peh = new TaskTreeModelExceptionHandler () {};
+		_persistenceNode = new PersistenceNode (applicationOptions, _logger);
 
 		final ProgressItem pi = new ProgressItem ("New workspace");
 		final Project prj = new Project (pi.getName (), pi);
-		final UndoableTaskTreeModel model = new UndoableTaskTreeModel (undoManager, applicationOptions, peh, prj);
+		final PersistentTaskTreeModel model = new PersistentTaskTreeModel (_persistenceNode, undoManager, applicationOptions, _logger, peh, prj);
 		
-		this._context = new ApplicationContext (
+		_context = new ApplicationContext (
 			_env,
 			applicationOptions,
 			new WindowManager (),
@@ -123,7 +127,8 @@ public class Application {
 			undoManager,
 			new ActionManager (),
 			new HelpManager (new HelpResourcesResolver (p), "help/MainTimekeeperHelp.hs"),
-			peh
+			peh,
+			_persistenceNode
 			);
 		
 		model.addUndoableEditListener(undoManager);
@@ -136,17 +141,17 @@ public class Application {
 	 */
 	public void start (){
 		_context.getLogger().info ("starting UI");
-		final WindowManager wm = this._context.getWindowManager ();
-		wm.getSplashWindow (this._context.getApplicationData ()).show ();
+		final WindowManager wm = _context.getWindowManager ();
+		wm.getSplashWindow (_context.getApplicationData ()).show ();
 		try {
-			wm.getSplashWindow (this._context.getApplicationData ()).showInfo ("Initializing context...");
-			wm.init (this._context);
+			wm.getSplashWindow (_context.getApplicationData ()).showInfo ("Initializing context...");
+			wm.init (_context);
 			final ConsoleLogger cl = new ConsoleLogger (new DefaultStyledDocument(), true);
 
 			_context.getWindowManager ().getLogConsole ().init (cl.getDocument ());
 
-			this._logger.setSuccessor (cl);
-			wm.getSplashWindow (this._context.getApplicationData ()).showInfo ("Preparing main window...");
+			_logger.setSuccessor (cl);
+			wm.getSplashWindow (_context.getApplicationData ()).showInfo ("Preparing main window...");
 			wm.getMainWindow ().addWindowListener (
 				new java.awt.event.WindowAdapter () {
 					public void windowClosing (java.awt.event.WindowEvent evt) {
@@ -154,25 +159,45 @@ public class Application {
 					}
 				});
 		} finally {
-			wm.getSplashWindow (this._context.getApplicationData ()).hide ();
+			wm.getSplashWindow (_context.getApplicationData ()).hide ();
 		}
 		
-		/*
-		 * Codice temporaneo per test
-		 * @todo rimuovere
-		 */
-		final ProgressItem pi = new ProgressItem ("foo");
-		pi.insert (new ProgressItem ("foo child"));
-		pi.addProgress (new Progress (new Date (), null, pi));
-		final Project prj = new Project ("foo", pi);
+		Project project = null;
+		try {
+			final List<Project> projects = _context.getPersistenceNode ().getAvailableWorkSpaces ();
+			final String lastProject = _context.getApplicationOptions ().getLastProjectName ();
+			if (lastProject!=null) {
+				for (final Project p : projects) {
+					if (lastProject.equals (p.getName ())) {
+						project = p;
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			/*
+			 eccezione silenzata in casodi problemidi inizializzaizone della peristenza.
+			 @todo rimuovere se possibile
+			 */
+		}
 		
-		_context.getModel ().setWorkSpace (prj);
+		if (project == null) {
+			/*
+			 * Crea nuovo progetto.
+			 */
+			final ProgressItem pi = new ProgressItem ("foo");
+			pi.insert (new ProgressItem ("foo child"));
+			pi.addProgress (new Progress (new Date (), null, pi));
+			project = new Project ("foo", pi);
+		}
+		_context.getModel ().setWorkSpace (project);
+		
 		wm.getMainWindow ().show ();
 		_context.getLogger().info ("UI successfully started");
 	}
 	
 	public Logger getLogger (){
-		return this._logger;
+		return _logger;
 	}
 	
 	/**
@@ -182,14 +207,17 @@ public class Application {
 	 *	</UL>
 	 */
 	public void beforeExit (){
-		this._context.getUIPersisteer ().makePersistentAll ();
+		_persistenceNode.flushData ();
+		
+		
+		_context.getUIPersisteer ().makePersistentAll ();
 		
 		
 		/* Garantisce la chiusura del logger. */
-		this._logger.close ();
+		_logger.close ();
 		
 		/* Salva le preferenze utente */
-		this._context.getUserSettings ().storeProperties ();
+		_context.getUserSettings ().storeProperties ();
 	}
 
 	/**
@@ -203,11 +231,11 @@ public class Application {
 	private final class UserUIStorage implements PersistenceStorage {
 		private final UserSettings _userSettings;
 		public UserUIStorage (final UserSettings userSettings){
-			this._userSettings = userSettings;
+			_userSettings = userSettings;
 		}
 
 		public java.util.Properties getRegistry () {
-			return this._userSettings.getProperties ();
+			return _userSettings.getProperties ();
 		}
 		
 	}

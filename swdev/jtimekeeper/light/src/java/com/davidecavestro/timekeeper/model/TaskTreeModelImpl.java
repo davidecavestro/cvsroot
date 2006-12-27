@@ -53,7 +53,7 @@ public class TaskTreeModelImpl extends AbstractTaskTreeModel {
 
 	/**
 	 * Imposta il nuovo workspace.
-	 *Provvede inoltre alla notifica divarizione della property "name".
+	 *Provvede inoltre alla notifica di variazione della property "name".
 	 * 
 	 * @param workSpace 
 	 */

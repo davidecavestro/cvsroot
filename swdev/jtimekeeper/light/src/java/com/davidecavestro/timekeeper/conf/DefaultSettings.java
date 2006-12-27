@@ -32,7 +32,7 @@ public final class DefaultSettings implements ApplicationSettings {
 	
 	/** Costruttore. */
 	public DefaultSettings (final ApplicationEnvironment environment){
-		this._env = environment;
+		_env = environment;
 	}
 	
 	/**
@@ -44,7 +44,7 @@ public final class DefaultSettings implements ApplicationSettings {
 	 */
 	public String getLogDirPath () {
 		final StringBuffer sb = new StringBuffer ();
-		final String applicationDirPath = this._env.getApplicationDirPath ();
+		final String applicationDirPath = _env.getApplicationDirPath ();
 		if (applicationDirPath!=null){
 			sb.append (applicationDirPath);
 		} else {
@@ -127,6 +127,30 @@ public final class DefaultSettings implements ApplicationSettings {
 	 */	
 	public static boolean discardMalformedEncoding (){
 		return false;
+	}
+
+	public String getJDOStorageName () {
+		return "database";
+	}
+
+	public String getJDOUserName () {
+		return System.getProperty ("user.name");
+	}
+
+	public String getJDOStorageDirPath () {
+		final StringBuffer sb = new StringBuffer ();
+		final String applicationDirPath = _env.getApplicationDirPath ();
+		if (applicationDirPath!=null){
+			sb.append (applicationDirPath);
+		} else {
+			sb.append (System.getProperty (ResourceNames.USER_WORKINGDIR_PATH));
+		}
+		sb.append ("/data");
+		return sb.toString ();
+	}
+
+	public String getLastProjectName () {
+		return null;
 	}
 	
 }

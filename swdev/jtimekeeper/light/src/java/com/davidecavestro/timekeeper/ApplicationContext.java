@@ -19,6 +19,7 @@ import com.davidecavestro.timekeeper.actions.ActionManager;
 import com.davidecavestro.timekeeper.conf.ApplicationEnvironment;
 import com.davidecavestro.timekeeper.model.TaskTreeModelImpl;
 import com.davidecavestro.timekeeper.model.UndoableTaskTreeModel;
+import com.davidecavestro.timekeeper.persistence.PersistenceNode;
 import java.beans.PropertyChangeListener;
 
 /**
@@ -45,6 +46,8 @@ public class ApplicationContext {
     private java.beans.PropertyChangeSupport changeSupport;
 	
 	private boolean _isProcessing;
+	private final PersistenceNode _persistenceNode;
+
 	
 	/** 
 	 * Costruttore.
@@ -61,21 +64,23 @@ public class ApplicationContext {
 		final RBUndoManager undoManager,
 		final ActionManager actionManager,
 		final HelpManager helpManager,
-		final TaskTreeModelExceptionHandler propsExceptionHandler
+		final TaskTreeModelExceptionHandler propsExceptionHandler, 
+		final PersistenceNode persistenceNode
 		) {
 			
-		this._env = env;
-		this._applicationOptions = applicationOptions;
-		this._logger = logger;
-		this._applicationData = applicationData;
-		this._windowManager = windowManager;
-		this._userSettings = userSettings;
-		this._uiPersister = uiPersister;
-		this._ttm = ttm;
-		this._undoManager = undoManager;
-		this._actionManager = actionManager;
-		this._helpManager = helpManager;
-		this._propsExceptionHandler = propsExceptionHandler;
+		_env = env;
+		_applicationOptions = applicationOptions;
+		_logger = logger;
+		_applicationData = applicationData;
+		_windowManager = windowManager;
+		_userSettings = userSettings;
+		_uiPersister = uiPersister;
+		_ttm = ttm;
+		_undoManager = undoManager;
+		_actionManager = actionManager;
+		_helpManager = helpManager;
+		_propsExceptionHandler = propsExceptionHandler;
+		_persistenceNode = persistenceNode;
 	}
 	
 	public ApplicationEnvironment getApplicationEnvironment (){
@@ -208,5 +213,9 @@ public class ApplicationContext {
 	
 	public boolean isProcessing (){
 		return this._isProcessing;
+	}
+
+	public PersistenceNode getPersistenceNode () {
+		return _persistenceNode;
 	}
 }

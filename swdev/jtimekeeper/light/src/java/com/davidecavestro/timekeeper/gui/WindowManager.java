@@ -9,7 +9,9 @@ package com.davidecavestro.timekeeper.gui;
 import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.common.gui.dialog.DialogListener;
 import com.davidecavestro.timekeeper.ApplicationContext;
+import com.davidecavestro.timekeeper.gui.OpenWorkSpaceDialog;
 import com.davidecavestro.timekeeper.model.Task;
+import com.davidecavestro.timekeeper.model.WorkSpace;
 import com.ost.timekeeper.model.Progress;
 import com.ost.timekeeper.model.ProgressItem;
 import java.awt.event.ActionListener;
@@ -106,7 +108,24 @@ public class WindowManager implements ActionListener, DialogListener {
 		getNewTaskDialog ().showForParent (parent);
 	}
 	
-
+	private OpenWorkSpaceDialog _openWSDialog;	
+	/**
+	 * Ritorna la dialog di selezione progetto.
+	 * @return la dialog di selezione progetto.
+	 */
+	public OpenWorkSpaceDialog getOpenWorkSpaceDialog () {
+		if (_openWSDialog==null){
+			_openWSDialog = new OpenWorkSpaceDialog (_context, getMainWindow (), true);
+			_context.getUIPersisteer ().register (_openWSDialog);
+			_openWSDialog.addDialogListener (this);
+		}
+		return _openWSDialog;
+	}
+	
+	public void showOpenWorkSpaceDialog (final WorkSpace initialValue) {
+		getOpenWorkSpaceDialog ().showWithSelection (initialValue);
+	}
+	
 	
 	private LogConsole _logConsole;	
 	/**
@@ -164,10 +183,24 @@ public class WindowManager implements ActionListener, DialogListener {
 					-1
 					);
 			}
+		} else if (e.getSource ()==_openWSDialog){
+			if (e.getType ()==JOptionPane.OK_OPTION){
+				final WorkSpace ws = (WorkSpace)e.getValue ();
+				_context.getModel ().setWorkSpace (ws);
+				_context.getUserSettings ().setLastProjectName (ws.getName ());
+			}
 		}
 		
 	}
 	
+	/**
+	 * Gestione dell'evento su azioni su cui questo manager &egrave; registrato come listener.
+	 * <P>
+	 *Comandi di azione gestiti:
+	 *<UL>
+	 *  <LI>showNewTaskDialog: mostra la dialog di creazione nuovo task
+	 *</UL>
+	 */
 	public void actionPerformed (java.awt.event.ActionEvent e) {
 		if (e!=null && e.getActionCommand ()!=null){
 			if (e.getActionCommand ().equals ("showNewTaskDialog")){
@@ -177,13 +210,18 @@ public class WindowManager implements ActionListener, DialogListener {
 		}
 	}
 	
+	/**
+	 * Espone il contesto applicativo, ad uso degli oggetti che hanno solamente un riferimento a questo manager.
+	 *
+	 */
 	public ApplicationContext getApplicationContext (){
 		return this._context;
 	}
 	
 	private About _about;	
 	/**
-	 * Ritorna la dialog di inserimento nuova entry.
+	 * Ritorna la dialog di inserimento nuova entry, conuna inizializzazione lazy.
+	 *
 	 * @return la dialog di inserimento nuova entry.
 	 */
 	public About getAbout (){

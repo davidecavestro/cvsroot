@@ -36,36 +36,28 @@ public interface ApplicationSettings {
 	String getLookAndFeel ();
 	
 	/**
-	 * Ritorna la lista dei percorsi degli ultimi bundle aperti.
-	 *
-	 * @return un aray contenente i percorsi degli ultimi bundle aperti.
-	 */	
-	String[] getRecentPaths ();
-	
-	/**
-	 * Ritorna il percorso dell'ultima directory utilizzata.
-	 * @return il percorso dell'ultima directory utilizzata.
+	 * Ritorna il nome dell'ultimo progetto.
+	 * @return il nome dell'ultimo progetto.
 	 */
-	String getLastPath ();
+	String getLastProjectName ();
 	
 	/**
-	 * Ritorna l'impostazione di creazione copie di backup.
-	 *
-	 * @return l'impostazione di creazione copie di backup.
-	 */	
-	Boolean getBackupOnSave ();
-	
+	 * Ritorna il nome utente da utilizare per accedere allo storage JDo.
+	 * @return il nome utente da utilizare per accedere allo storage JDo.
+	 */
+	String getJDOUserName ();
+
 	/**
-	 * Ritorna l'impostazione di abilitazione editazione chiavi.
-	 *
-	 * @return l'impostazione di abilitazione editazione chiavi.
-	 */	
-	Boolean getKeyEditing ();
-	
+	 * Ritorna il nome dello storage JDo.
+	 * 
+	 * @return il nome dello storage JDo.
+	 */
+	String getJDOStorageName ();
+
 	/**
-	 * Ritorna l'impostazione di scarto dei locale con codifiche non valide.
-	 *
-	 * @return l'impostazione di scarto dei locale con codifiche non valide.
-	 */	
-	Boolean getDiscardMalformedEncoding ();
+	 * Ritorna il percorso della directory da usare per lo storage JDO.
+	 * 
+	 * @return il percorso della directory da usare per lo storage JDO.
+	 */
+	String getJDOStorageDirPath ();
 }

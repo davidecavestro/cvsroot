@@ -9,13 +9,14 @@ package com.davidecavestro.timekeeper.gui.dnd;
 import com.davidecavestro.timekeeper.model.PieceOfWork;
 import com.ost.timekeeper.model.*;
 import java.awt.datatransfer.*;
+import javax.swing.TransferHandler;
 
 /**
  * La selezione contenente di un avanzamento.
  *
  * @author  davide
  */
-public class ProgressSelection implements Transferable{
+public class ProgressSelection implements MemoTransferable {
 	
 	/** I tipi di dato supportati. */
 	private static final DataFlavor[] flavors = {
@@ -23,6 +24,7 @@ public class ProgressSelection implements Transferable{
 	};
 	
     private PieceOfWork[] data;
+	private int _action = TransferHandler.NONE;
 						   
 	/**
 	 * Costruttore con avanzamenti.
@@ -31,6 +33,10 @@ public class ProgressSelection implements Transferable{
 	public ProgressSelection (PieceOfWork[] data) {
         this.data = data;
     }
+	
+	public void setAction (final int action) {
+		_action = action;
+	}
 	
 	/**
 	 * Ritorna il dato trasportato, in base al tipo di dato specificato.
@@ -42,7 +48,7 @@ public class ProgressSelection implements Transferable{
 	 */	
 	public Object getTransferData (DataFlavor flavor) throws UnsupportedFlavorException, java.io.IOException {
 		if (flavor.equals (DataFlavors.progressFlavor)) {
-			return (PieceOfWork[])data;
+			return new TransferData<PieceOfWork> (data, _action);
 		} else {
 			throw new UnsupportedFlavorException (flavor);
 		}
