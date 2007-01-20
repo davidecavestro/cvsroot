@@ -29,8 +29,8 @@ public final class ExceptionUtils {
 	 * @return lo stack delle chiamate del thread che ha generato <TT>t</TT>.
 	 */	
 	public static StringBuffer getStackTrace (Throwable t){
-		StringBuffer sb = new StringBuffer ();
-		StringWriter sw = new StringWriter ();
+//		final StringBuffer sb = new StringBuffer ();
+		final StringWriter sw = new StringWriter ();
 		t.printStackTrace(new PrintWriter (sw));
 		return sw.getBuffer();
 	}
@@ -42,8 +42,8 @@ public final class ExceptionUtils {
 	 * @param nestedException l'eccezione.
 	 * @return lo stack delle chiamate del thread che ha generato <TT>nestedException</TT>.
 	 */	
-	public static StringBuffer getStackTrace (NestedRuntimeException nestedException){
-		Throwable rootCause = nestedException.getRootCause();
+	public static StringBuffer getStackTrace (final NestedRuntimeException nestedException){
+		final Throwable rootCause = nestedException.getRootCause();
 		return new StringBuffer ().append (getStackTrace ((Throwable)nestedException)).append ("\nRoot cause:\n").append (getStackTrace (rootCause));
 	}
 }

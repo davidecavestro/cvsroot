@@ -7,7 +7,6 @@
 package com.davidecavestro.common.util.settings;
 
 import com.davidecavestro.common.util.CalendarUtils;
-import com.davidecavestro.common.util.NestedRuntimeException;
 import java.awt.*;
 import java.io.File;
 import java.util.*;
@@ -188,7 +187,7 @@ public final class SettingsSupport {
 				try {
 					return (Color)Color.class.getDeclaredField (colorValue).get (null);
 				} catch (Exception e){
-					throw new NestedRuntimeException (e);
+					throw new RuntimeException (e);
 				}
 			}
 		

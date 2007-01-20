@@ -15,7 +15,7 @@ import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 
 /**
- * UndoManager per il Resource Bundle Model.
+ * Personalizzaizone del UndoManager per la gestione UI.
  *
  * @author  davide
  */
@@ -46,6 +46,7 @@ public class RBUndoManager extends UndoManager {
 	}
 	
 	
+	@Override
 	public boolean addEdit (UndoableEdit anEdit) {
 		try {
 			return super.addEdit (anEdit);
@@ -56,6 +57,7 @@ public class RBUndoManager extends UndoManager {
 	}
 	
 	
+	@Override
 	protected void undoTo (UndoableEdit edit) throws CannotUndoException {
 		try {
 			super.undoTo (edit);
@@ -65,6 +67,7 @@ public class RBUndoManager extends UndoManager {
 	}
 	
 	
+	@Override
 	protected void redoTo (UndoableEdit edit) throws CannotRedoException {
 		try {
 			super.redoTo (edit);
@@ -73,6 +76,24 @@ public class RBUndoManager extends UndoManager {
 		}
 	}
 	
+
+	@Override
+	public void end () {
+		try {
+			super.end ();
+		} finally {
+			synchronizeActions ();
+		}
+	}
+	
+	@Override
+    public synchronized void discardAllEdits() {
+		try {
+			super.discardAllEdits ();
+		} finally {
+			synchronizeActions ();
+		}
+	}	
 	
 	protected void synchronizeActions () {
 		undoAction.setEnabled (canUndo ());

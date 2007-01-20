@@ -105,9 +105,9 @@ public final class CalendarUtils {
 	 * @see {@link java.text.SimpleDateFormat} per il formato del timestamp.
 	 * @param timeStamp il timestamp.
 	 * @param timestampFormat il formato del timestamp.
-	 * @throws NestedRuntimeException in caso di timestamp non interpretabile.
+	 * @throws RuntimeException in caso di timestamp non interpretabile.
 	 */	
-	public static Calendar getCalendar ( final String timeStamp, final String timestampFormat ) throws NestedRuntimeException{
+	public static Calendar getCalendar ( final String timeStamp, final String timestampFormat ) throws RuntimeException{
 		if (timeStamp==null || timeStamp.length ()==0){
 			return null;
 		}
@@ -120,7 +120,7 @@ public final class CalendarUtils {
 
 			return calendar;
 		} catch (java.text.ParseException pe) {
-			throw new NestedRuntimeException (pe);
+			throw new RuntimeException (pe);
 		}
 	}
 	
