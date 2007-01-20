@@ -9,7 +9,9 @@ package com.davidecavestro.timekeeper.persistence;
 
 import com.davidecavestro.common.log.Logger;
 import com.davidecavestro.timekeeper.conf.ApplicationOptions;
+import com.davidecavestro.timekeeper.model.WorkSpace;
 import com.ost.timekeeper.model.Project;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -64,6 +66,11 @@ public class PersistenceNode {
 				connectionURL.append ("/");
 			}
 		}
+		/* 
+		 * crea il percorsose necessario/possibile
+		 */
+		new File (_ao.getJDOStorageDirPath ()).mkdirs ();
+		
 		connectionURL.append (_ao.getJDOStorageName ());
 		_props.put ("javax.jdo.option.ConnectionURL", connectionURL.toString ());
 		_props.put ("javax.jdo.option.ConnectionUserName", _ao.getJDOUserName ());
@@ -124,6 +131,8 @@ public class PersistenceNode {
 				 * prova ad usare il datastore correntemente configurato.
 				 */
 				initPersistence ();
+				_pm.currentTransaction ().begin ();
+				_pm.currentTransaction ().rollback ();
 			} catch (final Exception e) {
 				try {
 					/*
@@ -179,8 +188,8 @@ public class PersistenceNode {
 		return pm;
 	}
 	
-	public List<Project> getAvailableWorkSpaces () throws PersistenceNodeException {
-		final List<Project> data = new ArrayList<Project> ();
+	public List<WorkSpace> getAvailableWorkSpaces () throws PersistenceNodeException {
+		final List<WorkSpace> data = new ArrayList<WorkSpace> ();
 		final PersistenceManager pm = getPersistenceManager ();
 		if (pm == null) {
 			throw new PersistenceNodeException ("Cannot initialize data storage.");

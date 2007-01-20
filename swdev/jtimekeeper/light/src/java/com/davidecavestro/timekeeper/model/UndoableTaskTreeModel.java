@@ -87,6 +87,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 	
 	@Override
 	public void insertPieceOfWorkInto (final PieceOfWork newPOW, final Task t, final int index) {
+		final boolean startingPOW = newPOW.getTo ()==null;
 		super.insertPieceOfWorkInto (newPOW, t, index);
 		
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
@@ -94,7 +95,11 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 			private final PieceOfWorkBackup backup = newPOW.backup ();
 			
 			public String getPresentationName () {
-				return "new progress";
+				if (startingPOW) {
+					return "start progress";
+				} else {
+					return "new progress";
+				}
 			}
 			
 			
@@ -189,6 +194,8 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 	
 	@Override
 	public void removeTasks (final Task parent, final List<Task> l) {
+		final boolean onlyOne = l.size ()==1;
+		
 		final Map<Integer, TaskBackup> backupMap = new HashMap<Integer, TaskBackup> ();
 		
 		final Map<Integer, Task> m = new HashMap<Integer, Task> ();
@@ -207,7 +214,11 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
 			public String getPresentationName () {
-				return "delete tasks";
+				if (onlyOne) {
+					return "delete task";
+				} else {
+					return "delete tasks";
+				}
 			}
 			
 			
@@ -236,6 +247,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 	
 	@Override
 	public void removePiecesOfWork (final Task t, final List<PieceOfWork> l) {
+		final boolean onlyOne = l.size ()==1;
 		final Map<Integer, PieceOfWorkBackup> backupMap = new HashMap<Integer, PieceOfWorkBackup> ();
 		
 		final Map<Integer, PieceOfWork> m = new HashMap<Integer, PieceOfWork> ();
@@ -254,7 +266,11 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
 			public String getPresentationName () {
-				return "delete progresses";
+				if (onlyOne) {
+					return "delete progress";
+				} else {
+					return "delete progresses";
+				}
 			}
 			
 			
@@ -283,6 +299,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 	
 	@Override
 	public void moveTasksTo (final Task previousParent, final List<Task> l, final Task target, final int position) {
+		final boolean onlyOne = l.size ()==1;
 		final Map<Integer, Task> m = new HashMap<Integer, Task> ();
 		final List<Integer> positions = new ArrayList<Integer> ();
 		for (final Task t : l) {
@@ -298,7 +315,11 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
 			public String getPresentationName () {
-				return "move tasks";
+				if (onlyOne) {
+					return "move task";
+				} else {
+					return "move tasks";
+				}
 			}
 			
 			
@@ -324,6 +345,7 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 	
 	@Override
 	public void movePiecesOfWorkTo (final Task previousTask, final List<PieceOfWork> l, final Task target, final int position) {
+		final boolean onlyOne = l.size ()==1;
 		final Map<Integer, PieceOfWork> m = new HashMap<Integer, PieceOfWork> ();
 		final List<Integer> positions = new ArrayList<Integer> ();
 		for (final PieceOfWork pow : l) {
@@ -339,7 +361,11 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
 			public String getPresentationName () {
-				return "move progresses";
+				if (onlyOne) {
+					return "move progress";
+				} else {
+					return "move progresses";
+				}
 			}
 			
 			
@@ -396,12 +422,19 @@ public class UndoableTaskTreeModel extends TaskTreeModelImpl {
 		final Date oldFrom = pow.getFrom ();
 		final Date oldTo = pow.getTo ();
 		final String oldDescr = pow.getDescription ();
+		
+		final boolean stoppingPOW = oldTo==null && to!=null;
+		
 		super.updatePieceOfWork (pow, from, to, description);
 
 		fireUndoableEditEvent (new AbstractUndoableEdit () {
 			
 			public String getPresentationName () {
-				return "edit progress";
+				if (stoppingPOW) {
+					return "stop progress";
+				} else {
+					return "edit progress";
+				}
 			}
 			
 			

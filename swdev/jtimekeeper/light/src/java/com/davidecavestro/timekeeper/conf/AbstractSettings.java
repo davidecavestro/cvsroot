@@ -7,7 +7,6 @@
 package com.davidecavestro.timekeeper.conf;
 
 import com.davidecavestro.common.util.ExceptionUtils;
-import com.davidecavestro.common.util.NestedRuntimeException;
 import com.davidecavestro.common.util.file.FileUtils;
 import com.davidecavestro.common.util.settings.SettingsSupport;
 import com.davidecavestro.timekeeper.Application;
@@ -42,10 +41,10 @@ public abstract class AbstractSettings implements CustomizableSettings {
 	/**
 	 * Carica e ritorna le properties a partire dal nome del file associato a queste impostazioni.
 	 *
-	 * @throws NestedRuntimeException in caso di errori nellapertura del file di risorse.
+	 * @throws RuntimeException in caso di errori nellapertura del file di risorse.
 	 * @return le properties caricate.
 	 */	
-	public final Properties loadProperties () throws NestedRuntimeException{
+	public final Properties loadProperties () throws RuntimeException{
 		final Properties properties = new Properties();
 		try {
 			final String persistentFileName = this.getPropertiesFileName ();
@@ -63,7 +62,7 @@ public abstract class AbstractSettings implements CustomizableSettings {
 				System.out.println ("Above error IS NOT a bad thing if you are running this application for the first time.");
 			}
 		} catch (IOException ioe) {
-			throw new NestedRuntimeException (ioe);
+			throw new RuntimeException (ioe);
 		}
 		return properties;
 	}
@@ -71,9 +70,9 @@ public abstract class AbstractSettings implements CustomizableSettings {
 	/**
 	 * Salva le properties a partire dal nome del file associato a queste impostazioni.
 	 *
-	 * @throws NestedRuntimeException in caso di errori nell'apertura del file di risorse.
+	 * @throws RuntimeException in caso di errori nell'apertura del file di risorse.
 	 */	
-	public final void storeProperties () throws NestedRuntimeException{
+	public final void storeProperties () throws RuntimeException{
 		final Properties properties = this.getProperties ();
 		try {
 			final String persistentFileName = this.getPropertiesFileName ();
@@ -89,9 +88,9 @@ public abstract class AbstractSettings implements CustomizableSettings {
 				out.close();
 			}
 		} catch (FileNotFoundException fnfe) {
-			throw new NestedRuntimeException (fnfe);
+			throw new RuntimeException (fnfe);
 		} catch (IOException ioe) {
-			throw new NestedRuntimeException (ioe);
+			throw new RuntimeException (ioe);
 		}
 	}
 	

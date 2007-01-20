@@ -6,7 +6,6 @@
 
 package com.davidecavestro.timekeeper.conf;
 
-import com.davidecavestro.common.util.NestedRuntimeException;
 import java.awt.*;
 import java.util.*;
 
@@ -62,17 +61,17 @@ public interface CustomizableSettings extends ApplicationSettings{
 	/**
 	 * Carica e ritorna le properties a partire dal nome del file associato a queste impostazioni.
 	 *
-	 * @throws NestedRuntimeException in caso di errori nellapertura del file di risorse.
+	 * @throws RuntimeException in caso di errori nellapertura del file di risorse.
 	 * @return le properties caricate.
 	 */	
-	public Properties loadProperties () throws NestedRuntimeException;
+	public Properties loadProperties () throws RuntimeException;
 	
 	/**
 	 * Salva le properties a partire dal nome del file associato a queste impostazioni.
 	 *
-	 * @throws NestedRuntimeException in caso di errori nell'apertura del file di risorse.
+	 * @throws RuntimeException in caso di errori nell'apertura del file di risorse.
 	 */	
-	public void storeProperties () throws NestedRuntimeException;
+	public void storeProperties () throws RuntimeException;
 	
 	/**
 	 * Ritorna lo header del file di properties di queste impostazioni.

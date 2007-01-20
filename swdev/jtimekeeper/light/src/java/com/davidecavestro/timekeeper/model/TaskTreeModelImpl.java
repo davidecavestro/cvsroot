@@ -44,7 +44,7 @@ public class TaskTreeModelImpl extends AbstractTaskTreeModel {
 	 * @param resources le risorse di localizzazione.
 	 */
 	public TaskTreeModelImpl (final ApplicationOptions applicationOptions, final TaskTreeModelExceptionHandler peh, final WorkSpace workSpace) {
-		super (workSpace.getRoot ());
+		super (workSpace, workSpace.getRoot ());
 		_applicationOptions = applicationOptions;
 		_peh = peh;
 		
@@ -60,12 +60,12 @@ public class TaskTreeModelImpl extends AbstractTaskTreeModel {
 	public void setWorkSpace (final WorkSpace workSpace){
 		final WorkSpace oldWS = _workSpace;
 		this._workSpace = workSpace;
-		setRoot (workSpace.getRoot ());
-		reload (workSpace.getRoot ());
+		super.setWorkSpace (workSpace);
 		final String oldName = oldWS!=null?oldWS.getName ():null;
 		final String newName = workSpace!=null?workSpace.getName ():null;
-		if (oldName!=newName)
-		firePropertyChange ("name", oldName, newName);
+		if (oldName!=newName) {
+			firePropertyChange ("name", oldName, newName);
+		}
 	}
 	
 

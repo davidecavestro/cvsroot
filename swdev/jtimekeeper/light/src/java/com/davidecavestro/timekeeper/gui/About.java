@@ -89,14 +89,12 @@ public class About extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         systemPropsTable = new JXTable (systemPropertiesTableModel);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("About");
         setName("aboutDialog");
         jTabbedPane1.setMaximumSize(null);
         jTabbedPane1.setPreferredSize(new java.awt.Dimension(420, 300));
         presentationPanel.setLayout(new java.awt.GridBagLayout());
 
-        presentationPanel.setMaximumSize(null);
         presentationPanel.setMinimumSize(new java.awt.Dimension(420, 300));
         presentationPanel.setPreferredSize(new java.awt.Dimension(420, 300));
         jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("About"), presentationPanel);

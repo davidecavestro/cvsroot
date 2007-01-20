@@ -35,6 +35,7 @@ public class PresentationPanel extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         appVersionLabel = new javax.swing.JLabel();
         appNameLabel = new javax.swing.JLabel();
+        statusLabel = new javax.swing.JLabel();
         applicationImageLabel = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
@@ -58,10 +59,14 @@ public class PresentationPanel extends javax.swing.JPanel {
         appNameLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jPanel1.add(appNameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 2, 260, 130));
 
-        applicationImageLabel.setForeground(new java.awt.Color(255, 255, 255));
+        statusLabel.setFont(new java.awt.Font("Dialog", 0, 12));
+        statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        statusLabel.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jPanel1.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 120, 420, 30));
+
+        applicationImageLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         applicationImageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/splash.png")));
-        applicationImageLabel.setIconTextGap(-300);
-        applicationImageLabel.setMaximumSize(null);
+        org.openide.awt.Mnemonics.setLocalizedText(applicationImageLabel, "aaa");
         jPanel1.add(applicationImageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 430, 290));
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -74,6 +79,7 @@ public class PresentationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel appVersionLabel;
     private javax.swing.JLabel applicationImageLabel;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel statusLabel;
     // End of variables declaration//GEN-END:variables
 	
 	/**
@@ -82,6 +88,6 @@ public class PresentationPanel extends javax.swing.JPanel {
 	 * @param info il testo da mostrare.
 	 */	
 	public void setInfoText (final String info){
-		applicationImageLabel.setText (info);
+		statusLabel.setText (info);
 	}
 }

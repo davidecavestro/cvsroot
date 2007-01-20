@@ -8,13 +8,22 @@ package com.davidecavestro.timekeeper.gui;
 
 import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.common.gui.dialog.DialogListener;
+import com.davidecavestro.timekeeper.Application;
 import com.davidecavestro.timekeeper.ApplicationContext;
-import com.davidecavestro.timekeeper.gui.OpenWorkSpaceDialog;
 import com.davidecavestro.timekeeper.model.Task;
 import com.davidecavestro.timekeeper.model.WorkSpace;
+import com.davidecavestro.timekeeper.report.DataExtractor;
+import com.davidecavestro.timekeeper.report.JRBindings;
+import com.davidecavestro.timekeeper.report.ReportPreferences;
+import com.davidecavestro.timekeeper.report.filter.NegateFilter;
+import com.davidecavestro.timekeeper.report.filter.flavors.date.AfterDateFilter;
+import com.davidecavestro.timekeeper.report.filter.flavors.date.BeforeDateFilter;
+import com.davidecavestro.timekeeper.report.flavors.CumulateProgresses;
+import com.davidecavestro.timekeeper.report.flavors.SimpleProgresses;
 import com.ost.timekeeper.model.Progress;
 import com.ost.timekeeper.model.ProgressItem;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -126,6 +135,24 @@ public class WindowManager implements ActionListener, DialogListener {
 		getOpenWorkSpaceDialog ().showWithSelection (initialValue);
 	}
 	
+	private ReportDialog _reportDialog;	
+	/**
+	 * Ritorna la dialog di stampa.
+	 * @return la dialog di stampa.
+	 */
+	public ReportDialog getReportDialog () {
+		if (_reportDialog==null){
+			_reportDialog = new ReportDialog (getMainWindow (), true, _context);
+			_context.getUIPersisteer ().register (_reportDialog);
+			_reportDialog.addDialogListener (this);
+		}
+		return _reportDialog;
+	}
+	
+	public void showReportDialog (final Task reportRoot) {
+		getReportDialog ().showForRoot (reportRoot);
+	}
+	
 	
 	private LogConsole _logConsole;	
 	/**
@@ -185,29 +212,32 @@ public class WindowManager implements ActionListener, DialogListener {
 			}
 		} else if (e.getSource ()==_openWSDialog){
 			if (e.getType ()==JOptionPane.OK_OPTION){
+				_context.getLogger ().debug ("Opening workspace...");
+				
 				final WorkSpace ws = (WorkSpace)e.getValue ();
 				_context.getModel ().setWorkSpace (ws);
 				_context.getUserSettings ().setLastProjectName (ws.getName ());
+				
+				_context.getLogger ().debug ("Workspace successfully opened");
+			}
+		} else if (e.getSource ()==_reportDialog){
+			if (e.getType ()==JOptionPane.OK_OPTION){
+				_context.getLogger ().debug ("Generating report...");
+				_reportDialog.launchReport ();
+				_context.getLogger ().debug ("Report successfully generated");
 			}
 		}
-		
 	}
-	
+
 	/**
 	 * Gestione dell'evento su azioni su cui questo manager &egrave; registrato come listener.
 	 * <P>
 	 *Comandi di azione gestiti:
 	 *<UL>
-	 *  <LI>showNewTaskDialog: mostra la dialog di creazione nuovo task
 	 *</UL>
 	 */
 	public void actionPerformed (java.awt.event.ActionEvent e) {
-		if (e!=null && e.getActionCommand ()!=null){
-			if (e.getActionCommand ().equals ("showNewTaskDialog")){
-				Object source = e.getSource ();
-				showNewTaskDialog (((MainWindow.NewTaskDialogRequester)source).getParent ());
-			}
-		}
+
 	}
 	
 	/**

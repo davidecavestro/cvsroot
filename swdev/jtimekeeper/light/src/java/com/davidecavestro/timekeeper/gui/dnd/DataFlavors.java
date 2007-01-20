@@ -6,7 +6,6 @@
 
 package com.davidecavestro.timekeeper.gui.dnd;
 
-import com.davidecavestro.common.util.NestedRuntimeException;
 import com.davidecavestro.timekeeper.model.PieceOfWork;
 import com.davidecavestro.timekeeper.model.Task;
 import java.awt.datatransfer.*;
@@ -60,7 +59,7 @@ public final class DataFlavors {
 			return new DataFlavor (progressMimeType);
 		} catch (ClassNotFoundException cnfe) {
 			/** Caso non previsto. */
-			throw new NestedRuntimeException (cnfe);
+			throw new RuntimeException (cnfe);
 		}
 	}
 	

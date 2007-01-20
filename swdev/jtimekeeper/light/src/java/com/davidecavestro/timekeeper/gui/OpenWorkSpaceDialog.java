@@ -13,16 +13,13 @@ import com.davidecavestro.common.gui.persistence.PersistentComponent;
 import com.davidecavestro.timekeeper.ApplicationContext;
 import com.davidecavestro.timekeeper.model.WorkSpace;
 import com.davidecavestro.timekeeper.persistence.PersistenceNodeException;
-import com.ost.timekeeper.model.Project;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import javax.jdo.PersistenceManager;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -89,7 +86,6 @@ public class OpenWorkSpaceDialog extends javax.swing.JDialog implements Persiste
 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Open workspace");
         setModal(true);
         okButton.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -305,23 +301,18 @@ public class OpenWorkSpaceDialog extends javax.swing.JDialog implements Persiste
 	 * Fornisce il modello aggiornato per la lista contenente i progetti
 	 */
 	private ListModel prepareProjects () {
-		try {
-			final List<Project> data = _context.getPersistenceNode ().getAvailableWorkSpaces ();
-			
-			Collections.sort (data, new WorkSpaceComparator ());
+		final List<WorkSpace> data = Arrays.asList (_context.getWorkSpaceModel ().toArray ());
 
-			return new AbstractListModel () {
-				public Object getElementAt (int index) {
-					return data.get (index);
-				}
-				public int getSize () {
-					return data.size ();
-				}
-			};
-		} catch (final PersistenceNodeException pne) {
-			JOptionPane.showInternalMessageDialog (this, pne.getMessage ()+" Please see log console for more details.");
-			return new DefaultListModel();
-		}
+		Collections.sort (data, new WorkSpaceComparator ());
+
+		return new AbstractListModel () {
+			public Object getElementAt (int index) {
+				return data.get (index);
+			}
+			public int getSize () {
+				return data.size ();
+			}
+		};
 		
 	}
 }

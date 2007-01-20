@@ -48,7 +48,7 @@ public class DurationUtils {
 		.append (durationNumberFormatter.format (f[Duration.MINUTES_SLOT]))
 		.append (":")
 		.append (durationNumberFormatter.format (f[Duration.SECONDS_SLOT]));
-		return sb.toString ();		
+		return sb.toString ();
 	}
 	
 

@@ -19,6 +19,7 @@ import com.davidecavestro.timekeeper.actions.ActionManager;
 import com.davidecavestro.timekeeper.conf.ApplicationEnvironment;
 import com.davidecavestro.timekeeper.model.TaskTreeModelImpl;
 import com.davidecavestro.timekeeper.model.UndoableTaskTreeModel;
+import com.davidecavestro.timekeeper.model.WorkSpaceModelImpl;
 import com.davidecavestro.timekeeper.persistence.PersistenceNode;
 import java.beans.PropertyChangeListener;
 
@@ -38,6 +39,7 @@ public class ApplicationContext {
 	private final ApplicationData _applicationData;
 	private final ApplicationEnvironment _env;
 	private final UndoableTaskTreeModel _ttm;
+	private final WorkSpaceModelImpl _wsm;
 	private final RBUndoManager _undoManager;
 	private ActionManager _actionManager;
 	private HelpManager _helpManager;
@@ -61,6 +63,7 @@ public class ApplicationContext {
 		final UserSettings userSettings,
 		final ApplicationData applicationData,
 		final UndoableTaskTreeModel ttm,
+		final WorkSpaceModelImpl wsm,
 		final RBUndoManager undoManager,
 		final ActionManager actionManager,
 		final HelpManager helpManager,
@@ -76,6 +79,7 @@ public class ApplicationContext {
 		_userSettings = userSettings;
 		_uiPersister = uiPersister;
 		_ttm = ttm;
+		_wsm = wsm;
 		_undoManager = undoManager;
 		_actionManager = actionManager;
 		_helpManager = helpManager;
@@ -84,43 +88,46 @@ public class ApplicationContext {
 	}
 	
 	public ApplicationEnvironment getApplicationEnvironment (){
-		return this._env;
+		return _env;
 	}
 	
 	public ApplicationOptions getApplicationOptions (){
-		return this._applicationOptions;
+		return _applicationOptions;
 	}
 	
 	public WindowManager getWindowManager (){
-		return this._windowManager;
+		return _windowManager;
 	}
 	
 	public UIPersister getUIPersisteer (){
-		return this._uiPersister;
+		return _uiPersister;
 	}
 	
 	public UserSettings getUserSettings (){
-		return this._userSettings;
+		return _userSettings;
 	}
 	
 	public TaskTreeModelImpl getModel (){
-		return this._ttm;
+		return _ttm;
 	}
+	public WorkSpaceModelImpl getWorkSpaceModel () {
+		return _wsm;
+	}	
 	
 	public RBUndoManager getUndoManager (){
-		return this._undoManager;
+		return _undoManager;
 	}
 	
 	public ActionManager getActionManager (){
-		return this._actionManager;
+		return _actionManager;
 	}
 	
 	public HelpManager getHelpManager (){
-		return this._helpManager;
+		return _helpManager;
 	}
 	
 	public TaskTreeModelExceptionHandler getPropertiesExceptionHandler (){
-		return this._propsExceptionHandler;
+		return _propsExceptionHandler;
 	}	
 	
 	public ApplicationData getApplicationData (){

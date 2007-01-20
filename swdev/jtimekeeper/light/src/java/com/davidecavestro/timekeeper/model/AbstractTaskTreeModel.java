@@ -7,7 +7,6 @@
 package com.davidecavestro.timekeeper.model;
 
 import com.davidecavestro.common.util.IllegalOperationException;
-import com.davidecavestro.common.util.NestedRuntimeException;
 import com.davidecavestro.timekeeper.model.event.TaskTreeModelEvent;
 import com.davidecavestro.timekeeper.model.event.TaskTreeModelListener;
 import com.davidecavestro.timekeeper.model.event.WorkAdvanceModelEvent;
@@ -79,6 +78,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	
 	protected final EventListenerList listenerList = new EventListenerList ();
 	
+	private WorkSpace _workspace;
 	private Task _root;
 	
 	/** Costruttore vuoto. */
@@ -90,11 +90,12 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	 * Costruttore con radice.
 	 * @param root la radice dell'albero.
 	 */
-	public AbstractTaskTreeModel (final Task root) {
+	public AbstractTaskTreeModel (final WorkSpace workspace, final Task root) {
 		this ();
 		if (root==null) {
 			throw new NullPointerException ();
 		}
+		_workspace = workspace;
 		_root = root;
 	}
 	
@@ -163,7 +164,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			if (listeners[i]==TaskTreeModelListener.class) {
 				// Lazily create the event:
 				if (e == null) {
-					e = new TaskTreeModelEvent (source, path,
+					e = new TaskTreeModelEvent (source, _workspace, path,
 						childIndices, children);
 				}
 				((TaskTreeModelListener)listeners[i+1]).treeNodesChanged (e);
@@ -195,7 +196,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			if (listeners[i]==TaskTreeModelListener.class) {
 				// Lazily create the event:
 				if (e == null) {
-					e = new TaskTreeModelEvent (source, path,
+					e = new TaskTreeModelEvent (source, _workspace, path,
 						childIndices, children);
 				}
 				((TaskTreeModelListener)listeners[i+1]).treeNodesInserted (e);
@@ -227,7 +228,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			if (listeners[i]==TaskTreeModelListener.class) {
 				// Lazily create the event:
 				if (e == null) {
-					e = new TaskTreeModelEvent (source, path,
+					e = new TaskTreeModelEvent (source, _workspace, path,
 						childIndices, children);
 				}
 				((TaskTreeModelListener)listeners[i+1]).treeNodesRemoved (e);
@@ -259,7 +260,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			if (listeners[i]==TaskTreeModelListener.class) {
 				// Lazily create the event:
 				if (e == null) {
-					e = new TaskTreeModelEvent (source, path,
+					e = new TaskTreeModelEvent (source, _workspace, path,
 						childIndices, children);
 				}
 				((TaskTreeModelListener)listeners[i+1]).treeStructureChanged (e);
@@ -287,9 +288,21 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			if (listeners[i]==TaskTreeModelListener.class) {
 				// Lazily create the event:
 				if (e == null) {
-					e = new TaskTreeModelEvent (source, path);
+					e = new TaskTreeModelEvent (source, _workspace, path);
 				}
 				((TaskTreeModelListener)listeners[i+1]).treeStructureChanged (e);
+			}
+		}
+	}
+	
+	private void fireWorkSpaceChanged (Object source, WorkSpace oldWS, WorkSpace newWS) {
+		// Guaranteed to return a non-null array
+		Object[] listeners = listenerList.getListenerList ();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length-2; i>=0; i-=2) {
+			if (listeners[i]==TaskTreeModelListener.class) {
+				((TaskTreeModelListener)listeners[i+1]).workSpaceChanged (oldWS, newWS);
 			}
 		}
 	}
@@ -318,7 +331,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			if (listeners[i]==TaskTreeModelListener.class) {
 				// Lazily create the event:
 				if (e == null) {
-					e = new TaskTreeModelEvent (source, path,
+					e = new TaskTreeModelEvent (source, _workspace, path,
 						childIndices, children);
 				}
 				((TaskTreeModelListener)listeners[i+1]).treeNodesChanged (e);
@@ -350,7 +363,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			if (listeners[i]==TaskTreeModelListener.class) {
 				// Lazily create the event:
 				if (e == null) {
-					e = new TaskTreeModelEvent (source, path,
+					e = new TaskTreeModelEvent (source, _workspace, path,
 						childIndices, children);
 				}
 				((TaskTreeModelListener)listeners[i+1]).treeNodesInserted (e);
@@ -382,7 +395,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			if (listeners[i]==TaskTreeModelListener.class) {
 				// Lazily create the event:
 				if (e == null) {
-					e = new TaskTreeModelEvent (source, path,
+					e = new TaskTreeModelEvent (source, _workspace, path,
 						childIndices, children);
 				}
 				((TaskTreeModelListener)listeners[i+1]).treeNodesRemoved (e);
@@ -395,8 +408,19 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	 * Sets the root to <code>root</code>. A null <code>root</code> implies
 	 * the tree is to display nothing, and is legal.
 	 */
-	public void setRoot (Task root) {
+	protected void setWorkSpace (WorkSpace workspace) {
+		final WorkSpace oldWS = _workspace;
+		_workspace = workspace;
 		final Task oldRoot = _root;
+		final Task root = _workspace!=null?_workspace.getRoot ():null;
+		reload (root);
+		
+		if (oldWS!=workspace) {
+			fireWorkSpaceChanged (this, oldWS, workspace);
+		}
+		/*
+		 *@todo dovrebbe essere possibile rimuovere il codice seguente, una volta completati i metodi di gestione dell'evento di variazione workspace sui listener
+		 */
 		_root = root;
 		if (root == null && oldRoot != null) {
 			fireTreeStructureChanged (this, null);
@@ -405,10 +429,10 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 		}
 		if (root!=oldRoot) {
 			if (oldRoot!=null) {
-				final PieceOfWork[] removed = discardObsoleteAdvancing (oldRoot);
-				if (removed.length>0) {
-					fireAdvancingRemoved (this, removed);
-				}
+				final Set<PieceOfWork> backup = new HashSet<PieceOfWork> (_advancingPOWs);
+				closeAdvancing ();
+				_advancingPOWs.clear ();
+				fireAdvancingRemoved (this, backup.toArray (_voidPOWArray));
 			}
 			
 			if (root!=null) {
@@ -419,10 +443,26 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			}
 		}
 	}
+
+	private void closeAdvancing () {
+		for (final PieceOfWork pow : _advancingPOWs) {
+			if (pow.getTo ()==null) {
+				/*
+				 * chiude eventuali avanzamenti incorso
+				 */
+				updatePieceOfWork (pow, pow.getFrom (), new Date (), pow.getDescription ());
+			}
+		}
+	}
 	
 	public Task getRoot () {
 		return _root;
 	}
+	
+	public WorkSpace getWorkSpace () {
+		return _workspace;
+	}
+	
 	
 	/**
 	 * Invoke this method if you've totally changed the children of
@@ -440,11 +480,12 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	 * where the original node is the last element in the returned array.
 	 * The length of the returned array gives the node's depth in the
 	 * tree.
-	 *
+	 * 
+	 * @param workSpace il workspace.
 	 * @param aNode the Task to get the path for
 	 */
 	public TaskTreePath getPathToRoot (Task aNode) {
-		return new TaskTreePath (aNode);
+		return new TaskTreePath (_workspace, aNode);
 	}
 	
 	
@@ -816,12 +857,12 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	
 	
 	/*-------------------------------------------------------------
-	 * INIZIO sezione contenente i metodi di supportoalla persistenza
+	 * INIZIO sezione contenente i metodi di supporto alla persistenza
 	 --------------------------------------------------------------*/
 	
 	
 	/**
-	 * RIferimentoalla transazione fake, creata lazy.
+	 * Riferimento alla transazione fake, creata lazy.
 	 */
 	private Transaction _tx;
 	/**
@@ -897,7 +938,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	}
 	
 	/*-------------------------------------------------------------
-	 * FINE sezione contenente i metodi di supportoalla persistenza
+	 * FINE sezione contenente i metodi di supporto alla persistenza
 	 --------------------------------------------------------------*/
 	
 	
@@ -993,7 +1034,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			tx.commit ();
 		} catch (final Exception e) {
 			tx.rollback ();
-			throw new NestedRuntimeException (e);
+			throw new RuntimeException (e);
 		}
 		
 		return newIndexs;
@@ -1069,7 +1110,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			tx.commit ();
 		} catch (final Exception e) {
 			tx.rollback ();
-			throw new NestedRuntimeException (e);
+			throw new RuntimeException (e);
 		}
 		
 		return newIndexs;
@@ -1122,7 +1163,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			i++;
 		}
 		removePiecesOfWork_TX (t, l, alterPersistence);
-		firePiecesOfWorkRemoved (this, new TaskTreePath (t), indices, removed);
+		firePiecesOfWorkRemoved (this, new TaskTreePath (_workspace, t), indices, removed);
 		lookForObsoleteAdvancing (l, false);
 	}
 	
@@ -1146,7 +1187,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			tx.commit ();
 		} catch (final Exception e) {
 			tx.rollback ();
-			throw new NestedRuntimeException (e);
+			throw new RuntimeException (e);
 		}
 	}
 	
@@ -1180,32 +1221,32 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	}
 	
 	/**
-	 * Implementazione con opzione per l'alterazione dellostato di persistenza.
+	 * Implementazione con opzione per l'alterazione dello stato di persistenza.
 	 * <P>
 	 * In caso di utilizzo composito (move implica rimozione e successivo reinserimento) pu&ograve; tornare utile non variare lo stato di persistenza degli oggetti.
 	 */
 	private void _removeTasks (final Task parent, final List<Task> l, final boolean alterPersistence) {
-		final TaskTreePath parentPath = new TaskTreePath (parent);
+		final TaskTreePath parentPath = new TaskTreePath (_workspace, parent);
 		final int count = l.size ();
 		final int[] indices = new int [count];
 		final Task[] removed = new Task [count];
 		
 		final PieceOfWork[] discardedAdvancing = discardObsoleteAdvancing (parent);
 		
-		int i=0;
-		for (final Task t : l) {
-			indices [i] = parent.childIndex (t);
-			removed[i] = t;
-			i++;
+		{
+			int i=0;
+			for (final Task t : l) {
+				indices [i] = parent.childIndex (t);
+				removed[i] = t;
+				i++;
+			}
 		}
 		
-		i = 0;
 		final Transaction tx = getTransaction ();
 		tx.begin ();
 		try {
-			for (final Task t : l) {
-				parent.remove (indices[i]);
-				i++;
+			for (int i = 0; i < count; i++) {
+				parent.remove (parent.childIndex (removed[i]));
 			}
 			if (alterPersistence) {
 				deleteSubtreePersistent (getPersistenceManager (), l);
@@ -1213,7 +1254,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			tx.commit ();
 		} catch (final Exception e) {
 			tx.rollback ();
-			throw new NestedRuntimeException (e);
+			throw new RuntimeException (e);
 		}
 		
 		fireTasksRemoved (this, parentPath, indices, removed);
@@ -1227,7 +1268,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 	
 	
 	public void moveTasksTo (final Task previousParent, final List<Task> l, final Task target, final int position) {
-		final TaskTreePath targetPath = new TaskTreePath (target);
+		final TaskTreePath targetPath = new TaskTreePath (_workspace, target);
 		for (final Task t : l) {
 			if (targetPath.contains (t)) {
 				throw new IllegalOperationException ("Cannot move a task into its subtree!");
@@ -1255,7 +1296,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			tx.commit ();
 		} catch (final Exception e) {
 			tx.rollback ();
-			throw new NestedRuntimeException (e);
+			throw new RuntimeException (e);
 		}
 		
 		nodeChanged (t);
@@ -1272,7 +1313,7 @@ public abstract class AbstractTaskTreeModel implements TaskTreeModel, WorkAdvanc
 			tx.commit ();
 		} catch (final Exception e) {
 			tx.rollback ();
-			throw new NestedRuntimeException (e);
+			throw new RuntimeException (e);
 		}
 		
 		pieceOfWorkChanged (pow);
