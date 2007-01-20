@@ -77,8 +77,9 @@ public class ProgressItem extends Observable implements Task {
 	
 	/**
 	 * Il progetto di appartenenza.
+	 * @warning non utilizzato, per retrocompatibilit&agrave; con JTTS v1 (BUG)
 	 */
-	protected Project project;
+	Project project;
 	
 	
 	/**
@@ -150,11 +151,12 @@ public class ProgressItem extends Observable implements Task {
 	/**
 	 * Ritorna il progetto di appartenenza di questo nodo.
 	 *
+	 * @warning non valorizato, per retrocompatibilit&agrave; con JTTS v1 (BUG)
 	 * @return il progetto di appartenenza.
 	 */
-	public WorkSpace getWorkSpace () {
-		return this.project;
-	}
+//	public WorkSpace getWorkSpace () {
+//		return this.project;
+//	}
 	
 	/**
 	 * Inserisce un nuovo elemento figlio alla posizione desiderata.
@@ -504,9 +506,9 @@ public class ProgressItem extends Observable implements Task {
 	 *
 	 * @param project il progetto di appartenenza.
 	 */
-	public void setProject (Project project) {
-		this.project=project;
-	}
+//	public void setProject (Project project) {
+//		this.project=project;
+//	}
 	
 	/**
 	 * Ritorna l'avanzamento corrente.
