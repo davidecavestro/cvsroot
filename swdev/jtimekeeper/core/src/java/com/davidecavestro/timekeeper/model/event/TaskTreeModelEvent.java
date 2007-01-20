@@ -10,6 +10,7 @@ package com.davidecavestro.timekeeper.model.event;
 import com.davidecavestro.timekeeper.model.PieceOfWork;
 import com.davidecavestro.timekeeper.model.Task;
 import com.davidecavestro.timekeeper.model.TaskTreePath;
+import com.davidecavestro.timekeeper.model.WorkSpace;
 
 /**
  * Incapsula le informazioni relative ad un evento di modifica dell'albero degli avanzamenti.
@@ -52,6 +53,11 @@ public class TaskTreeModelEvent extends java.util.EventObject {
 	private final Task[] _children;
 	
 	/**
+	 * Il workspace interessato.
+	 */
+	private final WorkSpace _workspace;
+	
+	/**
 	 * Elementi rimossi.
 	 */
 	private final PieceOfWork[] _progresses;
@@ -68,42 +74,47 @@ public class TaskTreeModelEvent extends java.util.EventObject {
 	
 	/**
 	 * Costruttore per un evento sui TASK.
-	 *
+	 * 
+	 * @param workspace il workspace.
 	 * @param source l'oggetto responsabile della generazione di questo evento.
 	 * @param parentElementPath identifica il percorso che porta all'elemento superiore a quelli interessati dall'evento
 	 * @param childIndices an array of <code>int</code> that specifies the
-     *               index values of the removed items. The indices must be
-     *               in sorted order, from lowest to highest
+	 *               index values of the removed items. The indices must be
+	 *               in sorted order, from lowest to highest
 	 * @param children an array of Object containing the inserted, removed, or
-     *                 changed objects
+	 *                 changed objects
 	 */
-	public TaskTreeModelEvent (final Object source, final TaskTreePath parentElementPath, final int[] childIndices, final Task[] children) {
+	public TaskTreeModelEvent (final Object source, final WorkSpace workspace, final TaskTreePath parentElementPath, final int[] childIndices, final Task[] children) {
 		super (source);
 		_parentElementPath = parentElementPath;
 		_childIndices = childIndices;
 		_children = children;
 		_progresses = null;
 		
+		_workspace = workspace;
+		
 		_type = TASK;
 	}
 
 	/**
 	 * Costruttore per un evento sui PROGRESS.
-	 *
+	 * 
+	 * @param workspace il workspace.
+	 * @param progresses gli avanzamenti.
 	 * @param source l'oggetto responsabile della generazione di questo evento.
 	 * @param parentElementPath identifica il percorso che porta all'elemento superiore a quelli interessati dall'evento
 	 * @param childIndices an array of <code>int</code> that specifies the
-     *               index values of the removed items. The indices must be
-     *               in sorted order, from lowest to highest
-	 * @param children an array of Object containing the inserted, removed, or
-     *                 changed objects
+	 *               index values of the removed items. The indices must be
+	 *               in sorted order, from lowest to highest
 	 */
-	public TaskTreeModelEvent (final Object source, final TaskTreePath parentElementPath, final int[] childIndices, final PieceOfWork[] progresses) {
+	public TaskTreeModelEvent (final Object source, final WorkSpace workspace, final TaskTreePath parentElementPath, final int[] childIndices, final PieceOfWork[] progresses) {
 		super (source);
 		_parentElementPath = parentElementPath;
 		_childIndices = childIndices;
 		_children = null;
 		_progresses = progresses;
+		
+		_workspace = workspace;
 		
 		_type = PROGRESS;
 	}
@@ -113,15 +124,19 @@ public class TaskTreeModelEvent extends java.util.EventObject {
 	 * <P>
 	 * Costituisce un evento di tipo TASK.
 	 * 
+	 * 
+	 * @param workspace il workspace.
 	 * @param source 'oggetto responsabile della generazione di questo evento.
 	 * @param parentElementPath il percorso che porta al sottoalbero che ha subito modifiche alla struttura,
 	 */
-	public TaskTreeModelEvent (final Object source, final TaskTreePath parentElementPath) {
+	public TaskTreeModelEvent (final Object source, final WorkSpace workspace, final TaskTreePath parentElementPath) {
 		super (source);
 		_parentElementPath = parentElementPath;
 		_childIndices = _voidIntArray;
 		_children = _voidTaskArray;
 		_progresses = null;
+		
+		_workspace = workspace;
 		
 		_type = TASK;
 	}
@@ -143,6 +158,15 @@ public class TaskTreeModelEvent extends java.util.EventObject {
 	 * @return il tipo di questo evento.
 	 */
 	public int getType (){return _type;}
+	
+	/**
+	 * Ritorna il WorkSpace interessato da questo evento.
+	 * 
+	 * @return il WorkSpace interessato da questo evento.
+	 */
+	public WorkSpace getWorkSpace () {
+		return _workspace;
+	}
 	
 	/**
 	 * Ritorna una stringa che rappresenta questo evento.
@@ -185,9 +209,9 @@ public class TaskTreeModelEvent extends java.util.EventObject {
 	public Object allow (final Inspector i) {
 		switch (_type) {
 			case TASK:
-				return i.inspectTASK (source, _type, _parentElementPath, _childIndices, _children);
+				return i.inspectTASK (source, _workspace, _type, _parentElementPath, _childIndices, _children);
 			case PROGRESS:
-				return i.inspectPROGRESS (source, _type, _parentElementPath, _childIndices, _progresses);
+				return i.inspectPROGRESS (source, _workspace, _type, _parentElementPath, _childIndices, _progresses);
 		}
 		/*
 		 * Caso non previsto
@@ -203,10 +227,10 @@ public class TaskTreeModelEvent extends java.util.EventObject {
 		/**
 		 * Ispeziona i dati di un evento di tipo <TT>TASK</TT>.
 		 */
-		Object inspectTASK (Object source, int type, TaskTreePath path, int[] childIndices, Task[] children);
+		Object inspectTASK (Object source, WorkSpace workspace, int type, TaskTreePath path, int[] childIndices, Task[] children);
 		/**
 		 * Ispeziona i dati di un evento di tipo <TT>PROGRESS</TT>.
 		 */
-		Object inspectPROGRESS (Object source, int type, TaskTreePath path, int[] childIndices, PieceOfWork[] progresses);
+		Object inspectPROGRESS (Object source, WorkSpace workspace, int type, TaskTreePath path, int[] childIndices, PieceOfWork[] progresses);
 	}
 }

@@ -73,7 +73,7 @@ public interface Task {
 	 *
 	 * @return il progetto di appartenenza.
 	 */
-	WorkSpace getWorkSpace ();
+//	WorkSpace getWorkSpace ();
 	
 	/**
 	 * Ritorna la lista di avanzamenti appartenenti a queto nodo. Non dovrebbe

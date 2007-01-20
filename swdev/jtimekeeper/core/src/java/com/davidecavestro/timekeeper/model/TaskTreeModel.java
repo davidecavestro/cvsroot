@@ -28,6 +28,13 @@ public interface TaskTreeModel {
 	Task getRoot ();
 	
 	/**
+	 * Ritorna il workspace.
+	 * 
+	 * @return il workspace.
+	 */
+	WorkSpace getWorkSpace ();
+	
+	/**
 	 * Aggiunge un listenr per <OCDE>TaskTreeModelEvent</CODE> inviato a fronte delle modifiche all'albero.
 	 * @param l il listener da aggiungere.
 	 * @see removeTaskTreeModelListener

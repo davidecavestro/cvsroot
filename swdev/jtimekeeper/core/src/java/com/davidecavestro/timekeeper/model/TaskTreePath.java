@@ -22,6 +22,12 @@ public class TaskTreePath {
 	private final TaskTreePath _parentPath;
 	
 	/**
+	 * Il Workspace.
+	 * @workaround il workspace &egrave;stato introdotto per ovviare al problema di mancata persistenza del riferimento alprogetto da parte deiprogressitem in JTTSv1
+	 */
+	private final WorkSpace _workspace;
+	
+	/**
 	 * L'ultimo elemento del percorso, ovvero quello pi&ugrave distante dalla radice dell'albero.
 	 */
 	private final Task _lastElement;
@@ -30,13 +36,15 @@ public class TaskTreePath {
 	 * Costruttore con elemento finale.
 	 * <P>
 	 * Fornisce il percorso completo fino alla radice dell'albero rintracciando i nodi superiori dell'elemento specificato.
-	 * @param lastElement  l'ultimo elemento del percorso creato.
+	 * @param workSpace 
+	 * @param lastElement l'ultimo elemento del percorso creato.
 	 */
-	public TaskTreePath (final Task lastElement) {
+	public TaskTreePath (final WorkSpace workSpace, final Task lastElement) {
+		_workspace = workSpace;
 		_parentPath = 
 			lastElement.getParent ()==null?
 				null:
-				new TaskTreePath (lastElement.getParent ());
+				new TaskTreePath (workSpace, lastElement.getParent ());
 		_lastElement = lastElement;
 	}
 	
@@ -70,6 +78,15 @@ public class TaskTreePath {
 	 */
 	public Task getLastPathComponent () {
 		return _lastElement;
+	}
+	
+	/**
+	 * Ritorna il workspace contenente l'albero su cui questo percorso &egrave;definito.
+	 * 
+	 * @return il workspace contenente l'albero su cui questo percorso &egrave;definito.
+	 */
+	public WorkSpace getWorkSpace () {
+		return _workspace;
 	}
 
 	/**

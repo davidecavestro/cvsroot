@@ -35,4 +35,8 @@ public interface TaskTreeModelListener extends EventListener {
 	 * Invocato a fronte di una drastica modifica del sottoalbero.
 	 */
 	void treeStructureChanged (TaskTreeModelEvent e);
+	/**
+	 * Invocato a fronte della variazione di WorkSpace.
+	 */
+	void workSpaceChanged (WorkSpace oldWS, WorkSpace newWS);
 }
