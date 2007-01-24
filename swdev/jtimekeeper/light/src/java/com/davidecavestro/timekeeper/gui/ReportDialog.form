@@ -45,7 +45,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Dialog" size="12" style="0"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="last"/>
+            <Property name="text" type="java.lang.String" value="presets"/>
             <Property name="toolTipText" type="java.lang.String" value="Use presets"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -123,7 +123,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-              <GridBagConstraints gridX="-1" gridY="-1" gridWidth="2" gridHeight="1" fill="3" ipadX="0" ipadY="0" insetsTop="4" insetsLeft="10" insetsBottom="4" insetsRight="4" anchor="18" weightX="1.0" weightY="0.0"/>
+              <GridBagConstraints gridX="-1" gridY="-1" gridWidth="2" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="4" insetsLeft="10" insetsBottom="4" insetsRight="4" anchor="18" weightX="1.0" weightY="0.0"/>
             </Constraint>
           </Constraints>
 
@@ -131,15 +131,11 @@
           <SubComponents>
             <Component class="org.jdesktop.swingx.JXList" name="presetRangesList">
               <Properties>
-                <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-                  <StringArray count="5">
-                    <StringItem index="0" value="Item 1"/>
-                    <StringItem index="1" value="Item 2"/>
-                    <StringItem index="2" value="Item 3"/>
-                    <StringItem index="3" value="Item 4"/>
-                    <StringItem index="4" value="Item 5"/>
-                  </StringArray>
+                <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="new AbstractListModel () {&#xa;&#x9;final TimeRangePreset[] elements = new TimeRangePreset[] {TimeRangePreset.THIS_WEEK, TimeRangePreset.LAST_SEVEN_DAYS, TimeRangePreset.PREVIOUS_WEEK, TimeRangePreset.PREVIOUS_TWO_WEEKS, TimeRangePreset.THIS_MONTH, TimeRangePreset.PREVIOUS_MONTH};&#xa;&#x9;&#xa;&#x9;public Object getElementAt (int index) {&#xa;&#x9;&#x9;return elements[index];&#xa;&#x9;}&#xa;&#x9;public int getSize () {&#xa;&#x9;&#x9;return elements.length;&#xa;&#x9;}&#xa;}" type="code"/>
                 </Property>
+                <Property name="selectionMode" type="int" value="0"/>
+                <Property name="toolTipText" type="java.lang.String" value="Choose a preset time range"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>

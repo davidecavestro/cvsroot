@@ -6,6 +6,8 @@
 
 package com.davidecavestro.timekeeper.report;
 
+import java.util.Collection;
+
 /**
  * Estrae i dati per la generazione di un report. Implementa la logica 
  * specifica di estrazione dei dati di un determinato report.
@@ -14,5 +16,5 @@ package com.davidecavestro.timekeeper.report;
  */
 public interface DataExtractor {
 	
-	public org.jdom.Document extract ();
+	public Collection extract ();
 }

@@ -8,22 +8,12 @@ package com.davidecavestro.timekeeper.gui;
 
 import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.common.gui.dialog.DialogListener;
-import com.davidecavestro.timekeeper.Application;
 import com.davidecavestro.timekeeper.ApplicationContext;
 import com.davidecavestro.timekeeper.model.Task;
 import com.davidecavestro.timekeeper.model.WorkSpace;
-import com.davidecavestro.timekeeper.report.DataExtractor;
-import com.davidecavestro.timekeeper.report.JRBindings;
-import com.davidecavestro.timekeeper.report.ReportPreferences;
-import com.davidecavestro.timekeeper.report.filter.NegateFilter;
-import com.davidecavestro.timekeeper.report.filter.flavors.date.AfterDateFilter;
-import com.davidecavestro.timekeeper.report.filter.flavors.date.BeforeDateFilter;
-import com.davidecavestro.timekeeper.report.flavors.CumulateProgresses;
-import com.davidecavestro.timekeeper.report.flavors.SimpleProgresses;
 import com.ost.timekeeper.model.Progress;
 import com.ost.timekeeper.model.ProgressItem;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -142,7 +132,7 @@ public class WindowManager implements ActionListener, DialogListener {
 	 */
 	public ReportDialog getReportDialog () {
 		if (_reportDialog==null){
-			_reportDialog = new ReportDialog (getMainWindow (), true, _context);
+			_reportDialog = new ReportDialog (getMainWindow (), false, _context);
 			_context.getUIPersisteer ().register (_reportDialog);
 			_reportDialog.addDialogListener (this);
 		}
