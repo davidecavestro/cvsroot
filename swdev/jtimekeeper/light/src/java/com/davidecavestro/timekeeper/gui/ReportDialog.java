@@ -68,7 +68,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 		});
 		
 		
-//		pack ();
+		pack ();
 		setLocationRelativeTo (null);
 		
 		timeRangeChanged ();
@@ -182,6 +182,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 10, 4, 4);
         jPanel1.add(jScrollPane1, gridBagConstraints);
 
@@ -326,7 +327,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 	
 	void launchReport () {
 		final ReportPreferences prefs = new ReportPreferences (null);
-		final JRBindings jrb = new JRBindings (getClass ().getResourceAsStream ("/cumulatelocalprogresses.jasper"));
+		final JRBindings jrb = new JRBindings (getClass ().getResourceAsStream ("/dailyprogressesdetail.jasper"));
 		
 		final java.util.List filters = new ArrayList ();
 //		if (fromDateEditor.isEnabled ()){
@@ -337,27 +338,28 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 //		}
 		
 		Date startDate = null;
-		int periodLength = 7;
+		int periodCount = 7;
 		if (_usePresets) {
 			final TimeRangePreset preset = (TimeRangePreset)presetRangesList.getSelectedValue ();
 			startDate = preset.from ();
-			periodLength = preset.length ();
+			periodCount = preset.length ();
 		} else {
 			startDate = fromDateEditor.getDate ();
 			final Calendar from = new GregorianCalendar ();
 			from.setTime (fromDateEditor.getDate ());
 			final Calendar to = new GregorianCalendar ();
 			to.setTime (toDateEditor.getDate ());
-			periodLength = from.get (Calendar.DAY_OF_YEAR) - to.get (Calendar.DAY_OF_YEAR);
+			periodCount = to.get (Calendar.DAY_OF_YEAR) - from.get (Calendar.DAY_OF_YEAR);
 		}
-			
+		System.out.println ("extracting data from "+CalendarUtils.toTSString (startDate)+" for "+periodCount+" days");
+
 		final DataExtractor extractor = new CumulateLocalProgresses (
 			_context,
 			_context.getModel ().getRoot (),
 			(TargetedFilterContainer[])filters.toArray (targetedFilterArray),
 			startDate,
 			1,
-			periodLength);
+			periodCount);
 		
 		
 		new ReportDataGenerator (_context).generate (extractor, prefs, jrb);
@@ -410,7 +412,17 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 			public Date from () {
 				final GregorianCalendar c = new GregorianCalendar ();
 				c.setTime (CalendarUtils.resetTimeCopy (new Date ()));
-				c.add (Calendar.DAY_OF_WEEK, -7);
+				int day = c.get (Calendar.DAY_OF_YEAR);
+				c.add (Calendar.DAY_OF_YEAR, -7);
+				if (day < 7) {
+					/*
+					 * siamo nelle prima settimana dell'anno
+					 *
+					 * adegua il campo di anno, quando necessario, 
+					 * dato  che non verrebbe decrementatoautomaticamente in quanto superiore almese
+					 */
+					c.roll (Calendar.YEAR, -1);
+				}
 				
 				return c.getTime ();
 			}
@@ -464,7 +476,6 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 					c.roll (Calendar.YEAR, -1);
 				}
 				c.set (Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek ());
-				
 				return c.getTime ();
 			}
 		},

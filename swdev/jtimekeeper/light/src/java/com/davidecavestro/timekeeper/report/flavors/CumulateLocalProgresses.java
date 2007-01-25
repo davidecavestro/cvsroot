@@ -6,7 +6,6 @@
 
 package com.davidecavestro.timekeeper.report.flavors;
 
-import com.csvreader.CsvWriter;
 import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.common.util.CalendarUtils;
 import com.davidecavestro.timekeeper.ApplicationContext;
@@ -61,7 +60,7 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 	
 	/**
 	 * Costruttore.
-	 * @param date la data di partenza
+	 * @param date la data di inizio del primo periodo
 	 * @param periodLength la lunghezza (in giorni) del periodo
 	 * @param periodCount il numero di periodi
 	 * @param filters i filtri da applicare.
@@ -107,10 +106,10 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 		now.set (Calendar.SECOND, 0);
 		now.set (Calendar.MILLISECOND, 0);
 		//		now.roll (Calendar.DATE, 1);
-		final Date periodFinishDate = new Date (now.getTime ().getTime ());
-		
-		now.add (Calendar.DAY_OF_YEAR, -1*_periodLength*_periodCount);
 		final Date periodStartDate = new Date (now.getTime ().getTime ());
+		
+		now.add (Calendar.DAY_OF_YEAR, 1*_periodLength*_periodCount);
+		final Date periodFinishDate = new Date (now.getTime ().getTime ());
 		
 		final TimeCumulationScale map = new TimeCumulationScale (periodStartDate, periodFinishDate, _periodLength);
 		
@@ -144,26 +143,26 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 		
 		
 		final IdentificatorAssigner ia = new IdentificatorAssigner ();
-		try {
-		final CsvWriter csvw = new CsvWriter ("/tmp/prova.csv");
-		csvw.setDelimiter (';');
-			csvw.writeRecord (
-				new String[] {
-				"periodID",
-				"periodName",
-				"periodStart",
-				"periodTotalEffort",
-				"progressDescription",
-				"progressEffort",
-				"progressEnd",
-				"progressNotes",
-				"progressStart",
-				"taskHierarchy",
-				"taskID",
-				"taskName",
-				"taskTotalEffort"
-				}
-				);
+//		try {
+//		final CsvWriter csvw = new CsvWriter ("/tmp/prova.csv");
+//		csvw.setDelimiter (';');
+//			csvw.writeRecord (
+//				new String[] {
+//				"periodID",
+//				"periodName",
+//				"periodStart",
+//				"periodTotalEffort",
+//				"progressDescription",
+//				"progressEffort",
+//				"progressEnd",
+//				"progressNotes",
+//				"progressStart",
+//				"taskHierarchy",
+//				"taskID",
+//				"taskName",
+//				"taskTotalEffort"
+//				}
+//				);
 		/*
 		 *
 		 * per ogni peridodo
@@ -175,7 +174,7 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 			final int periodID = ia.assignPeriodID ();
 			final String periodName = CalendarUtils.getTimestamp (cumulationPeriod.getFrom (), "MM/dd");
 			
-			System.out.println ("processing period "+periodName);
+//			System.out.println ("processing period "+periodName);
 			
 			final Timestamp periodStart = new Timestamp (cumulationPeriod.getFrom ().getTime ());
 //			final String periodName = CalendarUtils.getTimestamp (cumulationPeriod.getFrom (), "MM/dd");
@@ -197,7 +196,7 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 				final NodeProgresses detail = cumulationPeriod.getDetail (progressItem);
 				final double duration = detail.getDuration ();
 				
-			System.out.println ("processing task "+progressItem.getName ());
+//			System.out.println ("processing task "+progressItem.getName ());
 
 				final Time taskTotalEffort = new Time ((long)detail.getDuration ());
 				
@@ -238,7 +237,7 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 					row.setProgressDescription (progress.getDescription ());
 					row.setProgressNotes (progress.getNotes ());
 					
-					System.out.println ("processing progress "+progress);
+//					System.out.println ("processing progress "+progress);
 					
 					row.setPeriodID (periodID);
 					
@@ -250,33 +249,33 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 					row.setPeriodName (periodName);
 					row.setTaskID (taskID);
 					
-					csvw.writeRecord (
-						new String[] {
-						Integer.toString (row.getPeriodID ()),
-						row.getPeriodName (),
-						row.getPeriodStart ()!=null?row.getPeriodStart ().toString ():null,
-						row.getPeriodTotalEffort ()!=null?row.getPeriodTotalEffort ().toString ():null,
-						row.getProgressDescription (),
-						row.getProgressEffort ()!=null?row.getProgressEffort ().toString ():null,
-						row.getProgressEnd ()!=null?row.getProgressEnd ().toString ():null,
-						row.getProgressNotes (),
-						row.getProgressStart ()!=null?row.getProgressStart ().toString ():null,
-						row.getTaskHierarchy (),
-						Integer.toString (row.getTaskID ()),
-						row.getTaskName (),
-						row.getTaskTotalEffort ()!=null?row.getTaskTotalEffort ().toString ():null
-						}
-						);
+//					csvw.writeRecord (
+//						new String[] {
+//						Integer.toString (row.getPeriodID ()),
+//						row.getPeriodName (),
+//						row.getPeriodStart ()!=null?row.getPeriodStart ().toString ():null,
+//						row.getPeriodTotalEffort ()!=null?row.getPeriodTotalEffort ().toString ():null,
+//						row.getProgressDescription (),
+//						row.getProgressEffort ()!=null?row.getProgressEffort ().toString ():null,
+//						row.getProgressEnd ()!=null?row.getProgressEnd ().toString ():null,
+//						row.getProgressNotes (),
+//						row.getProgressStart ()!=null?row.getProgressStart ().toString ():null,
+//						row.getTaskHierarchy (),
+//						Integer.toString (row.getTaskID ()),
+//						row.getTaskName (),
+//						row.getTaskTotalEffort ()!=null?row.getTaskTotalEffort ().toString ():null
+//						}
+//						);
 					
 				}
 
 				
 			}
 		}
-			csvw.flush ();
-		} catch (IOException ioe) {
-			throw new RuntimeException (ioe);
-		}
+//			csvw.flush ();
+//		} catch (IOException ioe) {
+//			throw new RuntimeException (ioe);
+//		}
 		return data;
 	}
 	

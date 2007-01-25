@@ -539,6 +539,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jMenu2 = new javax.swing.JMenu();
         newProgressPopupItem1 = new javax.swing.JMenuItem();
         startProgressPopupItem1 = new javax.swing.JMenuItem();
+        startProgressClonePopupItem = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JSeparator();
         cutProgressesMenuItem1 = new javax.swing.JMenuItem();
         copyProgressesMenuItem1 = new javax.swing.JMenuItem();
@@ -762,6 +763,19 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         });
 
         jMenu2.add(startProgressPopupItem1);
+
+        startProgressClonePopupItem.setAction(new StartProgressCloneAction ());
+        startProgressClonePopupItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        startProgressClonePopupItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/davidecavestro/timekeeper/gui/images/small/transparent.png")));
+        org.openide.awt.Mnemonics.setLocalizedText(startProgressClonePopupItem, "Start Progress clone");
+        startProgressClonePopupItem.setToolTipText("Start a new progress with the same description of the selected one");
+        startProgressClonePopupItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startProgressClonePopupItemActionPerformed(evt);
+            }
+        });
+
+        jMenu2.add(startProgressClonePopupItem);
 
         tablePopupMenu.add(jMenu2);
 
@@ -1435,6 +1449,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             setBounds((screenSize.width-802)/2, (screenSize.height-600)/2, 802, 600);
         }// </editor-fold>//GEN-END:initComponents
 
+	private void startProgressClonePopupItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startProgressClonePopupItemActionPerformed
+// TODO add your handling code here:
+	}//GEN-LAST:event_startProgressClonePopupItemActionPerformed
+
 	private void printMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printMenuItemActionPerformed
 // TODO add your handling code here:
 	}//GEN-LAST:event_printMenuItemActionPerformed
@@ -1640,6 +1658,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JMenuItem redoMenuItem;
     private javax.swing.JMenuItem renameTaskPopupItem;
     private javax.swing.JFileChooser saveFileChooser;
+    private javax.swing.JMenuItem startProgressClonePopupItem;
     private javax.swing.JMenuItem startProgressPopupItem;
     private javax.swing.JMenuItem startProgressPopupItem1;
     private javax.swing.JPanel statusPanel;
@@ -2022,7 +2041,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 		
 		public void treeStructureChanged (TaskTreeModelEvent e) {
-			System.out.println ("table treeStructureChanged");
+//			System.out.println ("table treeStructureChanged");
 			checkForReload (e);
 			if (_masterPath==null) {
 				return;
@@ -2042,10 +2061,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				final WorkSpace ws = e.getWorkSpace ();
 				if (ws!=null) {
 					reload (ws, ws.getRoot ());
-					System.out.println ("reloading table for "+ws);
+//					System.out.println ("reloading table for "+ws);
 				} else {
 					reload (null, null);
-					System.out.println ("reloading table for null");
+//					System.out.println ("reloading table for null");
 				}
 			}
 		}
@@ -3032,6 +3051,77 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			setEnabled (_isEnabled ());
 		}
 	}
+	
+	
+	/**
+	 * Fa partire un nuovo avanzamento clone.
+	 *
+	 */
+	private class StartProgressCloneAction extends AbstractAction implements ListSelectionListener, WorkAdvanceModelListener {
+		
+		
+		/**
+		 * Costruttore.
+		 */
+		public StartProgressCloneAction () {
+			_context.getModel ().addWorkAdvanceModelListener (this);
+			progressesTable.getSelectionModel ().addListSelectionListener (this);
+			progressesTable.getColumnModel ().getSelectionModel ().addListSelectionListener (this);
+			
+			setEnabled (false);
+		}
+		
+		public void actionPerformed (java.awt.event.ActionEvent e) {
+			_context.getLogger ().debug ("Starting progress clone...");
+			final TaskTreeModelImpl m = _context.getModel ();
+			final ProgressItem parent = (ProgressItem)_candidateSource.getTask ();
+			final Progress clone = new Progress (new Date (), null, parent);
+			clone.setDescription (_candidateSource.getDescription ());
+			clone.setNotes (_candidateSource.getNotes ());
+			m.insertPieceOfWorkInto (clone, parent, parent.pieceOfWorkCount ());
+			_context.getLogger ().debug ("Clone progress successfully started");
+		}
+		
+		private Progress _candidateSource;
+		
+		private boolean _isEnabled () {
+			return _candidateSource!=null && _context.getModel ().getAdvancing ().isEmpty ();
+		}
+		
+		private void setEnabled () {
+			setEnabled (_isEnabled ());
+		}
+
+		
+		public void elementsInserted (WorkAdvanceModelEvent e) {
+			setEnabled (_isEnabled ());
+		}
+		
+		public void elementsRemoved (WorkAdvanceModelEvent e) {
+			setEnabled (_isEnabled ());
+		}
+		
+		public void valueChanged (ListSelectionEvent e) {
+			if (e.getValueIsAdjusting ()){
+				/* evento spurio */
+				return;
+			}
+			_candidateSource = null;
+			if (progressesTable.getSelectedRows ().length>1) {
+				return;
+			}
+			int r = progressesTable.getSelectedRow ();
+			if (r<0) {
+				return;
+			}
+			
+			r = progressesTable.convertRowIndexToModel (r);
+			_candidateSource = (Progress)progressesTable.getModel ().getValueAt (r, progressesTable.convertColumnIndexToModel (DURATION_COL_INDEX));
+			setEnabled ();
+		}
+		
+	}
+		
 	
 	/**
 	 * Ferma un avanzamento in progress.
