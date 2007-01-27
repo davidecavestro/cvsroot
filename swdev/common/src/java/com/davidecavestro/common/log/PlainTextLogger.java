@@ -8,7 +8,7 @@ package com.davidecavestro.common.log;
 
 import com.davidecavestro.common.util.CalendarUtils;
 import com.davidecavestro.common.util.ExceptionUtils;
-import com.davidecavestro.common.util.FileUtils;
+import com.davidecavestro.common.util.file.FileUtils;
 import java.io.*;
 import java.util.*;
 
