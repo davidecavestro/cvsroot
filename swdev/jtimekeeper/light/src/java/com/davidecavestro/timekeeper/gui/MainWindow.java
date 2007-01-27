@@ -2070,16 +2070,23 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		}
 		
 		public void valueChanged (TreeSelectionEvent e) {
-			final TreePath path = e.getPath ();
-			if (path==null) {
-				return;
-			}
-			final Object o = path.getLastPathComponent ();
-			if (!e.isAddedPath ()) {
+			final int r = taskTree.getSelectedRow ();
+			if (r<0) {
 				reload (null, null);
-			} else if (o instanceof Task){
-				reload (_context.getModel ().getWorkSpace (), (Task)o);
+			} else {
+				reload (_context.getModel ().getWorkSpace (), (Task)taskTree.getModel ().getValueAt (taskTree.convertRowIndexToModel (r), taskTree.convertColumnIndexToModel (TaskJTreeModel.TREE_COLUMN_INDEX)));
 			}
+			
+//			final TreePath path = e.getPath ();
+//			if (path==null) {
+//				return;
+//			}
+//			final Object o = path.getLastPathComponent ();
+//			if (!e.isAddedPath ()) {
+//				reload (null, null);
+//			} else if (o instanceof Task){
+//				reload (_context.getModel ().getWorkSpace (), (Task)o);
+//			}
 		}
 		
 		public void tableChanged (TableModelEvent e) {
