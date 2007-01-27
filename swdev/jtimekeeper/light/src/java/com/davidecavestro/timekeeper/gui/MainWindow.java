@@ -2356,7 +2356,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		};
 		
 		public void treeStructureChanged (TaskTreeModelEvent e) {
-			System.out.println ("tree treeStructureChanged");
+//			System.out.println ("tree treeStructureChanged");
 			checkForReload (e);
 			e.allow (_treeStructureChangedInspector);
 		}

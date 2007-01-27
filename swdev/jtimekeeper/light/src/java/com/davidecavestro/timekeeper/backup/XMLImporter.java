@@ -66,7 +66,7 @@ public class XMLImporter {
 	private WorkSpace findConflicts (final WorkSpace prj) {
 		for (final Iterator<WorkSpace> it = Arrays.asList (_context.getWorkSpaceModel ().toArray ()).iterator ();it.hasNext ();){
 			final WorkSpace existing = it.next ();
-			if (existing.getName ()!=null && existing.getName ().equals (prj.getName ())){
+			if (prj!=existing && existing.getName ()!=null && existing.getName ().equals (prj.getName ())){
 				/*
 				 * trovato conflitto
 				 */
@@ -82,6 +82,9 @@ public class XMLImporter {
 		do {
 			conflicting = findConflicts (prj);
 
+			if (conflicting==null) {
+				break;
+			}
 			choice = icr.chooseResolution ();
 
 			if (choice==ConflictResolution.RENAME) {

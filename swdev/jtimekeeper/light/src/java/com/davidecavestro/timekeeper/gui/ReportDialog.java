@@ -175,6 +175,12 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         presetRangesList.setFont(new java.awt.Font("Dialog", 0, 12));
         presetRangesList.setSelectedIndex(0);
         presetRangesList.setSelectionMode (ListSelectionModel.SINGLE_SELECTION);
+        presetRangesList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                presetRangesListMouseClicked(evt);
+            }
+        });
+
         jScrollPane1.setViewportView(presetRangesList);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -258,6 +264,12 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+	private void presetRangesListMouseClicked (java.awt.event.MouseEvent evt) {//GEN-FIRST:event_presetRangesListMouseClicked
+		if (evt.getClickCount ()>1) {
+			confirm ();
+		}
+	}//GEN-LAST:event_presetRangesListMouseClicked
 	
 	private void jRadioButton2ActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
 		timeRangeChanged ();

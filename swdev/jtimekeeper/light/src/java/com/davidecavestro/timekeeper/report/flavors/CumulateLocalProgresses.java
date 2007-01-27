@@ -172,7 +172,7 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 			
 			
 			final int periodID = ia.assignPeriodID ();
-			final String periodName = CalendarUtils.getTimestamp (cumulationPeriod.getFrom (), "MM/dd");
+			final String periodName = CalendarUtils.getTimestamp (cumulationPeriod.getFrom (), java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("date_format_short"));
 			
 //			System.out.println ("processing period "+periodName);
 			

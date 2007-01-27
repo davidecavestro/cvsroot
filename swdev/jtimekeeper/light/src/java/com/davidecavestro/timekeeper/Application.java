@@ -157,7 +157,7 @@ public class Application {
 			wsModel,
 			undoManager,
 			new ActionManager (),
-			new HelpManager (new HelpResourcesResolver (p), "help/MainTimekeeperHelp.hs"),
+			new HelpManager (new HelpResourcesResolver (p), "help-contents/JTTSlite.hs"),
 			peh,
 			_persistenceNode
 			);

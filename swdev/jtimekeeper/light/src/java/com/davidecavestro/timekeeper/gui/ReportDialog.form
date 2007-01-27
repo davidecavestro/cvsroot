@@ -141,6 +141,9 @@
                 </Property>
                 <Property name="selectedIndex" type="int" value="0"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="presetRangesListMouseClicked"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="presetRangesList.setSelectionMode (ListSelectionModel.SINGLE_SELECTION);"/>
               </AuxValues>
