@@ -75,6 +75,7 @@ public class About extends javax.swing.JDialog {
         jPanel5 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         licenseEditorPane = new javax.swing.JTextPane();
@@ -131,10 +132,10 @@ public class About extends javax.swing.JDialog {
 
         jLabel5.setFont(new java.awt.Font("Monospaced", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel5, _context.getApplicationData ().getBuildNumber ()
-            +" ["
+            +"-"
             +com.davidecavestro.common.util.CalendarUtils.getTimestamp (
                 _context.getApplicationData ().getBuildDate ().getTime (), "yyyyMMddHHmm")
-            +"}");
+        );
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
@@ -185,6 +186,17 @@ public class About extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
         jPanel1.add(jPanel5, gridBagConstraints);
+
+        jLabel10.setFont(new java.awt.Font("Monospaced", 0, 12));
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel10, _context.getApplicationData ().getBuildNotes ());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jLabel10, gridBagConstraints);
 
         jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Detail"), jPanel1);
 
@@ -304,6 +316,7 @@ public class About extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
