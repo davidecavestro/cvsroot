@@ -189,7 +189,7 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 				final NodeProgresses detail = cumulationPeriod.getDetail (progressItem);
 				periodDuration += detail.getDuration ();
 			}
-			final Time periodTotalEffort = new Time ((long)periodDuration);
+			final long periodTotalEffort = (long)periodDuration;
 			
 			for (final Iterator<Task> nodeIterator = cumulationPeriod.iterateProgressItems ();nodeIterator.hasNext ();){
 				final Task progressItem = nodeIterator.next ();
@@ -198,7 +198,7 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 				
 //			System.out.println ("processing task "+progressItem.getName ());
 
-				final Time taskTotalEffort = new Time ((long)detail.getDuration ());
+				final long taskTotalEffort = (long)detail.getDuration ();
 				
 				final String taskName = progressItem.getName ();
 				final int taskID = ia.getTaskID (progressItem);
@@ -233,7 +233,7 @@ public final class CumulateLocalProgresses extends AbstractDataExtractor {
 					row.setProgressStart (new Timestamp (periodOfInterest.getFrom ().getTime ()));
 					row.setProgressEnd (new Timestamp (periodOfInterest.getTo ().getTime ()));
 					
-					row.setProgressEffort (new Time (periodOfInterest.getDuration ().getTime ()));
+					row.setProgressEffort (periodOfInterest.getDuration ().getTime ());
 					row.setProgressDescription (progress.getDescription ());
 					row.setProgressNotes (progress.getNotes ());
 					

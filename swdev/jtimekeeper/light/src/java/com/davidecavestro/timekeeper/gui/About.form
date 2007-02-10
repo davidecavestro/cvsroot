@@ -267,6 +267,9 @@
               <SubComponents>
                 <Component class="javax.swing.JTextPane" name="licenseEditorPane">
                   <Properties>
+                    <Property name="editorKit" type="javax.swing.text.EditorKit" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="new HTMLEditorKit ()" type="code"/>
+                    </Property>
                     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="null"/>
                     </Property>
@@ -275,7 +278,7 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="final java.net.URL licenseURL = getClass ().getResource (&quot;license.html&quot;);&#xa;&#xa;if (licenseURL != null) {&#xa;&#x9;try {&#xa;&#x9;&#x9;licenseEditorPane.setPage (licenseURL);&#xa;&#x9;} catch (final IOException ioe) {&#xa;&#x9;&#x9;System.err.println (&quot;Attempted to read a bad URL: &quot; + licenseURL);&#xa;&#x9;}&#xa;} else {&#xa;&#x9;System.err.println (&quot;Couldn&apos;t find file: license.html&quot;);&#xa;}"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="//final java.net.URL licenseURL = getClass ().getClassLoader ().getResource (&quot;license/license.html&quot;);&#xa;&#xa;//if (licenseURL != null) {&#xa;&#x9;try {&#xa;&#x9;&#x9;licenseEditorPane.read (getClass ().getResourceAsStream (&quot;/license/license.html&quot;), new HTMLDocument ());&#xa;&#x9;} catch (final IOException ioe) {&#xa;//&#x9;&#x9;System.err.println (&quot;Attempted to read a bad URL: &quot; + licenseURL + ioe);&#xa;&#x9;}&#xa;//} else {&#xa;//&#x9;System.err.println (&quot;Couldn&apos;t find file: license.html&quot;);&#xa;//}"/>
                   </AuxValues>
                 </Component>
               </SubComponents>

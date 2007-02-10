@@ -6,19 +6,17 @@
 
 package com.davidecavestro.timekeeper.gui;
 
-import com.davidecavestro.common.application.ApplicationData;
 import com.davidecavestro.timekeeper.ApplicationContext;
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
 import java.io.IOException;
 import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 import org.jdesktop.swingx.JXTable;
 
 /**
@@ -194,19 +192,20 @@ public class About extends javax.swing.JDialog {
 
         jScrollPane2.setMaximumSize(null);
         jScrollPane2.setMinimumSize(null);
+        licenseEditorPane.setEditorKit(new HTMLEditorKit ());
         licenseEditorPane.setMaximumSize(null);
         licenseEditorPane.setPreferredSize(null);
-        final java.net.URL licenseURL = getClass ().getResource ("license.html");
+        //final java.net.URL licenseURL = getClass ().getClassLoader ().getResource ("license/license.html");
 
-        if (licenseURL != null) {
+        //if (licenseURL != null) {
             try {
-                licenseEditorPane.setPage (licenseURL);
+                licenseEditorPane.read (getClass ().getResourceAsStream ("/license/license.html"), new HTMLDocument ());
             } catch (final IOException ioe) {
-                System.err.println ("Attempted to read a bad URL: " + licenseURL);
+                //		System.err.println ("Attempted to read a bad URL: " + licenseURL + ioe);
             }
-        } else {
-            System.err.println ("Couldn't find file: license.html");
-        }
+            //} else {
+            //	System.err.println ("Couldn't find file: license.html");
+            //}
         jScrollPane2.setViewportView(licenseEditorPane);
 
         gridBagConstraints = new java.awt.GridBagConstraints();

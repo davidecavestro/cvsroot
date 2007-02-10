@@ -44,7 +44,7 @@ public class PresentationPanel extends javax.swing.JPanel {
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setPreferredSize(new java.awt.Dimension(420, 300));
-        appVersionLabel.setFont(new java.awt.Font("Impact", 1, 28));
+        appVersionLabel.setFont(new java.awt.Font("Impact", 0, 28));
         appVersionLabel.setForeground(new java.awt.Color(0, 0, 0));
         org.openide.awt.Mnemonics.setLocalizedText(appVersionLabel, _appData.getVersionNumber ());
         appVersionLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);

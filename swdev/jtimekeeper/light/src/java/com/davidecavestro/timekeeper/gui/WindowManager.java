@@ -15,6 +15,8 @@ import com.ost.timekeeper.model.Progress;
 import com.ost.timekeeper.model.ProgressItem;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  * Il gestore delle finestre.
@@ -250,6 +252,26 @@ public class WindowManager implements ActionListener, DialogListener {
 		}
 		return this._about;
 	}
-
 	
+	/**
+	 * Varia il look and feel.
+	 * 
+	 * @param laf il nuovo look and feel.
+	 */
+	public void setLookAndFeel (final String laf) {
+		try {
+			UIManager.setLookAndFeel (laf);
+			SwingUtilities.updateComponentTreeUI (getMainWindow ());
+			SwingUtilities.updateComponentTreeUI (getLogConsole ());
+			SwingUtilities.updateComponentTreeUI (getAbout ());
+			SwingUtilities.updateComponentTreeUI (getNewPieceOfWorkDialog ());
+			SwingUtilities.updateComponentTreeUI (getNewTaskDialog ());
+			SwingUtilities.updateComponentTreeUI (getOpenWorkSpaceDialog ());
+			SwingUtilities.updateComponentTreeUI (getOptionsDialog ());
+			SwingUtilities.updateComponentTreeUI (getReportDialog ());
+		} catch (final Exception e) {
+			_context.getLogger ().error ("Cannot change look and feel ", e);
+		}
+	}
+
 }

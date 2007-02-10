@@ -59,7 +59,7 @@ public final class DefaultSettings implements ApplicationSettings {
 	 * @return il lookAndFeel.
 	 */
 	public String getLookAndFeel () {
-		return "com.jgoodies.plaf.plastic.Plastic3DLookAndFeel";
+		return com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName ();
 //		return UIManager.getSystemLookAndFeelClassName ();
 	}
 	

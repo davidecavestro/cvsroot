@@ -190,6 +190,7 @@ public class Application {
 					exit ();
 				}
 			});
+			wm.setLookAndFeel (_context.getApplicationOptions ().getLookAndFeel ());
 		} finally {
 			wm.getSplashWindow (_context.getApplicationData ()).hide ();
 		}

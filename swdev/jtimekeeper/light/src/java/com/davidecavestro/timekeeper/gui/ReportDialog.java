@@ -42,7 +42,7 @@ import javax.swing.ListSelectionModel;
  */
 public class ReportDialog extends javax.swing.JDialog implements PersistentComponent, DialogNotifier {
 	
-	private final DateFormat[] _dateFormats = new DateFormat[] {new SimpleDateFormat ("yy/MM/dd")};
+	private final DateFormat[] _dateFormats = new DateFormat[] {new SimpleDateFormat ("yyyy/MM/dd")};
 	
 	private final DialogNotifierImpl _dialogNotifier = new DialogNotifierImpl ();
 	
@@ -66,7 +66,6 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 				cancel ();
 			}
 		});
-		
 		
 		pack ();
 		setLocationRelativeTo (null);
@@ -142,22 +141,26 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         gridBagConstraints.insets = new java.awt.Insets(16, 4, 4, 4);
         jPanel1.add(jRadioButton2, gridBagConstraints);
 
+        fromDateEditor.setDate(new Date ());
         fromDateEditor.setFormats(_dateFormats);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(16, 4, 4, 4);
+        gridBagConstraints.insets = new java.awt.Insets(16, 4, 4, 11);
         jPanel1.add(fromDateEditor, gridBagConstraints);
 
+        toDateEditor.setDate(new Date ());
         toDateEditor.setFormats(_dateFormats);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 11);
         jPanel1.add(toDateEditor, gridBagConstraints);
 
         presetRangesList.setModel(new AbstractListModel () {
@@ -175,6 +178,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         presetRangesList.setFont(new java.awt.Font("Dialog", 0, 12));
         presetRangesList.setSelectedIndex(0);
         presetRangesList.setSelectionMode (ListSelectionModel.SINGLE_SELECTION);
+        presetRangesList.setVisibleRowCount (presetRangesList.getModel ().getSize ());
         presetRangesList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 presetRangesListMouseClicked(evt);

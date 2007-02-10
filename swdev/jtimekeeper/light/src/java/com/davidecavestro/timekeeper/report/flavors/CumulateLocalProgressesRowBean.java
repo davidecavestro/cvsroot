@@ -152,13 +152,13 @@ public class CumulateLocalProgressesRowBean extends Object implements Serializab
 	/**
 	 * Holds value of property periodTotalEffort.
 	 */
-	private java.sql.Time periodTotalEffort;
+	private Long periodTotalEffort;
 
 	/**
 	 * Getter for property periodTotalEffort.
 	 * @return Value of property periodTotalEffort.
 	 */
-	public java.sql.Time getPeriodTotalEffort () {
+	public Long getPeriodTotalEffort () {
 		return this.periodTotalEffort;
 	}
 
@@ -166,20 +166,20 @@ public class CumulateLocalProgressesRowBean extends Object implements Serializab
 	 * Setter for property periodTotalEffort.
 	 * @param periodTotalEffort New value of property periodTotalEffort.
 	 */
-	public void setPeriodTotalEffort (java.sql.Time periodTotalEffort) {
+	public void setPeriodTotalEffort (Long periodTotalEffort) {
 		this.periodTotalEffort = periodTotalEffort;
 	}
 
 	/**
 	 * Holds value of property taskTotalEffort.
 	 */
-	private java.sql.Time taskTotalEffort;
+	private Long taskTotalEffort;
 
 	/**
 	 * Getter for property taskTotalEffort.
 	 * @return Value of property taskTotalEffort.
 	 */
-	public java.sql.Time getTaskTotalEffort () {
+	public Long getTaskTotalEffort () {
 		return this.taskTotalEffort;
 	}
 
@@ -187,20 +187,20 @@ public class CumulateLocalProgressesRowBean extends Object implements Serializab
 	 * Setter for property taskTotalEffort.
 	 * @param taskTotalEffort New value of property taskTotalEffort.
 	 */
-	public void setTaskTotalEffort (java.sql.Time taskTotalEffort) {
+	public void setTaskTotalEffort (Long taskTotalEffort) {
 		this.taskTotalEffort = taskTotalEffort;
 	}
 
 	/**
 	 * Holds value of property progressEffort.
 	 */
-	private java.sql.Time progressEffort;
+	private Long progressEffort;
 
 	/**
 	 * Getter for property progressEffort.
 	 * @return Value of property progressEffort.
 	 */
-	public java.sql.Time getProgressEffort () {
+	public Long getProgressEffort () {
 		return this.progressEffort;
 	}
 
@@ -208,7 +208,7 @@ public class CumulateLocalProgressesRowBean extends Object implements Serializab
 	 * Setter for property progressEffort.
 	 * @param progressEffort New value of property progressEffort.
 	 */
-	public void setProgressEffort (java.sql.Time progressEffort) {
+	public void setProgressEffort (Long progressEffort) {
 		this.progressEffort = progressEffort;
 	}
 

@@ -14,78 +14,99 @@
         <EventHandler event="popupMenuWillBecomeVisible" listener="javax.swing.event.PopupMenuListener" parameters="javax.swing.event.PopupMenuEvent" handler="treePopupMenuPopupMenuWillBecomeVisible"/>
       </Events>
       <SubComponents>
-        <Menu class="javax.swing.JMenu" name="jMenu1">
+        <MenuItem class="javax.swing.JMenuItem" name="newTaskPopupItem">
           <Properties>
-            <Property name="text" type="java.lang.String" value="New"/>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new NewTaskAction ()" type="code"/>
+            </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Dialog" size="12" style="0"/>
             </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/file-new.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="New task"/>
+            <Property name="actionCommand" type="java.lang.String" value="newTask"/>
           </Properties>
-          <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="newTaskPopupItem">
-              <Properties>
-                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="new NewTaskAction ()" type="code"/>
-                </Property>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Dialog" size="12" style="0"/>
-                </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/file-new.png"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="New Task"/>
-                <Property name="actionCommand" type="java.lang.String" value="newTask"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newTaskPopupItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="newProgressPopupItem">
-              <Properties>
-                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="new NewPieceOfWorkAction ()" type="code"/>
-                </Property>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Dialog" size="12" style="0"/>
-                </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/add.png"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="New Progress"/>
-                <Property name="actionCommand" type="java.lang.String" value="newProgress"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newProgressPopupItemActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
-              </AuxValues>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="startProgressPopupItem">
-              <Properties>
-                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="new StartProgressAction ()" type="code"/>
-                </Property>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+B"/>
-                </Property>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Dialog" size="12" style="0"/>
-                </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/media-record.png"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Start Progress"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startProgressPopupItemActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
-              </AuxValues>
-            </MenuItem>
-          </SubComponents>
-        </Menu>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newTaskPopupItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="newProgressPopupItem">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new NewPieceOfWorkAction ()" type="code"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Dialog" size="12" style="0"/>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/add.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="New action"/>
+            <Property name="actionCommand" type="java.lang.String" value="newProgress"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newProgressPopupItemActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="startProgressPopupItem">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new StartProgressAction ()" type="code"/>
+            </Property>
+            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+              <KeyStroke key="Ctrl+B"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Dialog" size="12" style="0"/>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/media-record.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Start action"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startProgressPopupItemActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+        </MenuItem>
+        <MenuItem class="javax.swing.JSeparator" name="jSeparator12">
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="expandPopupItem">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new ExpandTreeAction ()" type="code"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Dialog" size="12" style="0"/>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/transparent.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Expand"/>
+            <Property name="toolTipText" type="java.lang.String" value="Expands subtree"/>
+          </Properties>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="collapsePopupItem">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new CollapseTreeAction ()" type="code"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Dialog" size="12" style="0"/>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/transparent.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Collapse"/>
+          </Properties>
+        </MenuItem>
         <MenuItem class="javax.swing.JSeparator" name="jSeparator6">
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="cutTasksMenuItem">
@@ -153,6 +174,7 @@
               <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/transparent.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Rename"/>
+            <Property name="toolTipText" type="java.lang.String" value="Rename selected task"/>
           </Properties>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="deleteTaskPopupItem">
@@ -165,9 +187,6 @@
             </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Dialog" size="12" style="0"/>
-            </Property>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/edit-delete.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Delete"/>
             <Property name="actionCommand" type="java.lang.String" value="deleteTask"/>
@@ -188,81 +207,92 @@
         <EventHandler event="popupMenuWillBecomeVisible" listener="javax.swing.event.PopupMenuListener" parameters="javax.swing.event.PopupMenuEvent" handler="tablePopupMenuPopupMenuWillBecomeVisible"/>
       </Events>
       <SubComponents>
-        <Menu class="javax.swing.JMenu" name="jMenu2">
+        <MenuItem class="javax.swing.JMenuItem" name="newProgressPopupItem1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="New"/>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new NewPieceOfWorkAction ()" type="code"/>
+            </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Dialog" size="12" style="0"/>
             </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/add.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="New progress"/>
+            <Property name="actionCommand" type="java.lang.String" value="newProgress"/>
           </Properties>
-          <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="newProgressPopupItem1">
-              <Properties>
-                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="new NewPieceOfWorkAction ()" type="code"/>
-                </Property>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Dialog" size="12" style="0"/>
-                </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/add.png"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="New Progress"/>
-                <Property name="actionCommand" type="java.lang.String" value="newProgress"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newProgressPopupItem1ActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
-              </AuxValues>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="startProgressPopupItem1">
-              <Properties>
-                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="new StartProgressAction ()" type="code"/>
-                </Property>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+B"/>
-                </Property>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Dialog" size="12" style="0"/>
-                </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/media-record.png"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Start Progress"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startProgressPopupItem1ActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
-              </AuxValues>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="startProgressClonePopupItem">
-              <Properties>
-                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="new StartProgressCloneAction ()" type="code"/>
-                </Property>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Dialog" size="12" style="0"/>
-                </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/transparent.png"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Start Progress clone"/>
-                <Property name="toolTipText" type="java.lang.String" value="Start a new progress with the same description of the selected one"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startProgressClonePopupItemActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
-              </AuxValues>
-            </MenuItem>
-          </SubComponents>
-        </Menu>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newProgressPopupItem1ActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="startProgressPopupItem1">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new StartProgressAction ()" type="code"/>
+            </Property>
+            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+              <KeyStroke key="Ctrl+B"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Dialog" size="12" style="0"/>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/media-record.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Start action"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startProgressPopupItem1ActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="startProgressClonePopupItem">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new StartProgressCloneAction ()" type="code"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Dialog" size="12" style="0"/>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/transparent.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Start action clone"/>
+            <Property name="toolTipText" type="java.lang.String" value="Start a new action having the same description of the selected one"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startProgressClonePopupItemActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="continueProgressPopupItem">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new ContinueProgressAction ()" type="code"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Dialog" size="12" style="0"/>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/transparent.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Continue action"/>
+            <Property name="toolTipText" type="java.lang.String" value="Continue previously stopped action"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="continueProgressPopupItemActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+        </MenuItem>
         <MenuItem class="javax.swing.JSeparator" name="jSeparator9">
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="cutProgressesMenuItem1">
@@ -411,7 +441,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/folder-new.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="New Workspace"/>
+                <Property name="text" type="java.lang.String" value="New workspace"/>
                 <Property name="toolTipText" type="java.lang.String" value="Create a new workspace"/>
               </Properties>
               <Events>
@@ -432,7 +462,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/file-new.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="New Task"/>
+                <Property name="text" type="java.lang.String" value="New task"/>
                 <Property name="toolTipText" type="java.lang.String" value="Create a new task"/>
               </Properties>
               <Events>
@@ -455,8 +485,8 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/folder-open.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Open Workspace"/>
-                <Property name="toolTipText" type="java.lang.String" value="Use another existing Workspace"/>
+                <Property name="text" type="java.lang.String" value="Open workspace"/>
+                <Property name="toolTipText" type="java.lang.String" value="Use another existing workspace"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openWorkSpaceMenuItemActionPerformed"/>
@@ -465,55 +495,48 @@
                 <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
               </AuxValues>
             </MenuItem>
-            <Menu class="javax.swing.JMenu" name="importExportMenu">
+            <MenuItem class="javax.swing.JMenuItem" name="exportWorkSpaceMenuItem">
               <Properties>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/package-x-generic.png"/>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="new ExportWorkSpaceAction ()" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Archves"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="0"/>
                 </Property>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/transparent.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Export workspace"/>
+                <Property name="toolTipText" type="java.lang.String" value="Export current workspace to file"/>
               </Properties>
-              <SubComponents>
-                <MenuItem class="javax.swing.JMenuItem" name="exportWorkSpaceMenuItem">
-                  <Properties>
-                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="new ExportWorkSpaceAction ()" type="code"/>
-                    </Property>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Dialog" size="12" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Backup"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Export current Workspace to file"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportWorkSpaceMenuItemActionPerformed"/>
-                  </Events>
-                  <AuxValues>
-                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
-                  </AuxValues>
-                </MenuItem>
-                <MenuItem class="javax.swing.JMenuItem" name="importWorkSpaceMenuItem">
-                  <Properties>
-                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="new ImportWorkSpaceAction ()" type="code"/>
-                    </Property>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Dialog" size="12" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Restore"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Import Workspace from external file"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importWorkSpaceMenuItemActionPerformed"/>
-                  </Events>
-                  <AuxValues>
-                    <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
-                  </AuxValues>
-                </MenuItem>
-              </SubComponents>
-            </Menu>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportWorkSpaceMenuItemActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="importWorkSpaceMenuItem">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="new ImportWorkSpaceAction ()" type="code"/>
+                </Property>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Dialog" size="12" style="0"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/com/davidecavestro/timekeeper/gui/images/small/transparent.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Import workspace"/>
+                <Property name="toolTipText" type="java.lang.String" value="Import a workspace from external file"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importWorkSpaceMenuItemActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
+            </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator3">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="printMenuItem">
@@ -869,15 +892,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
               <SubComponents>
-                <Container class="javax.swing.JScrollPane" name="jScrollPane4">
-                  <Properties>
-                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="null"/>
-                    </Property>
-                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="null"/>
-                    </Property>
-                  </Properties>
+                <Container class="javax.swing.JScrollPane" name="jScrollPane1">
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                       <BorderConstraints direction="Center"/>
@@ -902,7 +917,6 @@
                           <Dimension value="null"/>
                         </Property>
                         <Property name="rootVisible" type="boolean" value="true"/>
-                        <Property name="showVerticalLines" type="boolean" value="true"/>
                         <Property name="treeTableModel" type="org.jdesktop.swingx.treetable.TreeTableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                           <Connection code="new TaskJTreeModel (_context.getModel ())" type="code"/>
                         </Property>
@@ -911,7 +925,7 @@
                         <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="taskTreeMousePressed"/>
                       </Events>
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="javax.help.CSH.setHelpIDString (taskTree, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.TASK_TREE ));&#xa;"/>
+                        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="javax.help.CSH.setHelpIDString (taskTree, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.TASK_TREE ));&#xa;&#xa;taskTree.setTreeCellRenderer (new TaskTreeCellRenderer ());&#xa;&#xa;"/>
                       </AuxValues>
                     </Component>
                   </SubComponents>
@@ -928,9 +942,6 @@
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
               <SubComponents>
                 <Container class="javax.swing.JPanel" name="progressesTablePanel">
-                  <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="this._context.getUIPersisteer ().register (new MainWindow.PersistencePanelAdapter (progressesTablePanel, &quot;progressesTablePanel&quot;));&#xa;"/>
-                  </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                       <BorderConstraints direction="Center"/>
@@ -967,7 +978,6 @@
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                               <Connection code="new ProgressesJTableModel (_context.getModel ())" type="code"/>
                             </Property>
-                            <Property name="autoStartEditOnKeyStroke" type="boolean" value="false"/>
                             <Property name="columnControlVisible" type="boolean" value="true"/>
                             <Property name="dragEnabled" type="boolean" value="true"/>
                             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -977,12 +987,13 @@
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="null"/>
                             </Property>
+                            <Property name="surrendersFocusOnKeystroke" type="boolean" value="true"/>
                           </Properties>
                           <Events>
                             <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="progressesTableMousePressed"/>
                           </Events>
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="&#xa;//progressesTable.setDefaultEditor (String.class, new ValueCellEditor ());&#xa;&#xa;/*&#xa; * editor (shortcut per cancellazione&#xa; */&#xa;progressesTable.addKeyListener (new KeyAdapter (){&#xa;&#x9; public void keyPressed(KeyEvent e) {&#xa;&#x9;&#x9; if (e.getKeyCode ()==KeyEvent.VK_DELETE){&#xa;&#x9;&#x9; }&#xa;&#x9; }&#xa;});&#xa;&#xa;javax.help.CSH.setHelpIDString (progressesTable, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.PROGRESSES_TABLE ));&#xa;&#xa;progressesTable.setDefaultRenderer (java.util.Date.class, new DefaultTableCellRenderer (){&#xa;&#x9;public void setValue (Object value) {&#xa;&#x9;&#x9;setText (&#xa;&#x9;&#x9;&#x9;com.davidecavestro.common.util.CalendarUtils.getTimestamp (&#xa;&#x9;&#x9;&#x9;&#x9;(Date)value, &#xa;&#x9;&#x9;&#x9;&#x9;java.util.ResourceBundle.getBundle(&quot;com.davidecavestro.timekeeper.gui.res&quot;).getString(&quot;from_to_format_long&quot;)&#xa;&#x9;&#x9;&#x9;)&#xa;&#x9;&#x9;);&#xa;&#x9;}&#xa;});&#xa;&#xa;final ImageIcon runningIcon = new ImageIcon (getClass().getResource (&quot;/com/davidecavestro/timekeeper/gui/images/gears.gif&quot;));&#xa;final ImageIcon staticIcon = new ImageIcon ();&#xa;&#xa;&#xa;progressesTable.setDefaultRenderer (Duration.class, &#xa;&#x9;new DefaultTableCellRenderer () {&#xa;&#x9;&#x9;private Font _originalFont;&#xa;&#x9;&#x9;private Font _boldFont;&#xa;&#x9;&#x9;public Component getTableCellRendererComponent (final JTable table, final Object value, boolean isSelected, boolean hasFocus, final int row, final int column) {&#xa;&#xa;&#x9;&#x9;&#x9;final JLabel res = (JLabel)super.getTableCellRendererComponent ( table, value, isSelected, hasFocus, row, column);&#xa;&#x9;&#x9;&#x9;final PieceOfWork progress = (PieceOfWork)value;&#xa;&#xa;&#x9;&#x9;&#x9;final boolean progressing = progress.getTo ()==null;&#xa;&#x9;&#x9;&#x9;//final ImageIcon icon = progressing?runningIcon:staticIcon;&#xa;&#x9;&#x9;&#x9;//setIcon (icon);&#xa;&#xa;&#x9;&#x9;&#x9;if (null==_originalFont) {&#xa;&#x9;&#x9;&#x9;&#x9;_originalFont = res.getFont ();&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;if (null==_boldFont) {&#xa;&#x9;&#x9;&#x9;&#x9;_boldFont = _originalFont.deriveFont (Font.BOLD);&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#xa;&#x9;&#x9;&#x9;if (progressing){&#xa;&#x9;&#x9;&#x9;&#x9;res.setFont (_boldFont);&#xa;&#x9;&#x9;&#x9;&#x9;/*&#xa;&#x9;&#x9;&#x9;&#x9;icon.setImageObserver (new ImageObserver (){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;public boolean imageUpdate (Image img, int flags, int x, int y, int w, int h) {&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;if ((flags &amp; (FRAMEBITS | ALLBITS)) != 0) {&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;Rectangle rect = table.getCellRect (row, column, false);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;table.repaint (rect);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;//&#x9;&#x9;&#x9;table.repaint ();&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;return (flags &amp; (ALLBITS | ABORT)) == 0;&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#x9;});&#xa;&#x9;&#x9;&#x9;&#x9; **/&#xa;&#x9;&#x9;&#x9;} else {&#xa;&#x9;&#x9;&#x9;&#x9;res.setFont (_originalFont);&#xa;&#x9;&#x9;&#x9;}&#xa;&#xa;&#x9;&#x9;&#x9;return res;&#xa;&#x9;&#x9;}&#xa;&#x9;&#x9;public void setValue (Object value) {&#xa;&#x9;&#x9;&#x9;final PieceOfWork progress = (PieceOfWork)value;&#xa;&#x9;&#x9;&#x9;setText (DurationUtils.formatDuration (progress.getTime ()));&#xa;&#x9;&#x9;}&#xa;&#x9;}&#xa;);"/>
+                            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="&#xa;//progressesTable.setDefaultEditor (String.class, new ValueCellEditor ());&#xa;&#xa;/*&#xa; * editor (shortcut per cancellazione&#xa; */&#xa;progressesTable.addKeyListener (new KeyAdapter (){&#xa;&#x9; public void keyPressed(KeyEvent e) {&#xa;&#x9;&#x9; if (e.getKeyCode ()==KeyEvent.VK_DELETE){&#xa;&#x9;&#x9; }&#xa;&#x9; }&#xa;});&#xa;&#xa;javax.help.CSH.setHelpIDString (progressesTable, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.PROGRESSES_TABLE ));&#xa;&#xa;progressesTable.setDefaultRenderer (java.util.Date.class, new DefaultTableCellRenderer (){&#xa;&#x9;&#xa;&#x9;public Component getTableCellRendererComponent (final JTable table, final Object value, boolean isSelected, boolean hasFocus, final int row, final int column) {&#xa;&#x9;&#x9;final Component c = super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);&#xa;&#x9;&#x9;&#xa;&#x9;&#x9;setHorizontalAlignment (TRAILING);&#xa;&#x9;&#x9;&#xa;&#x9;&#x9;return c;&#xa;&#x9;}&#xa;&#x9;public void setValue (Object value) {&#xa;&#x9;&#x9;setText (&#xa;&#x9;&#x9;&#x9;com.davidecavestro.common.util.CalendarUtils.getTimestamp (&#xa;&#x9;&#x9;&#x9;&#x9;(Date)value, &#xa;&#x9;&#x9;&#x9;&#x9;java.util.ResourceBundle.getBundle(&quot;com.davidecavestro.timekeeper.gui.res&quot;).getString(&quot;from_to_format_long&quot;)&#xa;&#x9;&#x9;&#x9;)&#xa;&#x9;&#x9;);&#xa;&#x9;}&#xa;});&#xa;&#xa;final ImageIcon runningIcon = new ImageIcon (getClass().getResource (&quot;/com/davidecavestro/timekeeper/gui/images/gears.gif&quot;));&#xa;final ImageIcon staticIcon = new ImageIcon ();&#xa;&#xa;&#xa;progressesTable.setDefaultRenderer (Duration.class, &#xa;&#x9;new DefaultTableCellRenderer () {&#xa;&#x9;&#x9;private Font _originalFont;&#xa;&#x9;&#x9;private Font _boldFont;&#xa;&#x9;&#x9;public Component getTableCellRendererComponent (final JTable table, final Object value, boolean isSelected, boolean hasFocus, final int row, final int column) {&#xa;&#xa;&#x9;&#x9;&#x9;final JLabel res = (JLabel)super.getTableCellRendererComponent ( table, value, isSelected, hasFocus, row, column);&#xa;&#x9;&#x9;&#x9;final PieceOfWork progress = (PieceOfWork)value;&#xa;&#xa;&#x9;&#x9;&#x9;final boolean progressing = progress.getTo ()==null;&#xa;&#x9;&#x9;&#x9;//final ImageIcon icon = progressing?runningIcon:staticIcon;&#xa;&#x9;&#x9;&#x9;//setIcon (icon);&#xa;&#xa;&#x9;&#x9;&#x9;if (null==_originalFont) {&#xa;&#x9;&#x9;&#x9;&#x9;_originalFont = res.getFont ();&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;if (null==_boldFont) {&#xa;&#x9;&#x9;&#x9;&#x9;_boldFont = _originalFont.deriveFont (Font.BOLD);&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#xa;&#x9;&#x9;&#x9;if (progressing){&#xa;&#x9;&#x9;&#x9;&#x9;res.setFont (_boldFont);&#xa;&#x9;&#x9;&#x9;&#x9;/*&#xa;&#x9;&#x9;&#x9;&#x9;icon.setImageObserver (new ImageObserver (){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;public boolean imageUpdate (Image img, int flags, int x, int y, int w, int h) {&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;if ((flags &amp; (FRAMEBITS | ALLBITS)) != 0) {&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;Rectangle rect = table.getCellRect (row, column, false);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;table.repaint (rect);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;//&#x9;&#x9;&#x9;table.repaint ();&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;return (flags &amp; (ALLBITS | ABORT)) == 0;&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#x9;});&#xa;&#x9;&#x9;&#x9;&#x9; **/&#xa;&#x9;&#x9;&#x9;} else {&#xa;&#x9;&#x9;&#x9;&#x9;res.setFont (_originalFont);&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#xa;&#x9;&#x9;&#x9;setHorizontalAlignment (TRAILING);&#xa;&#xa;&#x9;&#x9;&#x9;return res;&#xa;&#x9;&#x9;}&#xa;&#x9;&#x9;public void setValue (Object value) {&#xa;&#x9;&#x9;&#x9;final PieceOfWork progress = (PieceOfWork)value;&#xa;&#x9;&#x9;&#x9;setText (DurationUtils.formatDuration (progress.getTime ()));&#xa;&#x9;&#x9;}&#xa;&#x9;}&#xa;);"/>
                           </AuxValues>
                         </Component>
                       </SubComponents>

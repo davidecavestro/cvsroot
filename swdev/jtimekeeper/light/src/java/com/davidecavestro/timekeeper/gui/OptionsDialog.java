@@ -10,8 +10,10 @@ import com.davidecavestro.timekeeper.ApplicationContext;
 import com.davidecavestro.timekeeper.conf.ApplicationOptions;
 import com.davidecavestro.timekeeper.conf.UserSettings;
 import java.awt.event.ActionEvent;
+import javax.swing.AbstractListModel;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 
 /**
  * Dialog di impostazione delle opzioni.
@@ -51,8 +53,9 @@ public class OptionsDialog extends javax.swing.JDialog {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
-        createBackupFilesCheckBox = new javax.swing.JCheckBox();
-        enableKeyEditingCheckBox = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
         jPanel2 = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
@@ -66,30 +69,48 @@ public class OptionsDialog extends javax.swing.JDialog {
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        createBackupFilesCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        createBackupFilesCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 42, 4, 6);
-        jPanel1.add(createBackupFilesCheckBox, gridBagConstraints);
-
-        enableKeyEditingCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        enableKeyEditingCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jLabel1.setText("Choose look");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 3, 3, 3);
+        jPanel1.add(jLabel1, gridBagConstraints);
+
+        jList1.setFont(new java.awt.Font("Dialog", 0, 12));
+        jList1.setModel(new AbstractListModel () {
+
+            final LookAndFeelChoice[] lafs = LookAndFeelChoice.values ();
+
+            public LookAndFeelChoice getElementAt (int index) {
+                return lafs[index];
+            }
+            public int getSize () {
+                return lafs.length;
+            }
+        });
+        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jList1ValueChanged(evt);
+            }
+        });
+
+        jScrollPane1.setViewportView(jList1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 42, 4, 6);
-        jPanel1.add(enableKeyEditingCheckBox, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(11, 11, 11, 11);
+        jPanel1.add(jScrollPane1, gridBagConstraints);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
+        okButton.setText("Ok");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
@@ -100,6 +121,7 @@ public class OptionsDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         jPanel2.add(okButton, gridBagConstraints);
 
+        cancelButton.setText("Cancel");
         cancelButton.setDefaultCapable(false);
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -114,8 +136,13 @@ public class OptionsDialog extends javax.swing.JDialog {
         getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-306)/2, (screenSize.height-112)/2, 306, 112);
+        setBounds((screenSize.width-333)/2, (screenSize.height-183)/2, 333, 183);
     }// </editor-fold>//GEN-END:initComponents
+
+	private void jList1ValueChanged (javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
+		_context.getWindowManager ().setLookAndFeel (getSelectedLAF ());
+		_context.getUserSettings ().setLookAndFeel (getSelectedLAF ());
+	}//GEN-LAST:event_jList1ValueChanged
 
 	private void formComponentShown (java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
 		init (_context.getApplicationOptions ());		
@@ -133,10 +160,11 @@ public class OptionsDialog extends javax.swing.JDialog {
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
-    private javax.swing.JCheckBox createBackupFilesCheckBox;
-    private javax.swing.JCheckBox enableKeyEditingCheckBox;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
 	
@@ -151,9 +179,72 @@ public class OptionsDialog extends javax.swing.JDialog {
 	private void init (ApplicationOptions ao) {
 //		createBackupFilesCheckBox.getModel ().setSelected (ao.isBackupOnSaveEnabled ());
 //		enableKeyEditingCheckBox.getModel ().setSelected (ao.isKeyEditingEnabled ());
+		for (final LookAndFeelChoice c : LookAndFeelChoice.values ()) {
+			if (c.getClassName ().equals (UIManager.getLookAndFeel ().getClass ().getName ())) {
+				jList1.setSelectedValue (c, true);
+			}
+		}
 	}
 	
 	private void cancel (){
 		hide ();
+	}
+	
+	private enum LookAndFeelChoice {
+		SYSTEM {
+			public String getClassName () {
+				return UIManager.getSystemLookAndFeelClassName ();
+			}
+			public String toString () {
+				return "System";
+			}
+		},
+		CROSS_PLATFORM {
+			public String getClassName () {
+				return UIManager.getCrossPlatformLookAndFeelClassName ();
+			}
+			public String toString () {
+				return "Cross Platform";
+			}
+		},
+		WINDOWS {
+			public String getClassName () {
+				return "com.jgoodies.looks.windows.WindowsLookAndFeel";
+			}
+			public String toString () {
+				return "Windows";
+			}
+		},
+		PLASTIC {
+			public String getClassName () {
+				return "com.jgoodies.looks.plastic.PlasticLookAndFeel";
+			}
+			public String toString () {
+				return "Plastic";
+			}
+		},
+		PLASTIC2D {
+			public String getClassName () {
+				return "com.jgoodies.looks.plastic.Plastic3DLookAndFeel";
+			}
+			public String toString () {
+				return "Plastic 3D";
+			}
+		},
+		PLASTICXP {
+			public String getClassName () {
+				return "com.jgoodies.looks.plastic.PlasticXPLookAndFeel";
+			}
+			public String toString () {
+				return "Plastic XP";
+			}
+		};
+		public abstract String getClassName ();
+		public abstract String toString ();
+		
+	}
+	
+	private String getSelectedLAF () {
+		return ((LookAndFeelChoice)jList1.getSelectedValue ()).getClassName ();
 	}
 }
