@@ -102,7 +102,7 @@ public class PlainTextLogger implements Logger{
 	 * @param t l'evento.
 	 */
 	public void error (final String message, final Throwable t) {
-		printMessage (MessageType.ERROR, message);
+		printMessage (MessageType.ERROR, message, t);
 	}
 	
 	/**

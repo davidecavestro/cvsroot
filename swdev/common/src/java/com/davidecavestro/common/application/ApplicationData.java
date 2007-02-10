@@ -51,6 +51,11 @@ public final class ApplicationData {
 	public final static String PROPNAME_BUILDNUMBER = "build.number";
 
 	/**
+	 * Nome della proprieta' contenente le annotazioni di di build dell'applicazione.
+	 */
+	public final static String PROPNAME_BUILDNOTES = "build.notes";
+
+	/**
 	 * Nome della proprieta' contenente la data di rilascio dell'applicazione.
 	 */
 	public final static String PROPNAME_RELEASE_DATE = "release.date";
@@ -143,6 +148,22 @@ public final class ApplicationData {
 			_buildNumber = new DisposableData (_releaseProperties.getProperty (PROPNAME_BUILDNUMBER));
 		}
 		return (String)_buildNumber.getData ();
+	}
+	
+	/**
+	 * Le note di build (cache).
+	 */
+	private DisposableData _buildNotes;
+	/**
+	 * Ritorna il numero di build di questo rilascio.
+	 *
+	 * @return il numero di build di questo rilascio.
+	 */	
+	public final String getBuildNotes (){
+		if (_buildNotes==null || !_buildNotes.isValid ()){
+			_buildNotes = new DisposableData (_releaseProperties.getProperty (PROPNAME_BUILDNOTES));
+		}
+		return (String)_buildNotes.getData ();
 	}
 	
 	/**
