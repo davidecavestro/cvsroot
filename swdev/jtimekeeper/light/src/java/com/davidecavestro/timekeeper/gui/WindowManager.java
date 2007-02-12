@@ -76,7 +76,7 @@ public class WindowManager implements ActionListener, DialogListener {
 	 */
 	public NewPieceOfWorkDialog getNewPieceOfWorkDialog () {
 		if (_mewPOWDialog==null){
-			_mewPOWDialog = new NewPieceOfWorkDialog (getMainWindow (), true);
+			_mewPOWDialog = new NewPieceOfWorkDialog (_context, getMainWindow (), true);
 			_context.getUIPersisteer ().register (_mewPOWDialog);
 			_mewPOWDialog.addDialogListener (this);
 		}
@@ -88,6 +88,27 @@ public class WindowManager implements ActionListener, DialogListener {
 	 */
 	public void showNewPieceOfWorkDialog (final Task parent) {
 		getNewPieceOfWorkDialog ().showForTask (parent);
+	}
+	
+	private StartPieceOfWorkDialog _startPOWDialog;	
+	/**
+	 * Ritorna la dialog di partenza nuovo avanzamento.
+	 * @return la dialog di partenza nuovo avanzamento.
+	 */
+	public StartPieceOfWorkDialog getStartPieceOfWorkDialog () {
+		if (_startPOWDialog==null){
+			_startPOWDialog = new StartPieceOfWorkDialog (_context, getMainWindow (), true);
+			_context.getUIPersisteer ().register (_startPOWDialog);
+			_startPOWDialog.addDialogListener (this);
+		}
+		return _startPOWDialog;
+	}
+	
+	/**
+	 * Rende visibile la dialog di partenza nuovo avanzamento.
+	 */
+	public void showStartPieceOfWorkDialog (final Task parent) {
+		getStartPieceOfWorkDialog ().showForTask (parent);
 	}
 	
 	
@@ -201,6 +222,24 @@ public class WindowManager implements ActionListener, DialogListener {
 					t, 
 					-1
 					);
+			}
+			
+		} else if (e.getSource ()==_startPOWDialog){
+			if (e.getType ()==JOptionPane.OK_OPTION){
+				_context.getLogger ().debug ("Starting new progress...");
+				final ProgressItem t = (ProgressItem)_startPOWDialog.getTask ();
+				final Progress p = new Progress (
+						_startPOWDialog.getFromDate (), 
+						null, 
+						t
+					);
+				p.setDescription (_startPOWDialog.getDescriptionText ());
+				this._context.getModel ().insertPieceOfWorkInto (
+					p,
+					t, 
+					-1
+					);
+				_context.getLogger ().debug ("New progress started");
 			}
 		} else if (e.getSource ()==_openWSDialog){
 			if (e.getType ()==JOptionPane.OK_OPTION){

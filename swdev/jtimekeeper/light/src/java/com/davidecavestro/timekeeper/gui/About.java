@@ -75,7 +75,8 @@ public class About extends javax.swing.JDialog {
         jPanel5 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         licenseEditorPane = new javax.swing.JTextPane();
@@ -187,16 +188,21 @@ public class About extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
         jPanel1.add(jPanel5, gridBagConstraints);
 
-        jLabel10.setFont(new java.awt.Font("Monospaced", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel10, _context.getApplicationData ().getBuildNotes ());
+        jScrollPane3.setBorder(null);
+        jTextPane1.setBorder(null);
+        jTextPane1.setEditable(false);
+        jTextPane1.setFont(new java.awt.Font("Monospaced", 0, 12));
+        jTextPane1.setText(_context.getApplicationData ().getBuildNotes ());
+        jTextPane1.setOpaque(false);
+        jScrollPane3.setViewportView(jTextPane1);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jLabel10, gridBagConstraints);
+        jPanel1.add(jScrollPane3, gridBagConstraints);
 
         jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Detail"), jPanel1);
 
@@ -207,17 +213,17 @@ public class About extends javax.swing.JDialog {
         licenseEditorPane.setEditorKit(new HTMLEditorKit ());
         licenseEditorPane.setMaximumSize(null);
         licenseEditorPane.setPreferredSize(null);
-        //final java.net.URL licenseURL = getClass ().getClassLoader ().getResource ("license/license.html");
+        final java.net.URL licenseURL = getClass ().getResource ("/license/license.html");
 
-        //if (licenseURL != null) {
+        if (licenseURL != null) {
             try {
-                licenseEditorPane.read (getClass ().getResourceAsStream ("/license/license.html"), new HTMLDocument ());
+                licenseEditorPane.setPage (licenseURL);
             } catch (final IOException ioe) {
-                //		System.err.println ("Attempted to read a bad URL: " + licenseURL + ioe);
+                System.err.println ("Attempted to read a bad URL: " + licenseURL + ioe);
             }
-            //} else {
-            //	System.err.println ("Couldn't find file: license.html");
-            //}
+        } else {
+            System.err.println ("Couldn't find file: license.html");
+        }
         jScrollPane2.setViewportView(licenseEditorPane);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -333,7 +339,9 @@ public class About extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextPane jTextPane1;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
     private javax.swing.JToolBar jToolBar1;

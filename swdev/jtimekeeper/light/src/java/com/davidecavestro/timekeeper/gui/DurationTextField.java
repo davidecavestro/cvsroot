@@ -32,6 +32,14 @@ public class DurationTextField extends JFormattedTextField {
 		super (new DurationFormatter ());
 	}
 	
+	/**
+	 * Costruttore.
+	 */
+	public DurationTextField (final Duration d) {
+		this ();
+		setValue (d);
+	}
+	
 	private static class DurationFormatter extends InternationalFormatter {
 		public DurationFormatter () {
 			super (	new Format () {

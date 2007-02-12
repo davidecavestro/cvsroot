@@ -1,7 +1,7 @@
 /*
- * NewTaskDialog.java
+ * StartPieceOfWorkDialog.java
  *
- * Created on 10 dicembre 2005, 10.38
+ * Created on 10 febbraio 2007, 19.20
  */
 
 package com.davidecavestro.timekeeper.gui;
@@ -24,18 +24,19 @@ import javax.swing.KeyStroke;
 import javax.swing.text.DateFormatter;
 
 /**
+ * Dialog di lancio di un nuovo progress.
  *
- * @author  davide
+ * @author  Davide Cavestro
  */
-public class NewPieceOfWorkDialog extends javax.swing.JDialog implements PersistentComponent, DialogNotifier {
+public class StartPieceOfWorkDialog extends javax.swing.JDialog implements PersistentComponent, DialogNotifier {
 	
 	private final DialogNotifierImpl _dialogNotifier;
 	
 	private final ApplicationContext _context;
 	/**
-	 * Creates new form NewTaskDialog
+	 * Costruttore.
 	 */
-	public NewPieceOfWorkDialog (final ApplicationContext context, java.awt.Frame parent, boolean modal){
+	public StartPieceOfWorkDialog (final ApplicationContext context, java.awt.Frame parent, boolean modal){
 		super (parent, modal);
 		_context = context;
 		initComponents ();
@@ -50,6 +51,7 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
 		});
 		
 //		pack ();
+		startMethodChanged ();
 		setLocationRelativeTo (null);
 		
 	}
@@ -63,8 +65,7 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jLabel3 = new javax.swing.JLabel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
@@ -72,40 +73,20 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
         descriptionPane = new javax.swing.JScrollPane();
         descriptionField = new javax.swing.JTextArea();
         fromField = new JFormattedTextField (new DateFormatter (new SimpleDateFormat (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("from_to_format_long"))));
-        toField = new JFormattedTextField (new DateFormatter (new SimpleDateFormat (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("from_to_format_long"))));
-        durationField = new DurationTextField ();
-        jLabel4 = new javax.swing.JLabel();
+        durationField = new DurationTextField (new Duration (0));
+        fromRadio = new javax.swing.JRadioButton();
+        durationRadio = new javax.swing.JRadioButton();
 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("New_progress"));
         setModal(true);
-        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, "&From");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
-        getContentPane().add(jLabel1, gridBagConstraints);
-
-        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, "&To");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
-        getContentPane().add(jLabel2, gridBagConstraints);
-
         jLabel3.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel3, "&Notes");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
@@ -121,7 +102,7 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(okButton, gridBagConstraints);
@@ -136,7 +117,7 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(cancelButton, gridBagConstraints);
@@ -149,7 +130,7 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
         helpButton.setActionCommand("help");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(helpButton, gridBagConstraints);
@@ -160,7 +141,7 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -182,34 +163,14 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(fromField, gridBagConstraints);
 
-        toField.setText("jFormattedTextField1");
-        toField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                toFieldActionPerformed(evt);
-            }
-        });
-        toField.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                toFieldPropertyChange(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
-        getContentPane().add(toField, gridBagConstraints);
-
-        durationField.setText("jFormattedTextField1");
         durationField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 durationFieldActionPerformed(evt);
@@ -223,51 +184,76 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         getContentPane().add(durationField, gridBagConstraints);
 
-        jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel4, "&Duration");
+        buttonGroup1.add(fromRadio);
+        fromRadio.setFont(new java.awt.Font("Dialog", 0, 12));
+        fromRadio.setText("From");
+        fromRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        fromRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        fromRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fromRadioActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
-        getContentPane().add(jLabel4, gridBagConstraints);
+        getContentPane().add(fromRadio, gridBagConstraints);
+
+        buttonGroup1.add(durationRadio);
+        durationRadio.setFont(new java.awt.Font("Dialog", 0, 12));
+        durationRadio.setSelected(true);
+        durationRadio.setText("Duration");
+        durationRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        durationRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        durationRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                durationRadioActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
+        getContentPane().add(durationRadio, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+	private void durationRadioActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_durationRadioActionPerformed
+		startMethodChanged ();
+	}//GEN-LAST:event_durationRadioActionPerformed
+
+	private void fromRadioActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fromRadioActionPerformed
+		startMethodChanged ();
+	}//GEN-LAST:event_fromRadioActionPerformed
+
 	private void durationFieldPropertyChange (java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_durationFieldPropertyChange
-	syncToDate ();
 	check ();
 	}//GEN-LAST:event_durationFieldPropertyChange
 
-	private void toFieldPropertyChange (java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_toFieldPropertyChange
-	syncDuration ();
-	check ();
-	}//GEN-LAST:event_toFieldPropertyChange
-
 	private void fromFieldPropertyChange (java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_fromFieldPropertyChange
-	syncDuration ();
 	check ();
 	}//GEN-LAST:event_fromFieldPropertyChange
 
 	private void durationFieldActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_durationFieldActionPerformed
-	syncToDate ();
 	check ();
 	}//GEN-LAST:event_durationFieldActionPerformed
 
-	private void toFieldActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toFieldActionPerformed
-	syncDuration ();
-	check ();
-	}//GEN-LAST:event_toFieldActionPerformed
-
 	private void fromFieldActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fromFieldActionPerformed
-	syncDuration ();
 	check ();
 	}//GEN-LAST:event_fromFieldActionPerformed
 
@@ -281,18 +267,17 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton cancelButton;
     private javax.swing.JTextArea descriptionField;
     private javax.swing.JScrollPane descriptionPane;
     private javax.swing.JFormattedTextField durationField;
+    private javax.swing.JRadioButton durationRadio;
     private javax.swing.JFormattedTextField fromField;
+    private javax.swing.JRadioButton fromRadio;
     private javax.swing.JButton helpButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JButton okButton;
-    private javax.swing.JFormattedTextField toField;
     // End of variables declaration//GEN-END:variables
 	
 	private void confirm (){
@@ -303,7 +288,7 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
 	private Task _task;
 	public void showForTask (Task t) {
 		this._task = t;
-        setTitle(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("New_progress")+ " - ["+t.getName ()+"]");
+        setTitle("Start new action " + " - ["+t.getName ()+"]");
 		show ();
 	}
 	
@@ -318,8 +303,6 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
 	
 	private void reset (){
 		this.fromField.setValue (new Date ());
-		this.toField.setValue (new Date ());
-		syncDuration ();
 		this.descriptionField.setText ("");
 		check ();
 	}
@@ -327,12 +310,11 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
 	
 	private void check (){
 		final Date from = (Date)fromField.getValue ();
-		final Date to = (Date)toField.getValue ();
-		okButton.setEnabled (_task!=null && from!=null && to!=null && from.before (to));
+		okButton.setEnabled (_task!=null && from!=null);
 	}
 	
 	public String getPersistenceKey () {
-		return "newtaskdialog";
+		return "startprogressdialog";
 	}
 	
 	public void makePersistent (com.davidecavestro.common.gui.persistence.PersistenceStorage props) {
@@ -345,11 +327,11 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
 	}
 	
 	public Date getFromDate (){
-		return (Date)fromField.getValue ();
-	}
-	
-	public Date getToDate (){
-		return (Date)toField.getValue ();
+		if (_useDuration) {
+			return new Date (new Date ().getTime () - ((Duration)durationField.getValue ()).getTime ());
+		} else {
+			return (Date)fromField.getValue ();
+		}
 	}
 	
 	public String getDescriptionText (){
@@ -368,15 +350,18 @@ public class NewPieceOfWorkDialog extends javax.swing.JDialog implements Persist
 		hide ();
 	}
 	
-	private void syncDuration (){
-		if (getFromDate ()!=null && getToDate ()!=null) {
-			durationField.setValue (new Duration (getFromDate (), getToDate ()));
+	boolean _useDuration;
+	private void startMethodChanged () {
+		_useDuration = durationRadio.isSelected ();
+		durationField.setEnabled (_useDuration);
+		fromField.setEnabled (!_useDuration);
+		if (_useDuration) {
+			durationField.requestFocusInWindow ();
+			durationField.selectAll ();
+		} else {
+			fromField.requestFocusInWindow ();
+			fromField.selectAll ();
 		}
-	}
-	
-	private void syncToDate (){
-		if (getFromDate ()!=null && durationField.getValue ()!=null) {
-			toField.setValue (new Date (getFromDate ().getTime ()+ ((Duration)durationField.getValue ()).getTime ()));
-		}
-	}
+	}	
+		
 }
