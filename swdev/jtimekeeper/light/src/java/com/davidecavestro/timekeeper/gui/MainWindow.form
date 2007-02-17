@@ -1100,6 +1100,11 @@
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
               <SubComponents>
                 <Container class="javax.swing.JPanel" name="progressesTablePanel">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="ff" green="ff" id="Table.background" palette="3" red="ff" type="palette"/>
+                    </Property>
+                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                       <BorderConstraints direction="Center"/>
@@ -1111,14 +1116,15 @@
                     <Container class="javax.swing.JScrollPane" name="jScrollPane3">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="ff" green="ff" id="Table.background" palette="3" red="ff" type="palette"/>
+                          <Color blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
                         </Property>
                         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="null"/>
                         </Property>
+                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jScrollPane3.getViewport ().setBackground (javax.swing.UIManager.getDefaults().getColor(&quot;Table.background&quot;));"/>
+                        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="//jScrollPane3.getViewport ().setBackground (javax.swing.UIManager.getDefaults().getColor(&quot;Table.background&quot;));&#xa;jScrollPane3.getViewport ().setBackground (Color.WHITE);"/>
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
@@ -1142,6 +1148,7 @@
                               <Font name="Monospaced" size="12" style="0"/>
                             </Property>
                             <Property name="horizontalScrollEnabled" type="boolean" value="true"/>
+                            <Property name="opaque" type="boolean" value="false"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="null"/>
                             </Property>
@@ -1150,6 +1157,8 @@
                             <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="progressesTableMousePressed"/>
                           </Events>
                           <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JXTable (){&#xa;&#x9;&#xa;         public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {&#xa;            Component c = super.prepareRenderer( renderer, row, column);&#xa;            // We want renderer component to be transparent&#xa;            // so background image is visible&#xa;            if( c instanceof JComponent ) {&#xa;               //((JComponent)c).setOpaque(false);&#xa;&#x9;&#x9;&#x9;   final Color oldColor = c.getBackground ();&#xa;&#x9;&#x9;&#x9;   if (oldColor!=null) {&#xa;&#x9;&#x9;&#x9;&#x9;   c.setBackground (ColorUtil.setAlpha (oldColor, 150));&#xa;&#x9;&#x9;&#x9;   }&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;   return c;&#xa;&#x9;&#x9;}&#xa;&#x9;&#x9; &#xa;&#x9;&#x9; private final int imageWidth = image.getIconWidth();&#xa;&#x9;&#x9; private final int imageHeight = image.getIconHeight();&#xa;&#x9;&#x9; &#xa;&#x9;&#x9;public void paint( Graphics g ) {&#xa;&#x9;&#x9;&#x9;// First draw the background image - tiled &#xa;&#x9;&#x9;&#x9;final Dimension d = getSize();&#xa;&#x9;&#x9;&#x9;&#x9; &#xa;&#x9;&#x9;&#x9;g.drawImage( image.getImage(), (d.width - imageWidth)/2, (d.height - imageHeight)/2, null, null );&#xa;&#x9;&#x9;&#x9;// Now let the regular paint code do it&apos;s work&#xa;&#x9;&#x9;&#x9;super.paint(g);&#xa;&#x9;   }&#xa;&#x9;&#xa;&#x9;};"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="final ImageIcon image = new javax.swing.ImageIcon(getClass().getResource(&quot;/com/davidecavestro/timekeeper/gui/images/Hourglass.png&quot;));"/>
                             <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="&#xa;//progressesTable.setDefaultEditor (String.class, new ValueCellEditor ());&#xa;&#xa;/*&#xa; * editor (shortcut per cancellazione&#xa; */&#xa;progressesTable.addKeyListener (new KeyAdapter (){&#xa;&#x9; public void keyPressed(KeyEvent e) {&#xa;&#x9;&#x9; if (e.getKeyCode ()==KeyEvent.VK_DELETE){&#xa;&#x9;&#x9; }&#xa;&#x9; }&#xa;});&#xa;&#xa;javax.help.CSH.setHelpIDString (progressesTable, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.PROGRESSES_TABLE ));&#xa;&#xa;progressesTable.setDefaultRenderer (java.util.Date.class, new DefaultTableCellRenderer (){&#xa;&#x9;&#xa;&#x9;public Component getTableCellRendererComponent (final JTable table, final Object value, boolean isSelected, boolean hasFocus, final int row, final int column) {&#xa;&#x9;&#x9;final Component c = super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);&#xa;&#x9;&#x9;&#xa;&#x9;&#x9;setHorizontalAlignment (TRAILING);&#xa;&#x9;&#x9;&#xa;&#x9;&#x9;return c;&#xa;&#x9;}&#xa;&#x9;public void setValue (Object value) {&#xa;&#x9;&#x9;setText (&#xa;&#x9;&#x9;&#x9;com.davidecavestro.common.util.CalendarUtils.getTimestamp (&#xa;&#x9;&#x9;&#x9;&#x9;(Date)value, &#xa;&#x9;&#x9;&#x9;&#x9;java.util.ResourceBundle.getBundle(&quot;com.davidecavestro.timekeeper.gui.res&quot;).getString(&quot;from_to_format_long&quot;)&#xa;&#x9;&#x9;&#x9;)&#xa;&#x9;&#x9;);&#xa;&#x9;}&#xa;});&#xa;&#xa;final ImageIcon runningIcon = new ImageIcon (getClass().getResource (&quot;/com/davidecavestro/timekeeper/gui/images/gears.gif&quot;));&#xa;final ImageIcon staticIcon = new ImageIcon ();&#xa;&#xa;&#xa;progressesTable.setDefaultRenderer (Duration.class, &#xa;&#x9;new DefaultTableCellRenderer () {&#xa;&#x9;&#x9;private Font _originalFont;&#xa;&#x9;&#x9;private Font _boldFont;&#xa;&#x9;&#x9;public Component getTableCellRendererComponent (final JTable table, final Object value, boolean isSelected, boolean hasFocus, final int row, final int column) {&#xa;&#xa;&#x9;&#x9;&#x9;final JLabel res = (JLabel)super.getTableCellRendererComponent ( table, value, isSelected, hasFocus, row, column);&#xa;&#x9;&#x9;&#x9;final PieceOfWork progress = (PieceOfWork)value;&#xa;&#xa;&#x9;&#x9;&#x9;final boolean progressing = progress.getTo ()==null;&#xa;&#x9;&#x9;&#x9;//final ImageIcon icon = progressing?runningIcon:staticIcon;&#xa;&#x9;&#x9;&#x9;//setIcon (icon);&#xa;&#xa;&#x9;&#x9;&#x9;if (null==_originalFont) {&#xa;&#x9;&#x9;&#x9;&#x9;_originalFont = res.getFont ();&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;if (null==_boldFont) {&#xa;&#x9;&#x9;&#x9;&#x9;_boldFont = _originalFont.deriveFont (Font.BOLD);&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#xa;&#x9;&#x9;&#x9;if (progressing){&#xa;&#x9;&#x9;&#x9;&#x9;res.setFont (_boldFont);&#xa;&#x9;&#x9;&#x9;&#x9;/*&#xa;&#x9;&#x9;&#x9;&#x9;icon.setImageObserver (new ImageObserver (){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;public boolean imageUpdate (Image img, int flags, int x, int y, int w, int h) {&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;if ((flags &amp; (FRAMEBITS | ALLBITS)) != 0) {&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;Rectangle rect = table.getCellRect (row, column, false);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;table.repaint (rect);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;//&#x9;&#x9;&#x9;table.repaint ();&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;return (flags &amp; (ALLBITS | ABORT)) == 0;&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#x9;});&#xa;&#x9;&#x9;&#x9;&#x9; **/&#xa;&#x9;&#x9;&#x9;} else {&#xa;&#x9;&#x9;&#x9;&#x9;res.setFont (_originalFont);&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#xa;&#x9;&#x9;&#x9;setHorizontalAlignment (TRAILING);&#xa;&#xa;&#x9;&#x9;&#x9;return res;&#xa;&#x9;&#x9;}&#xa;&#x9;&#x9;public void setValue (Object value) {&#xa;&#x9;&#x9;&#x9;final PieceOfWork progress = (PieceOfWork)value;&#xa;&#x9;&#x9;&#x9;setText (DurationUtils.formatDuration (progress.getTime ()));&#xa;&#x9;&#x9;}&#xa;&#x9;}&#xa;);"/>
                           </AuxValues>
                         </Component>
