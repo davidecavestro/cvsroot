@@ -3,18 +3,13 @@
 ############################
 
 CONTENUTI DELLA DIRECTORY
-Questa directory contiene la licenza del software JTTS e le licenze delle librerie di terze parti utilizzate dal software JTTS e con essa redistribuite.
+Questa directory contiene le licenza del software JTTS e delle librerie 
+di terze parti utilizzate dal software JTTS e con essa redistribuite.
 
 Il file "license.html" contiene la licenza per il software JTTS.
 
-La directory "javahelp" contiene la licenza per la libreria SUN JavaHelp System.
-La directory "jlfgr" contiene la licenza per la libreria SUN Java Look and Feel Graphics Repository..
-La directory "openide" contiene la licenza per le librerie di Netbeans Platform.
-Il file LGPL.txt contiene la licenza GNU Lesser General Public License.
-
-
 NOTA
-L'autore ha cercato di includere le licenze del software di terze parti
+L'autore ha cercato di includere tutte le licenze del software di terze parti
 consapevolmente utilizzato. Si prega di segnalare all'indirizzo email 
 sotto riportato ogni eventuale mancanza.
 
