@@ -12,6 +12,7 @@ import com.davidecavestro.common.gui.VTextIcon;
 import com.davidecavestro.common.gui.persistence.PersistenceUtils;
 import com.davidecavestro.common.gui.persistence.PersistentComponent;
 import com.davidecavestro.common.util.CalendarUtils;
+import com.davidecavestro.common.util.ExceptionUtils;
 import com.davidecavestro.common.util.IllegalOperationException;
 import com.davidecavestro.common.util.StringUtils;
 import com.davidecavestro.common.util.action.ActionNotifier;
@@ -534,8 +535,15 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			public void propertyChange (PropertyChangeEvent e){
 				final String pName = e.getPropertyName ();
 				if (pName.equals ("name")){
-					taskTree.requestFocusInWindow ();
-					taskTree.getSelectionModel ().setSelectionInterval (0, 0);
+					try {
+						taskTree.requestFocusInWindow ();
+						taskTree.getSelectionModel ().setSelectionInterval (0, 0);
+					} catch (Exception ex) {
+						/*
+						 * Se non dovesse funzionare, non deve bloccare il thread AWT
+						 */
+						System.out.println (ExceptionUtils.getStackTrace (ex));
+					}
 				}
 			}
 		}
