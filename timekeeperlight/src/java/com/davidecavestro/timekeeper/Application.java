@@ -91,19 +91,14 @@ public class Application {
 		 */
 		final Properties p = new Properties ();
 		try {
-			p.load (new FileInputStream (_env.getApplicationDirPath ()+"/helpmap.properties"));
+			p.load (new FileInputStream (new File (_env.getApplicationDirPath (), "helpmap.properties")));
 		} catch (IOException ioe){
 			System.out.println (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Missing_help_resources_mapping_file"));
 		}
 		
 		
 		try {
-			final StringBuffer sb = new StringBuffer ();
-			sb.append (applicationOptions.getLogDirPath () ).append ("/")
-			.append (CalendarUtils.getTS (Calendar.getInstance ().getTime (), CalendarUtils.FILENAME_TIMESTAMP_FORMAT))
-			.append (".log");
-			
-			final File plainTextLogFile = new File (sb.toString ());
+			final File plainTextLogFile = new File (applicationOptions.getLogDirPath (), CalendarUtils.getTS (Calendar.getInstance ().getTime (), CalendarUtils.FILENAME_TIMESTAMP_FORMAT)+".log");
 			
 //			logDocument.setParser (new javax.swing.text.html.parser.ParserDelegator ());
 			
