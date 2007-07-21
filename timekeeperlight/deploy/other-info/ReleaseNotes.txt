@@ -1,0 +1,46 @@
+2.1.2
+- Added support to work with partially corrupted datastore (To avoid data corruption don't launch multiple instances of the application!).
+
+2.1.1
+- Completed report localization
+- Introduced subtree reporting filter
+- Fixed tree problems at action start (task names truncated with dots)
+- Added tree navigation through ring chart feature
+
+2.1.0
+
+- Introduced charts
+- Added Tiny Look And Feel
+- Fixed bug on task removal
+- Introduced centralised data directory support (due to old releases problem)
+
+
+2.0.4
+
+- Fixed critical non-deterministic bug on startup
+- Added some missing italian localizations
+- Added Application tab pane on about dialog
+- Introduced previous instances detection mechanism
+
+
+2.0.3
+
+- Fixed critical bug on report launch
+
+
+2.0.2
+
+- Fixed various bugs
+- Italian localization
+
+
+2.0.1
+
+- Added some missing data into report
+- Fixed some wrong report terms
+- Fixed problem on task removal (from contextual menu)
+
+
+2.0.0
+
+- First alpha release. 
