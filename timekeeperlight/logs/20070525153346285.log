@@ -1,0 +1,17 @@
+25/05/2007 15:33:47: starting UI
+25/05/2007 15:33:48: Cannot change look and feel 
+Related event: 
+javax.swing.UnsupportedLookAndFeelException: [The JGoodies Windows Look and Feel - © 2001-2006 JGoodies Karsten Lentzsch - com.jgoodies.looks.windows.WindowsLookAndFeel] not supported on this platform
+	at javax.swing.UIManager.setLookAndFeel(UIManager.java:428)
+	at javax.swing.UIManager.setLookAndFeel(UIManager.java:481)
+	at com.davidecavestro.timekeeper.gui.WindowManager$1.run(WindowManager.java:307)
+	at java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:209)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:461)
+	at java.awt.EventDispatchThread.pumpOneEventForHierarchy(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:163)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:157)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:149)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:110)
+
+
+25/05/2007 15:33:49: UI successfully started
