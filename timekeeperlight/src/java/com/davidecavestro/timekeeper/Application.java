@@ -187,6 +187,9 @@ public class Application {
 	public void start (){
 		_context.getLogger ().info (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("starting_UI"));
 		final WindowManager wm = _context.getWindowManager ();
+		
+		wm.setLookAndFeel (_context.getApplicationOptions ().getLookAndFeel ());
+		
 		wm.getSplashWindow (_context.getApplicationData ()).show ();
 		try {
 			wm.getSplashWindow (_context.getApplicationData ()).showInfo (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Initializing_context..."));
@@ -205,7 +208,6 @@ public class Application {
 				}
 			});
 			
-			wm.setLookAndFeel (_context.getApplicationOptions ().getLookAndFeel ());
 		} finally {
 			wm.getSplashWindow (_context.getApplicationData ()).hide ();
 		}
