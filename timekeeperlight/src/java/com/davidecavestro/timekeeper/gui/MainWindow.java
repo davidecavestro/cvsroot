@@ -1380,6 +1380,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jPanel5.setPreferredSize(new java.awt.Dimension(420, 40));
             mainToolbar.setFloatable(false);
             mainToolbar.setRollover(true);
+            mainToolbar.setPreferredSize(new java.awt.Dimension(150, 28));
             javax.help.CSH.setHelpIDString (mainToolbar, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
             jButton5.setAction(new NewWorkSpaceAction ());
@@ -1390,7 +1391,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton5.setMargin(null);
             jButton5.setMinimumSize(new java.awt.Dimension(22, 22));
             jButton5.setOpaque(false);
-            jButton5.setPreferredSize(new java.awt.Dimension(30, 30));
+            jButton5.setPreferredSize(new java.awt.Dimension(28, 28));
             mainToolbar.add(jButton5);
 
             jButton1.setAction(new NewTaskAction ());
@@ -1401,7 +1402,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton1.setMargin(null);
             jButton1.setMinimumSize(new java.awt.Dimension(22, 22));
             jButton1.setOpaque(false);
-            jButton1.setPreferredSize(new java.awt.Dimension(30, 30));
+            jButton1.setPreferredSize(new java.awt.Dimension(28, 28));
             mainToolbar.add(jButton1);
 
             jButton2.setAction(new OpenWorkSpaceAction ());
@@ -1413,10 +1414,10 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton2.setMaximumSize(new java.awt.Dimension(28, 28));
             jButton2.setMinimumSize(new java.awt.Dimension(22, 22));
             jButton2.setOpaque(false);
-            jButton2.setPreferredSize(new java.awt.Dimension(30, 30));
+            jButton2.setPreferredSize(new java.awt.Dimension(28, 28));
             mainToolbar.add(jButton2);
 
-            jSeparator5.setMinimumSize(new java.awt.Dimension(40, 0));
+            jSeparator5.setMinimumSize(new java.awt.Dimension(10, 0));
             mainToolbar.add(jSeparator5);
 
             jButton4.setAction(new NewPieceOfWorkAction ());
@@ -1428,7 +1429,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton4.setMaximumSize(new java.awt.Dimension(28, 28));
             jButton4.setMinimumSize(new java.awt.Dimension(22, 22));
             jButton4.setOpaque(false);
-            jButton4.setPreferredSize(new java.awt.Dimension(30, 30));
+            jButton4.setPreferredSize(new java.awt.Dimension(28, 28));
             mainToolbar.add(jButton4);
 
             jButton3.setAction(new StartProgressAction ());
@@ -1440,7 +1441,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton3.setMaximumSize(new java.awt.Dimension(28, 28));
             jButton3.setMinimumSize(new java.awt.Dimension(22, 22));
             jButton3.setOpaque(false);
-            jButton3.setPreferredSize(new java.awt.Dimension(30, 30));
+            jButton3.setPreferredSize(new java.awt.Dimension(28, 28));
             mainToolbar.add(jButton3);
 
             jButton10.setAction(new StopProgressAction ());
@@ -1452,16 +1453,19 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton10.setMaximumSize(new java.awt.Dimension(28, 28));
             jButton10.setMinimumSize(new java.awt.Dimension(22, 22));
             jButton10.setOpaque(false);
-            jButton10.setPreferredSize(new java.awt.Dimension(30, 30));
+            jButton10.setPreferredSize(new java.awt.Dimension(28, 28));
             mainToolbar.add(jButton10);
 
             jSeparator14.setMinimumSize(new java.awt.Dimension(40, 0));
             mainToolbar.add(jSeparator14);
 
-            jPanel5.add(mainToolbar, new java.awt.GridBagConstraints());
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+            jPanel5.add(mainToolbar, gridBagConstraints);
 
             mainToolbar1.setFloatable(false);
             mainToolbar1.setRollover(true);
+            mainToolbar1.setPreferredSize(new java.awt.Dimension(150, 28));
             javax.help.CSH.setHelpIDString (mainToolbar1, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
             jButton6.setAction(new TransferAction (TransferAction.Type.CUT, tal));
@@ -1472,7 +1476,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton6.setMargin(null);
             jButton6.setMinimumSize(new java.awt.Dimension(22, 22));
             jButton6.setOpaque(false);
-            jButton6.setPreferredSize(new java.awt.Dimension(30, 30));
+            jButton6.setPreferredSize(new java.awt.Dimension(28, 28));
             jButton6.setText (null);
             mainToolbar1.add(jButton6);
 
@@ -1484,7 +1488,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton7.setMargin(null);
             jButton7.setMinimumSize(new java.awt.Dimension(22, 22));
             jButton7.setOpaque(false);
-            jButton7.setPreferredSize(new java.awt.Dimension(30, 30));
+            jButton7.setPreferredSize(new java.awt.Dimension(28, 28));
             jButton7.setText (null);
             mainToolbar1.add(jButton7);
 
@@ -1496,7 +1500,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton8.setMargin(null);
             jButton8.setMinimumSize(new java.awt.Dimension(22, 22));
             jButton8.setOpaque(false);
-            jButton8.setPreferredSize(new java.awt.Dimension(30, 30));
+            jButton8.setPreferredSize(new java.awt.Dimension(28, 28));
             jButton8.setText (null);
             mainToolbar1.add(jButton8);
 
@@ -1509,7 +1513,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             undoButton.setMaximumSize(new java.awt.Dimension(28, 28));
             undoButton.setMinimumSize(new java.awt.Dimension(22, 22));
             undoButton.setOpaque(false);
-            undoButton.setPreferredSize(new java.awt.Dimension(30, 30));
+            undoButton.setPreferredSize(new java.awt.Dimension(28, 28));
             /* mantiene nascosto il testo  dell'action */
             undoButton.setText (null);
             undoButton.putClientProperty ("hideActionText", Boolean.TRUE);
@@ -1524,7 +1528,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             redoButton.setMaximumSize(new java.awt.Dimension(28, 28));
             redoButton.setMinimumSize(new java.awt.Dimension(22, 22));
             redoButton.setOpaque(false);
-            redoButton.setPreferredSize(new java.awt.Dimension(30, 30));
+            redoButton.setPreferredSize(new java.awt.Dimension(28, 28));
             /* mantiene nascosto il testo  dell'action */
             redoButton.setText (null);
             redoButton.putClientProperty ("hideActionText", Boolean.TRUE);
@@ -1533,10 +1537,13 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jSeparator15.setMinimumSize(new java.awt.Dimension(40, 0));
             mainToolbar1.add(jSeparator15);
 
-            jPanel5.add(mainToolbar1, new java.awt.GridBagConstraints());
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+            jPanel5.add(mainToolbar1, gridBagConstraints);
 
             mainToolbar2.setFloatable(false);
             mainToolbar2.setRollover(true);
+            mainToolbar2.setPreferredSize(new java.awt.Dimension(18, 28));
             javax.help.CSH.setHelpIDString (mainToolbar2, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
             _context.getHelpManager ().initialize (helpButton);
@@ -1562,6 +1569,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
             gridBagConstraints.weightx = 1.0;
             jPanel5.add(mainToolbar2, gridBagConstraints);
 
