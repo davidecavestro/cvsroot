@@ -1377,7 +1377,8 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
             jPanel5.setLayout(new java.awt.GridBagLayout());
 
-            jPanel5.setPreferredSize(new java.awt.Dimension(420, 40));
+            jPanel5.setMinimumSize(new java.awt.Dimension(400, 28));
+            jPanel5.setPreferredSize(new java.awt.Dimension(420, 28));
             mainToolbar.setFloatable(false);
             mainToolbar.setRollover(true);
             mainToolbar.setPreferredSize(new java.awt.Dimension(150, 28));
