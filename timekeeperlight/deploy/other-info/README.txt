@@ -28,3 +28,6 @@ NOT YET AVAILABLE @todo completare con link a home page
 
 Downloads:
 NOT YET AVAILABLE @todo completare con link a download
+
+- Credits:
+Thanks to mjames for his Silk Icons (http://www.famfamfam.com/lab/icons/silk/)

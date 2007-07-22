@@ -85,6 +85,7 @@
 	    <entry  key="build.date" type="date" value="now" pattern="yyyy-MM-dd HH:mm:ss.SSS"/>
 	    <entry  key="build.notes" type="string" value="Built with Java(TM) ${java.vm.version} (${java.vm.vendor}) by ${user.name} on ${os.name} ${os.arch} ${os.version}" />
 	</propertyfile>
+	<echo>Assigned build number: ${build.number}</echo>
     </target>
 
 

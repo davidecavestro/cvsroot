@@ -1,3 +1,7 @@
+2.3.0
+- Uses Silk Icons (from http://www.famfamfam.com/lab/icons/silk/)
+
+
 2.1.2
 - Added support to work with partially corrupted datastore (To avoid data corruption don't launch multiple instances of the application!).
 
@@ -9,7 +13,7 @@
 
 2.1.0
 
-- Introduced charts
+- Added charts
 - Added Tiny Look And Feel
 - Fixed bug on task removal
 - Introduced centralised data directory support (due to old releases problem)
