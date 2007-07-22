@@ -61,10 +61,15 @@ public class WindowManager implements ActionListener, DialogListener {
 	 * @return la finestra principale.
 	 */
 	public MainWindow getMainWindow (){
-		if (this._mainWindow==null){
-			this._mainWindow = new MainWindow (this._context);
-			this._context.getUIPersisteer ().register (this._mainWindow);
-			this._mainWindow.addActionListener (this);
+		synchronized (this) {
+			/*
+			 * Sccome all'avvio puo' essere chiamata da thread concorrenti va protetta
+			 */
+			if (this._mainWindow==null){
+				this._mainWindow = new MainWindow (this._context);
+				this._context.getUIPersisteer ().register (this._mainWindow);
+				this._mainWindow.addActionListener (this);
+			}
 		}
 		return this._mainWindow;
 	}
@@ -75,10 +80,12 @@ public class WindowManager implements ActionListener, DialogListener {
 	 * @return la dialog di inserimento nuovo avanzamento.
 	 */
 	public NewPieceOfWorkDialog getNewPieceOfWorkDialog () {
+		synchronized (this) {
 		if (_mewPOWDialog==null){
 			_mewPOWDialog = new NewPieceOfWorkDialog (_context, getMainWindow (), true);
 			_context.getUIPersisteer ().register (_mewPOWDialog);
 			_mewPOWDialog.addDialogListener (this);
+		}
 		}
 		return _mewPOWDialog;
 	}
@@ -118,10 +125,12 @@ public class WindowManager implements ActionListener, DialogListener {
 	 * @return la dialog di inserimento nuovo ytask.
 	 */
 	public NewTaskDialog getNewTaskDialog () {
+		synchronized (this) {
 		if (this._mewTaskDialog==null){
 			this._mewTaskDialog = new NewTaskDialog (getMainWindow (), true);
 			this._context.getUIPersisteer ().register (this._mewTaskDialog);
 			this._mewTaskDialog.addDialogListener (this);
+		}
 		}
 		return this._mewTaskDialog;
 	}
@@ -295,9 +304,11 @@ public class WindowManager implements ActionListener, DialogListener {
 	/**
 	 * Varia il look and feel.
 	 * 
+	 * 
+	 * @param propagateToExistingWindows indica se propafare le modifiche alle finestre esistenti.
 	 * @param laf il nuovo look and feel.
 	 */
-	public void setLookAndFeel (final String laf) {
+	public void setLookAndFeel (final String laf, final boolean propagateToExistingWindows) {
 		SwingUtilities.invokeLater (new Runnable () {
 				public void run () {
 					/*
@@ -305,16 +316,25 @@ public class WindowManager implements ActionListener, DialogListener {
 					 */
 					try {
 						UIManager.setLookAndFeel (laf);
-						SwingUtilities.updateComponentTreeUI (getMainWindow ());
-						SwingUtilities.updateComponentTreeUI (getLogConsole ());
-						SwingUtilities.updateComponentTreeUI (getAbout ());
-						SwingUtilities.updateComponentTreeUI (getNewPieceOfWorkDialog ());
-						SwingUtilities.updateComponentTreeUI (getNewTaskDialog ());
-						SwingUtilities.updateComponentTreeUI (getOpenWorkSpaceDialog ());
-						SwingUtilities.updateComponentTreeUI (getOptionsDialog ());
-						SwingUtilities.updateComponentTreeUI (getReportDialog ());
+						if (propagateToExistingWindows) {
+							SwingUtilities.updateComponentTreeUI (getAbout ());
+							SwingUtilities.updateComponentTreeUI (getMainWindow ());
+							SwingUtilities.updateComponentTreeUI (getLogConsole ());
+							SwingUtilities.updateComponentTreeUI (getNewPieceOfWorkDialog ());
+							SwingUtilities.updateComponentTreeUI (getNewTaskDialog ());
+							SwingUtilities.updateComponentTreeUI (getOpenWorkSpaceDialog ());
+							SwingUtilities.updateComponentTreeUI (getOptionsDialog ());
+							SwingUtilities.updateComponentTreeUI (getReportDialog ());
+						}
 					} catch (final Exception e) {
+						try {
 						_context.getLogger ().error (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Cannot_change_look_and_feel_"), e);
+						} catch (Exception ee) {
+							/*
+							 * Durante l'avvio dell'applicazione il logger potrebbe anche non esistere.
+							 */
+							e.printStackTrace (System.err);
+						}
 					}
 				}
 		});

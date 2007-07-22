@@ -112,7 +112,7 @@ public class Application {
 		final TaskTreeModelExceptionHandler peh = new TaskTreeModelExceptionHandler () {};
 		_persistenceNode = new PersistenceNode (applicationOptions, _logger);
 		/*
-		 * salva le informazioni relative al databse nelle impostazioni personali
+		 * salva le informazioni relative al database nelle impostazioni personali
 		 */
 		userSettings.setJDOStorageDirPath (applicationOptions.getJDOStorageDirPath ());
 		userSettings.setJDOStorageName (applicationOptions.getJDOStorageName ());
@@ -139,13 +139,15 @@ public class Application {
 		});
 		final PersistentWorkSpaceModel wsModel = new PersistentWorkSpaceModel (_persistenceNode, applicationOptions, _logger);
 		try {
-			wsModel.init () ;
+			_persistenceNode.init ();
 		} catch (final PersistenceNodeException pne) {
-			/*
-			 eccezione silenzata in caso di problemi di inizializzazione della peristenza.
-			 @todo rimuovere se possibile
-			 */
+			System.err.print ("Cannot initialize the persistence subsystem. ");
+			System.err.println ("Please check to have permissions to write to "+applicationOptions.getJDOStorageDirPath ());
+			System.err.println ("If you have the correct permissions, please wait a couple of minutes, so that the current lock become obsolete");
+			pne.printStackTrace (System.err);
+			System.exit (1);
 		}
+		wsModel.init () ;
 		
 		
 		_context = new ApplicationContext (
@@ -183,12 +185,12 @@ public class Application {
 		_context.getLogger ().info (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("starting_UI"));
 		final WindowManager wm = _context.getWindowManager ();
 		
-		wm.setLookAndFeel (_context.getApplicationOptions ().getLookAndFeel ());
+		wm.init (_context);
+		wm.setLookAndFeel (_context.getApplicationOptions ().getLookAndFeel (), false);
 		
 		wm.getSplashWindow (_context.getApplicationData ()).show ();
 		try {
 			wm.getSplashWindow (_context.getApplicationData ()).showInfo (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Initializing_context..."));
-			wm.init (_context);
 			wm.getSplashWindow (_context.getApplicationData ()).showInfo (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Initializing_log_console..."));
 			final ConsoleLogger cl = new ConsoleLogger (new DefaultStyledDocument (), true);
 			
@@ -203,11 +205,11 @@ public class Application {
 				}
 			});
 			
+			_context.getModel ().setWorkSpace (prepareWorkSpace ());
+		
 		} finally {
 			wm.getSplashWindow (_context.getApplicationData ()).hide ();
 		}
-		
-		_context.getModel ().setWorkSpace (prepareWorkSpace ());
 		
 		wm.getMainWindow ().show ();
 		_context.getLogger ().info (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("UI_successfully_started"));
