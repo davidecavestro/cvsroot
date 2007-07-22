@@ -9,6 +9,7 @@ package com.davidecavestro.timekeeper.gui;
 import com.davidecavestro.common.gui.CompositeIcon;
 import com.davidecavestro.common.gui.SwingWorker;
 import com.davidecavestro.common.gui.VTextIcon;
+import com.davidecavestro.common.gui.persistence.PersistenceStorage;
 import com.davidecavestro.common.gui.persistence.PersistenceUtils;
 import com.davidecavestro.common.gui.persistence.PersistentComponent;
 import com.davidecavestro.common.util.CalendarUtils;
@@ -19,6 +20,7 @@ import com.davidecavestro.common.util.action.ActionNotifier;
 import com.davidecavestro.common.util.action.ActionNotifierImpl;
 import com.davidecavestro.common.util.file.CustomFileFilter;
 import com.davidecavestro.common.util.file.FileUtils;
+import com.davidecavestro.common.util.settings.SettingsSupport;
 import com.davidecavestro.timekeeper.ApplicationContext;
 import com.davidecavestro.timekeeper.backup.XMLAgent;
 import com.davidecavestro.timekeeper.backup.XMLImporter;
@@ -80,6 +82,7 @@ import java.util.Date;
 import java.util.EventObject;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +134,7 @@ import org.jdesktop.swingx.decorator.FilterPipeline;
 import org.jdesktop.swingx.decorator.SortController;
 import org.jdesktop.swingx.decorator.SortOrder;
 import org.jdesktop.swingx.decorator.Sorter;
+import org.jdesktop.swingx.table.TableColumnExt;
 import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 import org.jdesktop.swingx.treetable.TreeTableCellEditor;
 import org.jdesktop.swingx.treetable.TreeTableModel;
@@ -643,6 +647,39 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			
 		
 		_context.getUIPersisteer ().register (new MainWindow.PersistencePanelAdapter (taskTreePanel, "taskTreePanel"));
+		
+		_context.getUIPersisteer ().register (new PersistentComponent () {
+			public String getPersistenceKey () {
+				return "task.tree.visible.columns";
+			}
+
+			public void makePersistent (PersistenceStorage props) {
+				final List<String> s = new ArrayList<String> ();
+				
+				for (int i = 0; i< taskTree.getColumnCount (false); i++) {
+					final TableColumnExt tce = taskTree.getColumnExt (i);
+					if (tce.isVisible ()) {
+						s.add (Integer.toString (taskTree.convertColumnIndexToModel (i)));
+					}
+				}
+				SettingsSupport.setStringProperty (props.getRegistry (), getPersistenceKey (), StringUtils.toCSV (s.toArray ()));
+			}
+		
+
+			public boolean restorePersistent (PersistenceStorage props) {
+				final String s = SettingsSupport.getStringProperty (props.getRegistry (), getPersistenceKey ());
+				if (s==null) {
+					return false;
+				}
+//				final String[] values = s.split (";");
+				final Set<String> values = new HashSet<String> (Arrays.asList (s.split (",")));
+				for (int i = taskTree.getColumnCount (false)-1; i>=0; i--) {
+					final TableColumnExt tce = taskTree.getColumnExt (i);
+					tce.setVisible (values.contains (Integer.toString (taskTree.convertColumnIndexToModel (i))));
+				}
+				return true;
+			}
+		});
 		
 		((RingChartPanel)chartPanel).addRingChartRootChangeListener (new PropertyChangeListener () {
 			public void propertyChange (PropertyChangeEvent evt) {
@@ -2858,7 +2895,34 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 					fireTreeStructureChanged (this, null);
 				} else {
 					final TaskTreePath path = new TaskTreePath (ws, newRoot);
+					try {
 					fireTreeStructureChanged (this, toObjectArray (path), null, null);
+					} catch (final NullPointerException npe) {
+						/*
+						 * @workaround saltuariamente (la frequenza varia da sistema a sistema) in fase di avvio 
+						 * viene sollevata un'accezione al momento inspiegabile che va silenziata.
+						 * Appena possibile bisogna rimuovere questo catch che potrebbe fermare altre eccezioni. NullPointerException e' moooolto generica.
+						 * L'eccezione sembra dovuta ad una parziale inizializzazione del TreeUI
+						 *
+						 *
+Exception in thread "main" java.lang.NullPointerException
+        at
+javax.swing.plaf.basic.BasicTreeUI.getLeadSelectionPath(BasicTreeUI.java:2358)
+        at
+javax.swing.plaf.basic.BasicTreeUI.updateLeadRow(BasicTreeUI.java:2362)
+        at
+javax.swing.plaf.basic.BasicTreeUI.access$1400(BasicTreeUI.java:46)
+        at
+javax.swing.plaf.basic.BasicTreeUI$Handler.treeStructureChanged(BasicTreeUI.java:3723)
+        at
+org.jdesktop.swingx.treetable.AbstractTreeTableModel.fireTreeStructureChanged(AbstractTreeTableModel.java:315)
+        at
+com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainWindow.java:2559)
+
+						 */
+						System.err.println ("Exception detected on reloading workspace");
+						npe.printStackTrace (System.err);
+					}
 				}
 			}
 		}
