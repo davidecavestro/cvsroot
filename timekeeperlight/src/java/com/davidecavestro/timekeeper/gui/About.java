@@ -55,6 +55,9 @@ public class About extends javax.swing.JDialog {
 		
 		presentationPanel.add (new PresentationPanel (_context.getApplicationData ()), new java.awt.GridBagConstraints());
 		
+		((JXTable)systemPropsTable).setColumnControlVisible (true);
+		((JXTable)systemPropsTable).packAll ();
+		
 		setLocationRelativeTo (null);
 	}
 	
