@@ -302,6 +302,7 @@ public class About extends javax.swing.JDialog {
         jScrollPane1.setMaximumSize(null);
         jScrollPane1.setMinimumSize(null);
         final Font keysFont = new Font("monospaced", Font.PLAIN, 12);
+        systemPropsTable.setCellSelectionEnabled(true);
         systemPropsTable.setMaximumSize(null);
         systemPropsTable.setMinimumSize(null);
         systemPropsTable.setPreferredSize(null);
