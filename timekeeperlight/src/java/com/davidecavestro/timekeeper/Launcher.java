@@ -173,7 +173,9 @@ public class Launcher {
 	public static void main (String[] args) {
 		final Launcher l = new Launcher ();
 		if (!l.checkForOtherInstances ()) {
-			System.err.println ("A live instance of the application was detected. Shutting down this one.");
+			System.err.println ("A live instance of the application was detected.");
+			System.err.println ("Please check if you have launched another instance of the application, or if a previous launch has left a zombie process. ");
+			System.err.println ("By now, this instance will be termiated.");
 			System.exit (0);
 		}
 		final Application a = new Application (new CommandLineApplicationEnvironment (args));

@@ -10,23 +10,33 @@
 package com.davidecavestro.timekeeper.persistence;
 
 /**
+ * Eccezione generica da utilizzare incasodi probleminella gestioen dellapersistenza.
  *
  * @author Davide Cavestro
  */
 public class PersistenceNodeException extends java.lang.Exception {
 	
 	/**
-	 * Creates a new instance of <code>PersistenceNodeException</code> without detail message.
+	 * Costruttore vuoto.
 	 */
 	public PersistenceNodeException () {
 	}
 	
 	
 	/**
-	 * Constructs an instance of <code>PersistenceNodeException</code> with the specified detail message.
-	 * @param msg the detail message.
+	 * Costrttore con messaggio
+	 * @param msg il messaggiodi dettaglio.
 	 */
 	public PersistenceNodeException (String msg) {
 		super (msg);
+	}
+	
+	/**
+	 * Costruttore con causa.
+	 * 
+	 * @param cause la causa.
+	 */
+	public PersistenceNodeException (final Throwable cause) {
+		super (cause);
 	}
 }

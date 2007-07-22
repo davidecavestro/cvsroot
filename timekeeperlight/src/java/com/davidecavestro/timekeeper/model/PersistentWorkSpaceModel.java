@@ -41,7 +41,7 @@ public class PersistentWorkSpaceModel extends WorkSpaceModelImpl {
 		_logger = logger;
 	}
 	
-	public void init () throws PersistenceNodeException {
+	public void init () {
 		init (_persistenceNode.getAvailableWorkSpaces ());
 	}
 	

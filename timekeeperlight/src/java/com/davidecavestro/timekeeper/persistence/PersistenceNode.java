@@ -11,13 +11,18 @@ import com.davidecavestro.common.log.Logger;
 import com.davidecavestro.timekeeper.conf.ApplicationOptions;
 import com.davidecavestro.timekeeper.model.WorkSpace;
 import com.ost.timekeeper.model.Project;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -79,23 +84,85 @@ public class PersistenceNode {
 	}
 	
 	
-//	private File getDatastoreLock () {
-//		return new File (new File (_ao.getJDOStorageDirPath ()), _ao.getJDOStorageName ()+".lock");
-//	}
-//	
-//	
-//	private final String _seed = Double.toString (Math.random ());
-//	
-//	private void lockDatastore () throws IOException {
-//		new FileWriter (getDatastoreLock ()).write (_seed);
-//	}
-//	
-//	private boolean isDatastoreLocked () {
-//		
-//	}
+	private File _datastoreLock;
+	/**
+	 * Ritorna il file di lock del datastore.
+	 * Il file viene sempre ritornato, ma potrebe anche non essere valido (non esiste il file sottostante).
+	 */
+	private File getDatastoreLock () {
+		if (_datastoreLock==null) {
+			_datastoreLock = new File (new File (_ao.getJDOStorageDirPath ()), _ao.getJDOStorageName ()+".lock");
+		}
+		return _datastoreLock;
+	}
+	
+	
+	/**
+	 * Identificatore dell'istanza di applicazione al fine di accedere al db.
+	 */
+	private final String _dbAccessID = Double.toString (Math.random ());
+	
+	private final static long MAX_DELAY = 1000*90;
+	/**
+	 * Acquisisce il lock sul datastore.
+	 */
+	private void lockDatastore () throws IOException {
+		final File lockFile = getDatastoreLock ();
+		if (lockFile.exists () && System.currentTimeMillis ()  - lockFile.lastModified () < MAX_DELAY) {
+			throw new IOException ("Cannot create a new datastore lock file. The existing one is too recent.");
+		}
+		final PrintWriter fw = new PrintWriter (getDatastoreLock ());
+		try {
+			fw.println (_dbAccessID);
+		} finally {
+			fw.flush ();
+			fw.close ();
+		}
+		getDatastoreLock ().deleteOnExit ();
+		final Timer t = new Timer ("datastore-lock-refresher", true);
+		t.schedule (
+			new TimerTask () {
+				public void run () {
+					lockFile.setLastModified (System.currentTimeMillis ());
+				}
+			}, 1000);
+	}
+	
+	/**
+	 * Ritorna <CODE>true</CODE> se il datastore &egrave; acquisito 
+	 * dall'istanza corrente dell'applicazione.
+	 */
+	private boolean isDatastoreAvailable () {
+		final BufferedReader br;
+		try {
+			br = new BufferedReader (new FileReader (getDatastoreLock()));
+			try {
+				return _dbAccessID.equals (br.readLine ());
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			} finally {
+				try {
+					br.close ();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
+			return false;
+		} catch (FileNotFoundException ex) {
+			return false;
+		}
+	}
+	
+	/**
+	 * Libera il lock acquisito sul datastore-
+	 */
+	private void unlockDatastore () {
+		getDatastoreLock ().delete ();
+	}
 	
 	/**
 	 * Inizializza la gestione della persistenza dei dati.
+	 * Imposta il campo interno <CODE>_pm</CODE>.
 	 */
 	private void initPersistence (){
 		setDatastoreProperties ();
@@ -126,6 +193,7 @@ public class PersistenceNode {
 	
 	/**
 	 * Inizializza il repository dei dati persistenti con le impostazioni correnti.
+	 * Imposta il campo interno <CODE>_pm</CODE>.
 	 */
 	private void createDataStore (){
 		if (_pm!=null){
@@ -136,34 +204,14 @@ public class PersistenceNode {
 	}
 	
 	/**
-	 * Inizializza e ritorna il gestore della persistenza dei dati.
-	 * Se non &egrave; possibile inizializzarlo ritorna <CODE>null</CODE>.
-	 * Nel caso in cui il sistema non sia configurato correttamente &egrave; possibile che il PersistenceManager non possa essere istanziato.
+	 * Ritorna il gestore della persistenza dei dati.
+	 * Se non &egrave; stato ancora inizializzato ritorna <CODE>null</CODE>.
+	 * 
 	 *
 	 * @return il gestore della persistenza dei dati, oppure <CODE>null</CODE>. se non &egrave; disponibile.
+	 * @see #init()
 	 */
 	public final PersistenceManager getPersistenceManager (){
-		if (_pm==null) {
-			try {
-				/*
-				 * prova ad usare il datastore correntemente configurato.
-				 */
-				initPersistence ();
-				_pm.currentTransaction ().begin ();
-				_pm.currentTransaction ().rollback ();
-			} catch (final Exception e) {
-				try {
-					/*
-					 * prova a creare il datastore alvolo, con le impostazioni correnti.
-					 */
-					createDataStore ();
-				} catch (final Exception ie) {
-					_logger.error (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Cannot_initialize_data_storage"), e);
-					_logger.error (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Cannot_create_data_storage"), ie);
-					return null;
-				}
-			}
-		}
 		return _pm;
 	}
 	
@@ -206,16 +254,46 @@ public class PersistenceNode {
 		return pm;
 	}
 	
-	public List<WorkSpace> getAvailableWorkSpaces () throws PersistenceNodeException {
+	public List<WorkSpace> getAvailableWorkSpaces () {
 		final List<WorkSpace> data = new ArrayList<WorkSpace> ();
 		final PersistenceManager pm = getPersistenceManager ();
-		if (pm == null) {
-			throw new PersistenceNodeException (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Cannot_initialize_data_storage."));
-		} else {
-			for (final Iterator it = pm.getExtent(Project.class, true).iterator();it.hasNext ();){
-				data.add ((Project)it.next());
-			}
+		for (final Iterator it = pm.getExtent(Project.class, true).iterator();it.hasNext ();){
+			data.add ((Project)it.next());
 		}
 		return data;
 	}
+	
+	/**
+	 * Inizializza il gestore della persistenza dei dati.
+	 * Nel caso in cui il sistema non sia configurato correttamente &egrave; possibile che il PersistenceManager non possa essere istanziato.
+	 * Se il campo interno <CODE>_pm</CODE> ha un valore diverso da <CODE>null</CODE>, il metodo ritorna subito.
+	 */
+	public void init () throws PersistenceNodeException {
+		if (_pm==null) {
+			try {
+				try {
+					/*
+					 * prova ad usare il datastore correntemente configurato.
+					 */
+					initPersistence ();
+					_pm.currentTransaction ().begin ();
+					_pm.currentTransaction ().rollback ();
+				} catch (final Exception e) {
+					/*
+					 * prova a creare il datastore alvolo, con le impostazioni correnti.
+					 */
+					createDataStore ();
+				}
+			
+				lockDatastore ();
+				if (!isDatastoreAvailable ()) {
+					throw new PersistenceNodeException (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Cannot_initialize_data_storage."));
+				}
+				
+			} catch (final Exception ex) {
+				throw new PersistenceNodeException (ex);
+			}
+		}
+	}
+
 }
