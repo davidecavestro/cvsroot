@@ -291,6 +291,6 @@ public class OptionsDialog extends javax.swing.JDialog {
 	}
 	
 	private void apply () {
-		_context.getWindowManager ().setLookAndFeel (getSelectedLAF ());
+		_context.getWindowManager ().setLookAndFeel (getSelectedLAF (), true);
 	}
 }
