@@ -246,7 +246,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			}
 		});
 //		progressesTable.addHighlighter (AlternateRowHighlighter.beige);
-		progressesTable.addHighlighter (new AlternateRowHighlighter(Color.white, new Color(205, 205, 180), null, true));
+		progressesTable.addHighlighter (new AlternateRowHighlighter(Color.white, new Color(255, 252, 180), null, true));
 //		taskTree.addHighlighter (AlternateRowHighlighter.quickSilver);
 		
 		/*
@@ -4625,6 +4625,16 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 			
 			final Object[] optionsArray = new Object[] {PasteMode.BEFORE, PasteMode.AFTER, PasteMode.AS_LAST_CHILD};
 			final StringBuffer sourceNames = new StringBuffer ();
+			
+			for (int i = 0; i< progressItems.length; i++) {
+				if (progressItems[i]==releaseTarget) {
+					/*
+					 * uno dei task da incollare e' la destinazione stessa.
+					 * Non si fa niente!!!
+					 */
+					return;
+				}
+			}
 			
 			if (progressItems.length>0) {
 				sourceNames.append (progressItems[0]);
