@@ -24,7 +24,7 @@ public final class ReportPreferences {
 	/**
 	 * La mappa dei parametri da passare al report.
 	 */
-	private final Map<String, String> _params = new HashMap<String, String> ();
+	private final Map<String, Object> _params = new HashMap<String, Object> ();
 	
 	/**
 	 * Costruttore.
@@ -41,7 +41,7 @@ public final class ReportPreferences {
 	 * @param output il report da generare.
 	 * @param params i parametri da utilizzare per il lancio.
 	 */
-	public ReportPreferences (final File output, final Map<String, String> params) {
+	public ReportPreferences (final File output, final Map<String, Object> params) {
 		this._output = output;
 		_params.putAll (params);
 	}
@@ -59,7 +59,7 @@ public final class ReportPreferences {
 	 * Ritorna i parametri da utilizzare per il lancio del report.
 	 * @return i parametri da utilizzare per il lancio del report.
 	 */
-	public Map<String, String> getParams () {
+	public Map<String, Object> getParams () {
 		return _params;
 	}
 	
@@ -68,7 +68,7 @@ public final class ReportPreferences {
 	 * @param name nome del parametro.
 	 * @param value valore del parametro.
 	 */
-	public void addParameter (final String name, final String value) {
+	public void addParameter (final String name, final Object value) {
 		_params.put (name, value);
 	}
 	
