@@ -7,6 +7,7 @@
 package com.davidecavestro.timekeeper;
 
 import com.davidecavestro.common.application.ApplicationData;
+import com.davidecavestro.common.gui.HungAwtExit;
 import com.davidecavestro.common.gui.persistence.PersistenceStorage;
 import com.davidecavestro.common.gui.persistence.UIPersister;
 import com.davidecavestro.common.help.HelpManager;
@@ -26,6 +27,8 @@ import com.davidecavestro.timekeeper.gui.WindowManager;
 import com.davidecavestro.timekeeper.actions.ActionManager;
 import com.davidecavestro.timekeeper.conf.ApplicationOptions;
 import com.davidecavestro.timekeeper.conf.DefaultSettings;
+import com.davidecavestro.timekeeper.gui.MainWindow;
+import com.davidecavestro.timekeeper.gui.Splash;
 import com.davidecavestro.timekeeper.model.PersistentTaskTreeModel;
 import com.davidecavestro.timekeeper.model.PersistentWorkSpaceModel;
 import com.davidecavestro.timekeeper.model.TaskTreeModelExceptionHandler;
@@ -37,7 +40,6 @@ import com.davidecavestro.timekeeper.persistence.PersistenceNode;
 import com.davidecavestro.timekeeper.persistence.PersistenceNodeException;
 import com.ost.timekeeper.model.ProgressItem;
 import com.ost.timekeeper.model.Project;
-import java.awt.KeyboardFocusManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -145,7 +147,11 @@ public class Application {
 			System.err.println ("Please check to have permissions to write to "+applicationOptions.getJDOStorageDirPath ());
 			System.err.println ("If you have the correct permissions, please wait a couple of minutes, so that the current lock become obsolete");
 			pne.printStackTrace (System.err);
-			System.exit (1);
+			exit ();
+			/*
+			 * Exit dovrebbe termiare la JVM, se non fosse, comunque l'applicazione non deve partire
+			 */
+			throw new RuntimeException (pne);
 		}
 		wsModel.init () ;
 		
@@ -188,16 +194,17 @@ public class Application {
 		wm.init (_context);
 		wm.setLookAndFeel (_context.getApplicationOptions ().getLookAndFeel (), false);
 		
-		wm.getSplashWindow (_context.getApplicationData ()).show ();
+		final Splash splash = wm.getSplashWindow (_context.getApplicationData ());
+		splash.show ();
 		try {
-			wm.getSplashWindow (_context.getApplicationData ()).showInfo (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Initializing_context..."));
-			wm.getSplashWindow (_context.getApplicationData ()).showInfo (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Initializing_log_console..."));
+			splash.showInfo (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Initializing_context..."));
+			splash.showInfo (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Initializing_log_console..."));
 			final ConsoleLogger cl = new ConsoleLogger (new DefaultStyledDocument (), true);
 			
 			_context.getWindowManager ().getLogConsole ().init (cl.getDocument ());
 			
 			_logger.setSuccessor (cl);
-			wm.getSplashWindow (_context.getApplicationData ()).showInfo (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Preparing_main_window..."));
+			splash.showInfo (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Preparing_main_window..."));
 			wm.getMainWindow ().addWindowListener (
 				new java.awt.event.WindowAdapter () {
 				public void windowClosing (java.awt.event.WindowEvent evt) {
@@ -208,7 +215,8 @@ public class Application {
 			_context.getModel ().setWorkSpace (prepareWorkSpace ());
 		
 		} finally {
-			wm.getSplashWindow (_context.getApplicationData ()).hide ();
+			splash.setVisible (false);
+			splash.dispose ();
 		}
 		
 		wm.getMainWindow ().show ();
@@ -298,7 +306,9 @@ public class Application {
 	 */
 	public final void exit (){
 		beforeExit ();
-		System.exit (0);
+		_context.getWindowManager ().disposeAllFrames ();
+		HungAwtExit.explain (_context.getWindowManager ().getMainWindow ());
+		System.out.println ("Closing application...");
 	}
 	
 	private final class UserUIStorage implements PersistenceStorage {
