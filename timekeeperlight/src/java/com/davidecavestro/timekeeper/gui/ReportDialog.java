@@ -44,7 +44,7 @@ import javax.swing.event.ListSelectionListener;
  */
 public class ReportDialog extends javax.swing.JDialog implements PersistentComponent, DialogNotifier {
 	
-	private final DateFormat[] _dateFormats = new DateFormat[] {new SimpleDateFormat ("yyyy/MM/dd")};
+	private final DateFormat[] _dateFormats = new DateFormat[] {new SimpleDateFormat (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("date_format_short"))};
 	
 	private final DialogNotifierImpl _dialogNotifier = new DialogNotifierImpl ();
 	
@@ -97,9 +97,10 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         jRadioButton2 = new javax.swing.JRadioButton();
         fromDateEditor = new org.jdesktop.swingx.JXDatePicker();
         toDateEditor = new org.jdesktop.swingx.JXDatePicker();
-        presetRangesList = new org.jdesktop.swingx.JXList();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        presetRangesList = new org.jdesktop.swingx.JXList();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
@@ -110,7 +111,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Report");
+        setTitle(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("ReportDialog/Title/Reporting_panel"));
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("ReportDialog/ChoiceGroupTitle/Time_range")));
@@ -148,7 +149,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(16, 4, 4, 4);
+        gridBagConstraints.insets = new java.awt.Insets(19, 4, 4, 4);
         jPanel1.add(jRadioButton2, gridBagConstraints);
 
         fromDateEditor.setDate(new Date ());
@@ -173,36 +174,6 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 11);
         jPanel1.add(toDateEditor, gridBagConstraints);
 
-        presetRangesList.setModel(new AbstractListModel () {
-            final TimeRangePreset[] elements = TimeRangePreset.values ();
-
-            public Object getElementAt (int index) {
-                return elements[index];
-            }
-            public int getSize () {
-                return elements.length;
-            }
-        });
-        presetRangesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        presetRangesList.setToolTipText("Choose a preset time range");
-        presetRangesList.setFont(new java.awt.Font("Dialog", 0, 12));
-        presetRangesList.setSelectedIndex(0);
-        presetRangesList.setVisibleRowCount(6);
-        presetRangesList.setSelectionMode (ListSelectionModel.SINGLE_SELECTION);
-        presetRangesList.setVisibleRowCount (presetRangesList.getModel ().getSize ());
-        presetRangesList.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                presetRangesListMouseClicked(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanel1.add(presetRangesList, gridBagConstraints);
-
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
         jLabel1.setText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("ReportDialog/CoiceControl/from"));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -221,6 +192,40 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         gridBagConstraints.insets = new java.awt.Insets(7, 13, 3, 4);
         jPanel1.add(jLabel2, gridBagConstraints);
 
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(22, 120));
+        presetRangesList.setModel(new AbstractListModel () {
+            final TimeRangePreset[] elements = TimeRangePreset.values ();
+
+            public Object getElementAt (int index) {
+                return elements[index];
+            }
+            public int getSize () {
+                return elements.length;
+            }
+        });
+        presetRangesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        presetRangesList.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("ReportDialog/ControlTooltip/Preset_list_tooltip"));
+        presetRangesList.setFont(new java.awt.Font("Dialog", 0, 12));
+        presetRangesList.setSelectedIndex(0);
+        presetRangesList.setVisibleRowCount(6);
+        presetRangesList.setSelectionMode (ListSelectionModel.SINGLE_SELECTION);
+        presetRangesList.setVisibleRowCount (presetRangesList.getModel ().getSize ());
+        presetRangesList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                presetRangesListMouseClicked(evt);
+            }
+        });
+
+        jScrollPane1.setViewportView(presetRangesList);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 11, 4, 11);
+        jPanel1.add(jScrollPane1, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -230,7 +235,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         getContentPane().add(jPanel1, gridBagConstraints);
 
         okButton.setFont(new java.awt.Font("Dialog", 0, 12));
-        okButton.setText("Print");
+        okButton.setText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("ReportDialog/LaunchButton/Confirm"));
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
@@ -244,7 +249,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         getContentPane().add(okButton, gridBagConstraints);
 
         cancelButton.setFont(new java.awt.Font("Dialog", 0, 12));
-        cancelButton.setText("Cancel");
+        cancelButton.setText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("ReportDialog/LaunchButton/Cancel"));
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
@@ -261,7 +266,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 162, Short.MAX_VALUE)
+            .add(0, 143, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -277,9 +282,9 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("ReportDialog/ControlsGroup/ReportRootChoice")));
-        jXTreeTable1.setColumnControl(null);
         jXTreeTable1.setEditable(false);
         jXTreeTable1.setRootVisible(true);
+        jXTreeTable1.setTableHeader(null);
         jXTreeTable1.setTreeTableModel(_context.getWindowManager ().getMainWindow ().getTaskTreeTableModel ());
         jScrollPane2.setViewportView(jXTreeTable1);
 
@@ -396,7 +401,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 		if (_usePresets) {
 			final TimeRangePreset preset = (TimeRangePreset)presetRangesList.getSelectedValue ();
 			startDate = preset.from ();
-			periodCount = preset.length ();
+			periodCount = preset.length ()-1;
 		} else {
 			startDate = fromDateEditor.getDate ();
 			final Calendar from = new GregorianCalendar ();
@@ -415,7 +420,13 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 			t = (Task) jXTreeTable1.getModel ().getValueAt (selectedRow, 0);
 		}
 		
+		final GregorianCalendar finishDate = new GregorianCalendar ();
+		finishDate.setTime (new Date (startDate.getTime ()));
+		finishDate.add (Calendar.DAY_OF_YEAR, periodCount);
+		
 		prefs.addParameter ("REPORT_ROOT_NAME", t.getName ());
+		prefs.addParameter ("START_DATE", CalendarUtils.getTimestamp (startDate, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("date_format_short")));
+		prefs.addParameter ("FINISH_DATE", CalendarUtils.getTimestamp (finishDate.getTime (), java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("date_format_short")));
 		
 		final DataExtractor extractor = new CumulateLocalProgresses (
 			_context,
@@ -441,6 +452,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private org.jdesktop.swingx.JXTreeTable jXTreeTable1;
     private javax.swing.JButton okButton;
@@ -551,7 +563,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 				return java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("ReportDialog/ReportPresetName/This_month");
 			}
 			public int length () {
-				return 31;
+				return getDaysInMonth (new GregorianCalendar ());
 			}
 			public Date from () {
 				final GregorianCalendar c = new GregorianCalendar ();
@@ -563,10 +575,13 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 		},
 		PREVIOUS_MONTH {
 			public String toString () {
-				return java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("ReportDialog/ReportPresetName/Last_month");
+				return java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("ReportDialog/ReportPresetName/Previous_month");
 			}
 			public int length () {
-				return 31;
+				final GregorianCalendar c = new GregorianCalendar ();
+				c.add (Calendar.MONTH, -1);
+				
+				return getDaysInMonth (c);
 			}
 			public Date from () {
 				final GregorianCalendar c = new GregorianCalendar ();
@@ -579,7 +594,7 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 					 * siamo in gennaio
 					 *
 					 * adegua il campo di anno, quando necessario, 
-					 * dato  che non verrebbe decrementatoautomaticamente in quanto superiore almese
+					 * dato  che non verrebbe decrementato automaticamente in quanto superiore al mese
 					 */
 					c.roll (Calendar.YEAR, -1);
 				}
@@ -593,5 +608,18 @@ public class ReportDialog extends javax.swing.JDialog implements PersistentCompo
 	};
 	
 	
-	
+
+	private static int getDaysInMonth (final GregorianCalendar c) {
+		int d = c.get (Calendar.DAY_OF_MONTH);
+		int m = c.get (Calendar.MONTH);
+		for (;;) {
+			c.add (Calendar.DAY_OF_MONTH, 1);
+			if (c.get (Calendar.MONTH)==m) {
+				d++;
+			} else {
+				break;
+			}
+		}
+		return d;
+	}
 }

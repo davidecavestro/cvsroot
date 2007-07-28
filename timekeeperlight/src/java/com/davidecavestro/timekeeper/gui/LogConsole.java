@@ -22,7 +22,7 @@ public class LogConsole extends javax.swing.JFrame implements PersistentComponen
 	private final ApplicationContext _context;
 	/** Costruttore. */
 	public LogConsole (ApplicationContext context) {
-		super ();
+		super (/*context.getWindowManager ().getMainWindow ()*/);
 		this._context = context;
 		
 		initComponents ();

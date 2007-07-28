@@ -64,6 +64,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -1202,6 +1203,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         progressesTableScrollPane.getViewport ().setBackground (Color.WHITE);
         progressesTable.setComponentPopupMenu(tablePopupMenu);
         progressesTable.setModel(new ProgressesJTableModel (_context.getModel ()));
+        progressesTable.setAutoStartEditOnKeyStroke(false);
         progressesTable.setColumnControlVisible(true);
         progressesTable.setDragEnabled(true);
         progressesTable.setFont(new java.awt.Font("Monospaced", 0, 12));
@@ -2173,7 +2175,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			}//GEN-LAST:event_newProgressPopupItemActionPerformed
 	
 	private void exitMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-		this.setVisible (false);
+		/*
+		 * Questo evento notifica la richiesta di chiusura della finestra.
+		 * Il listener registrato da Application dovrebbe provvedere alla chisuura effettiva dell'applicazione.
+		 */
+		dispatchEvent (new WindowEvent (this, WindowEvent.WINDOW_CLOSING));
 	}//GEN-LAST:event_exitMenuItemActionPerformed
 	
 	public String getPersistenceKey () {
@@ -4618,13 +4624,21 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 			final boolean rootTarget = releaseTarget.getParent ()==null;
 			
 			final Object[] optionsArray = new Object[] {PasteMode.BEFORE, PasteMode.AFTER, PasteMode.AS_LAST_CHILD};
+			final StringBuffer sourceNames = new StringBuffer ();
+			
+			if (progressItems.length>0) {
+				sourceNames.append (progressItems[0]);
+				for (int i = 1; i< progressItems.length; i++) {
+					sourceNames.append (", ").append (progressItems[i]);
+				}
+			}
 			
 			final int selectedOption = rootTarget?
 				//sul nodo radice si incolla solo come figlio
 				Arrays.binarySearch (optionsArray, PasteMode.AS_LAST_CHILD):
 				JOptionPane.showOptionDialog (
 				taskTree,
-				MessageFormat.format (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("PasteOptionsDialog/MainMessage"), releaseTarget.getName ()),
+				MessageFormat.format (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("PasteOptionsDialog/MainMessage"), releaseTarget.getName (), sourceNames.toString ()),
 				java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("PasteOptionsDialog/Title"),
 				JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE,
@@ -5160,6 +5174,7 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 				}
 			}, "table-background-chart-painter");
 			t.setPriority (Thread.MIN_PRIORITY);
+			t.setDaemon (true);
 			t.start ();
 		}
 		
