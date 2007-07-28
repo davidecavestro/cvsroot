@@ -1,5 +1,15 @@
-2.3.0
+2.5.0.2
+- Fixed problems initalian report localization
+- Added missing libraries to export reports in PDF and XLS format
+- Fixed problems on report temporal range definition
+
+2.5.0.1
+- Fixed problem closing application via menu
+
+2.5.0
 - Uses Silk Icons (from http://www.famfamfam.com/lab/icons/silk/)
+- Fixed problem on startup due to lookandfeel customization support
+- Added datastore lock check to avoid data corruption
 
 
 2.1.2
