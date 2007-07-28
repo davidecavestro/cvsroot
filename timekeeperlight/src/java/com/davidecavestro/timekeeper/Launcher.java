@@ -43,7 +43,7 @@ public class Launcher {
 		try {
 			final ServerSocket ss = new ServerSocket (port, 10, InetAddress.getLocalHost ());
 			
-			new Thread (
+			final Thread t = new Thread (
 				new Runnable () {
 				
 					public void run () {
@@ -92,7 +92,9 @@ public class Launcher {
 						}
 					}
 				}, "only-one-instance-per-user-check"
-			).start ();
+			);
+				t.setDaemon (true);
+				t.start ();
 				
 			/*
 			 * La socket e' stata inizializata correttamente
@@ -176,7 +178,7 @@ public class Launcher {
 			System.err.println ("A live instance of the application was detected.");
 			System.err.println ("Please check if you have launched another instance of the application, or if a previous launch has left a zombie process. ");
 			System.err.println ("By now, this instance will be termiated.");
-			System.exit (0);
+			System.exit (1);
 		}
 		final Application a = new Application (new CommandLineApplicationEnvironment (args));
 		a.start ();
