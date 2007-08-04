@@ -7,7 +7,10 @@
 package com.davidecavestro.timekeeper.gui;
 
 import JSci.awt.GraphLayout;
-import com.davidecavestro.common.charts.awt.*;
+import com.davidecavestro.common.charts.awt.DefaultSerieNode;
+import com.davidecavestro.common.charts.awt.DefaultTreeGraph2DModel;
+import com.davidecavestro.common.charts.awt.SerieNode;
+import com.davidecavestro.common.charts.awt.TreeGraph2DModel;
 import com.davidecavestro.timekeeper.gui.charts.JRingChart;
 import com.ost.timekeeper.model.Progress;
 import com.ost.timekeeper.model.ProgressItem;
