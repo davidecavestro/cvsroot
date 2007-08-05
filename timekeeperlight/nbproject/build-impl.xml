@@ -234,6 +234,7 @@ is divided into following sections:
     -->
     <target name="deps-jar" depends="init" unless="no.deps">
         <ant target="jar" inheritall="false" antfile="${project.common}/build.xml"/>
+        <ant target="jar" inheritall="false" antfile="${project.common-charts}/build.xml"/>
         <ant target="jar" inheritall="false" antfile="${project.timekeeper-reports}/build.xml"/>
         <ant target="jar" inheritall="false" antfile="${project.timekeepercore}/build.xml"/>
         <ant target="jar" inheritall="false" antfile="${project.timekeeperlight-icons}/build.xml"/>
@@ -538,6 +539,7 @@ is divided into following sections:
     -->
     <target name="deps-clean" depends="init" unless="no.deps">
         <ant target="clean" inheritall="false" antfile="${project.common}/build.xml"/>
+        <ant target="clean" inheritall="false" antfile="${project.common-charts}/build.xml"/>
         <ant target="clean" inheritall="false" antfile="${project.timekeeper-reports}/build.xml"/>
         <ant target="clean" inheritall="false" antfile="${project.timekeepercore}/build.xml"/>
         <ant target="clean" inheritall="false" antfile="${project.timekeeperlight-icons}/build.xml"/>
