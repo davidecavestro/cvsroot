@@ -3433,22 +3433,27 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 	/**
 	 * Editor per le date.
 	 */
-	private class DateCellEditor extends AbstractCellEditor implements TableCellEditor {
-		final JFormattedTextField _component;
+	private class DateCellEditor extends DefaultCellEditor implements TableCellEditor {
 
 		public DateCellEditor () {
-			_component = new JFormattedTextField (new DateFormatter (new SimpleDateFormat (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("from_to_format_long"))));
-			_component.setHorizontalAlignment (JTextField.TRAILING);
-//			_component.addFocusListener (new FocusListener () {
+			super (new JFormattedTextField (new DateFormatter (new SimpleDateFormat (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("from_to_format_long")))));
+			getComponent ().setHorizontalAlignment (JTextField.TRAILING);
+//			getComponent ().addFocusListener (new FocusListener () {
 //				public void focusGained (FocusEvent e) {
-//					_component.requestFocusInWindow ();
-//					_component.selectAll ();
+//					getComponent ().requestFocusInWindow ();
+//					getComponent ().selectAll ();
 //				}
 //				public void focusLost (FocusEvent e) {
 //				}
 //			});
 
 		}
+
+		@Override
+		public JFormattedTextField getComponent () {
+			return (JFormattedTextField)super.getComponent ();
+		}
+
 		
 		/**
 		 * Editazione parte, in caso di evento del mouse, solo dopo doppio click
@@ -3463,35 +3468,39 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 		}
 		
 		public Object getCellEditorValue () {
-			return (Date)_component.getValue ();
+			return (Date)getComponent ().getValue ();
 		}
 		
 		public Component getTableCellEditorComponent (JTable table, Object value, boolean isSelected, int row, int column) {
-			_component.setValue ((Date)value);
-//			_component.selectAll ();
-			_component.setCaretPosition (0);
-			return _component;
+			getComponent ().setValue ((Date)value);
+//			getComponent ().selectAll ();
+			getComponent ().setCaretPosition (0);
+			return getComponent ();
 		}
 	}
 	
 	/**
 	 * Editor per le durate.
 	 */
-	private class DurationCellEditor extends AbstractCellEditor implements TableCellEditor {
-		final JFormattedTextField _component;
+	private class DurationCellEditor extends DefaultCellEditor implements TableCellEditor {
 		public DurationCellEditor () {
-			_component = new DurationTextField ();;
-			_component.setHorizontalAlignment (JTextField.TRAILING);
-//			_component.addFocusListener (new FocusListener () {
+			super (new DurationTextField ());
+			getComponent ().setHorizontalAlignment (JTextField.TRAILING);
+//			getComponent ().addFocusListener (new FocusListener () {
 //				public void focusGained (FocusEvent e) {
-//					_component.requestFocusInWindow ();
-//					_component.selectAll ();
+//					getComponent ().requestFocusInWindow ();
+//					getComponent ().selectAll ();
 //				}
 //				public void focusLost (FocusEvent e) {
 //				}
 //			});
 		}
 		
+		@Override
+		public JFormattedTextField getComponent () {
+			return (JFormattedTextField)super.getComponent ();
+		}
+
 		/**
 		 * Editazione parte, in caso di evento del mouse, solo dopo doppio click
 		 */
@@ -3508,18 +3517,18 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 			/*
 			 * ritorna una durata
 			 */
-			return (Duration)_component.getValue ();
+			return (Duration)getComponent ().getValue ();
 		}
 		
 		public Component getTableCellEditorComponent (JTable table, Object value, boolean isSelected, int row, int column) {
 			/*
 			 * riceve un avanzamento
 			 */
-			_component.setValue (((PieceOfWork)value).getDuration ());
-			_component.setText (DurationUtils.format (((PieceOfWork)value).getDuration ()));
-//			_component.selectAll ();
-			_component.setCaretPosition (0);
-			return _component;
+			getComponent ().setValue (((PieceOfWork)value).getDuration ());
+			getComponent ().setText (DurationUtils.format (((PieceOfWork)value).getDuration ()));
+//			getComponent ().selectAll ();
+			getComponent ().setCaretPosition (0);
+			return getComponent ();
 		}
 	}
 	
