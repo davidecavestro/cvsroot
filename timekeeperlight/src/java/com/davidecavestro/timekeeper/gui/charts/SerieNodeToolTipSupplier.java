@@ -65,22 +65,40 @@ public final class SerieNodeToolTipSupplier {
 			final StringBuffer sb= new StringBuffer ();
 			sb.append ("<HTML>")
 			.append ("<TABLE>")
+			
 			.append ("<THEAD>")
+			
 			.append ("<TR>")
-			.append ("<TD colspan='2' nowrap align=center>")
+			.append ("<TD colspan='4' nowrap align=center>")
 			.append ("<B><I>").append (node.getName ()).append ("</I></B>")
 			.append ("</TD>")
 			.append ("</TR>")
+			
+			.append ("<TR>")
+			.append ("<TD colspan='3' nowrap align=center>")
+			.append ("</TD>")
+			.append ("<TD nowrap align=center>")
+			.append ("<B>")
+			.append (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("RingChart/Tooltip/parent_percentage"))
+			.append ("</B>")
+			.append ("</TD>")
+			.append ("</TR>")
+			
 			.append ("</THEAD>")
+			
 			.append ("<TBODY>")
+			
 			.append ("<TR>")
 			.append ("<TD align=right>")
 			.append (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("RingChart/Tooltip/node_local_time")).append (": ")
 			.append ("</TD>")
 			.append ("<TD align=right>")
-			.append ("<TT>").append (formatDuration (new Duration ((long)node.getValue ()))).append ("<TT>")
+			.append ("<TT align=right>").append (formatDuration (new Duration ((long)node.getValue ()))).append ("<TT>")
 			.append ("</TD>")
+			.append ("<TD align=right>").append ("<TT>(").append (Math.round (node.getValue ()*100/node.getTotalValue ())).append ("%)").append ("</TT>").append ("</TD>")
+			.append ("<TD align=right>").append ("<TT>").append (Math.round (node.getValue ()*100/getParentTotalValue (node))).append ("%").append ("</TT>").append ("</TD>")
 			.append ("</TR>")
+			
 			.append ("<TR>")
 			.append ("<TD align=right>")
 			.append (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("RingChart/Tooltip/node_subtree_time")).append (": ")
@@ -88,7 +106,12 @@ public final class SerieNodeToolTipSupplier {
 			.append ("<TD align=right>")
 			.append ("<TT>").append (formatDuration (new Duration ((long)node.getChildrenValue ()))).append ("<TT>")
 			.append ("</TD>")
+			.append ("<TD align=right>").append ("<TT>(").append (Math.round (node.getChildrenValue ()*100/node.getTotalValue ())).append ("%)").append ("</TT>").append ("</TD>")
+			.append ("<TD align=right>").append ("<TT>").append (Math.round (node.getChildrenValue ()*100/getParentTotalValue (node))).append ("%").append ("</TT>").append ("</TD>")
 			.append ("</TR>")
+			
+			.append ("<TR>").append ("<TD colspan=4><HR></TD>").append ("</TR>")
+			
 			.append ("<TR>")
 			.append ("<TD align=right>")
 			.append ("<B>")
@@ -96,12 +119,11 @@ public final class SerieNodeToolTipSupplier {
 			.append ("</B>")
 			.append (": ")
 			.append ("</TD>")
-			.append ("<TD align=right>")
-			.append ("<B>")
-			.append ("<TT>").append (formatDuration (new Duration ((long)node.getTotalValue ()))).append ("</TT>")
-			.append ("</B>")
-			.append ("</TD>")
+			.append ("<TD align=right>").append ("<B>").append ("<TT>").append (formatDuration (new Duration ((long)node.getTotalValue ()))).append ("</TT>").append ("</B>").append ("</TD>")
+			.append ("<TD>").append ("</TD>")
+			.append ("<TD align=right>").append ("<B><TT>").append (Math.round (node.getTotalValue ()*100/getParentTotalValue (node))).append ("%").append ("</TT></B>").append ("</TD>")
 			.append ("</TR>")
+			
 			.append ("</TBODY>")
 			.append ("</HTML>");
 			;
@@ -133,5 +155,24 @@ public final class SerieNodeToolTipSupplier {
 			.append (durationNumberFormatter.format(duration.getSeconds()));
 			return sb.toString ();
 		}
+	}
+	
+	private static double getParentTotalValue (final SerieNode node) {
+		if (node.getParent ()!=null) {
+			return node.getParent ().getTotalValue ();
+		}
+		return 0;
+	}
+	private static double getParentValue (final SerieNode node) {
+		if (node.getParent ()!=null) {
+			return node.getParent ().getValue ();
+		}
+		return 0;
+	}
+	private static double getParentChildrenValue (final SerieNode node) {
+		if (node.getParent ()!=null) {
+			return node.getParent ().getChildrenValue ();
+		}
+		return 0;
 	}
 }

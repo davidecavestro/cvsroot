@@ -107,14 +107,18 @@ public class RingChartPanel extends JPanel{
 	}
 	
 	private static DefaultTreeGraph2DModel createTreeData (final ProgressItem root) {
-		DefaultTreeGraph2DModel model=new DefaultTreeGraph2DModel (createSerieNode (root));
+		DefaultTreeGraph2DModel model=new DefaultTreeGraph2DModel (createSerieNode (null, root));
 		return model;
 	}
 	
-	private static SerieNode createSerieNode (final ProgressItem progressItem) {
+	private static SerieNode createSerieNode (final SerieNode parent, final ProgressItem progressItem) {
 		if (null==progressItem){
-			return new DefaultSerieNode (null + " - " + null, 0, new SerieNode [0], progressItem);
+			return new DefaultSerieNode ((SerieNode)null, null + " - " + null, 0d, new SerieNode [0], progressItem);
 		}
+		
+		
+		final DefaultSerieNode sn = new DefaultSerieNode (parent, (progressItem.getCode ()!=null?progressItem.getCode () + " - " :"")+ progressItem.getName (), 0, null, progressItem);		
+		
 		/*
 		 * calcola durata complessiva sottoalbero.
 		 */
@@ -130,11 +134,12 @@ public class RingChartPanel extends JPanel{
 		SerieNode[] childSeries = new SerieNode[progressItem.getChildren ().size ()];
 		int i=0;
 		for (final Iterator it = progressItem.getChildren ().iterator ();it.hasNext ();){
-			childSeries[i] = createSerieNode ((ProgressItem)it.next ());
+			childSeries[i] = createSerieNode (sn, (ProgressItem)it.next ());
 			i++;
 		}
 		
-		return new DefaultSerieNode ((progressItem.getCode ()!=null?progressItem.getCode () + " - " :"")+ progressItem.getName (), totalDuration, childSeries, progressItem);
+		sn.init (totalDuration, childSeries);
+		return sn;
 	}
 
 	/**
@@ -142,7 +147,7 @@ public class RingChartPanel extends JPanel{
 	 */
 	public final void reloadChart (final ProgressItem root) {
 		this._root = root;
-		this._treeModel.setRoot (createSerieNode (root));
+		this._treeModel.setRoot (createSerieNode (null, root));
 	}
 	
 	private JPanel createButtonPanel (){
@@ -164,7 +169,7 @@ public class RingChartPanel extends JPanel{
 		final JButton updateButton = new JButton (ResourceSupplier.getString (ResourceClass.UI, "controls", "update"));
 		updateButton.addActionListener (new java.awt.event.ActionListener () {
 			public void actionPerformed (java.awt.event.ActionEvent evt) {
-				RingChartPanel.this._treeModel.setRoot (createSerieNode (RingChartPanel.this._root));
+				RingChartPanel.this._treeModel.setRoot (createSerieNode (null, RingChartPanel.this._root));
 			}
 		});
 		thePanel.add (updateButton);

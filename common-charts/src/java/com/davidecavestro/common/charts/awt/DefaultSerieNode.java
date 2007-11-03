@@ -13,6 +13,7 @@ package com.davidecavestro.common.charts.awt;
  */
 public class DefaultSerieNode implements SerieNode {
 	
+	private SerieNode _parent;
 	private String _name;
 	private double _value;
 	private SerieNode[] _children;
@@ -22,7 +23,8 @@ public class DefaultSerieNode implements SerieNode {
 	/**
 	 * Costruttore senza figli.
 	 */
-	public DefaultSerieNode (String name, double value, final Object source) {
+	public DefaultSerieNode (final SerieNode parent, String name, double value, final Object source) {
+		this._parent=parent;
 		this._name=name;
 		this._value=value;
 		this._children=noChildren;
@@ -31,11 +33,21 @@ public class DefaultSerieNode implements SerieNode {
 	/** 
 	 * Costruttore con figli 
 	 */
-	public DefaultSerieNode (String name, double value, SerieNode[] children, final Object source) {
+	public DefaultSerieNode (final SerieNode parent, String name, double value, SerieNode[] children, final Object source) {
+		this._parent=parent;
 		this._name=name;
 		this._value=value;
 		this._children=children;
 		_source = source;
+	}
+	
+	/**
+	 * Impostale informazioni relative al sottoalbero.
+	 * Questo metodo e' utile nel caso incui la creazione dell'oggetto sia fatta in una situazione in cui il lavoro del sottoalbero non è ancora noto.
+	 */
+	public void init (double value, SerieNode[] children) {
+		this._value=value;
+		this._children=children;
 	}
 	
 	public SerieNode childAt (int param) {
@@ -91,5 +103,9 @@ public class DefaultSerieNode implements SerieNode {
 		.append (" childrenLength: ").append (this.childrenLength ())
 		.append (" source: ").append (getSource ());
 		return sb.toString ();
+	}
+
+	public SerieNode getParent () {
+		return _parent;
 	}
 }

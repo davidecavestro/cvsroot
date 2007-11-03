@@ -3283,23 +3283,23 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 //		this._context.getModel ().removePiecesOfWork (p.get (0).getTask (), p);
 //	}
 	
-	/**
-	 * Elimina un insieme di task dal modello.
-	 */
-	private void deleteTasks (List<Task> t){
-		if (t.isEmpty ()) {
-			return;
-		}
-		if (JOptionPane.showConfirmDialog (
-			this,
-			StringUtils.toStringArray (
-			"Removing a task you remove all sub-tasks and actions. Please confirm if you want to continue."
-			)
-			)!=JOptionPane.OK_OPTION){
-			return;
-		}
-		this._context.getModel ().removeTasks (t.get (0).getParent (), t);
-	}
+//	/**
+//	 * Elimina un insieme di task dal modello.
+//	 */
+//	private void deleteTasks (List<Task> t){
+//		if (t.isEmpty ()) {
+//			return;
+//		}
+//		if (JOptionPane.showConfirmDialog (
+//			this,
+//			StringUtils.toStringArray (
+//			"Removing a task you remove all sub-tasks and actions. Please confirm if you want to continue."
+//			)
+//			)!=JOptionPane.OK_OPTION){
+//			return;
+//		}
+//		this._context.getModel ().removeTasks (t.get (0).getParent (), t);
+//	}
 	
 	public void addActionListener (ActionListener l) {
 		this._actionNotifier.addActionListener (l);
@@ -3751,6 +3751,16 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 //			for (final Task parent : candidatesBackup.keySet ()) {
 //				m.removeTasks (parent, candidatesBackup.get (parent));
 //			}
+			
+			
+			if (
+				JOptionPane.showConfirmDialog (MainWindow.this, 
+					java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("task.removal.confirm.message"), 
+					java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("task.removal.confirm.dialogtitle"), 
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.OK_OPTION) {
+				return;
+			}
+			
 			_context.getLogger ().debug ("Removing tasks...");
 			final TaskTreeModelImpl m = _context.getModel ();
 			for (final Task parent : _removalCandidates.keySet ()) {
@@ -4122,6 +4132,18 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 		}
 		
 		public void actionPerformed (java.awt.event.ActionEvent e) {
+			
+			
+			if (
+				JOptionPane.showConfirmDialog (MainWindow.this, 
+					java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("action.removal.confirm.message"), 
+					java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("action.removal.confirm.dialogtitle"), 
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.OK_OPTION) {
+				return;
+			}
+			
+			
+			
 			_context.getLogger ().debug ("Deleting actions...");
 			final TaskTreeModelImpl m = _context.getModel ();
 			for (final Task t : _removalCandidates.keySet ()) {

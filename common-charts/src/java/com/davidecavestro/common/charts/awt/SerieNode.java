@@ -38,9 +38,14 @@ public interface SerieNode {
 		double getTotalValue ();
 		
 		/**
-		 * Ritorna l'oggettosorgente dei dati del nodo della serie.
+		 * Ritorna l'oggetto sorgente dei dati del nodo della serie.
 		 *
-		 * Questo oggetto pu&ograve; essere utilizzatoper ulteriori elaborazioni o mappature..
+		 * Questo oggetto pu&ograve; essere utilizzato per ulteriori elaborazioni o mappature..
 		 */
 		Object getSource ();
+		
+		/**
+		 * Ritorna il padre nella gerarchia.
+		 */
+		SerieNode getParent ();
 }
