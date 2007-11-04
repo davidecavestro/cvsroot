@@ -250,7 +250,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 //		taskTree.addHighlighter (AlternateRowHighlighter.quickSilver);
 		
 		/*
-		 * Imposta l'ordinamento crescente come default per la colonna di inizio nella tabella degliavanzamenti
+		 * Imposta l'ordinamento crescente come default per la colonna di inizio nella tabella degli avanzamenti
 		 */
 		progressesTable.setSortOrder (progressesTable.convertColumnIndexToView (START_COL_INDEX), SortOrder.ASCENDING);
 		
@@ -609,7 +609,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		
 		
 		/**
-		 * consente di disegnare in grassetto il percorsoinprogress
+		 * consente di disegnare in grassetto il percorso in progress
 		 */
 		_context.getModel ().addWorkAdvanceModelListener (new WorkAdvanceModelListener () {
 			
@@ -649,38 +649,47 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		
 		_context.getUIPersisteer ().register (new MainWindow.PersistencePanelAdapter (taskTreePanel, "taskTreePanel"));
 		
-		_context.getUIPersisteer ().register (new PersistentComponent () {
+		_context.getUIPersisteer ().register (new TablePersistenceExt (taskTree) {
 			public String getPersistenceKey () {
-				return "task.tree.visible.columns";
+				return "task.tree";
 			}
 
-			public void makePersistent (PersistenceStorage props) {
-				final List<String> s = new ArrayList<String> ();
-				
-				for (int i = 0; i< taskTree.getColumnCount (false); i++) {
-					final TableColumnExt tce = taskTree.getColumnExt (i);
-					if (tce.isVisible ()) {
-						s.add (Integer.toString (taskTree.convertColumnIndexToModel (i)));
-					}
-				}
-				SettingsSupport.setStringProperty (props.getRegistry (), getPersistenceKey (), StringUtils.toCSV (s.toArray ()));
-			}
+//			public void makePersistent (PersistenceStorage props) {
+//				final List<String> s = new ArrayList<String> ();
+//				
+//				for (int i = 0; i< taskTree.getColumnCount (false); i++) {
+//					final TableColumnExt tce = taskTree.getColumnExt (i);
+//					if (tce.isVisible ()) {
+//						s.add (Integer.toString (taskTree.convertColumnIndexToModel (i)));
+//					}
+//				}
+//				SettingsSupport.setStringProperty (props.getRegistry (), getPersistenceKey (), StringUtils.toCSV (s.toArray ()));
+//			}
+//		
+//
+//			public boolean restorePersistent (PersistenceStorage props) {
+//				final String s = SettingsSupport.getStringProperty (props.getRegistry (), getPersistenceKey ());
+//				if (s==null) {
+//					return false;
+//				}
+////				final String[] values = s.split (";");
+//				final Set<String> values = new HashSet<String> (Arrays.asList (s.split (",")));
+//				for (int i = taskTree.getColumnCount (false)-1; i>=0; i--) {
+//					final TableColumnExt tce = taskTree.getColumnExt (i);
+//					tce.setVisible (values.contains (Integer.toString (taskTree.convertColumnIndexToModel (i))));
+//				}
+//				return true;
+//			}
+		});
 		
-
-			public boolean restorePersistent (PersistenceStorage props) {
-				final String s = SettingsSupport.getStringProperty (props.getRegistry (), getPersistenceKey ());
-				if (s==null) {
-					return false;
-				}
-//				final String[] values = s.split (";");
-				final Set<String> values = new HashSet<String> (Arrays.asList (s.split (",")));
-				for (int i = taskTree.getColumnCount (false)-1; i>=0; i--) {
-					final TableColumnExt tce = taskTree.getColumnExt (i);
-					tce.setVisible (values.contains (Integer.toString (taskTree.convertColumnIndexToModel (i))));
-				}
-				return true;
+		
+		_context.getUIPersisteer ().register (new TablePersistenceExt (progressesTable) {
+			public String getPersistenceKey () {
+				return "progresses.table";
 			}
 		});
+		
+		
 		
 		((RingChartPanel)chartPanel).addRingChartRootChangeListener (new PropertyChangeListener () {
 			public void propertyChange (PropertyChangeEvent evt) {
@@ -697,6 +706,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				}
 			}
 		});
+		
+		
+		
 	}
 	
 	
