@@ -1,3 +1,14 @@
+2.5.1.0
+- Introduced additional info on tooltip for ring chart sectors (ISSUE# 7)
+- Added JTTS tray icon support (only from Java 6) (ISSUE# 6)
+- Added new "Daily actions list" report (ISSUE# 5)
+- Fixed some installer issues (ISSUE# 4)
+- Added alert on items removal (ISSUE# 1)
+- Added column sort and visibility memory between different sessions (ISSUE# 2)
+- Removed several editing issues (ISSUE# 3)
+- Performance optimizations
+
+
 2.5.0.2
 - Fixed problems initalian report localization
 - Added missing libraries to export reports in PDF and XLS format

@@ -23,6 +23,7 @@ import com.davidecavestro.timekeeper.conf.ApplicationEnvironment;
 import com.davidecavestro.timekeeper.conf.CommandLineApplicationEnvironment;
 import com.davidecavestro.timekeeper.conf.UserResources;
 import com.davidecavestro.timekeeper.conf.UserSettings;
+import com.davidecavestro.timekeeper.tray.SystemTraySupport;
 import com.davidecavestro.timekeeper.gui.WindowManager;
 import com.davidecavestro.timekeeper.actions.ActionManager;
 import com.davidecavestro.timekeeper.conf.ApplicationOptions;
@@ -95,7 +96,7 @@ public class Application {
 		try {
 			p.load (new FileInputStream (new File (_env.getApplicationDirPath (), "helpmap.properties")));
 		} catch (IOException ioe){
-			System.out.println (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Missing_help_resources_mapping_file"));
+//			System.out.println (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Missing_help_resources_mapping_file"));
 		}
 		
 		
@@ -307,7 +308,7 @@ public class Application {
 	public final void exit (){
 		beforeExit ();
 		_context.getWindowManager ().disposeAllFrames ();
-		HungAwtExit.explain (_context.getWindowManager ().getMainWindow ());
+		HungAwtExit.forceOtherFramesDispose (_context.getWindowManager ().getMainWindow ());
 		System.out.println ("Closing application...");
 	}
 	
@@ -328,17 +329,8 @@ public class Application {
 	 * Porta la finestra principale dell'applicazione inprimo piano.
 	 */
 	public void bringToFront () {
-		try {
-//			_context.getWindowManager ().getMainWindow ().setAlwaysOnTop (true);
-		} catch (final SecurityException se) {
-			se.printStackTrace();
-		}
-		_context.getWindowManager ().getMainWindow ().toFront ();
-		try {
-//			_context.getWindowManager ().getMainWindow ().setAlwaysOnTop (false);
-		} catch (final SecurityException se) {
-			se.printStackTrace();
-		}
-		_context.getWindowManager ().getMainWindow ().requestFocus ();
+		_context.getWindowManager ().getMainWindow ().bringToFront ();		
 	}
+	
+	
 }

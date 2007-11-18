@@ -91,7 +91,7 @@ public class AdvancingTicPump implements WorkAdvanceModelListener {
  
 	private void start () {
 		t = new Timer ("advancing-tic-pump", true);
-		t.scheduleAtFixedRate (
+		t.schedule (
 			new TimerTask () {
 			    public void run() {
 					fireAdvancingTic ();

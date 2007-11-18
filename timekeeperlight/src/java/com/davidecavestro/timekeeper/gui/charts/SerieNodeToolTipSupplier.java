@@ -61,6 +61,17 @@ public final class SerieNodeToolTipSupplier {
 	
 		
 		public String generate (final SerieNode node){
+			
+			final long localPercentage = Math.round (node.getValue ()*100/node.getTotalValue ());
+			final long childrenPercentage = Math.round (node.getChildrenValue ()*100/node.getTotalValue ());
+			
+			final double parentTotalValue = getParentTotalValue (node);
+			
+			final long totalPercentageOnParent = parentTotalValue!=0?Math.round (node.getTotalValue ()*100/parentTotalValue):100;
+			final long localPercentageOnParent = parentTotalValue!=0?Math.round (node.getValue ()*100/parentTotalValue):100;
+			final long childrenPercentageOnParent = parentTotalValue!=0?Math.round (node.getChildrenValue ()*100/parentTotalValue):100;
+			
+			
 				
 			final StringBuffer sb= new StringBuffer ();
 			sb.append ("<HTML>")
@@ -95,8 +106,8 @@ public final class SerieNodeToolTipSupplier {
 			.append ("<TD align=right>")
 			.append ("<TT align=right>").append (formatDuration (new Duration ((long)node.getValue ()))).append ("<TT>")
 			.append ("</TD>")
-			.append ("<TD align=right>").append ("<TT>(").append (Math.round (node.getValue ()*100/node.getTotalValue ())).append ("%)").append ("</TT>").append ("</TD>")
-			.append ("<TD align=right>").append ("<TT>").append (Math.round (node.getValue ()*100/getParentTotalValue (node))).append ("%").append ("</TT>").append ("</TD>")
+			.append ("<TD align=right>").append ("<TT>(").append (localPercentage).append ("%)").append ("</TT>").append ("</TD>")
+			.append ("<TD align=right>").append ("<TT>").append (localPercentageOnParent).append ("%").append ("</TT>").append ("</TD>")
 			.append ("</TR>")
 			
 			.append ("<TR>")
@@ -106,8 +117,8 @@ public final class SerieNodeToolTipSupplier {
 			.append ("<TD align=right>")
 			.append ("<TT>").append (formatDuration (new Duration ((long)node.getChildrenValue ()))).append ("<TT>")
 			.append ("</TD>")
-			.append ("<TD align=right>").append ("<TT>(").append (Math.round (node.getChildrenValue ()*100/node.getTotalValue ())).append ("%)").append ("</TT>").append ("</TD>")
-			.append ("<TD align=right>").append ("<TT>").append (Math.round (node.getChildrenValue ()*100/getParentTotalValue (node))).append ("%").append ("</TT>").append ("</TD>")
+			.append ("<TD align=right>").append ("<TT>(").append (childrenPercentage).append ("%)").append ("</TT>").append ("</TD>")
+			.append ("<TD align=right>").append ("<TT>").append (childrenPercentageOnParent).append ("%").append ("</TT>").append ("</TD>")
 			.append ("</TR>")
 			
 			.append ("<TR>").append ("<TD colspan=4><HR></TD>").append ("</TR>")
@@ -121,7 +132,7 @@ public final class SerieNodeToolTipSupplier {
 			.append ("</TD>")
 			.append ("<TD align=right>").append ("<B>").append ("<TT>").append (formatDuration (new Duration ((long)node.getTotalValue ()))).append ("</TT>").append ("</B>").append ("</TD>")
 			.append ("<TD>").append ("</TD>")
-			.append ("<TD align=right>").append ("<B><TT>").append (Math.round (node.getTotalValue ()*100/getParentTotalValue (node))).append ("%").append ("</TT></B>").append ("</TD>")
+			.append ("<TD align=right>").append ("<B><TT>").append (totalPercentageOnParent).append ("%").append ("</TT></B>").append ("</TD>")
 			.append ("</TR>")
 			
 			.append ("</TBODY>")

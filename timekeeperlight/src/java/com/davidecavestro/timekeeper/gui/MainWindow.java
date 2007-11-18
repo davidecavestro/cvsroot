@@ -9,18 +9,15 @@ package com.davidecavestro.timekeeper.gui;
 import com.davidecavestro.common.gui.CompositeIcon;
 import com.davidecavestro.common.gui.SwingWorker;
 import com.davidecavestro.common.gui.VTextIcon;
-import com.davidecavestro.common.gui.persistence.PersistenceStorage;
 import com.davidecavestro.common.gui.persistence.PersistenceUtils;
 import com.davidecavestro.common.gui.persistence.PersistentComponent;
 import com.davidecavestro.common.util.CalendarUtils;
 import com.davidecavestro.common.util.ExceptionUtils;
 import com.davidecavestro.common.util.IllegalOperationException;
-import com.davidecavestro.common.util.StringUtils;
 import com.davidecavestro.common.util.action.ActionNotifier;
 import com.davidecavestro.common.util.action.ActionNotifierImpl;
 import com.davidecavestro.common.util.file.CustomFileFilter;
 import com.davidecavestro.common.util.file.FileUtils;
-import com.davidecavestro.common.util.settings.SettingsSupport;
 import com.davidecavestro.timekeeper.ApplicationContext;
 import com.davidecavestro.timekeeper.backup.XMLAgent;
 import com.davidecavestro.timekeeper.backup.XMLImporter;
@@ -40,6 +37,8 @@ import com.davidecavestro.timekeeper.model.event.TaskTreeModelEvent;
 import com.davidecavestro.timekeeper.model.event.TaskTreeModelListener;
 import com.davidecavestro.timekeeper.model.event.WorkAdvanceModelEvent;
 import com.davidecavestro.timekeeper.model.event.WorkAdvanceModelListener;
+import com.davidecavestro.timekeeper.tray.SystemTraySupport;
+import com.davidecavestro.timekeeper.tray.TrayMessageNotifier;
 import com.ost.timekeeper.model.Progress;
 import com.ost.timekeeper.model.ProgressItem;
 import com.ost.timekeeper.model.Project;
@@ -53,6 +52,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.MenuItem;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.datatransfer.DataFlavor;
@@ -64,6 +64,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
@@ -83,7 +85,6 @@ import java.util.Date;
 import java.util.EventObject;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +93,6 @@ import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 import javax.help.CSH;
 import javax.swing.AbstractAction;
-import javax.swing.AbstractCellEditor;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.DefaultCellEditor;
@@ -135,7 +135,6 @@ import org.jdesktop.swingx.decorator.FilterPipeline;
 import org.jdesktop.swingx.decorator.SortController;
 import org.jdesktop.swingx.decorator.SortOrder;
 import org.jdesktop.swingx.decorator.Sorter;
-import org.jdesktop.swingx.table.TableColumnExt;
 import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 import org.jdesktop.swingx.treetable.TreeTableCellEditor;
 import org.jdesktop.swingx.treetable.TreeTableModel;
@@ -180,6 +179,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		this._actionNotifier = new ActionNotifierImpl ();
 		this._context = context;
 		this._wm = context.getWindowManager ();
+		
 		
 		/*
 		 * va istanziato prima dell'inizializzazione dei componenti, che vi si registrano
@@ -706,8 +706,126 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 				}
 			}
 		});
+
+		
+		final SystemTraySupport tray = context.getWindowManager ().getSystemTraySupport ();
+		
+		tray.setMenu (trayMenu);
+				
+		context.getModel ().addWorkAdvanceModelListener (new WorkAdvanceModelListener () {
+			public void elementsInserted (WorkAdvanceModelEvent e) {
+				processEvent (e);
+			}
+			public void elementsRemoved (WorkAdvanceModelEvent e) {
+				processEvent (e);
+			}
+			
+			private void processEvent (final WorkAdvanceModelEvent e) {
+				/*
+				 * Notifica la variazione di avanzamenti in corso
+				 */
+				PieceOfWork pow = null;
+				
+				final Set<PieceOfWork> advancing = _context.getModel ().getAdvancing ();
+				if (!advancing.isEmpty ()) {
+					/*
+					 * Usa il primo avanzamento
+					 */
+					pow = advancing.iterator ().next ();
+				}
+				
+				tray.setWorking (pow);
+			}
+		});
+		
+		/*
+		 * MOstra la finestra principale con un doppio clicksulla tray icon
+		 */
+		tray.addMouseListener (new MouseListener () {
+			public void mouseClicked (MouseEvent e) {
+				if (e.getClickCount ()>1) {
+					bringToFront ();
+				}
+			}
+			public void mouseEntered (MouseEvent e) {
+			}
+			public void mouseExited (MouseEvent e) {
+			}
+			public void mousePressed (MouseEvent e) {
+			}
+			public void mouseReleased (MouseEvent e) {
+			}
+		});
+
+		
+		_ticPump.addAdvancingTicListener (
+			new AdvancingTicListener () {
+				public void advanceTic (AdvancingTicEvent e) {
+					/*
+					 * Notifica la variazione di avanzamenti in corso
+					 */
+					PieceOfWork pow = null;
+
+					final Set<PieceOfWork> advancing = _context.getModel ().getAdvancing ();
+					if (!advancing.isEmpty ()) {
+						/*
+						 * Usa il primo avanzamento
+						 */
+						pow = advancing.iterator ().next ();
+					}
+
+					tray.setWorking (pow);
+					
+				}
+			}
+		);
 		
 		
+		
+		/*
+		 * notifica 15 minuti di inattivita'
+		 */
+		context.getModel ().addWorkAdvanceModelListener (new WorkAdvanceModelListener () {
+			
+			private final TrayMessageNotifier _notifier = new TrayMessageNotifier (context, 1000*60*15) {
+				public void notifyTray (final SystemTraySupport traySupport) {
+					traySupport.displayInfo (
+						java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("SystemTray/InfoMesage/Title/Idle_15_minutes"), 
+						java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("SystemTray/InfoMesage/Message/Idle_15_minutes"));
+				}
+			};
+			
+			{
+				testActivation ();
+			}
+			
+			public void elementsInserted (WorkAdvanceModelEvent e) {
+				_notifier.deactivate ();
+			}
+			public void elementsRemoved (WorkAdvanceModelEvent e) {
+				testActivation ();
+			}
+			
+			private void testActivation () {
+				if (context.getModel ().getAdvancing ().isEmpty ()) {
+					_notifier.activate ();
+				}
+			}
+		});
+		
+		
+		/*
+		 * notifica la variazione di selezione sull'alberoalla tray icon
+		 */
+		taskTree.addTreeSelectionListener (new TreeSelectionListener () {
+			public void valueChanged (TreeSelectionEvent e) {
+				
+				final List<Task> selected = getSelectedTasks ();
+				if (!selected.isEmpty ()) {
+					context.getWindowManager ().getSystemTraySupport ().setSelected (selected.get (0));
+				}
+			}
+		});		
 		
 	}
 	
@@ -758,6 +876,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         saveFileChooser = new javax.swing.JFileChooser();
         xmlFileChooser = new javax.swing.JFileChooser();
         TabShowingChoiceButtonGroup = new javax.swing.ButtonGroup();
+        trayMenu = new java.awt.PopupMenu();
+        trayMenuShowMenuItem = new java.awt.MenuItem();
+        trayMenuStartProgressMenuItem = new java.awt.MenuItem();
+        trayMenuStopProgressMenuItem = new java.awt.MenuItem();
+        trayMenuExitMenuItem = new java.awt.MenuItem();
         mainPanel = new javax.swing.JPanel();
         tree_table_splitPane = new javax.swing.JSplitPane();
         taskTreePanel = new javax.swing.JPanel();
@@ -805,6 +928,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
         jButton2 = new javax.swing.JButton();
         jSeparator5 = new javax.swing.JSeparator();
         jButton4 = new javax.swing.JButton();
+        jSeparator17 = new javax.swing.JSeparator();
         jButton3 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jSeparator14 = new javax.swing.JSeparator();
@@ -1138,6 +1262,34 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             new String []{FileUtils.xml},
             new String []{"XML files"}
         ));
+        trayMenu.setLabel(_context.getApplicationData ().getApplicationExternalName ());
+        trayMenuShowMenuItem.setLabel(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("TrayIcon/MenuItem/Label/Show"));
+        trayMenuShowMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                traMenuShowMenuItemActionPerformed(evt);
+            }
+        });
+
+        trayMenu.add(trayMenuShowMenuItem);
+
+        trayMenu.addSeparator();
+        trayMenuStartProgressMenuItem.setLabel(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("TrayIcon/MenuItem/Label/Start_action"));
+        bind (trayMenuStartProgressMenuItem, new StartProgressAction ());
+        trayMenu.add(trayMenuStartProgressMenuItem);
+
+        trayMenuStopProgressMenuItem.setLabel(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("TrayIcon/MenuItem/Label/Stop_action"));
+        bind (trayMenuStopProgressMenuItem, new StopProgressAction ());
+        trayMenu.add(trayMenuStopProgressMenuItem);
+
+        trayMenu.addSeparator();
+        trayMenuExitMenuItem.setLabel(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("TrayIcon/MenuItem/Label/Exit"));
+        trayMenuExitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trayMenuExitActionPerformed(evt);
+            }
+        });
+
+        trayMenu.add(trayMenuExitMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setIconImage(new javax.swing.ImageIcon (MainWindow.class.getResource ("/com/davidecavestro/timekeeper/gui/images/ktimer-16x16.png")).getImage ());
@@ -1395,7 +1547,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jPanel5.setPreferredSize(new java.awt.Dimension(420, 28));
             mainToolbar.setFloatable(false);
             mainToolbar.setRollover(true);
-            mainToolbar.setPreferredSize(new java.awt.Dimension(150, 28));
+            mainToolbar.setPreferredSize(null);
             javax.help.CSH.setHelpIDString (mainToolbar, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
             jButton5.setAction(new NewWorkSpaceAction ());
@@ -1404,7 +1556,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton5.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("New_workspace"));
             jButton5.setBorderPainted(false);
             jButton5.setMargin(null);
-            jButton5.setMinimumSize(new java.awt.Dimension(22, 22));
+            jButton5.setMinimumSize(new java.awt.Dimension(28, 28));
             jButton5.setOpaque(false);
             jButton5.setPreferredSize(new java.awt.Dimension(28, 28));
             mainToolbar.add(jButton5);
@@ -1415,7 +1567,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton1.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("New_task_(Ctrl+N)"));
             jButton1.setBorderPainted(false);
             jButton1.setMargin(null);
-            jButton1.setMinimumSize(new java.awt.Dimension(22, 22));
+            jButton1.setMinimumSize(new java.awt.Dimension(28, 28));
             jButton1.setOpaque(false);
             jButton1.setPreferredSize(new java.awt.Dimension(28, 28));
             mainToolbar.add(jButton1);
@@ -1427,12 +1579,14 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton2.setBorderPainted(false);
             jButton2.setMargin(null);
             jButton2.setMaximumSize(new java.awt.Dimension(28, 28));
-            jButton2.setMinimumSize(new java.awt.Dimension(22, 22));
+            jButton2.setMinimumSize(new java.awt.Dimension(28, 28));
             jButton2.setOpaque(false);
             jButton2.setPreferredSize(new java.awt.Dimension(28, 28));
             mainToolbar.add(jButton2);
 
-            jSeparator5.setMinimumSize(new java.awt.Dimension(10, 0));
+            jSeparator5.setMaximumSize(null);
+            jSeparator5.setMinimumSize(null);
+            jSeparator5.setPreferredSize(null);
             mainToolbar.add(jSeparator5);
 
             jButton4.setAction(new NewPieceOfWorkAction ());
@@ -1442,10 +1596,15 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton4.setBorderPainted(false);
             jButton4.setMargin(null);
             jButton4.setMaximumSize(new java.awt.Dimension(28, 28));
-            jButton4.setMinimumSize(new java.awt.Dimension(22, 22));
+            jButton4.setMinimumSize(new java.awt.Dimension(28, 28));
             jButton4.setOpaque(false);
             jButton4.setPreferredSize(new java.awt.Dimension(28, 28));
             mainToolbar.add(jButton4);
+
+            jSeparator17.setMaximumSize(null);
+            jSeparator17.setMinimumSize(null);
+            jSeparator17.setPreferredSize(null);
+            mainToolbar.add(jSeparator17);
 
             jButton3.setAction(new StartProgressAction ());
             jButton3.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -1454,7 +1613,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton3.setBorderPainted(false);
             jButton3.setMargin(null);
             jButton3.setMaximumSize(new java.awt.Dimension(28, 28));
-            jButton3.setMinimumSize(new java.awt.Dimension(22, 22));
+            jButton3.setMinimumSize(new java.awt.Dimension(28, 28));
             jButton3.setOpaque(false);
             jButton3.setPreferredSize(new java.awt.Dimension(28, 28));
             mainToolbar.add(jButton3);
@@ -1466,21 +1625,24 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton10.setBorderPainted(false);
             jButton10.setMargin(null);
             jButton10.setMaximumSize(new java.awt.Dimension(28, 28));
-            jButton10.setMinimumSize(new java.awt.Dimension(22, 22));
+            jButton10.setMinimumSize(new java.awt.Dimension(28, 28));
             jButton10.setOpaque(false);
             jButton10.setPreferredSize(new java.awt.Dimension(28, 28));
             mainToolbar.add(jButton10);
 
-            jSeparator14.setMinimumSize(new java.awt.Dimension(40, 0));
+            jSeparator14.setMaximumSize(null);
+            jSeparator14.setMinimumSize(null);
+            jSeparator14.setPreferredSize(null);
             mainToolbar.add(jSeparator14);
 
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+            gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
             jPanel5.add(mainToolbar, gridBagConstraints);
 
             mainToolbar1.setFloatable(false);
             mainToolbar1.setRollover(true);
-            mainToolbar1.setPreferredSize(new java.awt.Dimension(150, 28));
+            mainToolbar1.setPreferredSize(null);
             javax.help.CSH.setHelpIDString (mainToolbar1, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
             jButton6.setAction(new TransferAction (TransferAction.Type.CUT, tal));
@@ -1489,7 +1651,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton6.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Cut_(Ctrl+X)"));
             jButton6.setBorderPainted(false);
             jButton6.setMargin(null);
-            jButton6.setMinimumSize(new java.awt.Dimension(22, 22));
+            jButton6.setMinimumSize(new java.awt.Dimension(28, 28));
             jButton6.setOpaque(false);
             jButton6.setPreferredSize(new java.awt.Dimension(28, 28));
             jButton6.setText (null);
@@ -1501,7 +1663,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton7.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Copy_(Ctrl+C)"));
             jButton7.setBorderPainted(false);
             jButton7.setMargin(null);
-            jButton7.setMinimumSize(new java.awt.Dimension(22, 22));
+            jButton7.setMinimumSize(new java.awt.Dimension(28, 28));
             jButton7.setOpaque(false);
             jButton7.setPreferredSize(new java.awt.Dimension(28, 28));
             jButton7.setText (null);
@@ -1513,7 +1675,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jButton8.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Paste_(Ctrl+V)"));
             jButton8.setBorderPainted(false);
             jButton8.setMargin(null);
-            jButton8.setMinimumSize(new java.awt.Dimension(22, 22));
+            jButton8.setMinimumSize(new java.awt.Dimension(28, 28));
             jButton8.setOpaque(false);
             jButton8.setPreferredSize(new java.awt.Dimension(28, 28));
             jButton8.setText (null);
@@ -1526,7 +1688,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             undoButton.setBorderPainted(false);
             undoButton.setMargin(null);
             undoButton.setMaximumSize(new java.awt.Dimension(28, 28));
-            undoButton.setMinimumSize(new java.awt.Dimension(22, 22));
+            undoButton.setMinimumSize(new java.awt.Dimension(28, 28));
             undoButton.setOpaque(false);
             undoButton.setPreferredSize(new java.awt.Dimension(28, 28));
             /* mantiene nascosto il testo  dell'action */
@@ -1541,7 +1703,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             redoButton.setBorderPainted(false);
             redoButton.setMargin(null);
             redoButton.setMaximumSize(new java.awt.Dimension(28, 28));
-            redoButton.setMinimumSize(new java.awt.Dimension(22, 22));
+            redoButton.setMinimumSize(new java.awt.Dimension(28, 28));
             redoButton.setOpaque(false);
             redoButton.setPreferredSize(new java.awt.Dimension(28, 28));
             /* mantiene nascosto il testo  dell'action */
@@ -1549,16 +1711,20 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             redoButton.putClientProperty ("hideActionText", Boolean.TRUE);
             mainToolbar1.add(redoButton);
 
-            jSeparator15.setMinimumSize(new java.awt.Dimension(40, 0));
+            jSeparator15.setMinimumSize(null);
+            jSeparator15.setPreferredSize(null);
             mainToolbar1.add(jSeparator15);
 
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+            gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
             jPanel5.add(mainToolbar1, gridBagConstraints);
 
             mainToolbar2.setFloatable(false);
             mainToolbar2.setRollover(true);
-            mainToolbar2.setPreferredSize(new java.awt.Dimension(18, 28));
+            mainToolbar2.setMaximumSize(null);
+            mainToolbar2.setMinimumSize(null);
+            mainToolbar2.setPreferredSize(null);
             javax.help.CSH.setHelpIDString (mainToolbar2, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
             _context.getHelpManager ().initialize (helpButton);
@@ -1586,6 +1752,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
             gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
             gridBagConstraints.weightx = 1.0;
+            gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
             jPanel5.add(mainToolbar2, gridBagConstraints);
 
             mainPanel.add(jPanel5, java.awt.BorderLayout.NORTH);
@@ -1986,6 +2153,17 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             setBounds((screenSize.width-802)/2, (screenSize.height-600)/2, 802, 600);
         }// </editor-fold>//GEN-END:initComponents
 
+	private void traMenuShowMenuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_traMenuShowMenuItemActionPerformed
+		bringToFront ();
+	}//GEN-LAST:event_traMenuShowMenuItemActionPerformed
+
+	private void trayMenuExitActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trayMenuExitActionPerformed
+		/*
+		 * Come voce menu Esci
+		 */
+		exitMenuItemActionPerformed(evt);
+	}//GEN-LAST:event_trayMenuExitActionPerformed
+
 	private void chartDepthSliderFocusLost (java.awt.event.FocusEvent evt) {//GEN-FIRST:event_chartDepthSliderFocusLost
 		tbp.repaintProgressTableBackground ();
 	}//GEN-LAST:event_chartDepthSliderFocusLost
@@ -2262,6 +2440,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private javax.swing.JSeparator jSeparator14;
     private javax.swing.JSeparator jSeparator15;
     private javax.swing.JSeparator jSeparator16;
+    private javax.swing.JSeparator jSeparator17;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
@@ -2316,6 +2495,11 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
     private org.jdesktop.swingx.JXTreeTable taskTree;
     private javax.swing.JPanel taskTreePanel;
     private javax.swing.JMenu toolsMenu;
+    private java.awt.PopupMenu trayMenu;
+    private java.awt.MenuItem trayMenuExitMenuItem;
+    private java.awt.MenuItem trayMenuShowMenuItem;
+    private java.awt.MenuItem trayMenuStartProgressMenuItem;
+    private java.awt.MenuItem trayMenuStopProgressMenuItem;
     private javax.swing.JPopupMenu treePopupMenu;
     private javax.swing.JSplitPane tree_table_splitPane;
     private javax.swing.JButton undoButton;
@@ -2425,9 +2609,9 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			this._taskTreeModel = ttm;
 			reload (null, null);
 			fireTableStructureChanged ();
-			ttm.addTaskTreeModelListener (this);
-			ttm.addWorkAdvanceModelListener (this);
-			_ticPump.addAdvancingTicListener (this);
+//			ttm.addTaskTreeModelListener (this);
+//			ttm.addWorkAdvanceModelListener (this);
+//			_ticPump.addAdvancingTicListener (this);
 		}
 		
 		public int getColumnCount () {
@@ -2747,6 +2931,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			final int l = advancingIdx.length;
 			for (int i = 0; i < l; i++) {
 				final int idx = advancingIdx[i];
+//		System.out.println ("advanceTic - Thread: "+Thread.currentThread ().getName ()+" cause: "+com.davidecavestro.common.util.ExceptionUtils.getStackTrace (new Throwable ()));
 				SwingUtilities.invokeLater (new Runnable () {
 					public void run () {
 						/*
@@ -3713,7 +3898,7 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 		
 		public void valueChanged (TreeSelectionEvent e) {
 			final Task oldCandidateParent = _candidateParent;
-			final TreePath path = e.getPath ();
+			final TreePath path = taskTree.getPathForRow (taskTree.getSelectedRow ());
 			if (path==null) {
 				_candidateParent = null;
 			} else {
@@ -3857,7 +4042,7 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 		Task _candidateParent;
 		public void valueChanged (TreeSelectionEvent e) {
 			final Task oldCandidateParent = _candidateParent;
-			final TreePath path = e.getPath ();
+			final TreePath path = taskTree.getPathForRow (taskTree.getSelectedRow ());
 			if (path==null) {
 				_candidateParent = null;
 			} else {
@@ -4106,7 +4291,7 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 		Task _candidateParent;
 		public void valueChanged (TreeSelectionEvent e) {
 			final Task oldCandidateParent = _candidateParent;
-			final TreePath path = e.getPath ();
+			final TreePath path = taskTree.getPathForRow (taskTree.getSelectedRow ());
 			if (path==null) {
 				_candidateParent = null;
 			} else {
@@ -5202,14 +5387,17 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 									final BufferedImage i = (BufferedImage)chartPanel.createImage (w, h);
 									final Graphics2D g = i.createGraphics ();
 									g.setComposite (ac);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-        g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-        g.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-//        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+									g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+									g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+									g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+									g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+									g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+									g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+									g.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+//							        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+									/*
+									 * Invoca il repaint 
+									 */
 									SwingUtilities.invokeLater (new Runnable () {
 										public void run () {
 											chartPanel.paint (g);
@@ -5245,8 +5433,61 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 		}
 		
 		public void repaintProgressTableBackground () {
+//			System.out.println ("repaintProgressTableBackground ()");
 			semaphore.release ();
 		}
 	}
 
+	/**
+	 * Associa una voce del menu ad un'azione (come in swing)
+	 */
+	private static void bind (final MenuItem mi, final AbstractAction action) {
+		mi.setEnabled (action.isEnabled ());
+		action.addPropertyChangeListener (new PropertyChangeListener () {
+			public void propertyChange (PropertyChangeEvent evt) {
+				if (evt.getPropertyName ().equals ("enabled")) {
+					final Boolean b = (Boolean)evt.getNewValue ();
+					if (b!=null) {
+						mi.setEnabled (b.booleanValue ());
+					}
+				}
+			}
+		});
+		mi.addActionListener (action);
+		
+	}
+
+	/**
+	 * Porta in primo piano questa finestra.
+	 */
+	public void bringToFront () {
+		/*
+		 * Ripristina la finestra
+		 */
+//		dispatchEvent (new WindowEvent (this, WindowEvent.WINDOW_DEICONIFIED));
+
+		getToolkit ().getSystemEventQueue ().postEvent(new WindowEvent (this, WindowEvent.WINDOW_DEICONIFIED));
+		
+		
+		try {
+//			setAlwaysOnTop (true);
+		} catch (final SecurityException se) {
+			se.printStackTrace();
+		}
+		toFront ();
+		try {
+//			setAlwaysOnTop (false);
+		} catch (final SecurityException se) {
+			se.printStackTrace();
+		}
+		requestFocus ();
+	}
+	
+	private List<Task> getSelectedTasks () {
+		final List<Task> l= new ArrayList<Task> ();
+		for (final int r : taskTree.getSelectedRows ()){
+			l.add ((Task) taskTree.getModel ().getValueAt (taskTree.convertRowIndexToModel (r), taskTree.convertColumnIndexToModel (TaskJTreeModel.TREE_COLUMN_INDEX)));
+		}		
+		return l;
+	}
 }

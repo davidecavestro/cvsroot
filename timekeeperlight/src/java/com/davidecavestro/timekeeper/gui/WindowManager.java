@@ -11,6 +11,7 @@ import com.davidecavestro.common.gui.dialog.DialogListener;
 import com.davidecavestro.timekeeper.ApplicationContext;
 import com.davidecavestro.timekeeper.model.Task;
 import com.davidecavestro.timekeeper.model.WorkSpace;
+import com.davidecavestro.timekeeper.tray.SystemTraySupport;
 import com.ost.timekeeper.model.Progress;
 import com.ost.timekeeper.model.ProgressItem;
 import java.awt.event.ActionListener;
@@ -290,7 +291,7 @@ public class WindowManager implements ActionListener, DialogListener {
 	
 	private About _about;	
 	/**
-	 * Ritorna la dialog di inserimento nuova entry, conuna inizializzazione lazy.
+	 * Ritorna la dialog di inserimento nuova entry, con una inizializzazione lazy.
 	 *
 	 * @return la dialog di inserimento nuova entry.
 	 */
@@ -300,6 +301,36 @@ public class WindowManager implements ActionListener, DialogListener {
 		}
 		return this._about;
 	}
+	
+	
+	private SystemTraySupport _systemTray;
+	
+	/**
+	 * Ritorna il supporto per la tray icon, con una inizializzazione lazy.
+	 *
+	 * @return il supporto per la tray icon.
+	 */
+	public SystemTraySupport getSystemTraySupport () {
+		if (_systemTray==null) {
+			_systemTray = new SystemTraySupport (_context);
+			try {
+				_systemTray.register (null, null);
+			} catch (final NoClassDefFoundError er) {
+				/*
+				 * Eccezione silenziata inquanto è previsto che possa accadere, usando una versione di Java anteriore alla 6
+				 */
+				//er.printStackTrace();
+			} catch (final ClassNotFoundException ex) {
+				/*
+				 * Eccezione silenziata inquanto è previsto che possa accadere, usando una versione di Java anteriore alla 6
+				 */
+				//ex.printStackTrace();
+			}
+			
+		}
+		return _systemTray;
+	}
+	
 	
 	/**
 	 * Varia il look and feel.
@@ -351,5 +382,6 @@ public class WindowManager implements ActionListener, DialogListener {
 		getMainWindow ().dispose ();
 		getLogConsole ().setVisible (false);
 		getLogConsole ().dispose ();
+		getSystemTraySupport ().release ();
 	}
 }
