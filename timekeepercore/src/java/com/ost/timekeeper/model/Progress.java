@@ -86,8 +86,8 @@ public class Progress extends Period implements PieceOfWork {
 		
 		public void restore () {
 			
-			_source.from = from;
-			_source.to = to;
+			_source.from = safeFromAccessor ();
+			_source.to = safeToAccessor ();
 			_source.description = description;
 			_source.notes = notes;
 			_source.progressItem = progressItem;

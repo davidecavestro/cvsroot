@@ -16,11 +16,11 @@ import java.util.EventListener;
  */
 public interface WorkAdvanceModelListener extends EventListener {
 	/**
-	 * Invocato a fronte dell'inserimento di nuovi elementi nell'elenco.
+	 * Invocato a fronte dell'inserimento di nuovi elementi nell'elenco (nuovi avanzamenti).
 	 */
 	void elementsInserted (WorkAdvanceModelEvent e);
 	/**
-	 * Invocato a fronte della rimozione degli elementi dell'elenco.
+	 * Invocato a fronte della rimozione degli elementi dell'elenco (rimossi avanzamenti).
 	 */
 	void elementsRemoved (WorkAdvanceModelEvent e);
 }

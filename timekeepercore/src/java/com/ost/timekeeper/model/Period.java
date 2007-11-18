@@ -7,6 +7,7 @@
 package com.ost.timekeeper.model;
 
 import com.davidecavestro.common.util.CalendarUtils;
+import com.davidecavestro.common.util.ExceptionUtils;
 import com.ost.timekeeper.util.Duration;
 import com.ost.timekeeper.util.LocalizedPeriod;
 import java.util.*;
@@ -76,8 +77,8 @@ public class Period extends Observable implements LocalizedPeriod{
 	public Period (final Period source) {
 		this.description = source.description;
 		this.notes = source.notes;
-		this.from = source.from;
-		this.to = source.to;
+		this.from = source.safeFromAccessor ();
+		this.to = source.safeToAccessor ();
 	}
 	
 	/** 
@@ -86,8 +87,30 @@ public class Period extends Observable implements LocalizedPeriod{
 	 * @return la data d'inizio.
 	 */
 	public Date getFrom() {
-		return this.from;
+		return safeFromAccessor ();
 	}
+	
+	private transient Date _safeFromAccessor;
+	
+	protected Date safeFromAccessor (){
+		try {
+			return from;
+		} catch (Throwable e) {
+			/*
+			 * @workaround per mitigare problemi di corruzione dati
+			 */
+			if (_safeFromAccessor==null) {
+				_safeFromAccessor = new Date ();
+				/*
+				 * mostra messaggio solo la prima volta
+				 */
+				System.out.println ("WARNING: Potential corruption detected. Erasing unavailable object reference.");
+				System.out.println ("Root cause:" + ExceptionUtils.getStackTrace (e));
+			}
+			return _safeFromAccessor;
+		}
+	}
+	
 	
 	/** 
 	 * Imposta la data d'inizio per questo periodo.
@@ -95,7 +118,7 @@ public class Period extends Observable implements LocalizedPeriod{
 	 * @param from la nuova data d'inizio.
 	 */
 	public synchronized void setFrom(Date from) {
-		if (!CalendarUtils.equals(this.from,from)){
+		if (!CalendarUtils.equals(safeFromAccessor (),from)){
 			this.from = from;
 			this.isDurationComputed = false;
 			this.setChanged();
@@ -109,7 +132,28 @@ public class Period extends Observable implements LocalizedPeriod{
 	 * @return la data di fine.
 	 */
 	public Date getTo() {
-		return this.to;
+		return safeToAccessor ();
+	}
+	
+	private transient Date _safeToAccessor;
+	
+	protected Date safeToAccessor (){
+		try {
+			return to;
+		} catch (Throwable e) {
+			/*
+			 * @workaround per mitigare problemi di corruzione dati
+			 */
+			if (_safeToAccessor==null) {
+				_safeToAccessor = new Date ();
+				/*
+				 * mostra messaggio solo la prima volta
+				 */
+				System.out.println ("WARNING: Potential corruption detected. Erasing unavailable object reference.");
+				System.out.println ("Root cause:" + ExceptionUtils.getStackTrace (e));
+			}
+			return _safeToAccessor;
+		}
 	}
 	
 	/** 
@@ -118,7 +162,7 @@ public class Period extends Observable implements LocalizedPeriod{
 	 * @param to la nuova data di fine del periodo.
 	 */
 	public synchronized void setTo(Date to) {
-		if (!CalendarUtils.equals(this.to,to)){
+		if (!CalendarUtils.equals(safeToAccessor (),to)){
 			this.to = to;
 			isDurationComputed = false;
 			this.setChanged();
@@ -170,9 +214,9 @@ public class Period extends Observable implements LocalizedPeriod{
 	 * <code>false</code> altrimenti.
 	 */
 	public boolean isValid() {
-		return this.from!=null 
-			&& this.to!=null
-			&& !this.from.after(this.to);
+		return safeFromAccessor ()!=null 
+			&& safeToAccessor ()!=null
+			&& !safeFromAccessor ().after(safeToAccessor ());
 	}
 	
 	/** 
@@ -182,8 +226,8 @@ public class Period extends Observable implements LocalizedPeriod{
 	 * <code>false</code> altrimenti.
 	 */
 	public synchronized boolean isEndOpened() {
-		return this.from!=null 
-			&& this.to==null;
+		return safeFromAccessor ()!=null 
+			&& safeToAccessor ()==null;
 	}
 	
 	/**
@@ -193,10 +237,10 @@ public class Period extends Observable implements LocalizedPeriod{
 	 */	
 	public synchronized Duration getDuration (){
 		if (this.isEndOpened()){
-			return new Duration (this.from, new Date ());
+			return new Duration (safeFromAccessor (), new Date ());
 		} else {
 			if (!isDurationComputed){
-				this.computedDuration = new Duration (this.from, this.to);
+				this.computedDuration = new Duration (safeFromAccessor (), safeToAccessor ());
 				isDurationComputed = true;
 			}
 			return this.computedDuration;
@@ -210,8 +254,8 @@ public class Period extends Observable implements LocalizedPeriod{
 	 */	
 	public String toString (){
 		StringBuffer sb = new StringBuffer ();
-		sb.append ("from: ").append (CalendarUtils.toTSString(this.from))
-		.append (" to: ").append (CalendarUtils.toTSString(this.to));
+		sb.append ("from: ").append (CalendarUtils.toTSString(safeFromAccessor ()))
+		.append (" to: ").append (CalendarUtils.toTSString(safeToAccessor ()));
 		return sb.toString ();
 	}
 	
@@ -260,6 +304,6 @@ public class Period extends Observable implements LocalizedPeriod{
 	}
 
 	private long toNow () {
-		return System.currentTimeMillis () - from.getTime ();
+		return System.currentTimeMillis () - safeFromAccessor ().getTime ();
 	}
 }
