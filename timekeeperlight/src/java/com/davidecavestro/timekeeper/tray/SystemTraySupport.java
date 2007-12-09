@@ -18,6 +18,7 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.text.MessageFormat;
@@ -60,7 +61,7 @@ public class SystemTraySupport {
 	 * @param popup il menu da associare alla tray icon. Pu&ograve; essere nullo.
 	 * @throws java.lang.ClassNotFoundException in caso di utilizo con una versionedi Java anteriore alla 6
 	 */
-	public boolean register (final PopupMenu popup, final PieceOfWork pow) throws ClassNotFoundException {
+	public boolean register (final PopupMenu popup, final PieceOfWork pow) throws ClassNotFoundException, NoClassDefFoundError {
 		
 		if (SystemTray.isSupported ()) {
 			
@@ -93,7 +94,14 @@ public class SystemTraySupport {
 	 * @param popup ilnuovo menu.
 	 */
 	public void setMenu (final PopupMenu popup) {
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return;
 		}
 		getTrayIcon ().setPopupMenu (popup);
@@ -105,7 +113,14 @@ public class SystemTraySupport {
 	 * @return il menu associato alla tray icon.
 	 */
 	public PopupMenu getMenu () {
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return null;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return null;
 		}
 		return getTrayIcon ().getPopupMenu ();
@@ -116,7 +131,14 @@ public class SystemTraySupport {
 	 * @param text il nuovo tooltip.
 	 */
 	public void setTooltip (final String text) {
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return;
 		}
 		getTrayIcon ().setToolTip (text);
@@ -128,7 +150,14 @@ public class SystemTraySupport {
 	 */
 	public void setWorking (final PieceOfWork spow) {
 		
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return;
 		}
 		_advancingPOW = spow;
@@ -163,7 +192,14 @@ public class SystemTraySupport {
 	 * @param message il testo del messaggio.
 	 */
 	public void showError (final String caption, final String message) {
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return;
 		}
 		getTrayIcon ().displayMessage (caption, message, TrayIcon.MessageType.ERROR);
@@ -175,7 +211,14 @@ public class SystemTraySupport {
 	 * @param message il testo del messaggio.
 	 */
 	public void displayInfo (final String caption, final String message) {
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return;
 		}
 		getTrayIcon ().displayMessage (caption, message, TrayIcon.MessageType.INFO);
@@ -187,7 +230,14 @@ public class SystemTraySupport {
 	 * @param message il testo del messaggio.
 	 */
 	public void displayWarning (final String caption, final String message) {
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return;
 		}
 		getTrayIcon ().displayMessage (caption, message, TrayIcon.MessageType.WARNING);
@@ -199,7 +249,14 @@ public class SystemTraySupport {
 	 * @param message il testo del messaggio.
 	 */
 	public void displayMessage (final String caption, final String message) {
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return;
 		}
 		getTrayIcon ().displayMessage (caption, message, TrayIcon.MessageType.NONE);
@@ -210,7 +267,14 @@ public class SystemTraySupport {
 	 * Rimuove la tray icon dalla System Tray.
 	 */
 	public void release () {
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return;
 		}
 		final SystemTray tray = SystemTray.getSystemTray ();
@@ -219,28 +283,56 @@ public class SystemTraySupport {
 	}
 	
 	public void addMouseListener (final MouseListener l) {
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return;
 		}
 		getTrayIcon ().addMouseListener (l);
 	}
 	
 	public void removeMouseListener (final MouseListener l) {
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return;
 		}
 		getTrayIcon ().removeMouseListener (l);
 	}
 	
 	public void addMouseMotionListener (final MouseMotionListener l) {
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return;
 		}
 		getTrayIcon ().addMouseMotionListener (l);
 	}
 	
 	public void removeMouseMotionListener (final MouseMotionListener l) {
-		if (getTrayIcon ()==null) {
+		try {
+			if (getTrayIcon ()==null) {
+				return;
+			}
+		} catch (final NoClassDefFoundError ncdfe) {
+			/*
+			 * SUpporto java 5
+			 */
 			return;
 		}
 		getTrayIcon ().removeMouseMotionListener (l);
@@ -255,7 +347,13 @@ public class SystemTraySupport {
 		return _selectedTask;
 	}
 	
-	private TrayIcon getTrayIcon () {
+	/**
+	 * Finche' si vuole supportare Java 5, e' necessario proteggere qualsiasi accesso a TrayIcon con un 
+	 * try {
+	 * ...
+	 * } catch (NoClassDefFoundError )
+	 */
+	private TrayIcon getTrayIcon () throws NoClassDefFoundError {
 		return (TrayIcon)trayIcon;
 	}
 
@@ -267,5 +365,12 @@ public class SystemTraySupport {
 		_selectedTask = t;
 		refreshTooltip ();
 	}
+
+//	public void showMenu () {
+//		if (getTrayIcon ()==null) {
+//			return;
+//		}
+////		getTrayIcon ().getPopupMenu ().dispatchEvent (new MouseEvent ());
+//	}
 	
 }
