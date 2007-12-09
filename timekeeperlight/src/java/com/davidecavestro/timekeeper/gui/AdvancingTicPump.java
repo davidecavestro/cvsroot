@@ -108,4 +108,11 @@ public class AdvancingTicPump implements WorkAdvanceModelListener {
 			t = null;
 		}
 	}
+	
+	/**
+	 * Ferma il timer di notifica. DOpo l'invocazione di questo metodo l'istanza non &egrave; pi&ugrave; utilizzabile.
+	 */
+	public void release () {
+		stop ();
+	}
 }
