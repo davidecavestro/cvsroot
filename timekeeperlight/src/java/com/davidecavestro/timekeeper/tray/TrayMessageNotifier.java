@@ -45,9 +45,12 @@ public abstract class TrayMessageNotifier {
 	}
  
 	/**
-	 * Attiva il timer di notifica.
+	 * Attiva il timer di notifica, se non &egrave; gi&agrave; attivo.
 	 */
 	public void activate () {
+		if (_timer!=null) {
+			return;
+		}
 		_timer = new Timer ("tray-notifier", true);
 		
 		final TimerTask task = 
@@ -70,6 +73,7 @@ public abstract class TrayMessageNotifier {
 	public void deactivate () {
 		if (_timer!=null) {
 			_timer.cancel ();
+			_timer.purge ();
 			_timer = null;
 		}
 	}
