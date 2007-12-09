@@ -50,6 +50,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MenuItem;
@@ -65,8 +66,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -185,6 +186,27 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		 * va istanziato prima dell'inizializzazione dei componenti, che vi si registrano
 		 */
 		_ticPump = new AdvancingTicPump (_context.getModel (), 1000);
+		/*
+		 * garantisce che alla chiusura della finestra la ticpump smetta di notificare eventi riempiendo la coda AWT 
+		 * (altrimenti la JVM non si chiude in funzione della frequenza del timer!)
+		 */
+		addWindowListener (new WindowListener () {
+			public void windowActivated (WindowEvent e) {
+			}
+			public void windowClosed (WindowEvent e) {
+			}
+			public void windowClosing (WindowEvent e) {
+				_ticPump.release ();
+			}
+			public void windowDeactivated (WindowEvent e) {
+			}
+			public void windowDeiconified (WindowEvent e) {
+			}
+			public void windowIconified (WindowEvent e) {
+			}
+			public void windowOpened (WindowEvent e) {
+			}
+		});
 		_context.getModel ().addWorkAdvanceModelListener (_ticPump);
 		
 		createActionTable (new JTextArea ());
@@ -739,11 +761,13 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 		});
 		
 		/*
-		 * MOstra la finestra principale con un doppio clicksulla tray icon
+		 * Mostra la finestra principale con un doppio clicksulla tray icon
 		 */
 		tray.addMouseListener (new MouseListener () {
 			public void mouseClicked (MouseEvent e) {
-				if (e.getClickCount ()>1) {
+				if (e.getClickCount ()==1) {
+//					tray.showMenu ();
+				} else {
 					bringToFront ();
 				}
 			}
@@ -2931,7 +2955,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 			final int l = advancingIdx.length;
 			for (int i = 0; i < l; i++) {
 				final int idx = advancingIdx[i];
-//		System.out.println ("advanceTic - Thread: "+Thread.currentThread ().getName ()+" cause: "+com.davidecavestro.common.util.ExceptionUtils.getStackTrace (new Throwable ()));
 				SwingUtilities.invokeLater (new Runnable () {
 					public void run () {
 						/*
@@ -2941,7 +2964,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 						fireTableCellUpdated (idx, DURATION_COL_INDEX);
 					}
 				});
-//				fireTableCellUpdated (idx, DURATION_COL_INDEX);
 			}
 		}
 		
@@ -5467,7 +5489,10 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 //		dispatchEvent (new WindowEvent (this, WindowEvent.WINDOW_DEICONIFIED));
 
 		getToolkit ().getSystemEventQueue ().postEvent(new WindowEvent (this, WindowEvent.WINDOW_DEICONIFIED));
+
 		
+//		setState(Frame.ICONIFIED);
+		setState (java.awt.Frame.NORMAL);		
 		
 		try {
 //			setAlwaysOnTop (true);
