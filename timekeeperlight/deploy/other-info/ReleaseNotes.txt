@@ -1,3 +1,10 @@
+2.5.1.2
+- Fixed Java 5 incompatibility (introduced from version 2.5.1.0 - tray icon support)
+
+2.5.1.1
+- Fixed abnormal application exit while an action is running
+- Fixed tray area notification problem
+
 2.5.1.0
 - Introduced additional info on tooltip for ring chart sectors (ISSUE# 7)
 - Added JTTS tray icon support (only from Java 6) (ISSUE# 6)
