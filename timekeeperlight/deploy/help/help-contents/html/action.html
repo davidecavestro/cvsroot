@@ -7,69 +7,66 @@
 	<META NAME="AUTHOR" CONTENT="Davide Cavestro">
 	<META NAME="CREATED" CONTENT="20071216;11304800">
 	<META NAME="CHANGEDBY" CONTENT="Davide Cavestro">
-	<META NAME="CHANGED" CONTENT="20080103;9541100">
+	<META NAME="CHANGED" CONTENT="20071231;11255700">
+	<META NAME="CHANGEDBY" CONTENT="Davide Cavestro">
 	<META NAME="CHANGEDBY" CONTENT="Davide Cavestro">
 	<META NAME="CHANGEDBY" CONTENT="Davide Cavestro">
 	<META NAME="CHANGEDBY" CONTENT="Davide Cavestro">
 	<META NAME="CHANGEDBY" CONTENT="Davide Cavestro">
 	<META NAME="CHANGEDBY" CONTENT="Davide Cavestro">
 </HEAD>
-<BODY LANG="it-IT" DIR="LTR">
-<H1>Azione</H1>
-<P><B>L'</B><SPAN STYLE="font-weight: medium">azione</SPAN> definisce
-un intervallo temporale dedicato ad una particolare <A HREF="task.html">attivit&agrave;</A>.</P>
-<P>Perci&ograve; ha una durata, calcolata come differenza tra l'ora
-di fine e quella di inizio, e un campo di annotazioni per eventuali
-informazioni di promemoria.</P>
-<P>Quando un'azione ha un'ora d'inizio ma non una di fine, &egrave;
-considerata un'azione in corso, ovvero l'<B>azione corrente</B>.</P>
-<P>Le azioni sono visualizzate nella <A HREF="progressestable.html">tabella
-delle azioni</A>.</P>
-<P>Esse possono essere create in diversi modi:</P>
+<BODY LANG="en-US" DIR="LTR">
+<H1>Action</H1>
+<P><SPAN STYLE="font-weight: medium">An action fixes a temporal space
+during which the user devote himself to a certain </SPAN><A HREF="task.html">task</A>.</P>
+<P>Therefore it comes with a term, calculated as the difference
+between the end time and start time. It also has a note field.</P>
+<P>When an action has a start time but lacks of the end one, it is
+called the <B>current action</B>.</P>
+<P>The actions of the currently selected task are listed on the
+<A HREF="progressestable.html">actions table</A>.</P>
+<P>You have several ways to create an action:</P>
 <UL>
-	<LI><P><A HREF="#start_an_action">avviare un'azione</A></P>
-	<LI><P><A HREF="#add_an_action">aggiungere un'azione</A></P>
-	<LI><P><A HREF="#start_an_action_clone">avviare un clone</A> di
-	azione</P>
+	<LI><P><A HREF="#Avviare un'azione|outline">starting an action</A></P>
+	<LI><P><A HREF="#Aggiungere un'azione|outline">adding an action</A></P>
+	<LI><P><A HREF="#Avviare un clone di azione|outline">starting an
+	action clone</A></P>
 </UL>
-<P>Inoltre possono essere modificate, eliminate, tagliate/copiate e
-incollate come qualsiasi altro oggetto.</P>
+<P>Actions can also be edited, deleted; you can cut/copy and paste
+them like every other object.</P>
 <P><BR><BR>
 </P>
 <HR>
-<H2><A NAME="start_an_action"></A>Avviare un'azione</H2>
-<P><SPAN STYLE="font-weight: medium">dal men&ugrave; </SPAN><B>|Azioni
-|Avvia azione|</B> <SPAN STYLE="font-weight: medium">viene creata
-un'azione in corso, ovvero una nuova azione, che ha l'ora attuale
-come inizio, mentre l'ora di fine non &egrave; impostata. Questa
-diventa l'azione corrente. Non &egrave; possibile avere pi&ugrave; di
-una azione corrente.</SPAN></P>
-<P STYLE="font-weight: medium">Serve per tracciare del lavoro mentre
-lo si sta svolgendo, misurandone automaticamente la durata.</P>
-<H2><A NAME="add_an_action"></A>Aggiungere un'azione (gi&agrave;
-conclusa)</H2>
-<P><A NAME="DDE_LINK"></A><SPAN STYLE="font-weight: medium">Dal men&ugrave;
-</SPAN><B>|Azioni|Aggiungi azione|</B> <SPAN STYLE="font-weight: medium">si
-inserisce una nuova azione impostandone l'ora di inizio e di fine.</SPAN></P>
-<P STYLE="font-weight: medium">Serve per tracciare del lavoro dopo
-che &egrave; gi&agrave; stato fatto. E' necessario sapere quanto &egrave;
-durato.</P>
-<H2><A NAME="start_an_action_clone"></A>Avviare un clone di azione</H2>
-<P><SPAN STYLE="font-weight: medium">Dal men&ugrave; </SPAN><B>|Azioni|Avvia
-clone|</B> <SPAN STYLE="font-weight: medium">si ottiene lo stesso
-effetto di avviare un'azione, con la differenza che la nuova azione
-ha la stessa annotazione dell'azione selezionata.</SPAN></P>
-<H2><A NAME="stop_an_action"></A>Fermare l'azione corrente</H2>
-<P>Per fermare l'azione corrente, scegliere la voce di men&ugrave;
-<B>|Azioni|Ferma azione|</B>.</P>
-<H2><A NAME="delete_an_action"></A>Eliminare un'azione</H2>
-<P>Per eliminare un'azione, selezionarla e scegliere la voce di men&ugrave;
-<B>|Modifica|Elimina|</B>.</P>
-<P>Non &egrave; possibile eliminare l'azione corrente.</P>
-<H2><A NAME="continue_an_action"></A>Continuare un'azione</H2>
-<P>Per far continuare un'azione gi&agrave; terminata come se non
-fosse mai stata chiusa, scegliere la voce di men&ugrave;
-<B>|Azioni|Continua azione|</B>.</P>
+<H2><A NAME="start_an_action"></A>Starting an action</H2>
+<P><SPAN STYLE="font-weight: medium">Use the menu </SPAN><B>|Actions
+|Start action|</B> to create a current action, or rather a new
+action, with the present time as start time, but without an end time<SPAN STYLE="font-weight: medium">.
+You cannot have more than one current action at a time.</SPAN></P>
+<P STYLE="font-weight: medium">This operation is useful to record
+your effort while you are working, and automatically measure its
+duration.</P>
+<H2><A NAME="add_an_action"></A>Adding an action (concluded)</H2>
+<P><A NAME="DDE_LINK"></A><SPAN STYLE="font-weight: medium">From the
+</SPAN><B>|Actions|Add action|</B> menu you can create a new action
+setting a start and end time<SPAN STYLE="font-weight: medium">.</SPAN></P>
+<P STYLE="font-weight: medium">This operation is useful to record
+your effort when the work has previously been concluded. Of course,
+you have to know the start and end time.</P>
+<H2><A NAME="start_an_action_clone"></A>Starting an action clone</H2>
+<P><SPAN STYLE="font-weight: medium">Using the menu item
+</SPAN><B>|Actions|Start action clone|</B> you obtain the same result
+as starting an action, with the difference that the new action has
+the same notes of the selected one<SPAN STYLE="font-weight: medium">.</SPAN></P>
+<H2><A NAME="stop_an_action"></A>Stopping the current action</H2>
+<P>To stop the current action, choose the menu item <B>|Actions|Stop
+action|</B>.</P>
+<H2><A NAME="delete_an_action"></A>Deleting an action</H2>
+<P>To delete an action, select it and choose the menu item
+<B>|Edit|Delete|</B>.</P>
+<P>You cannot delete the current action..</P>
+<H2><A NAME="continue_an_action"></A>Continue an action</H2>
+<P>To continue a previously concluded action, as it was never
+stopped, choose the menu item <B>|Actions|Continue action|</B>.</P>
 <P><BR><BR>
 </P>
 </BODY>

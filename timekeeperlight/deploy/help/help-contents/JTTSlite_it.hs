@@ -7,7 +7,7 @@
   <homeID>
 top
   </homeID>
-  <mapref location="default/Map.jhm"/>
+  <mapref location="it/Map.jhm"/>
 
  </maps>
  <view>
@@ -21,7 +21,7 @@ TOC
 javax.help.TOCView
   </type>
   <data>
-default/JTTSliteTOC.xml
+it/JTTSliteTOC.xml
   </data>
  </view>
  <view>
@@ -35,7 +35,7 @@ Index
 javax.help.IndexView
   </type>
   <data>
-default/JTTSliteIndex.xml
+it/JTTSliteIndex.xml
   </data>
  </view>
  <view>
@@ -49,7 +49,7 @@ Search
 javax.help.SearchView
   </type>
   <data engine="com.sun.java.help.search.DefaultSearchEngine">
-default/JavaHelpSearch
+it/JavaHelpSearch
   </data>
  </view>
 </helpset>
