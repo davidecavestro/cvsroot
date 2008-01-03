@@ -1571,7 +1571,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
             jPanel5.setPreferredSize(new java.awt.Dimension(420, 28));
             mainToolbar.setFloatable(false);
             mainToolbar.setRollover(true);
-            mainToolbar.setPreferredSize(null);
             javax.help.CSH.setHelpIDString (mainToolbar, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
             jButton5.setAction(new NewWorkSpaceAction ());
@@ -1666,7 +1665,6 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
             mainToolbar1.setFloatable(false);
             mainToolbar1.setRollover(true);
-            mainToolbar1.setPreferredSize(null);
             javax.help.CSH.setHelpIDString (mainToolbar1, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
             jButton6.setAction(new TransferAction (TransferAction.Type.CUT, tal));
@@ -1746,10 +1744,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 
             mainToolbar2.setFloatable(false);
             mainToolbar2.setRollover(true);
-            mainToolbar2.setMaximumSize(null);
-            mainToolbar2.setMinimumSize(null);
-            mainToolbar2.setPreferredSize(null);
-            javax.help.CSH.setHelpIDString (mainToolbar2, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
+            //javax.help.CSH.setHelpIDString (mainToolbar2, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.MAIN_TOOLBAR ));
 
             _context.getHelpManager ().initialize (helpButton);
             printButton.setAction(new StartReportAction ());
