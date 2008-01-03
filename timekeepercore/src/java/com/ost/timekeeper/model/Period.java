@@ -95,7 +95,7 @@ public class Period extends Observable implements LocalizedPeriod{
 	protected Date safeFromAccessor (){
 		try {
 			return from;
-		} catch (Throwable e) {
+		} catch (final Exception e) {
 			/*
 			 * @workaround per mitigare problemi di corruzione dati
 			 */
@@ -140,7 +140,7 @@ public class Period extends Observable implements LocalizedPeriod{
 	protected Date safeToAccessor (){
 		try {
 			return to;
-		} catch (Throwable e) {
+		} catch (final Exception e) {
 			/*
 			 * @workaround per mitigare problemi di corruzione dati
 			 */
