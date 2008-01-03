@@ -410,7 +410,7 @@ public class ProgressItem extends Observable implements Task {
 	protected List safeProgressesAccessor (){
 		try {
 			return this.progresses;
-		} catch (Throwable e) {
+		} catch (final Exception e) {
 			/*
 			 * @workaround per mitigare problemi di corruzione dati
 			 */
@@ -434,7 +434,7 @@ public class ProgressItem extends Observable implements Task {
 	protected List safeChildrenAccessor (){
 		try {
 			return this.children;
-		} catch (Throwable e) {
+		} catch (final Exception e) {
 			/*
 			 * @workaround per mitigare problmi di corruzione dati
 			 */
