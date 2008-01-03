@@ -10,6 +10,7 @@
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="2"/>
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
@@ -64,6 +65,7 @@
         <Property name="text" type="java.lang.String" value="Help"/>
       </Properties>
       <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="javax.help.CSH.setHelpIDString (helpButton, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.OPEN_PROJECT ));&#xa;_context.getHelpManager ().initialize (helpButton);"/>
         <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
       </AuxValues>
       <Constraints>

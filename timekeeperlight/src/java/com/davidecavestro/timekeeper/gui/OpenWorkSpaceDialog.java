@@ -11,8 +11,8 @@ import com.davidecavestro.common.gui.dialog.DialogNotifierImpl;
 import com.davidecavestro.common.gui.persistence.PersistenceUtils;
 import com.davidecavestro.common.gui.persistence.PersistentComponent;
 import com.davidecavestro.timekeeper.ApplicationContext;
+import com.davidecavestro.timekeeper.help.HelpResources;
 import com.davidecavestro.timekeeper.model.WorkSpace;
-import com.davidecavestro.timekeeper.persistence.PersistenceNodeException;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -86,10 +85,10 @@ public class OpenWorkSpaceDialog extends javax.swing.JDialog implements Persiste
 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        setTitle(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Open_workspace"));
+        setTitle("Open workspace");
         setModal(true);
         okButton.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(okButton, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Ok"));
+        org.openide.awt.Mnemonics.setLocalizedText(okButton, "Ok");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
@@ -104,7 +103,7 @@ public class OpenWorkSpaceDialog extends javax.swing.JDialog implements Persiste
         getContentPane().add(okButton, gridBagConstraints);
 
         cancelButton.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(cancelButton, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Cancel"));
+        org.openide.awt.Mnemonics.setLocalizedText(cancelButton, "Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
@@ -119,7 +118,9 @@ public class OpenWorkSpaceDialog extends javax.swing.JDialog implements Persiste
         getContentPane().add(cancelButton, gridBagConstraints);
 
         helpButton.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(helpButton, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Help"));
+        org.openide.awt.Mnemonics.setLocalizedText(helpButton, "Help");
+        javax.help.CSH.setHelpIDString (helpButton, _context.getHelpManager ().getResolver ().resolveHelpID (HelpResources.OPEN_PROJECT ));
+        _context.getHelpManager ().initialize (helpButton);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 6;
@@ -128,7 +129,7 @@ public class OpenWorkSpaceDialog extends javax.swing.JDialog implements Persiste
         getContentPane().add(helpButton, gridBagConstraints);
 
         jLabel6.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel6, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Available_projects"));
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel6, "Available projects");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
