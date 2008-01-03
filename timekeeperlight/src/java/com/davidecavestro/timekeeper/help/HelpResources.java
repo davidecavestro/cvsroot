@@ -27,4 +27,6 @@ public interface HelpResources {
 	/** La barra di stato. */
 	public final static HelpResource STATUS_BAR = new HelpResource ("html.statusbar");
 	
+	/** La funzionalità di apertura progetto. */
+	public final static HelpResource OPEN_PROJECT = new HelpResource ("html.workspace");
 }
