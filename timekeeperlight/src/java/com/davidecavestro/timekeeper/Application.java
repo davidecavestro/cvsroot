@@ -16,6 +16,7 @@ import com.davidecavestro.common.log.CompositeLogger;
 import com.davidecavestro.common.log.ConsoleLogger;
 import com.davidecavestro.common.log.Logger;
 import com.davidecavestro.common.log.LoggerAdapter;
+import com.davidecavestro.common.log.NotificationUtils;
 import com.davidecavestro.common.log.PlainTextLogger;
 import com.davidecavestro.common.undo.RBUndoManager;
 import com.davidecavestro.common.util.*;
@@ -23,12 +24,10 @@ import com.davidecavestro.timekeeper.conf.ApplicationEnvironment;
 import com.davidecavestro.timekeeper.conf.CommandLineApplicationEnvironment;
 import com.davidecavestro.timekeeper.conf.UserResources;
 import com.davidecavestro.timekeeper.conf.UserSettings;
-import com.davidecavestro.timekeeper.tray.SystemTraySupport;
 import com.davidecavestro.timekeeper.gui.WindowManager;
 import com.davidecavestro.timekeeper.actions.ActionManager;
 import com.davidecavestro.timekeeper.conf.ApplicationOptions;
 import com.davidecavestro.timekeeper.conf.DefaultSettings;
-import com.davidecavestro.timekeeper.gui.MainWindow;
 import com.davidecavestro.timekeeper.gui.Splash;
 import com.davidecavestro.timekeeper.model.PersistentTaskTreeModel;
 import com.davidecavestro.timekeeper.model.PersistentWorkSpaceModel;
@@ -41,6 +40,7 @@ import com.davidecavestro.timekeeper.persistence.PersistenceNode;
 import com.davidecavestro.timekeeper.persistence.PersistenceNodeException;
 import com.ost.timekeeper.model.ProgressItem;
 import com.ost.timekeeper.model.Project;
+import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -144,13 +144,18 @@ public class Application {
 		try {
 			_persistenceNode.init ();
 		} catch (final PersistenceNodeException pne) {
-			System.err.print ("Cannot initialize the persistence subsystem. ");
-			System.err.println ("Please check to have permissions to write to "+applicationOptions.getJDOStorageDirPath ());
-			System.err.println ("If you have the correct permissions, please wait a couple of minutes, so that the current lock become obsolete");
-			pne.printStackTrace (System.err);
+			
+			final NotificationUtils notification = new NotificationUtils ();
+			final String[] message = {
+				"Cannot initialize the persistence subsystem. ",
+				"Please check write permissions to "+applicationOptions.getJDOStorageDirPath (),
+				"If you have the correct permissions, please wait a couple of minutes, so that the current lock become obsolete"
+				};
+			notification.error (pne, message);
+			
 			exit ();
 			/*
-			 * Exit dovrebbe termiare la JVM, se non fosse, comunque l'applicazione non deve partire
+			 * Exit dovrebbe terminare la JVM, se non fosse, comunque l'applicazione non deve partire
 			 */
 			throw new RuntimeException (pne);
 		}
@@ -187,8 +192,9 @@ public class Application {
 	
 	/**
 	 * Fa partire l'applicazione.
+	 * @throws java.awt.HeadlessException se l'ambiente grafico non è supportato.
 	 */
-	public void start (){
+	public void start () throws HeadlessException {
 		_context.getLogger ().info (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("starting_UI"));
 		final WindowManager wm = _context.getWindowManager ();
 		

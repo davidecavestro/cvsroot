@@ -6,8 +6,10 @@
 
 package com.davidecavestro.timekeeper;
 
+import com.davidecavestro.common.log.NotificationUtils;
 import com.davidecavestro.timekeeper.conf.CommandLineApplicationEnvironment;
 import com.davidecavestro.timekeeper.conf.UserResources;
+import java.awt.HeadlessException;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -175,13 +177,27 @@ public class Launcher {
 	public static void main (String[] args) {
 		final Launcher l = new Launcher ();
 		if (!l.checkForOtherInstances ()) {
-			System.err.println ("A live instance of the application was detected.");
-			System.err.println ("Please check if you have launched another instance of the application, or if a previous launch has left a zombie process. ");
-			System.err.println ("By now, this instance will be termiated.");
+			final NotificationUtils notification = new NotificationUtils ();
+			final String[] message = {
+				java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Launcher/ErrorMessage/DuplicatedAppInstance/Row1"),
+				java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Launcher/ErrorMessage/DuplicatedAppInstance/Row2"),
+				java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Launcher/ErrorMessage/DuplicatedAppInstance/Row3")
+				};
+			notification.error (message);
 			System.exit (1);
 		}
 		final Application a = new Application (new CommandLineApplicationEnvironment (args));
-		a.start ();
+		try {
+			a.start ();
+		} catch (final HeadlessException he) {
+			final NotificationUtils notification = new NotificationUtils ();
+			final String[] message = {
+				java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Launcher/ErrorMessage/AWTUnavailable"),
+				};
+			notification.error (message);
+			throw he;
+		}
+		
 		l.bind (a);
 	}
 }

@@ -103,7 +103,7 @@ public class TreeTableDropTarget /*extends DropTarget */ implements DropTargetLi
    */
   public void drop(DropTargetDropEvent dtde) {
     clearImage((JXTreeTable) dtde.getDropTargetContext().getComponent());
-	System.out.println ("dropping...");
+//	System.out.println ("dropping...");
 //    super.drop(dtde);
   }
 
@@ -242,7 +242,7 @@ public class TreeTableDropTarget /*extends DropTarget */ implements DropTargetLi
       }
       lastRowBounds = rowBounds;
 	  
-	  System.out.println (""+System.currentTimeMillis ()+" painting insert marker");
+//	  System.out.println (""+System.currentTimeMillis ()+" painting insert marker");
     }
   }
 

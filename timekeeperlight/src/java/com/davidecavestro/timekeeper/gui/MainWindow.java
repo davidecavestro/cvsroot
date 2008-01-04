@@ -569,7 +569,7 @@ public class MainWindow extends javax.swing.JFrame implements PersistentComponen
 						/*
 						 * Se non dovesse funzionare, non deve bloccare il thread AWT
 						 */
-						System.out.println (ExceptionUtils.getStackTrace (ex));
+						ex.printStackTrace (System.err);
 					}
 				}
 			}
@@ -5091,10 +5091,10 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 					importProgresses (c, progresses, td.getAction ()!=TransferHandler.COPY);
 				}
 			} catch (UnsupportedFlavorException ufe) {
-				_context.getLogger ().warning ("Error transferring UI data.", ufe);
+				_context.getLogger ().warning (ufe, "Error transferring UI data.");
 				return false;
 			} catch (IOException ioe) {
-				_context.getLogger ().warning ("Error transferring UI data.", ioe);
+				_context.getLogger ().warning (ioe, "Error transferring UI data.");
 				return false;
 			}
 			return true;
@@ -5149,7 +5149,7 @@ com.davidecavestro.timekeeper.gui.MainWindow$TaskJTreeModel.checkForReload(MainW
 			for (int i=0;i<selectedRowsCount;i++){
 				exportedProgresses[i] = (PieceOfWork)((ProgressesJTableModel)progressesTable.getModel ()).getValueAt (progressesTable.convertRowIndexToModel (selectedRows[i]), progressesTable.convertColumnIndexToModel (DURATION_COL_INDEX));
 			}
-			System.out.println ("Exported progresses: "+selectedRowsCount);
+//			System.out.println ("Exported progresses: "+selectedRowsCount);
 			return exportedProgresses;
 		}
 		

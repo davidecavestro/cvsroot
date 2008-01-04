@@ -61,10 +61,10 @@ public abstract class ProgressTransferHandler extends TransferHandler implements
 			final PieceOfWork[] progresses = td.getData ();
 			importProgresses (c, progresses, td.getAction ()!=TransferHandler.COPY);
 		} catch (UnsupportedFlavorException ufe) {
-			_context.getLogger ().warning (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Error_transferring_UI_data."), ufe);
+			_context.getLogger ().warning (ufe, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Error_transferring_UI_data."));
 			return false;
 		} catch (IOException ioe) {
-			_context.getLogger ().warning (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Error_transferring_UI_data."), ioe);
+			_context.getLogger ().warning (ioe, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Error_transferring_UI_data."));
 			return false;
 		}
 		return true;

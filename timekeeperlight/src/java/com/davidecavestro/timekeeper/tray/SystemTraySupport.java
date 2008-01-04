@@ -77,8 +77,8 @@ public class SystemTraySupport {
 				tray.add (getTrayIcon ());
 				getTrayIcon ().setToolTip ("foo");
 			} catch (AWTException e) {
-				System.err.println ("TrayIcon is not supported.");
-				e.printStackTrace (System.err);
+				System.out.println ("TrayIcon is not supported.");
+				e.printStackTrace (System.out);
 			}
 			
 			

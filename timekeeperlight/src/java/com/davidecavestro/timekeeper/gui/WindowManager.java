@@ -359,7 +359,7 @@ public class WindowManager implements ActionListener, DialogListener {
 						}
 					} catch (final Exception e) {
 						try {
-						_context.getLogger ().error (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Cannot_change_look_and_feel_"), e);
+						_context.getLogger ().error (e, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Cannot_change_look_and_feel_"));
 						} catch (Exception ee) {
 							/*
 							 * Durante l'avvio dell'applicazione il logger potrebbe anche non esistere.

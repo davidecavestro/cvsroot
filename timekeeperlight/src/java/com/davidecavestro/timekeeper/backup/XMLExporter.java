@@ -62,7 +62,7 @@ public class XMLExporter {
 				final Task child = (Task)it.next ();
 				try {
 					addContent (new ProgressItemElement (child));
-				} catch (Exception e){_context.getLogger ().error (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_exporting_node"), e);}
+				} catch (Exception e){_context.getLogger ().error (e, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_exporting_node"));}
 			}
 			for (final Object progress : progressItem.getPiecesOfWork ()){
 				addContent (new ProgressElement ((PieceOfWork)progress));
@@ -89,16 +89,16 @@ public class XMLExporter {
 			super (XMLResources.PROGRESS_ELEMENT);
 			try {
 				addContent (new NullableSingleValueElement (XMLResources.FROM_PROPERTY, CalendarUtils.getTS (progress.getFrom (), CalendarUtils.TIMESTAMP_FORMAT)));
-			} catch (Exception e){_context.getLogger ().error (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_exporting_action"), e);}
+			} catch (Exception e){_context.getLogger ().error (e, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_exporting_action"));}
 			try {
 				addContent (new NullableSingleValueElement (XMLResources.TO_PROPERTY, CalendarUtils.getTS (progress.getTo (), CalendarUtils.TIMESTAMP_FORMAT)));
-			} catch (Exception e){_context.getLogger ().error (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_exporting_action"), e);}
+			} catch (Exception e){_context.getLogger ().error (e, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_exporting_action"));}
 			try {
 				addContent (new NullableSingleValueElement (XMLResources.DESCRIPTION_PROPERTY, progress.getDescription ()));
-			} catch (Exception e){_context.getLogger ().error (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_exporting_action"), e);}
+			} catch (Exception e){_context.getLogger ().error (e, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_exporting_action"));}
 			try {
 				addContent (new NullableSingleValueElement (XMLResources.NOTES_PROPERTY, progress.getNotes ()));
-			} catch (Exception e){_context.getLogger ().error (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_exporting_action"), e);}
+			} catch (Exception e){_context.getLogger ().error (e, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_exporting_action"));}
 			
 		}
 	}

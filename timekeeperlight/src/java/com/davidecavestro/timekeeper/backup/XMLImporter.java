@@ -178,7 +178,7 @@ public class XMLImporter {
 					child.setParent (this._progressItem);
 					children.add (child);
 				} catch (Exception e){
-					_context.getLogger ().error (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_importing_task_"), e);
+					_context.getLogger ().error (e, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_importing_task_"));
 				}
 			}
 			this._progressItem.setChildren (children);
@@ -188,7 +188,7 @@ public class XMLImporter {
 					final Progress progress = new ProgressElement ((Element)it.next (), this._progressItem).getProgress ();
 					progresses.add (progress);
 				} catch (Exception e){
-					_context.getLogger ().error (java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_importing_action_"), e);
+					_context.getLogger ().error (e, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("error_importing_action_"));
 				}
 			}
 			this._progressItem.setProgresses (progresses);
