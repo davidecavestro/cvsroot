@@ -379,7 +379,7 @@
 			<band height="27"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="263"
+						x="258"
 						y="6"
 						width="250"
 						height="19"
