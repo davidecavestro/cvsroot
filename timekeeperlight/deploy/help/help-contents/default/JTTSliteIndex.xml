@@ -6,13 +6,13 @@
 
  <indexitem text="actions table " target="html.progressestable"/>
 
+ <indexitem text="donut chart " target="html.mainpanel_pie_chart"/>
+
  <indexitem text="exporting data " target="html.workspace_export_a_project"/>
 
  <indexitem text="importing data " target="html.workspace_import_a_project"/>
 
- <indexitem text="licenza " target="html.index_license"/>
-
- <indexitem text="pie chart " target="html.mainpanel_pie_chart"/>
+ <indexitem text="license " target="html.index_license"/>
 
  <indexitem text="reporting " target="html.report"/>
 

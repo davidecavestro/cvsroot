@@ -1,0 +1,2 @@
+GLihelpset (i file .hs) contenuti in questa directory abilitano semplicemente l'utilizzo deglialtrihelpset contenuti nelle rispettive cartelle dedicate al locale.
+Ciò è necessario in quanto, dovendo utilizzare helpset localizzati, si riscontravano problemi nel retrieving dei file, a runtime, a fronte dell'utilizzo di risultati di una ricerca.

@@ -13,14 +13,20 @@ import java.awt.Font;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
-import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.FilterPipeline;
+import org.jdesktop.swingx.decorator.SortController;
+import org.jdesktop.swingx.decorator.SortOrder;
+import org.jdesktop.swingx.decorator.Sorter;
 
 /**
  * La finestra di About.
@@ -29,9 +35,11 @@ import org.jdesktop.swingx.JXTable;
  */
 public class About extends javax.swing.JDialog {
 	
-	private final static Object[] _voidObjectAray = new Object[0];
+	private final static Object[] _voidObjectArray = new Object[0];
 		
 	private final ApplicationContext _context;
+	
+	private final ProxyTableModel proxyTableModel;
 	
 	private final SystemEnvTableModel systemEnvTableModel;
 	private final SystemPropertiesTableModel systemPropertiesTableModel;
@@ -48,16 +56,48 @@ public class About extends javax.swing.JDialog {
 		super (parent, modal);
 		this._context = context;
 		
+		proxyTableModel = new ProxyTableModel ();
+		
 		systemEnvTableModel = new SystemEnvTableModel ();
 		systemPropertiesTableModel = new SystemPropertiesTableModel ();
 		applicationOptionsTableModel = new ApplicationOptionsTableModel ();
+		
+		proxyTableModel.setModel (systemEnvTableModel);
+		
 		initComponents ();
 		
 		presentationPanel.add (new PresentationPanel (_context.getApplicationData ()), new java.awt.GridBagConstraints());
 		
-		((JXTable)systemPropsTable).setColumnControlVisible (true);
-		((JXTable)systemPropsTable).packAll ();
 		
+		/*
+		 * toggle sort
+		 * 1 asc, 2 desc, 3 null
+		 */
+		((JXTable)systemPropsTable).setFilters (new FilterPipeline () {
+			protected SortController createDefaultSortController () {
+				return new SorterBasedSortController () {
+					
+					public void toggleSortOrder (int column, Comparator comparator) {
+						Sorter currentSorter = getSorter ();
+						if ((currentSorter != null)
+						&& (currentSorter.getColumnIndex () == column)
+						&& !currentSorter.isAscending ()) {
+							setSorter (null);
+						} else {
+							super.toggleSortOrder (column, comparator);
+						}
+					}
+					
+				};
+			}
+		});		
+		
+		((JXTable)systemPropsTable).setColumnControlVisible (true);
+		((JXTable)systemPropsTable).setSortOrder (0, SortOrder.ASCENDING);
+		
+
+		javaToggleButton.doClick ();
+			
 		setLocationRelativeTo (null);
 	}
 	
@@ -93,14 +133,15 @@ public class About extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
         jToggleButton3 = new javax.swing.JToggleButton();
-        jToggleButton1 = new javax.swing.JToggleButton();
+        javaToggleButton = new javax.swing.JToggleButton();
         jToggleButton2 = new javax.swing.JToggleButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        systemPropsTable = new JXTable (systemPropertiesTableModel);
+        systemPropsTable = new JXTable (proxyTableModel);
 
         setTitle("About");
         setName("aboutDialog");
+        jTabbedPane1.setFont(new java.awt.Font("Dialog", 0, 12));
         jTabbedPane1.setMaximumSize(null);
         jTabbedPane1.setPreferredSize(new java.awt.Dimension(420, 300));
         presentationPanel.setLayout(new java.awt.GridBagLayout());
@@ -258,8 +299,9 @@ public class About extends javax.swing.JDialog {
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
         buttonGroup1.add(jToggleButton3);
+        jToggleButton3.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jToggleButton3, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Application"));
-        jToggleButton3.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Host_env_button_tooltip"));
+        jToggleButton3.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("About/System/HostButton/tooltip"));
         jToggleButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jToggleButton3ActionPerformed(evt);
@@ -268,19 +310,20 @@ public class About extends javax.swing.JDialog {
 
         jToolBar1.add(jToggleButton3);
 
-        buttonGroup1.add(jToggleButton1);
-        jToggleButton1.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(jToggleButton1, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Java"));
-        jToggleButton1.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Java_properties_button_tooltip"));
-        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroup1.add(javaToggleButton);
+        javaToggleButton.setFont(new java.awt.Font("Dialog", 0, 12));
+        org.openide.awt.Mnemonics.setLocalizedText(javaToggleButton, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Java"));
+        javaToggleButton.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Java_properties_button_tooltip"));
+        javaToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton1ActionPerformed(evt);
+                javaToggleButtonActionPerformed(evt);
             }
         });
 
-        jToolBar1.add(jToggleButton1);
+        jToolBar1.add(javaToggleButton);
 
         buttonGroup1.add(jToggleButton2);
+        jToggleButton2.setFont(new java.awt.Font("Dialog", 0, 12));
         org.openide.awt.Mnemonics.setLocalizedText(jToggleButton2, java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Host"));
         jToggleButton2.setToolTipText(java.util.ResourceBundle.getBundle("com.davidecavestro.timekeeper.gui.res").getString("Host_env_button_tooltip"));
         jToggleButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -301,24 +344,22 @@ public class About extends javax.swing.JDialog {
         jPanel4.setBackground(javax.swing.UIManager.getDefaults().getColor("Table.background"));
         jScrollPane1.setMaximumSize(null);
         jScrollPane1.setMinimumSize(null);
-        final Font keysFont = new Font("monospaced", Font.PLAIN, 12);
+        final Font valuesFont = new Font("monospaced", Font.PLAIN, 12);
         systemPropsTable.setCellSelectionEnabled(true);
-        systemPropsTable.setMaximumSize(null);
-        systemPropsTable.setMinimumSize(null);
-        systemPropsTable.setPreferredSize(null);
         systemPropsTable.setDefaultRenderer (String.class, new DefaultTableCellRenderer () {
             public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
 
                 final JLabel label = (JLabel)super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);
                 if (0 != column) {
-                    /* colonna chiavi */
-                    label.setFont (keysFont);
+                    /* colonna valori */
+                    label.setFont (valuesFont);
                 }
                 return label;
             }
 
         });
+
         jScrollPane1.setViewportView(systemPropsTable);
 
         jPanel4.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -342,14 +383,17 @@ public class About extends javax.swing.JDialog {
 
 	private void jToggleButton3ActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton3ActionPerformed
 		systemPropsTable.setModel (applicationOptionsTableModel);
+//		((JXTable)systemPropsTable).packColumn (1,0);		
 	}//GEN-LAST:event_jToggleButton3ActionPerformed
 
-	private void jToggleButton1ActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+	private void javaToggleButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaToggleButtonActionPerformed
 		systemPropsTable.setModel (systemPropertiesTableModel);
-	}//GEN-LAST:event_jToggleButton1ActionPerformed
+//		((JXTable)systemPropsTable).packColumn (1,0);		
+	}//GEN-LAST:event_javaToggleButtonActionPerformed
 
 	private void jToggleButton2ActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
 		systemPropsTable.setModel (systemEnvTableModel);
+//		((JXTable)systemPropsTable).packColumn (1,0);	
 	}//GEN-LAST:event_jToggleButton2ActionPerformed
 	
 
@@ -376,23 +420,74 @@ public class About extends javax.swing.JDialog {
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
     private javax.swing.JToggleButton jToggleButton3;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JToggleButton javaToggleButton;
     private javax.swing.JTextPane licenseEditorPane;
     private javax.swing.JPanel presentationPanel;
     private javax.swing.JTable systemPropsTable;
     // End of variables declaration//GEN-END:variables
 
+	
+	/**
+	 * Incapsula un tablemodel in modo da poterne variare l'istanza senza indurre una variazione di modello.
+	 * Alla variazione del modello incapusalto scatena una rivalidazione dei dati.
+	 */
+	private class ProxyTableModel extends AbstractTableModel {
+		private TableModel _back;
+		
+		
+		public void setModel (final TableModel m) {
+			_back = m;
+			fireTableStructureChanged ();
+		}
+		
+		public int getRowCount () {
+			return _back.getRowCount ();
+		}
+
+		public int getColumnCount () {
+			return _back.getColumnCount ();
+		}
+
+		public String getColumnName (int columnIndex) {
+			return _back.getColumnName (columnIndex);
+		}
+
+		public Class<?> getColumnClass (int columnIndex) {
+			return _back.getColumnClass (columnIndex);
+		}
+
+		public boolean isCellEditable (int rowIndex, int columnIndex) {
+			return _back.isCellEditable (rowIndex, columnIndex);
+		}
+
+		public Object getValueAt (int rowIndex, int columnIndex) {
+			return _back.getValueAt (rowIndex, columnIndex);
+		}
+
+		public void setValueAt (Object aValue, int rowIndex, int columnIndex) {
+			_back.setValueAt (aValue, rowIndex, columnIndex);
+		}
+
+		public void addTableModelListener (TableModelListener l) {
+			_back.addTableModelListener (l);
+		}
+
+		public void removeTableModelListener (TableModelListener l) {
+			_back.removeTableModelListener (l);
+		}
+	}
+	
 	private final class SystemPropertiesTableModel implements TableModel {
 
 		private final Object[] keys;
 		private final Object[] values;
 		
 		public SystemPropertiesTableModel (){
-            this.keys = System.getProperties ().keySet ().toArray (_voidObjectAray);
-            this.values = System.getProperties ().values ().toArray (_voidObjectAray);
+            this.keys = System.getProperties ().keySet ().toArray (_voidObjectArray);
+            this.values = System.getProperties ().values ().toArray (_voidObjectArray);
 		}
 		
 		public void addTableModelListener (javax.swing.event.TableModelListener l) {}
@@ -450,7 +545,7 @@ public class About extends javax.swing.JDialog {
 		
 		public SystemEnvTableModel (){
 			this.env = System.getenv ();
-            this.keys = env.keySet ().toArray (_voidObjectAray);
+            this.keys = env.keySet ().toArray (_voidObjectArray);
 		}
 		
 		public void addTableModelListener (javax.swing.event.TableModelListener l) {}
@@ -543,7 +638,7 @@ public class About extends javax.swing.JDialog {
 				case 1:
 
 					try {
-						return keys[rowIndex].invoke (_context.getApplicationOptions (), _voidObjectAray);
+						return keys[rowIndex].invoke (_context.getApplicationOptions (), _voidObjectArray);
 					} catch (IllegalArgumentException ex) {
 						ex.printStackTrace();
 					} catch (IllegalAccessException ex) {

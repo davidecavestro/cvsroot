@@ -18,9 +18,9 @@
 
 <mapID target="html.report_Filtrare il report ad un periodo temporale|outline" url="html/report.html#Filtrare il report ad un periodo temporale|outline"/>
 
-<mapID target="html.report" url="html/report.html"/>
-
 <mapID target="html.workspace_export_a_project" url="html/workspace.html#export_a_project"/>
+
+<mapID target="html.report" url="html/report.html"/>
 
 <mapID target="html.maintoolbar" url="html/maintoolbar.html"/>
 
@@ -28,9 +28,9 @@
 
 <mapID target="html.action_delete_an_action" url="html/action.html#delete_an_action"/>
 
-<mapID target="html.mainpanel_Grafico a torta|outline" url="html/mainpanel.html#Grafico a torta|outline"/>
-
 <mapID target="html.action_stop_an_action" url="html/action.html#stop_an_action"/>
+
+<mapID target="html.mainpanel_Grafico a torta|outline" url="html/mainpanel.html#Grafico a torta|outline"/>
 
 <mapID target="html.progressestable" url="html/progressestable.html"/>
 
@@ -46,9 +46,9 @@
 
 <mapID target="html.task_delete_a_task" url="html/task.html#delete_a_task"/>
 
-<mapID target="html.index_author" url="html/index.html#author"/>
-
 <mapID target="html.task_create_a_task" url="html/task.html#create_a_task"/>
+
+<mapID target="html.index_author" url="html/index.html#author"/>
 
 <mapID target="html.action_continue_an_action" url="html/action.html#continue_an_action"/>
 
@@ -62,9 +62,9 @@
 
 <mapID target="html.index_DDE_LINK1" url="html/index.html#DDE_LINK1"/>
 
-<mapID target="html.index_bugs" url="html/index.html#bugs"/>
-
 <mapID target="html.index_first_steps" url="html/index.html#first_steps"/>
+
+<mapID target="html.index_bugs" url="html/index.html#bugs"/>
 
 <mapID target="html.task" url="html/task.html"/>
 
@@ -74,21 +74,21 @@
 
 <mapID target="html.action_start_an_action_clone" url="html/action.html#start_an_action_clone"/>
 
-<mapID target="html.index_license" url="html/index.html#license"/>
-
 <mapID target="html.index_glossary" url="html/index.html#glossary"/>
+
+<mapID target="html.index_license" url="html/index.html#license"/>
 
 <mapID target="html.report_Scegliere il report da lanciare|outline" url="html/report.html#Scegliere il report da lanciare|outline"/>
 
 <mapID target="html.action" url="html/action.html"/>
 
-<mapID target="html.mainpanel_pie_chart" url="html/mainpanel.html#pie_chart"/>
-
 <mapID target="html.workspace_create_a_project" url="html/workspace.html#create_a_project"/>
 
-<mapID target="html.index" url="html/index.html"/>
+<mapID target="html.mainpanel_pie_chart" url="html/mainpanel.html#pie_chart"/>
 
 <mapID target="html.statusbar" url="html/statusbar.html"/>
+
+<mapID target="html.index" url="html/index.html"/>
 
 <mapID target="html.userinterface_Finestra Principale|outline" url="html/userinterface.html#Finestra Principale|outline"/>
 
